@@ -44,6 +44,7 @@
             <nav class="primary-nav" id="primary-nav" aria-label="التنقل الرئيسي" data-open="false">
                 <a href="/quran"<?= $activePath === '/quran' ? ' aria-current="page"' : '' ?>>القرآن</a>
                 <a href="/hadith"<?= $activePath === '/hadith' ? ' aria-current="page"' : '' ?>>الحديث</a>
+                <a href="/dorar"<?= $activePath === '/dorar' ? ' aria-current="page"' : '' ?>>الموسوعة</a>
                 <a href="/books"<?= $activePath === '/books' ? ' aria-current="page"' : '' ?>>الكتب</a>
                 <a href="/lessons"<?= $activePath === '/lessons' ? ' aria-current="page"' : '' ?>>الدروس</a>
                 <a href="/adhkar"<?= $activePath === '/adhkar' ? ' aria-current="page"' : '' ?>>الأذكار</a>
@@ -73,7 +74,7 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="120" height="76" loading="lazy"></a><p>مساحة هادئة للقرآن والمعرفة والعبادة.</p><span class="footer-note">محتوى منظّم، ومصادر واضحة، وتجربة مريحة على كل جهاز.</span></div>
-            <nav class="footer-nav" aria-label="روابط الموقع"><strong>استكشف أثر</strong><a href="/quran">القرآن الكريم</a><a href="/hadith">الحديث النبوي</a><a href="/adhkar">الأذكار والأدعية</a><a href="/books">المكتبة</a><a href="/lessons">الدروس والمحاضرات</a></nav>
+            <nav class="footer-nav" aria-label="روابط الموقع"><strong>استكشف أثر</strong><a href="/quran">القرآن الكريم</a><a href="/hadith">الحديث النبوي</a><a href="/dorar">موسوعة الدرر السنية</a><a href="/adhkar">الأذكار والأدعية</a><a href="/books">المكتبة</a><a href="/lessons">الدروس والمحاضرات</a></nav>
             <nav class="footer-nav" aria-label="روابط القراءة والمصادر"><strong>قراءة ومصادر</strong><a href="/quran">قراءة القرآن والاستماع</a><a href="/hadith">البحث في الحديث</a><a href="/about">منهجية المصادر</a><a href="/about">سياسة المحتوى والإحالات</a></nav>
             <div class="footer-account"><strong>حسابك</strong><p>تابع قراءتك واحفظ تقدّمك وإحصاءاتك، مع بقاء التصفح العام متاحًا.</p><?php if (!empty($user)): ?><a href="/account">ملفي الشخصي والإحصاءات</a><?php else: ?><a href="/login">تسجيل الدخول</a><a href="/register">إنشاء حساب اختياري</a><?php endif; ?></div>
             <div class="footer-bottom"><small>© <?= date('Y') ?> أثر</small><small>صُمّم ليكون قريبًا منك، أينما قرأت.</small></div>

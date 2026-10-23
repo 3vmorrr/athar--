@@ -5,6 +5,7 @@
         <h1>الحديث النبوي</h1>
         <p>ابحث بالعربية، وتظهر خلاصة حكم المحدّث مع كل نتيجة ورابطها المرجعي.</p>
     </header>
+    <p class="source-note"><a href="/dorar">افتح البحث في التفسير والعقيدة والفقه والأخلاق والآداب والتاريخ ↗</a></p>
     <form class="knowledge-search" data-hadith-form role="search">
         <label for="hadith-query">كلمة أو عبارة في الحديث</label>
         <div class="search-row">

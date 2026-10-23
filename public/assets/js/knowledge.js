@@ -164,6 +164,61 @@
         }
     }
 
+    const dorarPage = document.querySelector('[data-dorar-page]');
+    if (dorarPage) {
+        const form = dorarPage.querySelector('[data-dorar-form]');
+        const queryInput = form.elements.q;
+        const scopeInput = form.elements.scope;
+        const results = dorarPage.querySelector('[data-dorar-results]');
+        const status = dorarPage.querySelector('[data-dorar-status]');
+        const scopeNames = { hadith: 'الحديث النبوي', tafseer: 'التفسير', aqeeda: 'العقيدة', feqhia: 'الفقه', alakhlaq: 'الأخلاق', aadab: 'الآداب', history: 'التاريخ' };
+        const search = async (query, scope) => {
+            results.replaceChildren();
+            setStatus(status, `جارٍ البحث في ${scopeNames[scope]}…`, 'loading');
+            try {
+                const response = await fetch('/api/dorar/search?' + new URLSearchParams({ q: query, scope }), { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+                const payload = await response.json();
+                if (!response.ok && payload?.error !== 'service_not_configured') throw new Error('provider-response');
+                if (payload?.error === 'service_not_configured') throw new Error('service-not-configured');
+                if (!Array.isArray(payload?.data)) throw new Error('provider-shape');
+                if (!payload.data.length) { setStatus(status, 'لا توجد نتائج لهذه العبارة. جرّب كلمات عربية أخرى.', 'empty'); return; }
+                payload.data.forEach((item) => {
+                    if (!item || typeof item.url !== 'string' || !item.url.startsWith('https://dorar.net/')) return;
+                    if (scope === 'hadith' && (typeof item.grade !== 'string' || !item.grade.trim())) return;
+                    const body = text(scope === 'tafseer' ? item.body : item.text, text(item.body, text(item.text)));
+                    if (!body) return;
+                    const card = make('article', `knowledge-card${scope === 'hadith' ? ' hadith-card' : ''}`);
+                    const meta = make('div', 'card-meta');
+                    meta.append(make('span', 'source-chip', scopeNames[scope]));
+                    if (scope === 'hadith' && typeof item.grade === 'string' && item.grade.trim()) meta.append(make('span', 'source-chip', `خلاصة حكم المحدّث: ${item.grade}`));
+                    if (item.title) card.append(make('h2', '', item.title));
+                    card.append(meta, make('p', scope === 'hadith' ? 'hadith-text' : '', body));
+                    card.append(sourceLink(item.url, 'المصدر: الدرر السنية ↗'));
+                    results.append(card);
+                });
+                if (!results.childElementCount) setStatus(status, 'لم تتوفر نتائج مكتملة مرتبطة بمصدرها.', 'empty');
+                else status.hidden = true;
+            } catch (error) {
+                setStatus(status, error.message === 'service-not-configured' ? 'لم يُضف مفتاح الدرر المعتمد بعد. يلزم طلب موافقة الخدمة التي اخترتها ثم حفظ الرمز في إعدادات الإدارة.' : 'تعذر البحث الآن. تحقق من اتصال الخادم وحاول مرة أخرى.', 'error');
+                const retry = make('button', 'button button-secondary', 'إعادة المحاولة');
+                retry.type = 'button';
+                retry.addEventListener('click', () => search(query, scope));
+                status.append(' ', retry);
+            }
+        };
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const query = queryInput.value.trim();
+            const scope = scopeInput.value;
+            if (query.length < 2 || query.length > 200) return;
+            history.replaceState(null, '', `/dorar?${new URLSearchParams({ q: query, scope })}`);
+            search(query, scope);
+        });
+        const params = parseSearchParams();
+        if (Object.hasOwn(scopeNames, params.get('scope'))) scopeInput.value = params.get('scope');
+        if (params.has('q') && params.get('q').trim().length >= 2 && params.get('q').trim().length <= 200) search(params.get('q').trim(), scopeInput.value);
+    }
+
     const booksPage = document.querySelector('[data-books-page]');
     if (booksPage) {
         const form = booksPage.querySelector('[data-books-form]');

@@ -30,21 +30,32 @@ $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 if (in_array($path, ['/login','/register','/account','/admin','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)) header('Cache-Control: no-store, private');
 
-if ($path === '/api/hadith/search' && $method === 'GET') {
-    if (!allow_session_rate('dorar_hadith_search',30,60)) { http_response_code(429); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error'=>'rate_limited'],JSON_UNESCAPED_UNICODE); exit; }
+if (in_array($path, ['/api/hadith/search', '/api/dorar/search'], true) && $method === 'GET') {
+    if (!allow_session_rate('dorar_search', 30, 60) || !allow_shared_dorar_rate(55, 60)) { http_response_code(429); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error'=>'rate_limited'],JSON_UNESCAPED_UNICODE); exit; }
     $query = trim((string) ($_GET['q'] ?? ''));
     if (mb_strlen($query, 'UTF-8') < 2 || mb_strlen($query, 'UTF-8') > 200) { http_response_code(422); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error' => 'invalid_query'], JSON_UNESCAPED_UNICODE); exit; }
+    $scope = $path === '/api/hadith/search' ? 'hadith' : (string) ($_GET['scope'] ?? 'hadith');
+    $endpoints = ['hadith'=>'hadith', 'tafseer'=>'tafseer', 'aqeeda'=>'aqeeda', 'feqhia'=>'feqhia', 'alakhlaq'=>'alakhlaq', 'aadab'=>'aadab', 'history'=>'history'];
+    if (!isset($endpoints[$scope])) { http_response_code(422); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error'=>'invalid_scope'],JSON_UNESCAPED_UNICODE); exit; }
     try { $token = trim(platform_secret('dorar_api_token', 'ATHAR_DORAR_API_TOKEN')); } catch (Throwable $exception) { $token = ''; }
     if ($token === '') { http_response_code(503); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error' => 'service_not_configured'], JSON_UNESCAPED_UNICODE); exit; }
-    $url = 'https://dorar.net/api/v1/hadith/search?' . http_build_query(['q' => $query, 'limit' => 15, 'match' => 'all']);
-    $context = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true, 'header' => "Accept: application/json\r\nAuthorization: Bearer {$token}\r\n"]]);
+    $parameters = ['q' => $query, 'limit' => 15, 'match' => in_array($_GET['match'] ?? 'all', ['any','all','phrase'], true) ? (string) ($_GET['match'] ?? 'all') : 'all'];
+    if ($scope !== 'hadith') $parameters['in'] = in_array($_GET['in'] ?? 'both', ['title','text','both'], true) ? (string) ($_GET['in'] ?? 'both') : 'both';
+    if ($scope === 'tafseer') {
+        $sura = filter_var($_GET['sura'] ?? null, FILTER_VALIDATE_INT);
+        $category = filter_var($_GET['category'] ?? null, FILTER_VALIDATE_INT);
+        if ($sura !== false && $sura !== null) $parameters['sura'] = max(1, min(114, $sura));
+        if ($category !== false && $category !== null) $parameters['category'] = max(0, min(19, $category));
+    }
+    $url = 'https://dorar.net/api/v1/' . $endpoints[$scope] . '/search?' . http_build_query($parameters);
+    $context = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 12, 'ignore_errors' => true, 'header' => "Accept: application/json\r\nAuthorization: Bearer {$token}\r\n"]]);
     $payload = @file_get_contents($url, false, $context);
     $statusCode = 0;
     foreach (($http_response_header ?? []) as $responseHeader) if (preg_match('/^HTTP\/\S+\s+(\d{3})/', $responseHeader, $match)) $statusCode = (int) $match[1];
     if (!is_string($payload) || $statusCode < 200 || $statusCode >= 300) { http_response_code($statusCode === 429 ? 429 : 502); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error' => 'search_unavailable'], JSON_UNESCAPED_UNICODE); exit; }
     $decoded = json_decode($payload, true);
     if (!is_array($decoded) || !is_array($decoded['data'] ?? null)) { http_response_code(502); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error' => 'invalid_provider_response'], JSON_UNESCAPED_UNICODE); exit; }
-    header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: private, max-age=0, must-revalidate'); echo json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit;
+    header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store, private'); echo json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit;
 }
 
 if ($path === '/robots.txt' && $method === 'GET') {
@@ -58,7 +69,7 @@ if ($path === '/robots.txt' && $method === 'GET') {
 if ($path === '/sitemap.xml' && $method === 'GET') {
     $base = rtrim((string) (getenv('ATHAR_BASE_URL') ?: ''), '/');
     if ($base === '' || !is_https_url($base . '/')) { http_response_code(404); exit; }
-    $urls = ['/', '/quran', '/hadith', '/books', '/lessons', '/adhkar', '/about'];
+    $urls = ['/', '/quran', '/hadith', '/dorar', '/books', '/lessons', '/adhkar', '/about'];
     try { foreach (db()->query('SELECT id FROM scholars WHERE is_published=1')->fetchAll(PDO::FETCH_COLUMN) as $id) $urls[] = '/scholar?id=' . (int) $id; foreach (db()->query('SELECT id FROM series WHERE is_published=1')->fetchAll(PDO::FETCH_COLUMN) as $id) $urls[] = '/series?id=' . (int) $id; } catch (Throwable $exception) { }
     header('Content-Type: application/xml; charset=utf-8');
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
@@ -86,6 +97,29 @@ function allow_session_rate(string $key, int $limit, int $windowSeconds): bool
     if (!is_array($attempts) || $now - (int) ($attempts['started'] ?? 0) > $windowSeconds) $attempts = ['started' => $now, 'count' => 0];
     $attempts['count'] = (int) ($attempts['count'] ?? 0) + 1; $_SESSION[$key] = $attempts;
     return $attempts['count'] <= $limit;
+}
+
+function allow_shared_dorar_rate(int $limit, int $windowSeconds): bool
+{
+    $file = @fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'athar-dorar-rate-' . hash('sha256', dirname(__DIR__)) . '.json', 'c+');
+    if ($file === false) return false;
+    try {
+        if (!flock($file, LOCK_EX)) return false;
+        rewind($file);
+        $state = json_decode((string) stream_get_contents($file), true);
+        $now = time();
+        $timestamps = is_array($state) ? array_values(array_filter($state, static fn ($timestamp): bool => is_int($timestamp) && $timestamp > $now - $windowSeconds)) : [];
+        if (count($timestamps) >= $limit) return false;
+        $timestamps[] = $now;
+        rewind($file);
+        ftruncate($file, 0);
+        if (fwrite($file, json_encode($timestamps)) === false) return false;
+        fflush($file);
+        return count($timestamps) <= $limit;
+    } finally {
+        flock($file, LOCK_UN);
+        fclose($file);
+    }
 }
 
 if ($path === '/verify-email') redirect(current_user() ? '/account' : '/login');
@@ -781,6 +815,7 @@ $pages = [
     '/' => ['title' => 'الرئيسية', 'view' => 'pages/home.php'],
     '/quran' => ['title' => 'القرآن الكريم', 'view' => 'pages/quran.php'],
     '/hadith' => ['title' => 'الحديث', 'view' => 'pages/hadith.php'],
+    '/dorar' => ['title' => 'موسوعة الدرر السنية', 'view' => 'pages/dorar.php'],
     '/books' => ['title' => 'الكتب', 'view' => 'pages/books.php'],
     '/lessons' => ['title' => 'الدروس', 'view' => 'pages/lessons.php'],
     '/scholar' => ['title' => 'العالم', 'view' => 'pages/scholar.php'],
@@ -802,7 +837,7 @@ $user = current_user();
 $csrfToken = csrf_token();
 $flashMessage = take_flash();
 $siteBaseUrl = rtrim((string) (getenv('ATHAR_BASE_URL') ?: ''), '/');
-$indexablePaths = ['/', '/quran', '/hadith', '/books', '/lessons', '/adhkar', '/about', '/scholar', '/series'];
+$indexablePaths = ['/', '/quran', '/hadith', '/dorar', '/books', '/lessons', '/adhkar', '/about', '/scholar', '/series'];
 $privatePaths = ['/login', '/register', '/account', '/admin', '/forgot-password', '/reset-password', '/verify-email'];
 $isPublicCanonical = in_array($path, $indexablePaths, true) && !in_array($path, $privatePaths, true) && $page['view'] !== 'pages/not-found.php' && $siteBaseUrl !== '' && is_https_url($siteBaseUrl . '/');
 if ($path === '/scholar' && empty($publicScholar['id'])) $isPublicCanonical = false;
@@ -816,12 +851,13 @@ $seoDescription = 'اقرأ القرآن وابحث في الحديث واستك
 if ($path === '/') $seoDescription = 'اقرأ القرآن، وابحث عن الحديث، وتابع دروس العلماء، واستكشف الكتب والأذكار في منصة أثر العربية.';
 elseif ($path === '/quran') $seoDescription = 'اقرأ القرآن الكريم وابحث في الآيات واستمع إلى التلاوة واحفظ موضع قراءتك.';
 elseif ($path === '/hadith') $seoDescription = 'ابحث بالعربية في الموسوعة الحديثية، مع نص الحديث وخلاصة حكم المحدّث ورابط المرجع.';
+elseif ($path === '/dorar') $seoDescription = 'ابحث بالعربية في خدمات الدرر السنية للحديث والتفسير والعقيدة والفقه والأخلاق والآداب والتاريخ.';
 elseif ($path === '/books') $seoDescription = 'تصفح مكتبة أثر وابحث في الكتب الإسلامية المتاحة للعامة.';
 elseif ($path === '/lessons') $seoDescription = 'شاهد دروس العلماء والسلاسل العلمية المرتبة في مكتبة أثر.';
 elseif ($path === '/adhkar') $seoDescription = 'تصفح أذكار الصباح والمساء والأدعية والنصوص الموثقة.';
 elseif ($path === '/scholar' && !empty($publicScholar['name'])) { $seoTitle = $publicScholar['name'] . ' | علماء أثر'; $seoDescription = mb_substr(trim(strip_tags((string) $publicScholar['biography'])) ?: ('السلاسل والدروس المنشورة للشيخ ' . $publicScholar['name'] . ' في أثر.'), 0, 250, 'UTF-8'); }
 elseif ($path === '/series' && !empty($publicSeries['title'])) { $seoTitle = $publicSeries['title'] . ' | سلسلة دروس في أثر'; $seoDescription = mb_substr(trim(strip_tags((string) $publicSeries['description'])) ?: ('تابع دروس سلسلة ' . $publicSeries['title'] . ' مرتبة في أثر.'), 0, 250, 'UTF-8'); }
-    $loadKnowledgeScript = in_array($path, ['/hadith', '/books', '/lessons', '/series', '/adhkar'], true);
+$loadKnowledgeScript = in_array($path, ['/hadith', '/dorar', '/books', '/lessons', '/series', '/adhkar'], true);
 $structuredData = $isPublicCanonical ? [
     '@context' => 'https://schema.org',
     '@graph' => [

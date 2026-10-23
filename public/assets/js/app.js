@@ -140,6 +140,7 @@
         const surahInput = quranReader.querySelector('[name="surah"]');
         const ayahInput = quranReader.querySelector('[name="ayah"]');
         const juzInput = quranReader.querySelector('[name="juz"]');
+        const hizbInput = quranReader.querySelector('[name="hizb"]');
         const pageInput = quranReader.querySelector('[name="page"]');
         const status = quranReader.querySelector('[data-quran-status]');
         const content = quranReader.querySelector('[data-quran-content]');
@@ -299,12 +300,14 @@
             memoryButton.addEventListener('click', () => {
                 const enabled = memoryButton.getAttribute('aria-pressed') !== 'true';
                 memoryButton.setAttribute('aria-pressed', String(enabled)); memoryButton.textContent = enabled ? 'إنهاء مراجعة الحفظ' : 'وضع مراجعة الحفظ';
-                verseList.querySelectorAll('li').forEach((item) => { const text = item.querySelector('.verse-text'); const reveal = item.querySelector('.verse-reveal'); text.hidden = enabled; reveal.hidden = !enabled; });
+                verseList.querySelectorAll('li').forEach((item) => { const text = item.querySelector('.verse-text'); const reveal = item.querySelector('.verse-reveal'); if (!text || !reveal) return; text.hidden = enabled; reveal.hidden = !enabled; });
             });
-            content.append(heading, memoryButton, verseList);
+            if (quranReader.dataset.tool !== 'daily') content.append(heading, memoryButton, verseList);
+            else content.append(heading, verseList);
+            if (quranReader.dataset.review === 'true') memoryButton.click();
         };
 
-        const loadReading = async ({ mode = modeInput.value, surah = Number(surahInput.value), ayah = Number(ayahInput.value) || null, juz = Number(juzInput.value), page = Number(pageInput.value) } = {}) => {
+        const loadReading = async ({ mode = modeInput.value, surah = Number(surahInput.value), ayah = Number(ayahInput.value) || null, juz = Number(juzInput.value), hizb = Number(hizbInput?.value || quranReader.dataset.hizb), page = Number(pageInput.value) } = {}) => {
             const thisRequest = ++requestVersion;
             status.hidden = false; status.dataset.state = 'loading'; status.textContent = 'جارٍ تحميل الآيات…';
             content.hidden = true; content.replaceChildren(); loadedVerses = []; activeVerses = [];
@@ -314,21 +317,44 @@
             if (tafsirButton) { tafsirButton.setAttribute('aria-expanded', 'false'); tafsirButton.textContent = 'عرض التفسير'; }
             try {
                 let url;
-                if (mode === 'juz') url = `https://api.alquran.cloud/v1/juz/${juz}/quran-uthmani`;
-                else if (mode === 'page') url = `https://api.alquran.cloud/v1/page/${page}/quran-uthmani`;
+                let rawVerses;
+                if (quranReader.dataset.tool === 'daily') {
+                    const now = new Date();
+                    const dayKey = Number(`${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`);
+                    const dailyNumber = (dayKey * 37 % 6236) + 1;
+                    url = `https://api.alquran.cloud/v1/ayah/${dailyNumber}/quran-uthmani`;
+                } else if (mode === 'juz') url = `https://api.alquran.cloud/v1/juz/${juz}/quran-uthmani`;
+                else if (mode === 'hizb') {
+                    const firstQuarter = (hizb - 1) * 4 + 1;
+                    const quarterResponses = await Promise.all(Array.from({ length: 4 }, (_, index) => fetch(`https://api.alquran.cloud/v1/hizbQuarter/${firstQuarter + index}/quran-uthmani`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) })));
+                    if (quarterResponses.some((result) => !result.ok)) throw new Error('provider-response');
+                    const quarterPayloads = await Promise.all(quarterResponses.map((result) => result.json()));
+                    rawVerses = quarterPayloads.flatMap((part) => part?.data?.ayahs || []);
+                } else if (mode === 'page') url = `https://api.alquran.cloud/v1/page/${page}/quran-uthmani`;
                 else url = `${baseUrl}/mushafs/1/${surah}`;
-                const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
-                if (!response.ok) throw new Error('provider-response');
-                const payload = await response.json();
-                const rawVerses = mode === 'surah' ? (Array.isArray(payload) ? payload : [payload]) : payload?.data?.ayahs;
+                if (!rawVerses) {
+                    const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
+                    if (!response.ok) throw new Error('provider-response');
+                    const payload = await response.json();
+                    rawVerses = quranReader.dataset.tool === 'daily' ? [payload?.data] : (mode === 'surah' ? (Array.isArray(payload) ? payload : [payload]) : payload?.data?.ayahs);
+                }
                 const allVerses = (Array.isArray(rawVerses) ? rawVerses : []).map(normalizeVerse).filter(Boolean);
                 if (!allVerses.length) throw new Error('provider-shape');
                 if (thisRequest !== requestVersion) return;
-                if (quranReader.dataset.tool === 'ayah' || quranReader.dataset.tool === 'tafsir') loadedVerses = ayah ? allVerses.filter((verse) => verse.numberInSurah === ayah) : allVerses;
+                if (quranReader.dataset.tool === 'daily') loadedVerses = allVerses;
+                else if (quranReader.dataset.tool === 'ayah' || quranReader.dataset.tool === 'tafsir') loadedVerses = ayah ? allVerses.filter((verse) => verse.numberInSurah === ayah) : allVerses;
                 else loadedVerses = mode === 'surah' && ayah && quranReader.dataset.tool !== 'listen' ? allVerses.filter((verse) => verse.numberInSurah >= ayah) : allVerses;
                 if (!loadedVerses.length) throw new Error('empty-range');
-                const heading = mode === 'juz' ? `الجزء ${juz} · ${loadedVerses.length} آية` : mode === 'page' ? `صفحة ${page} · ${loadedVerses.length} آية` : `${surahNames[surah - 1]} · ${ayah ? `من الآية ${ayah}` : `${loadedVerses.length} آية`}`;
+                const currentVerse = loadedVerses[0];
+                const heading = quranReader.dataset.tool === 'daily' ? `آية اليوم · سورة ${surahNames[currentVerse.surah - 1]} · الآية ${currentVerse.numberInSurah}` : mode === 'juz' ? `الجزء ${juz} · ${loadedVerses.length} آية` : mode === 'hizb' ? `الحزب ${hizb} · ${loadedVerses.length} آية` : mode === 'page' ? `صفحة ${page} · ${loadedVerses.length} آية` : `${surahNames[surah - 1]} · ${ayah ? `من الآية ${ayah}` : `${loadedVerses.length} آية`}`;
                 buildReading(loadedVerses, heading);
+                if (quranReader.dataset.tool === 'daily') {
+                    const actions = quranReader.querySelector('[data-daily-verse-actions]');
+                    if (actions) {
+                        actions.replaceChildren();
+                        [['/quran?tool=listen', 'استمع إلى الآية'], ['/quran?tool=tafsir', 'افتح التفسير']].forEach(([href, label]) => { const link = document.createElement('a'); link.className = 'button button-secondary'; link.textContent = label; link.href = `${href}&surah=${currentVerse.surah}&ayah=${currentVerse.numberInSurah}`; actions.append(link); });
+                    }
+                }
                 content.hidden = false;
                 if (mode === 'surah' && ayah && tafsirSection && tafsirButton && tafsirFrame) {
                     tafsirSection.hidden = false;
@@ -348,7 +374,7 @@
                 if (thisRequest !== requestVersion) return;
                 status.dataset.state = 'error'; status.replaceChildren();
                 const message = document.createElement('span'); message.textContent = 'تعذر تحميل الآيات الآن. تحقق من الاتصال ثم حاول مجددًا.';
-                const retry = document.createElement('button'); retry.className = 'button button-secondary'; retry.type = 'button'; retry.textContent = 'إعادة المحاولة'; retry.addEventListener('click', () => loadReading({ mode, surah, ayah, juz, page }), { once: true });
+                const retry = document.createElement('button'); retry.className = 'button button-secondary'; retry.type = 'button'; retry.textContent = 'إعادة المحاولة'; retry.addEventListener('click', () => loadReading({ mode, surah, ayah, juz, hizb, page }), { once: true });
                 status.append(message, retry); if (audioStatus) audioStatus.textContent = 'تعذر تجهيز التلاوة لهذا الموضع.';
             }
         };
@@ -379,7 +405,7 @@
             event.preventDefault();
             if (modeInput.value === 'page' && (Number(pageInput.value) < 1 || Number(pageInput.value) > 604)) { pageInput.setCustomValidity('رقم الصفحة يجب أن يكون بين 1 و604'); pageInput.reportValidity(); return; }
             pageInput.setCustomValidity('');
-            const query = new URLSearchParams({ tool: quranReader.dataset.tool, mode: modeInput.value, surah: surahInput.value, juz: juzInput.value, page: pageInput.value });
+            const query = new URLSearchParams({ tool: quranReader.dataset.tool, mode: modeInput.value, surah: surahInput.value, juz: juzInput.value, hizb: hizbInput?.value || '1', page: pageInput.value });
             if (modeInput.value === 'surah' && ayahInput.value) query.set('ayah', ayahInput.value);
             history.replaceState(null, '', `/quran?${query}`);
             loadReading();
@@ -444,6 +470,6 @@
         if (['ayah', 'tafsir'].includes(quranReader.dataset.tool) && !quranReader.dataset.ayah) {
             status.dataset.state = 'info';
             status.textContent = 'اختر السورة ورقم الآية ثم اضغط عرض.';
-        } else loadReading({ mode: quranReader.dataset.mode, surah: Number(quranReader.dataset.surah), ayah: Number(quranReader.dataset.ayah) || null, juz: Number(quranReader.dataset.juz), page: Number(quranReader.dataset.page) });
+        } else loadReading({ mode: quranReader.dataset.mode, surah: Number(quranReader.dataset.surah), ayah: Number(quranReader.dataset.ayah) || null, juz: Number(quranReader.dataset.juz), hizb: Number(quranReader.dataset.hizb), page: Number(quranReader.dataset.page) });
     }
 })();

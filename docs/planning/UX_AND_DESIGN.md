@@ -4,7 +4,7 @@
 
 ## Information architecture
 
-- **Public navigation:** Home; Quran; Hadith; Tafsir (contextual from an ayah); Books; Scholars/Lessons; Adhkar; About/Sources.
+- **Public navigation:** Home; Quran; Hadith; Dorar knowledge search; Books; Scholars/Lessons; Adhkar; About/Sources.
 - **Account area:** Saved Quran, recent reading position, favorite books/series, lesson progress, khatmah plans, preferences, export/delete account.
 - **Admin area:** Overview; separate scholar/series/lesson/book/adhkar forms; sources and review status; users/roles; pending-comment review; encrypted SMTP and approved Dorar settings; owner-only backup/restore controls.
 - Keep primary mobile navigation to at most five high-level destinations; group secondary public areas under a clearly labeled “More” destination. Preserve browser back/deep links to surah, ayah, book, scholar, series, lesson, and adhkar item.
@@ -14,8 +14,8 @@
 | Screen | Main content and interaction |
 |---|---|
 | Home | Calm purpose statement, prominent Quran/learning discovery, recent/curated content, clear guest entry; no forced registration. |
-| Quran tools and reader | Start with a chooser for reading, listening, tafsir, a specific verse, or Arabic search; each opens its own focused route. Listening makes the choice between a selected verse and a complete surah explicit and labels the matching reciter/source catalog. Preserve readable Arabic text, bookmarks, loading/unavailable states, and responsive controls. |
-| Hadith search/detail | Arabic search using official Dorar endpoint; source text, supplied grading, narrator/reference and Dorar link; clear pending-approval/unavailable/error states. |
+| Quran tools and reader | Start with a chooser for reading, listening, tafsir, a specific verse, Arabic search, daily verse, or memorization review; navigate by surah, juz, hizb, or page. Listening makes the choice between a selected verse and a complete surah explicit and labels the matching reciter/source catalog. Preserve readable Arabic text, bookmarks, loading/unavailable states, and responsive controls. |
+| Dorar knowledge search | Search the approved Dorar API service scopes (hadith, tafsir, creed, jurisprudence, ethics, etiquette, and history); preserve each result's source URL and attribution, and require the supplied grade for hadith results. Show pending-approval/unavailable/error states. |
 | Books browse/detail/reader | Search, filters, cover and bibliographic/rights metadata, allowed read/download action, accessible PDF link/reader state. |
 | Scholar/series/lesson | Scholar biography; ordered series and standalone lessons; YouTube-style player with series playlist, title, description and reviewed first-party comments; save/resume only after sign-in. |
 | Adhkar | Category/occasion navigation, search, original text/reference/count, keyboard/touch accessible progress control and reset. |
