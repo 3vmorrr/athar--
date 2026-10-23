@@ -454,15 +454,15 @@ if ($path === '/admin') {
                     if ($type === 'scholar') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
                         if (!is_https_url($source) || trim((string) ($_POST['rights_basis'] ?? '')) === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
-                        db()->prepare('UPDATE scholars SET name=?,biography=?,source_url=?,rights_basis=?,is_published=? WHERE id=?')->execute([trim((string) $_POST['name']), trim((string) $_POST['biography']), $source, trim((string) $_POST['rights_basis']), $published, $id]);
+                        db()->prepare('UPDATE scholars SET name=?,biography=?,source_url=?,rights_basis=?,is_published=?,sort_order=? WHERE id=?')->execute([trim((string) $_POST['name']), trim((string) $_POST['biography']), $source, trim((string) $_POST['rights_basis']), $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'lesson') {
                         $url = trim((string) ($_POST['source_url'] ?? '')); $videoId = youtube_video_id($url);
                         if (!$videoId) throw new RuntimeException('رابط فيديو YouTube غير صالح.');
-                        db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), (int) ($_POST['series_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, $id]);
+                        db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), (int) ($_POST['series_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'series') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
                         if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
-                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, $id]);
+                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'book') {
                         $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? ''));
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
@@ -484,7 +484,7 @@ if ($path === '/admin') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
                         if (!is_https_url($source) || trim((string) ($_POST['source_reference'] ?? '')) === '' || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا ومرجعًا وأكد المراجعة.');
                         $count = ($_POST['repeat_count'] ?? '') === '' ? null : max(1, min(1000, (int) $_POST['repeat_count']));
-                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, $id]);
+                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     }
                     $auditAction = 'update';
                 } elseif (($_POST['content_action'] ?? '') === 'toggle') {
@@ -548,7 +548,9 @@ if ($path === '/admin') {
     ob_start(); require $viewPath; $content=(string) ob_get_clean(); require dirname(__DIR__).'/app/Views/layout.php'; exit;
 }
 
-$curatedBooks = $curatedLessons = $curatedAdhkar = [];
+$curatedBooks = $curatedLessons = $curatedAdhkar = $curatedScholars = [];
+$publicScholar = $publicSeries = null;
+$scholarSeries = $scholarLessons = $seriesLessons = [];
 try {
     if ($path === '/books') {
         $user = current_user();
@@ -557,10 +559,28 @@ try {
     }
     if ($path === '/lessons') {
         $user = current_user();
-        $query = 'SELECT l.id,l.title,l.description,l.youtube_id,l.source_url,l.series_id,s.name AS scholar_name,r.title AS series_name,(SELECT position_seconds FROM video_progress vp WHERE vp.user_id=? AND vp.lesson_id=l.id) AS position_seconds,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'lesson\' AND f.target_id=l.id) AS is_favorite FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id LEFT JOIN series r ON r.id=l.series_id AND r.is_published=1 WHERE l.is_published=1 ORDER BY r.sort_order,r.id,l.sort_order,l.id DESC LIMIT 50';
+        $curatedScholars = db()->query('SELECT id,name,biography FROM scholars WHERE is_published=1 ORDER BY sort_order,id LIMIT 50')->fetchAll();
+        $query = 'SELECT l.id,l.title,l.description,l.youtube_id,l.source_url,l.series_id,s.id AS scholar_id,s.name AS scholar_name,r.title AS series_name,(SELECT position_seconds FROM video_progress vp WHERE vp.user_id=? AND vp.lesson_id=l.id) AS position_seconds,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'lesson\' AND f.target_id=l.id) AS is_favorite FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id LEFT JOIN series r ON r.id=l.series_id AND r.is_published=1 WHERE l.is_published=1 ORDER BY r.sort_order,r.id,l.sort_order,l.id DESC LIMIT 50';
         $statement = db()->prepare($query); $statement->execute([(int) ($user['id'] ?? 0), (int) ($user['id'] ?? 0)]); $curatedLessons = $statement->fetchAll();
     }
     if ($path === '/adhkar') $curatedAdhkar = db()->query('SELECT title,formula,source_reference,source_url,repeat_count,category FROM adhkar_items WHERE is_published=1 AND is_reviewed=1 ORDER BY category,sort_order,id DESC LIMIT 100')->fetchAll();
+    if ($path === '/scholar') {
+        $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+        if ($id) {
+            $query = db()->prepare('SELECT id,name,biography,source_url FROM scholars WHERE id=? AND is_published=1'); $query->execute([$id]); $publicScholar = $query->fetch() ?: null;
+            if ($publicScholar) {
+                $query = db()->prepare('SELECT r.id,r.title,r.description,COUNT(l.id) AS lesson_count FROM series r LEFT JOIN lessons l ON l.series_id=r.id AND l.is_published=1 WHERE r.scholar_id=? AND r.is_published=1 GROUP BY r.id ORDER BY r.sort_order,r.id'); $query->execute([$id]); $scholarSeries = $query->fetchAll();
+                $query = db()->prepare('SELECT id,title,description FROM lessons WHERE scholar_id=? AND series_id IS NULL AND is_published=1 ORDER BY sort_order,id'); $query->execute([$id]); $scholarLessons = $query->fetchAll();
+            }
+        }
+    }
+    if ($path === '/series') {
+        $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+        if ($id) {
+            $query = db()->prepare('SELECT r.id,r.title,r.description,r.source_url,r.scholar_id,s.name AS scholar_name FROM series r LEFT JOIN scholars s ON s.id=r.scholar_id AND s.is_published=1 WHERE r.id=? AND r.is_published=1'); $query->execute([$id]); $publicSeries = $query->fetch() ?: null;
+            if ($publicSeries) { $query = db()->prepare('SELECT id,title,description FROM lessons WHERE series_id=? AND is_published=1 ORDER BY sort_order,id'); $query->execute([$id]); $seriesLessons = $query->fetchAll(); }
+        }
+    }
 } catch (Throwable $exception) { /* The live provider pages remain available before local database setup. */ }
 
 $pages = [
@@ -569,6 +589,8 @@ $pages = [
     '/hadith' => ['title' => 'الحديث', 'view' => 'pages/hadith.php'],
     '/books' => ['title' => 'الكتب', 'view' => 'pages/books.php'],
     '/lessons' => ['title' => 'الدروس', 'view' => 'pages/lessons.php'],
+    '/scholar' => ['title' => 'العالم', 'view' => 'pages/scholar.php'],
+    '/series' => ['title' => 'السلسلة', 'view' => 'pages/series.php'],
     '/adhkar' => ['title' => 'الأذكار', 'view' => 'pages/adhkar.php'],
     '/about' => ['title' => 'عن أثر', 'view' => 'pages/about.php'],
 ];

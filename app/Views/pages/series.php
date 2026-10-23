@@ -1,0 +1,7 @@
+<section class="knowledge-page section-wrap">
+    <a class="back-link" href="/lessons">العودة إلى الدروس</a>
+    <?php if (!$publicSeries): ?><h1>السلسلة غير متاحة</h1><p>قد يكون المحتوى غير منشور أو أن الرابط غير صالح.</p>
+    <?php else: ?><header class="knowledge-heading"><span class="eyebrow">سلسلة دروس مرتبة</span><h1><?= e($publicSeries['title']) ?></h1><?php if ($publicSeries['scholar_name']): ?><p>إعداد <a href="/scholar?id=<?= (int) $publicSeries['scholar_id'] ?>"><?= e($publicSeries['scholar_name']) ?></a></p><?php endif; ?><?php if ($publicSeries['description']): ?><p><?= nl2br(e($publicSeries['description'])) ?></p><?php endif; ?><?php if ($publicSeries['source_url']): ?><a class="source-link" href="<?= e($publicSeries['source_url']) ?>" target="_blank" rel="noopener noreferrer">المصدر ↗</a><?php endif; ?></header>
+        <section class="curated-section"><h2>الدروس بالترتيب</h2><?php if (!$seriesLessons): ?><p class="source-note">لا توجد دروس منشورة في هذه السلسلة.</p><?php else: ?><ol class="knowledge-results"><?php foreach ($seriesLessons as $index => $item): ?><li class="knowledge-card"><span class="source-chip">الدرس <?= $index + 1 ?></span><h3><?= e($item['title']) ?></h3><?php if ($item['description']): ?><p><?= e($item['description']) ?></p><?php endif; ?><a class="button button-secondary" href="/lessons?lesson=<?= (int) $item['id'] ?>">تشغيل الدرس</a></li><?php endforeach; ?></ol><?php endif; ?></section>
+    <?php endif; ?>
+</section>
