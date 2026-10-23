@@ -19,13 +19,60 @@
 
     const setTheme = (theme) => {
         root.dataset.theme = theme;
-        if (themeButton) themeButton.setAttribute('aria-pressed', String(theme === 'dark'));
-        if (themeLabel) themeLabel.textContent = theme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن';
+        const nextThemeLabel = theme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن';
+        const englishThemeLabel = theme === 'dark' ? 'Light mode' : 'Dark mode';
+        if (themeButton) {
+            themeButton.setAttribute('aria-pressed', String(theme === 'dark'));
+            themeButton.setAttribute('aria-label', root.lang === 'en' ? englishThemeLabel : nextThemeLabel);
+            themeButton.title = root.lang === 'en' ? englishThemeLabel : nextThemeLabel;
+        }
+        if (themeLabel) themeLabel.textContent = root.lang === 'en' ? englishThemeLabel : nextThemeLabel;
         const themeColor = document.querySelector('meta[name="theme-color"]');
         if (themeColor) themeColor.setAttribute('content', theme === 'dark' ? '#20221F' : '#F5F3ED');
     };
 
     setTheme(readSavedTheme());
+
+    const eyeIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg>';
+    const eyeOffIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 6.2A10.6 10.6 0 0 1 12 6c6.1 0 9.5 6 9.5 6a15 15 0 0 1-3.1 3.7M6.2 6.3C3.8 7.8 2.5 12 2.5 12s3.4 6 9.5 6a10 10 0 0 0 3-.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+        if (!input.id) input.id = `password-${Math.random().toString(36).slice(2, 9)}`;
+        const oldLabel = input.closest('label');
+        const field = document.createElement('div'); field.className = 'password-field';
+        const control = document.createElement('div'); control.className = 'password-control';
+        const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'password-toggle';
+        toggle.setAttribute('aria-controls', input.id); toggle.setAttribute('aria-pressed', 'false');
+        const showLabel = root.lang === 'en' ? 'Show password' : 'إظهار كلمة المرور';
+        toggle.setAttribute('aria-label', showLabel); toggle.title = showLabel; toggle.innerHTML = eyeIcon;
+        toggle.addEventListener('click', () => {
+            const show = input.type === 'password'; input.type = show ? 'text' : 'password';
+            const label = show ? (root.lang === 'en' ? 'Hide password' : 'إخفاء كلمة المرور') : showLabel;
+            toggle.setAttribute('aria-pressed', String(show)); toggle.setAttribute('aria-label', label); toggle.title = label;
+            toggle.innerHTML = show ? eyeOffIcon : eyeIcon; input.focus({ preventScroll: true });
+        });
+        if (oldLabel) {
+            const label = oldLabel.cloneNode(false); label.htmlFor = input.id;
+            Array.from(oldLabel.childNodes).forEach((node) => { if (node !== input) label.append(node); });
+            oldLabel.replaceWith(field); field.append(label, control);
+        } else {
+            input.parentNode.insertBefore(field, input); field.append(control);
+        }
+        control.append(input, toggle);
+
+        if (input.hasAttribute('data-password-strength-check')) {
+            const strength = document.createElement('div'); strength.className = 'password-strength'; strength.setAttribute('aria-live', 'polite');
+            const meter = document.createElement('div'); meter.className = 'password-strength-meter'; meter.setAttribute('role', 'meter'); meter.setAttribute('aria-label', root.lang === 'en' ? 'Password strength' : 'قوة كلمة المرور'); meter.setAttribute('aria-valuemin', '0'); meter.setAttribute('aria-valuemax', '5'); meter.setAttribute('aria-valuenow', '0');
+            const result = document.createElement('span'); result.dataset.passwordStrength; result.textContent = root.lang === 'en' ? 'Use at least 10 characters.' : 'استخدم 10 أحرف على الأقل.';
+            strength.append(meter, result); field.append(strength);
+            input.addEventListener('input', () => {
+                const value = input.value;
+                const score = value ? [value.length >= 10, value.length >= 14, /[a-z]/.test(value) && /[A-Z]/.test(value), /\d/.test(value), /[^A-Za-z0-9]/.test(value)].filter(Boolean).length : 0;
+                const level = score >= 4 ? (root.lang === 'en' ? 'Strong password' : 'كلمة مرور قوية') : score >= 2 ? (root.lang === 'en' ? 'Fair password' : 'كلمة مرور متوسطة') : value ? (root.lang === 'en' ? 'Weak password' : 'كلمة مرور ضعيفة') : (root.lang === 'en' ? 'Use at least 10 characters.' : 'استخدم 10 أحرف على الأقل.');
+                meter.dataset.level = score >= 4 ? 'strong' : score >= 2 ? 'fair' : value ? 'weak' : 'empty';
+                meter.setAttribute('aria-valuenow', String(score)); result.textContent = level;
+            });
+        }
+    });
 
     document.addEventListener('submit', (event) => {
         const form = event.target;

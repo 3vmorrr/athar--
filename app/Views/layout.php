@@ -23,6 +23,7 @@
     <link rel="apple-touch-icon" href="/assets/images/athar-favicon.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/assets/css/app.css?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/css/app.css') ?: 1) ?>">
+    <script src="/assets/js/i18n.js?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/js/i18n.js') ?: 1) ?>" defer></script>
     <script src="/assets/js/app.js?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/js/app.js') ?: 1) ?>" defer></script>
     <?php if (!empty($loadKnowledgeScript)): ?><script src="/assets/js/knowledge.js?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/js/knowledge.js') ?: 1) ?>" defer></script><?php endif; ?>
     <?php if (!empty($structuredData)): ?><script type="application/ld+json"><?= json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script><?php endif; ?>
@@ -49,6 +50,7 @@
             </nav>
 
             <div class="header-actions">
+                <button class="language-toggle" type="button" data-language-toggle aria-label="Switch to English" title="Switch to English">EN</button>
                 <?php if (!empty($user)): ?>
                     <a class="account-link" href="/account">حسابي</a>
                     <?php if (in_array(($user['role'] ?? ''), ['admin','owner'], true)): ?><a class="account-link" href="/admin">الإدارة</a><?php endif; ?>
@@ -56,9 +58,8 @@
                 <?php else: ?>
                     <a class="account-link" href="/login">دخول</a>
                 <?php endif; ?>
-                <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="الوضع الداكن" title="الوضع الداكن" aria-pressed="false">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.5 8.5 0 1 0 20.2 15.2Z" /></svg>
-                    <span data-theme-label>الوضع الداكن</span>
                 </button>
             </div>
         </div>
@@ -71,9 +72,11 @@
 
     <footer class="site-footer">
         <div class="footer-inner">
-            <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="120" height="76" loading="lazy"></a><p>منصة عربية مفتوحة للقرآن والمعرفة والعبادة.</p></div>
-            <nav class="footer-nav" aria-label="روابط الموقع"><a href="/quran">القرآن</a><a href="/hadith">الحديث</a><a href="/lessons">الدروس</a><a href="/books">الكتب</a><a href="/adhkar">الأذكار</a><a href="/about">عن أثر</a></nav>
-            <small class="footer-copy">© <?= date('Y') ?> أثر</small>
+            <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="120" height="76" loading="lazy"></a><p>مساحة هادئة للقرآن والمعرفة والعبادة.</p><span class="footer-note">محتوى منظّم، ومصادر واضحة، وتجربة مريحة على كل جهاز.</span></div>
+            <nav class="footer-nav" aria-label="روابط الموقع"><strong>استكشف أثر</strong><a href="/quran">القرآن الكريم</a><a href="/hadith">الحديث النبوي</a><a href="/adhkar">الأذكار والأدعية</a><a href="/books">المكتبة</a><a href="/lessons">الدروس والمحاضرات</a></nav>
+            <nav class="footer-nav" aria-label="روابط القراءة والمصادر"><strong>قراءة ومصادر</strong><a href="/quran">قراءة القرآن والاستماع</a><a href="/hadith">البحث في الحديث</a><a href="/about">منهجية المصادر</a><a href="/about">سياسة المحتوى والإحالات</a></nav>
+            <div class="footer-account"><strong>حسابك</strong><p>تابع قراءتك واحفظ تقدّمك وإحصاءاتك، مع بقاء التصفح العام متاحًا.</p><?php if (!empty($user)): ?><a href="/account">ملفي الشخصي والإحصاءات</a><?php else: ?><a href="/login">تسجيل الدخول</a><a href="/register">إنشاء حساب اختياري</a><?php endif; ?></div>
+            <div class="footer-bottom"><small>© <?= date('Y') ?> أثر</small><small>صُمّم ليكون قريبًا منك، أينما قرأت.</small></div>
         </div>
     </footer>
 </body>
