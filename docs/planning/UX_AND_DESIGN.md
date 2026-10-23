@@ -14,7 +14,7 @@
 | Screen | Main content and interaction |
 |---|---|
 | Home | Calm purpose statement, prominent Quran/learning discovery, recent/curated content, clear guest entry; no forced registration. |
-| Quran index and reader | Surah list/search; compact surah/ayah navigation; readable Arabic text, translation/tafsir source switch where available, reciter/audio controls, bookmark/save state, loading/unavailable source states. Main text column remains readable on desktop. |
+| Quran tools and reader | Start with a chooser for reading, listening, tafsir, a specific verse, or Arabic search; each opens its own focused route. Listening makes the choice between a selected verse and a complete surah explicit and labels the matching reciter/source catalog. Preserve readable Arabic text, bookmarks, loading/unavailable states, and responsive controls. |
 | Hadith search/detail | Arabic search using official Dorar endpoint; source text, supplied grading, narrator/reference and Dorar link; clear pending-approval/unavailable/error states. |
 | Books browse/detail/reader | Search, filters, cover and bibliographic/rights metadata, allowed read/download action, accessible PDF link/reader state. |
 | Scholar/series/lesson | Scholar biography; ordered series and standalone lessons; YouTube-style player with series playlist, title, description and reviewed first-party comments; save/resume only after sign-in. |

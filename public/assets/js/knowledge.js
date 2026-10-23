@@ -57,7 +57,7 @@
     });
 
     const quranReader = document.querySelector('[data-quran-reader]');
-    if (quranReader) {
+    if (quranReader?.dataset.tool === 'search') {
         const form = quranReader.querySelector('[data-quran-search-form]');
         const input = form.elements.q;
         const status = quranReader.querySelector('[data-quran-search-status]');
@@ -77,7 +77,7 @@
                     card.append(make('p', 'hadith-text', match.text));
                     const reference = make('p', 'book-details', `سورة ${text(match.surah?.name, 'غير معروفة')} · الآية ${match.numberInSurah}`);
                     const link = make('a', 'button button-secondary', 'افتح الآية');
-                    link.href = `/quran?${new URLSearchParams({ surah: String(match.surah.number), ayah: String(match.numberInSurah) })}`;
+                    link.href = `/quran?${new URLSearchParams({ tool: 'ayah', surah: String(match.surah.number), ayah: String(match.numberInSurah) })}`;
                     card.append(reference, link);
                     results.append(card);
                 });

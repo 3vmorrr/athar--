@@ -13,6 +13,7 @@ $surahs = [
     'القارعة', 'التكاثر', 'العصر', 'الهمزة', 'الفيل', 'قريش', 'الماعون', 'الكوثر', 'الكافرون', 'النصر',
     'المسد', 'الإخلاص', 'الفلق', 'الناس',
 ];
+$tool = is_string($_GET['tool'] ?? null) && in_array($_GET['tool'], ['read', 'listen', 'tafsir', 'ayah', 'search'], true) ? $_GET['tool'] : '';
 $selectedSurah = filter_input(INPUT_GET, 'surah', FILTER_VALIDATE_INT) ?: 1;
 $selectedSurah = max(1, min(114, $selectedSurah));
 $ayahParam = filter_input(INPUT_GET, 'ayah', FILTER_VALIDATE_INT);
@@ -20,57 +21,55 @@ $selectedAyah = $ayahParam === false || $ayahParam === null ? null : max(1, $aya
 $readingMode = in_array($_GET['mode'] ?? '', ['juz', 'page'], true) ? (string) $_GET['mode'] : 'surah';
 $selectedJuz = max(1, min(30, filter_input(INPUT_GET, 'juz', FILTER_VALIDATE_INT) ?: 1));
 $selectedPage = max(1, min(604, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1));
+$toolDetails = [
+    'read' => ['القراءة', 'اقرأ بالسورة أو الجزء أو الصفحة، واضبط حجم الخط واحفظ موضعك.'],
+    'listen' => ['الاستماع', 'اختر قارئًا، ثم استمع إلى آية واحدة أو إلى السورة كاملة.'],
+    'tafsir' => ['التفسير', 'اختر السورة والآية لعرض تفسيرها من مصدره.'],
+    'ayah' => ['آية محددة', 'افتح آية واحدة واقرأ نصها وتفسيرها مباشرة.'],
+    'search' => ['البحث في القرآن', 'ابحث بكلمة أو عبارة عربية وافتح الآية المطابقة مباشرة.'],
+];
 ?>
-<section class="quran-page section-wrap" data-quran-reader data-surah="<?= $selectedSurah ?>" data-ayah="<?= $selectedAyah ?? '' ?>" data-mode="<?= e($readingMode) ?>" data-juz="<?= $selectedJuz ?>" data-page="<?= $selectedPage ?>" data-signed-in="<?= current_user() ? 'true' : 'false' ?>">
+<section class="quran-page section-wrap" data-quran-reader data-tool="<?= e($tool) ?>" data-surah="<?= $selectedSurah ?>" data-ayah="<?= $selectedAyah ?? '' ?>" data-mode="<?= e(in_array($tool, ['listen', 'ayah', 'tafsir'], true) ? 'surah' : $readingMode) ?>" data-juz="<?= $selectedJuz ?>" data-page="<?= $selectedPage ?>" data-signed-in="<?= current_user() ? 'true' : 'false' ?>">
     <a class="back-link" href="/">العودة إلى الرئيسية</a>
-    <div class="quran-heading">
-        <div><span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> المصحف وأدوات القراءة</span><h1>القرآن الكريم</h1><p>اقرأ بالسورة أو الجزء أو الصفحة، استمع باختيار القارئ، وتابع موضعك أو راجع حفظك.</p></div>
-        <a class="source-link" href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">مصدر النص والتلاوة: Al Quran Cloud <span aria-hidden="true">↗</span></a>
-    </div>
-
-    <nav class="quran-tool-nav" aria-label="أدوات القرآن">
-        <a href="#reader-tools">القراءة</a><a href="#audio-tools">الاستماع</a><a href="#search-tools">البحث</a><a href="#tafsir-heading">التفسير</a>
-    </nav>
-
-    <section id="reader-tools" class="quran-tool-section" aria-labelledby="reader-tools-heading">
-        <div class="section-heading"><div><span class="eyebrow">المصحف</span><h2 id="reader-tools-heading">اختر موضع القراءة</h2></div></div>
-        <form class="quran-controls" data-quran-form>
-            <label for="quran-mode">طريقة التصفح<select id="quran-mode" name="mode" data-reading-mode><option value="surah"<?= $readingMode === 'surah' ? ' selected' : '' ?>>بالسورة</option><option value="juz"<?= $readingMode === 'juz' ? ' selected' : '' ?>>بالجزء</option><option value="page"<?= $readingMode === 'page' ? ' selected' : '' ?>>بالصفحة</option></select></label>
-            <label for="quran-surah" data-mode-control="surah"<?= $readingMode !== 'surah' ? ' hidden' : '' ?>>السورة<select id="quran-surah" name="surah"><?php foreach ($surahs as $index => $surahName): $number = $index + 1; ?><option value="<?= $number ?>"<?= $selectedSurah === $number ? ' selected' : '' ?>><?= $number ?>. <?= e($surahName) ?></option><?php endforeach; ?></select></label>
-            <label for="quran-ayah" data-mode-control="surah"<?= $readingMode !== 'surah' ? ' hidden' : '' ?>>ابدأ من الآية (اختياري)<input id="quran-ayah" name="ayah" type="number" min="1" inputmode="numeric" value="<?= $selectedAyah ?? '' ?>" placeholder="أول السورة"></label>
-            <label for="quran-juz" data-mode-control="juz"<?= $readingMode !== 'juz' ? ' hidden' : '' ?>>الجزء<select id="quran-juz" name="juz"><?php for ($juz = 1; $juz <= 30; $juz++): ?><option value="<?= $juz ?>"<?= $selectedJuz === $juz ? ' selected' : '' ?>>الجزء <?= $juz ?></option><?php endfor; ?></select></label>
-            <label for="quran-page" data-mode-control="page"<?= $readingMode !== 'page' ? ' hidden' : '' ?>>رقم الصفحة<input id="quran-page" name="page" type="number" min="1" max="604" inputmode="numeric" value="<?= $selectedPage ?>"></label>
-            <button class="button button-primary" type="submit">عرض الموضع</button>
-            <div class="reading-size" aria-label="حجم خط القراءة"><button class="icon-button" type="button" data-font-step="-1" aria-label="تصغير الخط">−</button><span>حجم الخط</span><button class="icon-button" type="button" data-font-step="1" aria-label="تكبير الخط">+</button></div>
-        </form>
-        <div class="quran-status" data-quran-status role="status" aria-live="polite" aria-atomic="true">جارٍ تحميل الآيات…</div>
-        <article class="quran-reading" data-quran-content aria-label="نص القرآن" hidden></article>
-        <p class="quran-attribution">النص بالرسم العثماني والتلاوة عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>؛ تُعرض النصوص كما يرسلها المصدر.</p>
-    </section>
-
-    <section id="audio-tools" class="quran-tool-section" aria-labelledby="audio-heading">
-        <div class="section-heading"><div><span class="eyebrow">استمع واختر القارئ</span><h2 id="audio-heading">مشغل التلاوة</h2></div></div>
-        <div class="quran-audio" data-quran-audio>
-            <div class="quran-audio-settings">
-                <label for="quran-reciter">القارئ<select id="quran-reciter" data-quran-reciter><option value="ar.alafasy">مشاري راشد العفاسي</option></select></label>
-                <label for="quran-audio-scope">نطاق الاستماع<select id="quran-audio-scope" data-audio-scope><option value="current">من الموضع المحدد</option><option value="surah">السورة حتى آخرها</option><option value="reader-list">الموضع المعروض كاملًا</option></select></label>
-                <label class="audio-repeat-control"><input type="checkbox" data-audio-repeat> تكرار الآية الحالية</label>
-            </div>
-            <audio controls preload="none" aria-label="مشغل تلاوة القرآن"></audio>
-            <div class="quran-audio-actions"><button class="button button-secondary" type="button" data-audio-previous>الآية السابقة</button><button class="button button-secondary" type="button" data-audio-next>الآية التالية</button></div>
-            <p class="audio-status" data-audio-status role="status" aria-live="polite">اختر السورة والقارئ، ثم اضغط تشغيل.</p>
-            <p class="audio-lock-note">عند دعم المتصفح، تظهر بيانات التلاوة وأزرار التحكم في شاشة القفل وسماعة الهاتف.</p>
+    <?php if ($tool === ''): ?>
+        <div class="quran-heading"><div><span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> المصحف وأدوات القراءة</span><h1>القرآن الكريم</h1><p>اختر ما تريد فعله أولًا، وسنفتح لك مساحة مخصصة للقراءة أو الاستماع أو البحث.</p></div></div>
+        <div class="quran-tool-grid" aria-label="اختر أداة القرآن">
+            <a class="quran-tool-card" href="/quran?tool=read"><span class="quran-tool-icon" aria-hidden="true">۞</span><span class="eyebrow">المصحف</span><h2>القراءة</h2><p>تصفح القرآن بالسورة أو الجزء أو الصفحة، مع أدوات مريحة للقراءة.</p><span class="quran-card-action">ابدأ القراءة <span aria-hidden="true">←</span></span></a>
+            <a class="quran-tool-card" href="/quran?tool=listen"><span class="quran-tool-icon" aria-hidden="true">♫</span><span class="eyebrow">التلاوة</span><h2>الاستماع</h2><p>اختر قارئًا من مكتبة واسعة، وشغّل آية محددة أو سورة كاملة.</p><span class="quran-card-action">اختر قارئًا <span aria-hidden="true">←</span></span></a>
+            <a class="quran-tool-card" href="/quran?tool=tafsir"><span class="quran-tool-icon" aria-hidden="true">۝</span><span class="eyebrow">تدبر</span><h2>التفسير</h2><p>انتقل مباشرة إلى تفسير الآية التي تختارها.</p><span class="quran-card-action">افتح التفسير <span aria-hidden="true">←</span></span></a>
+            <a class="quran-tool-card" href="/quran?tool=ayah"><span class="quran-tool-icon" aria-hidden="true">﴿ ﴾</span><span class="eyebrow">موضع بعينه</span><h2>آية محددة</h2><p>افتح آية واحدة واقرأ نصها أو اعرض تفسيرها مباشرة.</p><span class="quran-card-action">اختر آية <span aria-hidden="true">←</span></span></a>
+            <a class="quran-tool-card" href="/quran?tool=search"><span class="quran-tool-icon" aria-hidden="true">⌕</span><span class="eyebrow">الوصول السريع</span><h2>البحث في القرآن</h2><p>اكتب كلمة أو عبارة عربية للوصول إلى مواضعها في القرآن.</p><span class="quran-card-action">ابحث الآن <span aria-hidden="true">←</span></span></a>
         </div>
-    </section>
-
-    <section id="search-tools" class="quran-tool-section" aria-labelledby="search-tools-heading">
-        <div class="section-heading"><div><span class="eyebrow">بحث بالآيات</span><h2 id="search-tools-heading">ابحث في القرآن</h2></div></div>
-        <form class="knowledge-search quran-search" data-quran-search-form role="search"><label for="quran-search-query">كلمة أو عبارة من الآية</label><div class="search-row"><input id="quran-search-query" name="q" type="search" minlength="2" maxlength="60" value="<?= e(is_string($_GET['q'] ?? null) ? $_GET['q'] : '') ?>" placeholder="مثال: إن مع العسر يسرا"><button class="button button-secondary" type="submit">ابحث في القرآن</button></div></form>
-        <div class="knowledge-status" data-quran-search-status role="status" aria-live="polite" hidden></div><div class="knowledge-results quran-search-results" data-quran-search-results></div>
-    </section>
-
-    <section class="tafsir-section quran-tool-section" data-quran-tafsir hidden aria-labelledby="tafsir-heading">
-        <div class="section-heading"><div><span class="eyebrow">من مصدر التفسير</span><h2 id="tafsir-heading">تفسير الآية</h2></div><button class="button button-secondary" type="button" data-tafsir-toggle aria-expanded="false">عرض التفسير</button></div>
-        <div class="tafsir-frame" data-tafsir-frame hidden></div><p class="quran-attribution">يعرض هذا القسم محتوى Quranpedia كما ورد من المصدر، مع بيانات الكتاب داخله.</p>
-    </section>
+    <?php else: ?>
+        <div class="quran-heading"><div><span class="eyebrow">أدوات القرآن <span aria-hidden="true">/</span> <?= e($toolDetails[$tool][0]) ?></span><h1><?= e($toolDetails[$tool][0]) ?></h1><p><?= e($toolDetails[$tool][1]) ?></p></div><a class="quran-home-link" href="/quran">كل أدوات القرآن</a></div>
+        <?php if ($tool === 'search'): ?>
+            <form class="knowledge-search quran-search" data-quran-search-form role="search"><label for="quran-search-query">كلمة أو عبارة من الآية</label><div class="search-row"><input id="quran-search-query" name="q" type="search" minlength="2" maxlength="60" value="<?= e(is_string($_GET['q'] ?? null) ? $_GET['q'] : '') ?>" placeholder="مثال: إن مع العسر يسرا"><button class="button button-secondary" type="submit">ابحث في القرآن</button></div></form>
+            <div class="knowledge-status" data-quran-search-status role="status" aria-live="polite" hidden></div><div class="knowledge-results quran-search-results" data-quran-search-results></div>
+        <?php else: ?>
+            <?php $fixedMode = in_array($tool, ['ayah', 'tafsir', 'listen'], true); $activeMode = $fixedMode ? 'surah' : $readingMode; ?>
+            <form class="quran-controls" data-quran-form>
+                <label for="quran-mode"<?= $fixedMode ? ' hidden' : '' ?>>طريقة التصفح<select id="quran-mode" name="mode" data-reading-mode><option value="surah"<?= $activeMode === 'surah' ? ' selected' : '' ?>>بالسورة</option><option value="juz"<?= $activeMode === 'juz' ? ' selected' : '' ?>>بالجزء</option><option value="page"<?= $activeMode === 'page' ? ' selected' : '' ?>>بالصفحة</option></select></label>
+                <label for="quran-surah" data-mode-control="surah"<?= $activeMode !== 'surah' ? ' hidden' : '' ?>>السورة<select id="quran-surah" name="surah"><?php foreach ($surahs as $index => $surahName): $number = $index + 1; ?><option value="<?= $number ?>"<?= $selectedSurah === $number ? ' selected' : '' ?>><?= $number ?>. <?= e($surahName) ?></option><?php endforeach; ?></select></label>
+                <label for="quran-ayah" data-mode-control="surah" data-ayah-control><?= $tool === 'listen' || $tool === 'ayah' || $tool === 'tafsir' ? 'رقم الآية' : 'ابدأ من الآية (اختياري)' ?><input id="quran-ayah" name="ayah" type="number" min="1" inputmode="numeric" value="<?= $selectedAyah ?? '' ?>" placeholder="<?= $tool === 'read' ? 'أول السورة' : 'مثال: 1' ?>"<?= in_array($tool, ['ayah', 'tafsir'], true) ? ' required' : '' ?>></label>
+                <label for="quran-juz" data-mode-control="juz"<?= $activeMode !== 'juz' ? ' hidden' : '' ?>>الجزء<select id="quran-juz" name="juz"><?php for ($juz = 1; $juz <= 30; $juz++): ?><option value="<?= $juz ?>"<?= $selectedJuz === $juz ? ' selected' : '' ?>>الجزء <?= $juz ?></option><?php endfor; ?></select></label>
+                <label for="quran-page" data-mode-control="page"<?= $activeMode !== 'page' ? ' hidden' : '' ?>>رقم الصفحة<input id="quran-page" name="page" type="number" min="1" max="604" inputmode="numeric" value="<?= $selectedPage ?>"></label>
+                <button class="button button-primary" type="submit"><?= $tool === 'listen' ? 'تجهيز الاستماع' : ($tool === 'tafsir' ? 'عرض الآية والتفسير' : ($tool === 'ayah' ? 'افتح الآية' : 'عرض الموضع')) ?></button>
+                <?php if ($tool === 'read' || $tool === 'ayah'): ?><div class="reading-size" aria-label="حجم خط القراءة"><button class="icon-button" type="button" data-font-step="-1" aria-label="تصغير الخط">−</button><span>حجم الخط</span><button class="icon-button" type="button" data-font-step="1" aria-label="تكبير الخط">+</button></div><?php endif; ?>
+            </form>
+            <div class="quran-status" data-quran-status role="status" aria-live="polite" aria-atomic="true">جارٍ تحميل الآيات…</div>
+            <article class="quran-reading" data-quran-content aria-label="نص القرآن" hidden></article>
+            <p class="quran-attribution" data-quran-attribution><?php if ($tool === 'listen'): ?>السور الكاملة عبر <a href="https://quranicaudio.com/" target="_blank" rel="noopener noreferrer">QuranicAudio</a>، والآيات المنفردة عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>.<?php else: ?>نص القرآن عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>.<?php endif; ?></p>
+            <?php if ($tool === 'listen'): ?>
+                <section class="quran-tool-section" aria-labelledby="audio-heading"><div class="section-heading"><div><span class="eyebrow">مكتبة القراء</span><h2 id="audio-heading">مشغل التلاوة</h2></div></div>
+                    <div class="quran-audio" data-quran-audio hidden>
+                        <div class="audio-scope-choice" role="group" aria-label="اختر نطاق الاستماع"><span>ماذا تريد أن تستمع؟</span><label><input type="radio" name="audio-scope" value="current" data-audio-scope checked><span><strong>آية واحدة</strong><small>ابدأ من رقم الآية المحددة فقط</small></span></label><label><input type="radio" name="audio-scope" value="surah" data-audio-scope><span><strong>السورة كاملة</strong><small>تشغيل كامل السورة من بدايتها</small></span></label></div>
+                        <div class="quran-audio-settings"><label for="quran-reciter">القارئ<select id="quran-reciter" data-quran-reciter><option value="ar.alafasy">مشاري راشد العفاسي</option></select></label><label class="audio-repeat-control"><input type="checkbox" data-audio-repeat> تكرار التلاوة</label></div><p class="audio-provider-note" data-audio-provider-note>اختيار السورة الكاملة يفتح مكتبة QuranicAudio الأوسع؛ والآية المنفردة تستخدم قراء Al Quran Cloud.</p>
+                        <audio controls preload="none" aria-label="مشغل تلاوة القرآن"></audio><div class="quran-audio-actions"><button class="button button-secondary" type="button" data-audio-previous>الآية السابقة</button><button class="button button-secondary" type="button" data-audio-next>الآية التالية</button></div>
+                        <p class="audio-status" data-audio-status role="status" aria-live="polite">اختر السورة والقارئ، ثم اضغط تشغيل.</p><p class="audio-lock-note">عند دعم المتصفح، تظهر بيانات التلاوة وأزرار التحكم في شاشة القفل وسماعة الهاتف.</p>
+                    </div>
+                </section>
+            <?php endif; ?>
+            <?php if (in_array($tool, ['tafsir', 'ayah'], true)): ?><section class="tafsir-section quran-tool-section" data-quran-tafsir hidden aria-labelledby="tafsir-heading"><div class="section-heading"><div><span class="eyebrow">من مصدر التفسير</span><h2 id="tafsir-heading">تفسير الآية</h2></div><button class="button button-secondary" type="button" data-tafsir-toggle aria-expanded="false">عرض التفسير</button></div><div class="tafsir-frame" data-tafsir-frame hidden></div><p class="quran-attribution">يعرض هذا القسم محتوى Quranpedia كما ورد من المصدر، مع بيانات الكتاب داخله.</p></section><?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
 </section>
