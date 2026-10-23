@@ -4,25 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#F5F3ED">
-    <meta name="description" content="أثر — منصة عربية مجانية للقرآن والمعرفة الإسلامية وأدوات العبادة الشخصية.">
+    <meta name="description" content="<?= e($seoDescription ?? 'اقرأ القرآن، وابحث عن الحديث، واستكشف الدروس والكتب والأذكار في منصة أثر العربية.') ?>">
+    <meta name="robots" content="<?= e($seoRobots ?? (!empty($canonicalUrl) ? 'index,follow,max-image-preview:large' : 'noindex,nofollow')) ?>">
+    <?php if (!empty($canonicalUrl)): ?><link rel="canonical" href="<?= e($canonicalUrl) ?>"><?php endif; ?>
+    <meta property="og:type" content="<?= e($ogType ?? 'website') ?>">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:site_name" content="أثر">
+    <meta property="og:title" content="<?= e($seoTitle ?? ($title . ' | أثر')) ?>">
+    <meta property="og:description" content="<?= e($seoDescription ?? 'منصة أثر العربية للقرآن والمعرفة والعبادة.') ?>">
+    <?php if (!empty($canonicalUrl)): ?><meta property="og:url" content="<?= e($canonicalUrl) ?>"><?php endif; ?>
+    <?php if (!empty($siteBaseUrl)): ?><meta property="og:image" content="<?= e($siteBaseUrl . '/assets/images/athar-logo-cropped.png') ?>"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="692"><meta property="og:image:height" content="640"><meta property="og:image:alt" content="شعار أثر"><meta name="twitter:image" content="<?= e($siteBaseUrl . '/assets/images/athar-logo-cropped.png') ?>"><?php endif; ?>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?= e($seoTitle ?? ($title . ' | أثر')) ?>">
+    <meta name="twitter:description" content="<?= e($seoDescription ?? 'منصة أثر العربية للقرآن والمعرفة والعبادة.') ?>">
     <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
-    <title><?= e($title) ?> | أثر</title>
-    <link rel="icon" type="image/png" href="/assets/images/athar-logo.png">
-    <link rel="stylesheet" href="/assets/css/app.css">
-    <script src="/assets/js/app.js" defer></script>
-    <script src="/assets/js/knowledge.js" defer></script>
+    <title><?= e($seoTitle ?? ($title . ' | أثر')) ?></title>
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/athar-favicon.png">
+    <link rel="apple-touch-icon" href="/assets/images/athar-favicon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="/assets/css/app.css?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/css/app.css') ?: 1) ?>">
+    <script src="/assets/js/app.js?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/js/app.js') ?: 1) ?>" defer></script>
+    <?php if (!empty($loadKnowledgeScript)): ?><script src="/assets/js/knowledge.js?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/js/knowledge.js') ?: 1) ?>" defer></script><?php endif; ?>
+    <?php if (!empty($structuredData)): ?><script type="application/ld+json"><?= json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script><?php endif; ?>
 </head>
 <body>
     <a class="skip-link" href="#main-content">انتقل إلى المحتوى</a>
 
     <header class="site-header">
         <div class="header-inner">
-            <a class="brand" href="/" aria-label="أثر — الصفحة الرئيسية">
-                <img class="brand-logo" src="/assets/images/athar-logo.png" alt="" width="64" height="52">
-                <span class="brand-copy">
-                    <span class="brand-name">أثر</span>
-                    <span class="brand-tagline">معرفةٌ تنفع وأثرٌ يبقى</span>
-                </span>
+            <a class="brand" href="/" aria-label="الصفحة الرئيسية">
+                <img class="brand-logo" src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="150" height="92" fetchpriority="high">
             </a>
 
             <button class="icon-button menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="primary-nav" data-menu-toggle>
@@ -60,9 +71,9 @@
 
     <footer class="site-footer">
         <div class="footer-inner">
-            <a class="footer-brand" href="/">أثر</a>
-            <p>منصة مجانية للقرآن والمعرفة الإسلامية النافعة.</p>
-            <a href="/about">عن أثر ومصادر المحتوى</a>
+            <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="120" height="76" loading="lazy"></a><p>منصة عربية مفتوحة للقرآن والمعرفة والعبادة.</p></div>
+            <nav class="footer-nav" aria-label="روابط الموقع"><a href="/quran">القرآن</a><a href="/hadith">الحديث</a><a href="/lessons">الدروس</a><a href="/books">الكتب</a><a href="/adhkar">الأذكار</a><a href="/about">عن أثر</a></nav>
+            <small class="footer-copy">© <?= date('Y') ?> أثر</small>
         </div>
     </footer>
 </body>

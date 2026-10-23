@@ -12,9 +12,9 @@
             const saved = window.localStorage.getItem('athar-theme');
             if (saved === 'light' || saved === 'dark') return saved;
         } catch (_) {
-            // Storage may be disabled; the site still works with the system preference.
+            // Storage may be disabled; the default remains light.
         }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return 'light';
     };
 
     const setTheme = (theme) => {

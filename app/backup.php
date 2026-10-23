@@ -142,7 +142,7 @@ function build_backup_archive(int $ownerId): array
         $database = getenv('ATHAR_DB_NAME') ?: 'athar';
         $list = $pdo->prepare("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME");
         $list->execute([$database]); $tables = $list->fetchAll(PDO::FETCH_COLUMN);
-        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants'];
+        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants','platform_settings'];
         $counts = []; $checksums = []; $bookFiles = []; $excludedTables = [];
         foreach ($tables as $table) {
             if (!is_string($table) || !preg_match('/^[a-zA-Z0-9_]+$/', $table)) continue;
@@ -172,7 +172,7 @@ function build_backup_archive(int $ownerId): array
             'format' => 'athar-full-backup-v1', 'created_at_utc' => gmdate('c'), 'schema_version' => (string) ($migration ?: 'unknown'),
             'database_name' => $database, 'tables' => $counts, 'checksums_sha256' => $checksums, 'book_assets' => $assetManifest,
             'excluded_tables' => $excludedTables,
-            'excluded' => ['database credentials and environment secrets', 'auth token rows', 'backup artifact and grant rows', 'logs and temporary files', 'external YouTube media'],
+            'excluded' => ['database credentials and environment secrets', 'SMTP/Dorar settings and encrypted secrets', 'auth token rows', 'backup artifact and grant rows', 'logs and temporary files', 'external YouTube media'],
         ];
         $manifestJson = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         $zip->addFromString('manifest.json', $manifestJson);
@@ -245,7 +245,7 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             $contents = $zip->getFromName($entry);
             if ($contents === false || !hash_equals($expected, hash('sha256', $contents))) throw new RuntimeException('فشل التحقق من أحد ملفات النسخة.');
         }
-        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants'];
+        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants','platform_settings'];
         $tables = $db->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=" . $db->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
         $restoreTables = [];
         foreach ($manifest['tables'] as $table => $count) {

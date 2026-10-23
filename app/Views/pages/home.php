@@ -72,6 +72,15 @@
     </div>
 </section>
 
+<section class="home-recent section-wrap" aria-labelledby="home-recent-heading">
+    <div class="section-heading"><div><span class="eyebrow">محتوى الموقع</span><h2 id="home-recent-heading">ابدأ من هنا</h2></div></div>
+    <div class="home-recent-grid">
+        <article class="knowledge-card home-feature-card"><h3>الدروس والسلاسل</h3><?php if($homeLessons): ?><ul class="home-link-list"><?php foreach($homeLessons as $lesson): ?><li><a href="<?= $lesson['series_id']?'/series?id='.(int)$lesson['series_id'].'&lesson='.(int)$lesson['id']:'/lessons?lesson='.(int)$lesson['id'] ?>"><?= e($lesson['title']) ?></a><small><?= e($lesson['series_title']?:'درس مستقل') ?></small></li><?php endforeach; ?></ul><?php else: ?><p>استكشف الدروس المنشورة في مكتبة العلماء.</p><?php endif; ?><a class="button button-secondary" href="/lessons">كل الدروس</a></article>
+        <article class="knowledge-card home-feature-card"><h3>السلاسل العلمية</h3><?php if($homeSeries): ?><ul class="home-link-list"><?php foreach($homeSeries as $series): ?><li><a href="/series?id=<?= (int)$series['id'] ?>"><?= e($series['title']) ?></a></li><?php endforeach; ?></ul><?php else: ?><p>تظهر هنا السلاسل التي يضيفها فريق المحتوى.</p><?php endif; ?><a class="button button-secondary" href="/lessons">تصفح السلاسل</a></article>
+        <article class="knowledge-card home-feature-card"><h3>الكتب المتاحة</h3><?php if($homeBooks): ?><ul class="home-link-list"><?php foreach($homeBooks as $book): ?><li><a href="/books"><?= e($book['title']) ?></a><small><?= e($book['author']) ?></small></li><?php endforeach; ?></ul><?php else: ?><p>تصفح مكتبة الكتب العامة.</p><?php endif; ?><a class="button button-secondary" href="/books">فتح المكتبة</a></article>
+    </div>
+</section>
+
 <section class="trust-section">
     <div class="trust-inner section-wrap">
         <span class="trust-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.7 2.9 8.1 7 10 4.1-1.9 7-5.3 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>

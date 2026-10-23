@@ -28,7 +28,7 @@
 - Quran reader and recitation using selected permitted provider; source-attributed selected tafsir/translation and permitted search.
 - Small editorially reviewed adhkar collection with accessible count control.
 - Books catalog and permission-checked upload/download; scholar pages, series, standalone lessons, official YouTube embeds.
-- Hadith search only if key and documented coverage are available; otherwise explicitly defer or run an approved curated subset.
+- Arabic hadith search uses the official Dorar API; it stays unavailable until the application passes manual access review and an administrator stores the approved token.
 
 **Exit:** feature acceptance criteria in `PRODUCT_REQUIREMENTS.md` pass; guest access remains open; provider failures are graceful; all published content has source/rights data.
 
@@ -41,7 +41,7 @@
 ### Phase 4 — Admin and production readiness
 
 - Role-scoped CRUD, source/review workflow, aggregate metrics, user support actions, audit trail, upload controls, moderation only if separately approved, and owner-operated backup/restore.
-- Conduct owner-only backup-download and restore exercise, verify reset denial in production configuration and reset recovery in isolated local development, permissions review, source-term review, accessibility/usability review, monitoring and incident rehearsal.
+- Conduct owner-only backup-download and restore exercise, verify reset denial in production configuration and reset recovery in isolated local development, SMTP delivery, permissions review, source-term review, accessibility/usability review, monitoring and incident rehearsal.
 
 **Exit:** no unreviewed roles/actions; encrypted backup download, integrity verification, expiry/deletion and restore are verified; local reset safeguards and recovery are verified; production reset denial is verified server-side; release requirements and operational owner are identified.
 
@@ -51,21 +51,21 @@
 |---|---|---|
 | Empty repository/local Git root points at user home | No stack/version/history facts; broad status noise | Keep docs limited to project directory; correct repository/worktree metadata before implementation without touching unrelated files. |
 | Quran source approval/terms/feature support | Search, audio, tafsir availability may change | Verify endpoint-specific use and production permissions before promise; source fallback states are explicit. |
-| Sunnah.com key and partial coverage | Hadith search may not launch | Request access early; never scrape; label partial or defer. |
+| Dorar API approval | Hadith search stays unavailable | Submit the official application early; keep the page in a clear unavailable state until a token is approved and configured. |
 | Rights for PDFs, covers, translations, audio, adhkar | Unlicensed republication risk | Require permission/edition metadata and publication gate. |
 | YouTube video policy/availability/browser restrictions | Playback and resume not guaranteed | Official player only, guest play, native controls/ads, event-throttled approximate progress, watch-page fallback. |
 | Arabic search, shaping, font coverage | Poor reading/findability | Validate Arabic normalization/search behavior and font glyph shaping with representative content and devices. |
 | Unknown host, storage, email and backups | Cost, reliability and recovery unknown | Choose provider and RPO/RTO before deployment; API price does not include infrastructure. |
-| Admin moderation capacity | Unsafe/unanswered comments | Comments out of MVP; enable only with staffing, policy and audit workflow. |
+| Admin moderation capacity | Unsafe/unanswered comments | Comments remain pending until an administrator reviews and publishes them; disable comment posting if no reviewer is available. |
 
 ## Owner decisions needed
 
-1. Confirm MVP feature priorities and whether hadith is conditional/deferred until Sunnah.com key or a licensed curated corpus is available.
+1. Apply for Dorar API access, provide a review account or staging link as requested, and configure the approved token in the administrator settings.
 2. Choose first Quran provider after endpoint-specific terms and feature checks: Quranpedia live API, Quran Foundation after app/scope approval, or defer a feature.
 3. Name an editorial reviewer and define approval/source expectations for tafsir, hadith, adhkar, translations, and PDF rights.
 4. Decide whether email/password account MVP is sufficient or whether external identity/account linking is desired; Athar accounts do not require Quran Foundation OAuth by default.
-5. Confirm comment policy (recommended: off in MVP), and whether any memorial feature belongs in the product (reserved palette applies only if yes).
-6. Select deployment host, PHP/MySQL versions, email, file storage, budget, data region, backup RPO/RTO, maximum archive size, encryption-key handling, durable retention, and cleanup ownership. Uploaded books are included in the protected archive; production reset remains denied by design.
+5. Assign an administrator to review pending lesson comments and establish the public moderation policy.
+6. Select deployment host, PHP/MySQL versions, SMTP provider, file storage, budget, data region, backup RPO/RTO, maximum archive size, encryption-key handling, durable retention, and cleanup ownership. Service settings are excluded from protected backups and must be reconfigured after a new-host restore.
 7. Confirm account deletion/audit retention language and whether book PDFs should stream in-browser, download, or both per rights.
 
 ## Next steps

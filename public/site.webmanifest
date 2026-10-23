@@ -1,0 +1,13 @@
+{
+  "name": "أثر - منصة للقرآن والمعرفة والعبادة",
+  "short_name": "أثر",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F3ED",
+  "theme_color": "#F5F3ED",
+  "icons": [
+    { "src": "/assets/images/athar-favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

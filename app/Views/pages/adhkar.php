@@ -13,7 +13,7 @@
             <button class="button button-primary" type="submit">ابحث</button>
         </div>
     </form>
-    <p class="source-note">المصدر: <a href="https://islamic.network/api/pray/" target="_blank" rel="noopener noreferrer">Pray API من Islamic Network</a>. تُعرض إحالة المصدر التفصيلية عندما يوفّرها سجل الذكر.</p>
+    <p class="source-note">تُعرض مراجع الأذكار مع كل نصّ، وتظهر بقية النتائج عند طلب المزيد.</p>
     <div class="knowledge-status" data-adhkar-status role="status" aria-live="polite" hidden></div>
     <div class="knowledge-results" data-adhkar-results></div>
     <?php if ($curatedAdhkar): ?><section class="curated-section"><div class="section-heading"><div><span class="eyebrow">مختارة ومراجَعة للموقع</span><h2>أذكار موثقة</h2></div></div><div class="knowledge-results">

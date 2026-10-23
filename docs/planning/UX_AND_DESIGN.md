@@ -1,12 +1,12 @@
 # UX and Design System
 
-**Design authority:** the exact Athar color values supplied by the owner are authoritative; do not substitute or sample another palette. The owner-provided logo is stored at `public/assets/images/athar-logo.png`. UI/UX Pro Max skill was available and consulted on 2026-10-23; its applicable guidance was minimalism, readable hierarchy, responsive layouts, 4.5:1 text contrast, keyboard-visible focus, 44px touch targets, reduced motion, and restrained 150–300ms interaction transitions. Its generic palette was not adopted because the owner-provided palette is authoritative.
+**Design authority:** the exact Athar color values supplied by the owner are authoritative; do not substitute or sample another palette. The original owner-provided logo remains at `public/assets/images/athar-logo.png`; the header uses a cropped transparent-safe derivative without duplicate brand text. Default theme is light; dark theme is an explicit saved preference. The shared layout includes responsive navigation and a linked site footer.
 
 ## Information architecture
 
 - **Public navigation:** Home; Quran; Hadith; Tafsir (contextual from an ayah); Books; Scholars/Lessons; Adhkar; About/Sources.
 - **Account area:** Saved Quran, recent reading position, favorite books/series, lesson progress, khatmah plans, preferences, export/delete account.
-- **Admin area:** Overview; content by type; sources and review status; users/roles; moderation only if enabled; profile/settings; owner-only downloadable backup; separately confirmed restore; local-development reset control denied in production. No arbitrary SQL or credential display.
+- **Admin area:** Overview; separate scholar/series/lesson/book/adhkar forms; sources and review status; users/roles; pending-comment review; encrypted SMTP and approved Dorar settings; owner-only backup/restore controls.
 - Keep primary mobile navigation to at most five high-level destinations; group secondary public areas under a clearly labeled “More” destination. Preserve browser back/deep links to surah, ayah, book, scholar, series, lesson, and adhkar item.
 
 ## Major screens and requirements
@@ -15,12 +15,12 @@
 |---|---|
 | Home | Calm purpose statement, prominent Quran/learning discovery, recent/curated content, clear guest entry; no forced registration. |
 | Quran index and reader | Surah list/search; compact surah/ayah navigation; readable Arabic text, translation/tafsir source switch where available, reciter/audio controls, bookmark/save state, loading/unavailable source states. Main text column remains readable on desktop. |
-| Hadith search/detail | Search and filter by available collection metadata; show query coverage; reference/source and optional supplied grade; clear partial/no-key/error states. |
+| Hadith search/detail | Arabic search using official Dorar endpoint; source text, supplied grading, narrator/reference and Dorar link; clear pending-approval/unavailable/error states. |
 | Books browse/detail/reader | Search, filters, cover and bibliographic/rights metadata, allowed read/download action, accessible PDF link/reader state. |
-| Scholar/series/lesson | Scholar biography; ordered series and standalone lessons; player with visible native controls and source; save/resume only after sign-in; video unavailable and approximate-resume explanation. |
+| Scholar/series/lesson | Scholar biography; ordered series and standalone lessons; YouTube-style player with series playlist, title, description and reviewed first-party comments; save/resume only after sign-in. |
 | Adhkar | Category/occasion navigation, search, original text/reference/count, keyboard/touch accessible progress control and reset. |
-| Account/worship tools | Private saved items and plan state; clear progress calculation, pause/edit/finish, export/delete and preferences. |
-| Admin | Scoped content forms and publication/review state, user action confirmations, audit context, moderation state only when active, owner-only create/download backup flow, separate restore flow, and local-development-only reset flow. Destructive tasks have separate step-up and explicit confirmation flows. |
+| Account/worship tools | Private saved items, daily aggregate activity, profile name/username, plan state, export/delete and preferences. |
+| Admin | Scoped content forms/publication state, SMTP and provider settings without secret echo, comment review, audit history, and owner-only backup/restore flows. |
 
 ## RTL and content layout
 

@@ -27,9 +27,9 @@ Athar is a presentation and personal-organization platform, not a source of orig
 
 ## Scope
 
-**MVP:** guest Quran reader/player using an approved source; attributed Quran search if permitted; limited hadith lookup only if an approved API key and coverage are available, otherwise a clearly labeled unavailable/curated pilot state; selected sourced tafsir; small editorially reviewed adhkar collection; curated books with verified rights; scholars, series and YouTube lessons; optional account, bookmarks and progress, khatmah planner; scoped admin tools; secure content uploads; owner-only protected downloadable backups and a local-development-only database reset with production execution denied server-side.
+**MVP:** guest Quran reader/player using approved sources; Arabic hadith search through Dorar's official API after manual key approval; attributed tafsir; reviewed adhkar; public books with verified rights and direct downloads; scholar, series, standalone lesson and official YouTube video pages; optional accounts with profile and private aggregate stats; SMTP OTP flows; moderated first-party comments; scoped admin tools; owner-only encrypted backups.
 
-First-party comments are **out of MVP**. If later enabled, they are optional, authenticated-only, moderated Athar content. Do not imply YouTube comments are available.
+First-party comments are authenticated-only and held for administrator review. YouTube comments are not imported.
 
 **Later:** broader licensed collections, richer search, additional integrations after approval, comment/report workflow if staffed, analytics beyond essential operational metrics, and any public memorial feature only as a separately scoped feature using its reserved palette.
 

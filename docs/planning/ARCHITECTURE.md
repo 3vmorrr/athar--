@@ -24,8 +24,8 @@ The initial schema lives in `database/migrations/001_initial.sql`; `.env.example
 | Identity and account | registration, login, preferences, private bookmarks/progress/export/deletion |
 | Worship tools | Quran/video progress and khatmah calculations |
 | Content administration | validation, editorial workflow, publish/visibility, upload and rights metadata |
-| Moderation | reserved for approved first-party comments/reports; out of MVP |
-| Provider clients | Quranpedia, Quran Foundation, Sunnah.com and YouTube embed metadata boundary; timeouts, schema validation, caching, attribution |
+| Moderation | first-party lesson comments, authenticated posting, pending review and audited publication/hide actions |
+| Provider clients | server-side Dorar search; Quran and adhkar providers; official YouTube embeds, with bounded requests and source attribution |
 | Operations | migrations, logs, health/metrics, protected backup artifact lifecycle/download, separately confirmed restore, local-development reset gate, audit records |
 
 ## Request lifecycle
@@ -40,9 +40,12 @@ The initial schema lives in `database/migrations/001_initial.sql`; `.env.example
 ## Integrations and data ownership
 
 - Quran content: prefer Quranpedia live endpoints if the specific content, search, audio, and usage terms meet feature needs. Use conservative cache TTLs and honor corrections, limits, and attribution/republishing restrictions. Do not mirror by crawling. Quran Foundation is an alternative requiring application credentials and production permission; keep client secret server-side.
-- Hadith: Sunnah.com API key is requested, not guaranteed; documented coverage is partial. Do not scrape if denied. Offer only an explicitly limited, editor-curated alternative if rights and editorial process are approved.
+- Hadith: use the official Dorar Hadith API through a server-side proxy. A token requires a manually reviewed access request; search stays unavailable until the approved token is configured. Keep the Bearer token encrypted at rest, display supplied grades with every result, preserve Dorar URLs/attribution, and never scrape or bulk cache.
 - Video: store admin-entered YouTube ID and embed via official IFrame Player; no Data API key is needed for this proposed embed-only behavior. Do not download media or imply dependable playback resume.
 - Adhkar/books/editorial material: use reviewed records with source, rights/license, edition, and review metadata. Do not substitute unknown-provenance feeds.
+- Account email: send verification and password-reset OTPs through administrator-configured SMTP. Store only hashes of short-lived codes; store SMTP credentials and the approved Dorar token using AES-256-GCM under the environment-provided `ATHAR_SETTINGS_KEY`.
+- Activity reporting: store per-user daily aggregate counters without recording specific verses or adhkar. Users see their own totals only.
+- Video discussion: store first-party lesson comments as plain text with pending/visible/hidden states. Only authenticated users can submit; administrator review is required before publication.
 
 ## Caching and failures
 

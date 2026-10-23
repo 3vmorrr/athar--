@@ -24,7 +24,7 @@ Show only operational/product aggregates useful to maintain the service: publish
 
 ## Moderation
 
-First-party comments and reports are out of MVP. If owner approves them later, staff and publish policy must exist first. Queue supports reported content, safe preview, report reason, assign/resolve, hide/restore/delete with reason, repeat-abuse limits, appeal/contact path, and append-only moderation audit. User text is plain-text escaped and bounded. Guests cannot comment in the initial scope. YouTube comments are not imported or represented.
+First-party comments are enabled for signed-in users and enter a pending queue. Administrators may publish or hide them; plain text is escaped, bounded to 2,000 characters, and rate-limited. New comments are not public before review. YouTube comments are not imported. Reports, appeals, and moderator staffing remain deployment/product policy work; keep comments disabled if the site cannot review the queue.
 
 ## Backups and restore
 

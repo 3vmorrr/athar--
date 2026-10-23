@@ -1,7 +1,6 @@
 (() => {
     const quranpedia = 'https://api.quranpedia.net/v1';
     const prayApi = 'https://pray.api.islamic.network/v1';
-    const ummahApi = 'https://ummahapi.com/api/hadith';
 
     const text = (value, fallback = '') => typeof value === 'string' && value.trim() ? value.trim() : fallback;
     const request = async (url) => {
@@ -110,41 +109,44 @@
         const results = hadithPage.querySelector('[data-hadith-results]');
         const status = hadithPage.querySelector('[data-hadith-status]');
         const queryInput = form.elements.q;
-        const collectionInput = form.elements.collection;
 
-        const search = async (query, collection) => {
+        const search = async (query) => {
             status.hidden = true;
             results.replaceChildren();
-            setStatus(status, 'جارٍ البحث في المجموعات المتاحة…', 'loading');
+              setStatus(status, 'جارٍ البحث في الموسوعة الحديثية…', 'loading');
             try {
-                const params = new URLSearchParams({ q: query });
-                if (collection) params.set('collection', collection);
-                const payload = await request(`${ummahApi}/search?${params}`);
-                const items = payload?.data?.hadiths;
-                if (!payload?.success || !Array.isArray(items)) throw new Error('provider-shape');
+                const response = await fetch('/api/hadith/search?' + new URLSearchParams({ q: query }), { headers:{Accept:'application/json'}, credentials:'same-origin' });
+                const payload = await response.json();
+                if (!response.ok && payload?.error !== 'service_not_configured') throw new Error('provider-response');
+                const items = payload?.data;
+                if (!Array.isArray(items)) {
+                    if (payload?.error === 'service_not_configured') throw new Error('service-not-configured');
+                    throw new Error('provider-shape');
+                }
                 status.hidden = true;
                 if (!items.length) {
-                    setStatus(status, 'لم تظهر نتائج لهذه العبارة في الفهرس المتاح.', 'empty');
+                    setStatus(status, 'لا توجد نتائج لهذه العبارة. جرّب كلمات عربية أخرى.', 'empty');
                     return;
                 }
                 items.forEach((hadith) => {
-                    if (typeof hadith.arabic !== 'string' || !hadith.arabic.trim()) return;
+                    if (typeof hadith.text !== 'string' || !hadith.text.trim() || typeof hadith.grade !== 'string' || !hadith.grade.trim() || typeof hadith.url !== 'string' || !hadith.url.startsWith('https://dorar.net/')) return;
                     const card = make('article', 'knowledge-card hadith-card');
                     const meta = make('div', 'card-meta');
-                    meta.append(make('span', 'source-chip', text(hadith.collection_name, 'مجموعة غير محددة')));
-                    meta.append(make('span', '', `رقم ${text(String(hadith.hadithnumber ?? ''), 'غير متاح')}`));
-                    if (typeof hadith.grade === 'string' && hadith.grade.trim()) meta.append(make('span', 'source-chip', `الدرجة كما وردت: ${hadith.grade}`));
-                    card.append(meta, make('p', 'hadith-text', hadith.arabic));
-                    const ref = `${text(hadith.collection, 'unknown')}/${encodeURIComponent(String(hadith.hadithnumber ?? ''))}`;
-                    card.append(sourceLink(`${ummahApi}/${ref}`, 'تفاصيل هذا السجل عند المصدر ↗'));
+                    meta.append(make('span', 'source-chip', text(hadith.source, 'الموسوعة الحديثية')));
+                    meta.append(make('span', 'source-chip', `خلاصة حكم المحدّث: ${hadith.grade}`));
+                    if (hadith.narrator) meta.append(make('span', '', `الراوي: ${hadith.narrator}`));
+                    if (hadith.muhaddith) meta.append(make('span', '', `المحدّث: ${hadith.muhaddith}`));
+                    if (hadith.page_or_number) meta.append(make('span', '', `المرجع: ${hadith.page_or_number}`));
+                    card.append(meta, make('p', 'hadith-text', hadith.text));
+                    card.append(sourceLink(hadith.url, 'صفحة الحديث في الدرر السنية ↗'));
                     results.append(card);
                 });
-                if (!results.childElementCount) setStatus(status, 'لم يرسل المصدر نصوصًا قابلة للعرض لهذه العبارة.', 'empty');
-            } catch (_) {
-                setStatus(status, 'تعذر الاتصال بمصدر الحديث. حاول مرة أخرى بعد قليل.', 'error');
+                if (!results.childElementCount) setStatus(status, 'لم تتوفر نتائج مكتملة بالنص وخلاصة الحكم.', 'empty');
+            } catch (error) {
+                setStatus(status, error.message === 'service-not-configured' ? 'خدمة البحث لم تُفعّل بعد. أضف مفتاح الدرر السنية المعتمد إلى إعدادات الخادم.' : 'تعذر البحث الآن. حاول مرة أخرى بعد قليل.', 'error');
                 const retry = make('button', 'button button-secondary', 'إعادة المحاولة');
                 retry.type = 'button';
-                retry.addEventListener('click', () => search(query, collection));
+                retry.addEventListener('click', () => search(query));
                 status.append(' ', retry);
             }
         };
@@ -152,16 +154,13 @@
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             const query = queryInput.value.trim();
-            if (query.length < 2 || query.length > 80) return;
-            const collection = collectionInput.value;
-            history.replaceState(null, '', `/hadith?${new URLSearchParams({ q: query, ...(collection ? { collection } : {}) })}`);
-            search(query, collection);
+            if (query.length < 2 || query.length > 200) return;
+            history.replaceState(null, '', `/hadith?${new URLSearchParams({ q: query })}`);
+            search(query);
         });
         const params = parseSearchParams();
-        if (params.has('q') && params.get('q').trim().length >= 2 && params.get('q').trim().length <= 80) {
-            const collection = ['bukhari', 'muslim', 'abudawud', 'tirmidhi'].includes(params.get('collection')) ? params.get('collection') : '';
-            collectionInput.value = collection;
-            search(params.get('q').trim(), collection);
+        if (params.has('q') && params.get('q').trim().length >= 2 && params.get('q').trim().length <= 200) {
+            search(params.get('q').trim());
         }
     }
 
@@ -260,10 +259,20 @@
                     const count = make('output', 'dhikr-count', '0');
                     count.setAttribute('aria-live', 'polite');
                     count.setAttribute('aria-label', 'عدد النقرات');
+                    const requiredCount = Math.max(1, Number(entry.repeat_count || entry.repeat || 1));
+                    let completionRecorded = false;
                     const add = make('button', 'button button-primary', 'سبّح +1');
                     add.type = 'button';
                     add.setAttribute('aria-label', 'زيادة العداد واحدًا');
-                    add.addEventListener('click', () => { count.value = String(Number(count.value || count.textContent) + 1); count.textContent = count.value; });
+                    add.addEventListener('click', async () => {
+                        count.value = String(Number(count.value || count.textContent) + 1);
+                        count.textContent = count.value;
+                        if (!completionRecorded && Number(count.value) >= requiredCount) {
+                            completionRecorded = true;
+                            const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
+                            try { await fetch('/api/adhkar/completion', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','X-CSRF-Token':token,Accept:'application/json'}, body:'completed=1', credentials:'same-origin' }); } catch (_) { /* Guest counters remain usable without an account. */ }
+                        }
+                    });
                     const reset = make('button', 'button button-secondary', 'إعادة');
                     reset.type = 'button';
                     reset.setAttribute('aria-label', 'إعادة العداد إلى الصفر');
@@ -450,9 +459,20 @@
         });
         lessonsPage.querySelectorAll('[data-curated-video]').forEach((button) => {
             button.addEventListener('click', () => {
+                if (button.dataset.lessonId && window.location.pathname === '/series') {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set('lesson', button.dataset.lessonId);
+                    window.location.assign('/series?' + params.toString());
+                    return;
+                }
                 const video = button.dataset.curatedVideo || '';
                 input.value = video;
                 loadVideo(video, true, button.dataset.lessonId, button.dataset.resumeSeconds);
+                const title = lessonsPage.querySelector('[data-active-lesson-title]');
+                const description = lessonsPage.querySelector('[data-active-lesson-description]');
+                if (title && button.dataset.lessonTitle) title.textContent = button.dataset.lessonTitle;
+                if (description) description.textContent = button.dataset.lessonDescription || '';
+                lessonsPage.querySelectorAll('.playlist-item').forEach((item) => item.setAttribute('aria-current', String(item === button)));
                 player.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         });

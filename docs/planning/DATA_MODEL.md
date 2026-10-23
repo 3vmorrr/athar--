@@ -40,9 +40,11 @@ Search metadata records provider and coverage boundary, query limits, and checke
 
 Every read/write of user data scopes by authenticated owner in the query/policy; admin access is exceptional and audited. No public profile, social ranking, or worship activity feed is proposed.
 
-## Comments, reports, and moderation (only if later enabled)
+## Comments, reports, and moderation
 
-`comments`: author FK, target lesson/content FK/type, plain-text body, status, created/edited timestamps; enforce server-side length limit and rate limits. `reports`: reporter, comment, bounded reason, status, timestamps. `moderation_actions`: moderator, target, action, reason, prior/new state, timestamp; immutable audit reference. Guests may browse comments only if owner approves; guests cannot write/report under the initial safest scope. No YouTube comments integration is implied.
+`lesson_comments`: lesson/user foreign keys, plain-text body up to 2,000 characters, pending/visible/hidden state, timestamps, and optional moderator. Authenticated-only posting with session rate limiting; pending comments are visible only to their author and administrators. Every moderation decision is recorded in `audit_logs`. No YouTube comments integration is implied.
+
+`users` also carries an optional public display name and a unique lowercase username (3–24 ASCII letters, digits, underscores; reserved names rejected). `platform_settings` stores non-secret SMTP fields and authenticated settings; secret values are AES-256-GCM ciphertext, while the key remains outside the database in `ATHAR_SETTINGS_KEY`. `account_daily_stats` stores aggregate Quran sessions, completed lessons, completed adhkar counters, and book downloads by user/date, without item-level reading history.
 
 ## Operational constraints and indexes
 

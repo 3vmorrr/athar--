@@ -7,17 +7,16 @@ Security requirements apply to every route, admin operation, integration, and de
 - Browsing, reading, and listening to public content does not require an account. Require login only for save/continuity actions.
 - Hash passwords with PHP `password_hash()` using `PASSWORD_DEFAULT` (or a supported stronger Argon2id choice after host verification); verify with `password_verify()` and upgrade with `password_needs_rehash()`. Never log/store plaintext passwords or send them in email.
 - Use generic login/reset responses to reduce account enumeration; throttle login, signup, reset, and verification by account and source/IP using bounded progressive delays. Protect against abuse without permanent lockout.
-- Password reset tokens are random, single-use, hashed at rest, short-lived, and invalidate sessions or require reauthentication. Email verification and recovery contact changes are confirmed.
+- Email verification and password recovery use six-digit, single-use OTPs, stored only as SHA-256 hashes, expire after ten minutes, and are limited to five code attempts in the database and session. SMTP credentials are entered by administrators, stored using AES-256-GCM, and encrypted with a host-managed `ATHAR_SETTINGS_KEY`.
 - On login, rotate session ID; regenerate on privilege change; revoke sessions on logout, password reset/change, deletion, and suspension. Do not place session IDs in URLs or logs.
-- Current implementation uses strict server-side PHP sessions, a 30-minute idle limit and a 24-hour absolute limit on protected routes; protected requests re-read the account role from the database. Password recovery/change and cross-device session revocation still need an operational email/token flow.
+- Current implementation uses strict server-side PHP sessions, a 30-minute idle limit and a 24-hour absolute limit on protected routes; protected requests re-read the account role from the database. Password recovery/change increment the session version to revoke other devices.
 - Deletion: require reauthentication/step-up, clear sessions/tokens, delete or anonymize personal progress/favorites, stop optional jobs, and disclose any legally required security/audit retention. Provide a user export before deletion and explain export expiry.
 
 ## Roles and authorization
 
 Public: browse published content and permitted API search.
 Authenticated user: only own bookmarks, positions, favorites, plans, settings, export, and deletion.
-Moderator: only explicitly assigned reports/comments and moderation actions if enabled; no role management, credentials, reset, or unrestricted user data.
-Administrator: curated-content CRUD, user support actions within scope, metrics, and operational tasks explicitly assigned.
+Administrator: curated-content CRUD, pending lesson-comment review, encrypted mail/provider settings, metrics, and operational tasks explicitly assigned.
 Owner: assign privileged admins and perform separately protected, documented destructive operations.
 
 Every protected request checks permission and object ownership on the server, including AJAX/API requests. Hide controls for convenience but never treat UI hiding as access control. Deny by default, validate role assignment, avoid direct-object-reference leaks, and audit sensitive actions with actor, target, reason, timestamp, and request ID.
@@ -39,15 +38,15 @@ Every protected request checks permission and object ownership on the server, in
 
 ## Abuse, provider, and application limits
 
-- Rate limit auth, search, write, comment/report if later enabled, upload, and expensive exports. Enforce limits server-side; return retry guidance without exposing internals.
+- Rate limit auth, search, write, comments, uploads, SMTP tests, and expensive exports. Enforce limits server-side; return retry guidance without exposing internals.
 - External HTTP calls use TLS verification, fixed provider host allowlists, strict timeouts, response size limits, schema validation, safe retry policy, and no user-supplied arbitrary URL fetch (SSRF prevention). Never scrape or ignore provider limits.
-- Quranpedia documented limit: 120 requests/minute and 10,000/day per IP; server-side caching should reduce calls and comply with its no bulk scraping/republishing policy. Sunnah key is not guaranteed. Quran Foundation credentials are backend-only and production permissions are requested. See `API_RESEARCH.md`.
+- Quranpedia documented limit: 120 requests/minute and 10,000/day per IP. Dorar uses a manually approved server-only Bearer token; preserve its required source link and grade and obey its no-scraping/no-bulk rule and 24–48 hour cache cap. See `API_RESEARCH.md`.
 - Secrets are environment/configuration-managed outside web root and source control; distinct per environment, least privilege, rotated on exposure, and redacted from logs. Use least-privilege DB user; TLS to remote DB; no credentials in dashboard.
 
 ## Privacy and retention
 
-- Collect only email/password and data necessary for requested account functionality. Quran/video progress and khatmah plans are private by default and are never public or used for ranking.
-- Tell users which provider receives data when they initiate external playback or API-backed content; embed YouTube only when requested/visible and follow current Google requirements and applicable consent/privacy law.
+- Collect only email/password, display name, constrained username, and data needed for requested account functionality. Daily aggregate activity is private and does not identify specific verses or adhkar. Quran/video progress and khatmah plans remain private and are never used for ranking.
+- Tell users which provider receives data when they initiate API-backed searches or external playback; Dorar receives hadith query text through the server proxy. Embed YouTube only when requested/visible and follow current Google requirements and applicable consent/privacy law.
 - Define retention before launch for inactive accounts, logs, rate-limit keys, exports, reports, backups, and deleted accounts. Proposed defaults: short-lived logs with redaction, expiring exports, and backups retained only for an owner-approved recovery window. These durations need owner/deployment/legal review before publication.
 - Provide account export and deletion routes, explain treatment of backups (deletion propagates as backups expire), and minimize IP/device fingerprint retention. Do not add third-party analytics until purpose, consent, and retention are approved.
 
@@ -56,7 +55,7 @@ Every protected request checks permission and object ownership on the server, in
 ### Owner-only backup create/download
 
 - The admin area supports owner-only backup creation and download. Require recent step-up authentication and a CSRF-protected POST to create an artifact. Issue the one-time download grant only through a second owner-authorized, step-up authenticated, CSRF-protected POST; bind a random grant to the owner and one backup artifact, expire it within 15 minutes, and consume it after one successful download. Do not expose static/predictable public URLs, reusable bearer links, or artifact directory paths.
-- Create a consistent database snapshot and encrypted archive containing the database, schema/migration metadata, restore manifest/checksums, uploaded book PDFs, and other Athar-managed uploaded assets necessary for content recovery. Exclude environment secrets, DB credentials, logs, caches/temp data, and externally hosted YouTube media. State this manifest to the owner before creation.
+- Create a consistent database snapshot and encrypted archive containing the database, schema/migration metadata, restore manifest/checksums, uploaded book PDFs, and other Athar-managed uploaded assets necessary for content recovery. Exclude service settings (SMTP/Dorar), environment secrets, DB credentials, logs, caches/temp data, and externally hosted YouTube media. State this manifest to the owner before creation; reconfigure service settings after restoring to a new host.
 - Write artifacts outside the public web root with restrictive owner-only filesystem permissions; use authenticated encryption at rest with keys stored separately from artifacts. Do not put encryption keys in the DB dump or archive. Keep TLS in transit and do not log download tokens or backup contents.
 - Verify archive integrity/checksum and manifest/schema readability before enabling download. Audit request, creation, verification, download, expiry, deletion and failure with actor/time/artifact ID/result; never log the bearer token or secrets.
 - Default download-artifact expiry is 24 hours. Delete expired or successfully downloaded temporary artifacts safely and record deletion; clean up abandoned partial artifacts. Durable operational recovery copies are separately encrypted/off-host and retained only for an owner-approved schedule. Account deletion propagates to backups as those copies expire; disclose this retention.

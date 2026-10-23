@@ -59,7 +59,7 @@ function require_login(): array
         header('Location: /login?next=' . rawurlencode($_SERVER['REQUEST_URI'] ?? '/account'), true, 303);
         exit;
     }
-    $statement = db()->prepare('SELECT id,email,role,session_version,email_verified_at,preferences_json FROM users WHERE id=? LIMIT 1');
+    $statement = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,preferences_json FROM users WHERE id=? LIMIT 1');
     $statement->execute([(int) $sessionUser['id']]);
     $activeUser = $statement->fetch();
     if (!$activeUser || (int) ($sessionUser['session_version'] ?? 0) !== (int) $activeUser['session_version']) {
@@ -139,6 +139,27 @@ function youtube_video_id(string $url): ?string
         $id = $match[1];
     }
     return preg_match('/^[A-Za-z0-9_-]{11}$/', $id) ? $id : null;
+}
+
+function validated_lesson_scope(int $scholarId, int $seriesId): array
+{
+    $scholarId = max(0, $scholarId);
+    $seriesId = max(0, $seriesId);
+    if ($seriesId > 0) {
+        $statement = db()->prepare('SELECT scholar_id FROM series WHERE id=? LIMIT 1');
+        $statement->execute([$seriesId]);
+        $seriesScholarId = $statement->fetchColumn();
+        if ($seriesScholarId === false) throw new RuntimeException('السلسلة المحددة غير موجودة.');
+        $seriesScholarId = (int) ($seriesScholarId ?: 0);
+        if ($scholarId > 0 && $seriesScholarId > 0 && $scholarId !== $seriesScholarId) throw new RuntimeException('العالم المحدد لا يطابق عالم هذه السلسلة.');
+        if ($scholarId === 0) $scholarId = $seriesScholarId;
+    }
+    if ($scholarId > 0) {
+        $statement = db()->prepare('SELECT id FROM scholars WHERE id=? LIMIT 1');
+        $statement->execute([$scholarId]);
+        if (!$statement->fetchColumn()) throw new RuntimeException('العالم المحدد غير موجود.');
+    }
+    return [$scholarId, $seriesId];
 }
 
 function store_book_pdf(array $file, string $storage): array
