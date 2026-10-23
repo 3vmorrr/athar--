@@ -1,5 +1,5 @@
-const MODEL_URL = new URL('../models/zipformer_interp_gentle_a05.int8.onnx', import.meta.url).href;
-const IO_URL = new URL('../models/zipformer_interp_gentle_a05.io.json', import.meta.url).href;
+const MODEL_URL = new URL('../models/zipformer_a0w_ep1_a05.int8.onnx', import.meta.url).href;
+const IO_URL = new URL('../models/zipformer_a0w_ep1_a05.io.json', import.meta.url).href;
 const CORPUS_URL = new URL('../models/zipformer_quran.json', import.meta.url).href;
 const CORE_URL = 'https://cdn.jsdelivr.net/npm/@tilawa/core@0.4.0/+esm';
 const ORT_URL = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.2/dist/ort.wasm.min.mjs';
@@ -23,6 +23,8 @@ async function fetchJson(url) {
 
 async function fetchModel(url) {
     const cache = 'caches' in self ? await caches.open(CACHE_NAME).catch(() => null) : null;
+    const previousModelUrl = new URL('../models/zipformer_interp_gentle_a05.int8.onnx', import.meta.url).href;
+    if (cache && url !== previousModelUrl) await cache.delete(previousModelUrl).catch(() => false);
     const cached = await cache?.match(url);
     if (cached) {
         tell({ type: 'loading', percent: 100 });
@@ -67,6 +69,7 @@ async function initialize(quran) {
         corpus,
         quran,
         executionProviders: ['wasm'],
+        structural: { timing: 'pause' },
         tailSeconds: 1.5,
         onEvent: (message) => tell(message),
     });

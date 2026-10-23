@@ -17,6 +17,7 @@ These artefacts are **NPL-1.2 Derivatives** of Quran-Lab's Work. NPL-1.2 §7 is 
 - `data/prompter/quran_phoneme_zipformer.onnx` (byte-identical to Quran-Lab `zipformer_p_arabic_v3.1.int8.onnx`)
 - Fine-tuned checkpoints (`ft-*`)
 - Blended model `interp-gentle-a0.5` (0.5 v3.1 + 0.5 ft-gentle)
+- Zipformer model `a0w-ep1-a0.5` from Tilawa's release artifact `zipformer_a0w_ep1_a05.int8.onnx`
 - 251-token vocabulary `experiments/prompter-zipformer/engine/model/tokens.txt`
 - Phoneme lexicon in `data/prompter/quran.json`
 - Training labels produced from that lexicon

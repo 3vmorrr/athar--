@@ -11,7 +11,7 @@ if (
     && $requestedFile !== false
     && str_starts_with($requestedFile, $publicRoot . DIRECTORY_SEPARATOR)
     && is_file($requestedFile)
-    && in_array(strtolower(pathinfo($requestedFile, PATHINFO_EXTENSION)), ['css', 'js', 'png', 'jpg', 'jpeg', 'webp', 'svg', 'ico', 'webmanifest'], true)
+    && in_array(strtolower(pathinfo($requestedFile, PATHINFO_EXTENSION)), ['css', 'js', 'json', 'onnx', 'ttf', 'woff', 'woff2', 'otf', 'png', 'jpg', 'jpeg', 'webp', 'svg', 'ico', 'webmanifest'], true)
 ) {
     return false;
 }

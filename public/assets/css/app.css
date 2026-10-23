@@ -24,6 +24,7 @@
     --color-shadow-strong: #18342620;
     --font-ui: "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
     --font-reading: "Noto Naskh Arabic", "Amiri", "Times New Roman", serif;
+    --font-quran: "Amiri Quran", "Noto Naskh Arabic", "Amiri", "Times New Roman", serif;
     --content-width: 1200px;
     --radius-card: 1.2rem;
     --space-section: clamp(3rem, 5.5vw, 4.75rem);
@@ -295,10 +296,15 @@ h1, h2, p { margin-block-start: 0; }
 .quran-tool-icon svg { width: 2rem; height: 2rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .recitation-review .section-heading { margin-block-end: 0.65rem; }
 .recitation-review-intro, .recitation-review-credit { color: var(--color-text-secondary); font-size: 0.9rem; line-height: 1.85; }
+.review-live-readout { margin-block: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--color-border); border-radius: 0.9rem; background: var(--color-surface-secondary); }
+.review-live-progress { height: 0.45rem; overflow: hidden; border-radius: 999px; background: var(--color-border); }
+.review-live-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--color-primary), #47a58e); transition: width 180ms ease; }
 .recitation-review-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 .recitation-review-controls .button { min-height: 48px; }
 .review-beep-option { min-height: 44px; display: inline-flex; align-items: center; gap: 0.55rem; color: var(--color-text-secondary); font-size: 0.9rem; font-weight: 700; }
 .review-beep-option input { width: 20px; height: 20px; accent-color: var(--color-primary); }
+.review-vibrate-option { min-height: 44px; display: inline-flex; align-items: center; gap: 0.55rem; color: var(--color-text-secondary); font-size: 0.9rem; font-weight: 700; }
+.review-vibrate-option input { width: 20px; height: 20px; accent-color: var(--color-primary); }
 .recitation-review-status, .recitation-review-result { margin-block: 1rem 0; padding: 0.8rem 1rem; border-radius: 0.75rem; background: var(--color-surface-secondary); color: var(--color-text); line-height: 1.8; }
 .recitation-review-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-block-start: 0.7rem; }
 .recitation-review-actions .button { min-height: 44px; }
@@ -307,8 +313,10 @@ h1, h2, p { margin-block-start: 0; }
 .verse-word { display: inline; padding: 0.05em 0.1em; border-radius: 0.25em; transition: background-color 180ms ease, color 180ms ease; }
 .verse-word.is-possible-error { background: #fee2e2; color: #a32020; text-decoration: underline wavy #a32020; text-decoration-thickness: 1.5px; }
 .verse-word.is-reviewed-correct { background: #d9f1e4; color: #176246; }
+.verse-word.is-review-current { background: #fff0bc; color: #704b00; box-shadow: 0 0 0 2px #e4b844; }
 [data-theme="dark"] .verse-word.is-possible-error { background: #552a31; color: #ffd4d4; text-decoration-color: #ff8b8b; }
 [data-theme="dark"] .verse-word.is-reviewed-correct { background: #193c32; color: #c3f2da; }
+[data-theme="dark"] .verse-word.is-review-current { background: #534321; color: #ffedb8; box-shadow: 0 0 0 2px #c69c3c; }
 .verse-list li { min-width: 0; border-radius: 0.45rem; transition: background-color 160ms ease; }
 .verse-list li.verse-surah-heading { flex: 1 0 100%; margin-block-start: 0.8rem; padding-block: 0.45rem; border-block-end: 1px solid var(--color-border); border-radius: 0; color: var(--color-primary); font-family: var(--font-ui); font-size: 1rem; font-weight: 700; }
 .verse-list li.is-playing { background: var(--color-primary-soft); box-shadow: 0 0 0 0.2rem var(--color-primary-soft); }
@@ -652,4 +660,160 @@ ol.knowledge-results > li { padding-inline-start: 0.5rem; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+@font-face {
+    font-family: "Amiri Quran";
+    src: url("/assets/fonts/amiri-quran-regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* Use a dedicated Quran face and a shared rhythm across the Quran tools. */
+.quran-reading, .quran-reading h2, .verse-list li { font-family: var(--font-quran); }
+.verse-list li { line-height: 2.35; }
+.recitation-review { display: grid; gap: 0.15rem; padding: clamp(1.2rem, 3vw, 2rem); }
+.recitation-review .section-heading { align-items: center; margin-block-end: 0; }
+.recitation-review .section-heading h2 { margin-block: 0.3rem 0; font-size: clamp(1.55rem, 2.6vw, 2rem); }
+.review-local-badge { min-height: 38px; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+.review-local-badge > span { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--color-primary); box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--color-primary) 16%, transparent); }
+.recitation-review-intro { max-width: 82ch; margin-block: 0.4rem 0.8rem; }
+.review-live-readout { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 0.8rem; margin-block: 0.4rem 0.85rem; padding: clamp(1rem, 3vw, 1.65rem); border: 1px solid var(--color-border); border-radius: 1.2rem; background: linear-gradient(145deg, var(--color-surface-secondary), color-mix(in srgb, var(--color-primary-soft) 42%, var(--color-surface-raised))); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-white) 55%, transparent); }
+.review-readout-heading, .review-progress-meta { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.review-readout-heading .eyebrow { color: var(--color-primary-strong); }
+.review-listening-indicator { display: inline-flex; align-items: center; gap: 0.18rem; min-height: 30px; color: var(--color-text-secondary); font-size: 0.78rem; font-weight: 700; }
+.review-listening-indicator i { width: 3px; height: 8px; border-radius: 999px; background: var(--color-primary); opacity: 0.5; }
+.review-listening-indicator i:nth-child(2), .review-listening-indicator i:nth-child(4) { height: 13px; }
+.review-listening-indicator i:nth-child(3) { height: 17px; }
+.review-listening-indicator.is-listening i { opacity: 1; transition: height 100ms ease; }
+.review-empty-state { margin: 0; color: var(--color-text-muted); font-size: 0.85rem; text-align: center; }
+.review-progress-meta { margin-block: auto 0.5rem; color: var(--color-text-secondary); font-size: 0.78rem; font-weight: 700; }
+.review-live-progress { height: 0.55rem; }
+.recitation-review-controls { min-height: 56px; gap: 0.65rem 1rem; }
+.recitation-review-controls .button { min-width: 150px; }
+.review-beep-option, .review-vibrate-option { margin-inline-start: auto; }
+.recitation-review-status, .recitation-review-result { margin-block-start: 0.7rem; border: 1px solid var(--color-border); }
+.recitation-review-status[data-state="error"] { border-inline-start: 4px solid var(--color-danger); background: var(--color-danger-soft); }
+.recitation-review-status[data-state="ready"] { border-inline-start: 4px solid var(--color-primary); }
+.recitation-review-result:not([hidden]) { border-inline-start: 4px solid var(--color-danger); background: var(--color-danger-soft); }
+.recitation-review-credit { margin-block: 0.8rem 0; padding-block-start: 0.75rem; border-block-start: 1px solid var(--color-border); }
+.verse-word { padding: 0; border-radius: 0; }
+.verse-word.is-reviewed-correct { background: transparent; color: var(--color-text); }
+.verse-word.is-review-current { background: var(--color-warning-soft); color: var(--color-warning); box-shadow: none; text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 2px; text-underline-offset: 0.22em; }
+.review-word { display: inline; margin-inline-end: 0.2em; }
+.review-word.is-possible-error { border-radius: 0.15em; background: var(--color-danger-soft); color: var(--color-danger); text-decoration: underline wavy var(--color-danger); text-decoration-thickness: 1.5px; text-underline-offset: 0.2em; }
+.review-verse-end { padding-inline: 0.15em; color: var(--color-primary); font-size: 0.6em; }
+[data-theme="dark"] .review-live-readout { box-shadow: inset 0 1px 0 #ffffff0c, 0 12px 30px var(--color-shadow); }
+[data-theme="dark"] .verse-word.is-reviewed-correct { color: var(--color-text); }
+
+@media (max-width: 700px) {
+    .recitation-review { padding: 1rem; }
+    .recitation-review .section-heading { align-items: flex-start; flex-direction: column; gap: 0.7rem; }
+    .review-local-badge { min-height: 34px; font-size: 0.76rem; }
+    .review-live-readout { min-height: 0; padding: 1rem; }
+    .review-listening-indicator { font-size: 0.72rem; }
+    .recitation-review-controls { grid-template-columns: 1fr 1fr; }
+    .recitation-review-controls .button { min-width: 0; }
+    .review-beep-option, .review-vibrate-option { grid-column: 1 / -1; justify-content: center; margin-inline-start: 0; }
+}
+
+.review-live-readout { min-height: 0; display: grid; grid-template-rows: auto auto auto auto; align-content: start; gap: 0.8rem; }
+.review-mushaf-page { width: min(100%, 900px); min-height: 0; display: grid; grid-template-rows: auto auto auto auto; align-content: start; gap: 0.6rem; justify-self: center; padding: clamp(1rem, 3vw, 1.75rem); border: 3px double color-mix(in srgb, var(--color-accent) 50%, var(--color-border)); border-radius: 0.65rem; background: var(--color-surface-raised); box-shadow: 0 10px 26px var(--color-shadow); }
+.review-mushaf-page-header { display: flex; align-items: center; justify-content: center; gap: 1rem; padding-block: 0.25rem 0.75rem; border-block-end: 1px solid var(--color-border); text-align: center; }
+.review-mushaf-page-header > div { display: grid; gap: 0.1rem; }
+.review-mushaf-page-header strong { color: var(--color-primary-strong); font-family: var(--font-reading); font-size: 1.2rem; }
+.review-mushaf-page-header small { color: var(--color-text-muted); font-size: 0.75rem; }
+.review-mushaf-ornament { color: var(--color-accent); font-family: var(--font-quran); font-size: 1.1rem; }
+.review-mushaf-lines { min-height: 0; display: block; padding-block: 0.25rem; }
+.review-mushaf-ayah { min-height: 2.25em; margin: 0; color: var(--color-text); font-family: var(--font-quran); font-size: clamp(1.2rem, 2.4vw, 1.65rem); font-weight: 400; line-height: 2.15; text-align: justify; }
+.review-mushaf-slot { width: clamp(1.05rem, calc(var(--slot-units) * 0.48rem), 4.5rem); min-width: 0.7rem; height: 1.2em; display: inline-block; margin-inline: 0.1em; border-block-end: 1px dotted color-mix(in srgb, var(--color-primary) 34%, var(--color-border)); color: transparent; opacity: 0.72; vertical-align: baseline; }
+.review-mushaf-slot.is-revealed { width: auto; height: auto; border: 0; color: var(--color-text); opacity: 1; animation: review-ink 220ms ease-out both; }
+@keyframes review-ink { from { opacity: 0; transform: translateY(-0.12em); } to { opacity: 1; transform: translateY(0); } }
+.review-mushaf-slot.is-review-current { border-radius: 0.18em; background: var(--color-warning-soft); color: var(--color-warning); outline: 1px solid color-mix(in srgb, var(--color-accent) 65%, transparent); text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
+.review-mushaf-slot.is-possible-error { border-radius: 0.15em; background: var(--color-danger-soft); color: var(--color-danger); text-decoration: underline wavy var(--color-danger); text-decoration-thickness: 1.5px; text-underline-offset: 0.18em; }
+.review-mushaf-ayah-number { min-width: 2.4em; display: inline-grid; place-items: center; margin-inline-start: 0.25rem; border: 1px solid var(--color-border); border-radius: 50%; color: var(--color-primary); font-family: var(--font-ui); font-size: 0.52em; font-weight: 700; white-space: nowrap; vertical-align: middle; }
+.review-empty-state { margin: 0; color: var(--color-text-muted); font-size: 0.85rem; text-align: center; }
+.review-mushaf-page-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding-block-start: 0.5rem; border-block-start: 1px solid var(--color-border); color: var(--color-text-muted); font-size: 0.72rem; }
+[data-theme="dark"] .review-mushaf-page { background: linear-gradient(150deg, var(--color-surface-raised), color-mix(in srgb, var(--color-surface) 72%, var(--color-accent-soft))); }
+@media (max-width: 700px) {
+    .review-mushaf-page { min-height: 370px; gap: 0.45rem; padding: 0.8rem; }
+    .review-mushaf-page-header { gap: 0.6rem; }
+    .review-mushaf-page-header strong { font-size: 1.05rem; }
+    .review-mushaf-lines { min-height: 290px; gap: 0.15rem; }
+    .review-mushaf-ayah { min-height: 2.4em; font-size: clamp(1.1rem, 4.6vw, 1.45rem); line-height: 2.1; }
+    .review-mushaf-slot { width: clamp(0.95rem, calc(var(--slot-units) * 0.4rem), 3.8rem); margin-inline: 0.06em; }
+}
+
+/* Keep Quran text in a continuous Mushaf-style flow at every viewport width. */
+.quran-page { min-width: 0; }
+.quran-heading { align-items: center; }
+.quran-home-link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0.55rem 0.9rem; border: 1px solid var(--color-border); border-radius: 0.7rem; background: var(--color-surface-raised); }
+.quran-home-link:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.quran-tool-nav { position: static; width: 100%; justify-content: flex-start; margin-block: 0 1.25rem; border-radius: 0.85rem; }
+.quran-tool-nav a[aria-current="page"] { background: var(--color-primary-soft); color: var(--color-primary-strong); }
+.quran-controls { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.quran-controls-review { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.quran-controls:not(.quran-controls-review) .reading-size { grid-column: 1 / -1; }
+.quran-controls label { font-size: 0.9rem; }
+.quran-controls .button { white-space: normal; }
+.quran-reading { width: 100%; max-width: 92rem; margin-inline: auto; }
+.quran-reading .verse-list { display: block; margin: 0; padding: 0; text-align: justify; text-align-last: start; line-height: 2.5; }
+.quran-reading .verse-list li:not(.verse-surah-heading) { display: inline; margin: 0; padding: 0; font-size: var(--reading-font-size); line-height: inherit; }
+.quran-reading .verse-list li.verse-surah-heading { display: block; margin-block: 1.4rem 0.65rem; padding: 0.6rem 1rem; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface-secondary); text-align: center; }
+.quran-reading .verse-text { unicode-bidi: plaintext; }
+.quran-reading .verse-number { min-width: 1.8em; min-height: 1.8em; margin-inline: 0.18em; }
+.quran-reading .ayah-actions { white-space: nowrap; }
+.quran-attribution { max-width: 75ch; font-size: 0.9rem; line-height: 1.8; }
+.quran-search-results { grid-template-columns: 1fr; }
+.tafsir-frame { min-height: clamp(420px, 72vh, 760px); }
+.tafsir-frame iframe { height: clamp(420px, 72vh, 760px); min-height: 0; }
+.recitation-review, .review-live-readout, .review-mushaf-page { min-width: 0; }
+.review-live-readout { grid-template-columns: minmax(0, 1fr); }
+.review-mushaf-page { width: 100%; max-width: 1180px; justify-self: center; margin-inline: auto; grid-column: 1 / -1; }
+.review-mushaf-page-header { min-width: 0; }
+.review-mushaf-lines { display: block; min-height: 0; padding-block: 0.6rem; font-family: var(--font-quran); font-size: clamp(1.7rem, 2.45vw, 2rem); line-height: 2.55; text-align: justify; text-align-last: start; overflow-wrap: normal; }
+.review-mushaf-ayah { display: inline; min-height: 0; margin: 0; font: inherit; line-height: inherit; }
+.review-mushaf-slot { width: clamp(1.1rem, calc(var(--slot-units) * 0.56rem), 5.6rem); max-width: 100%; height: 1.25em; margin-inline: 0.08em; vertical-align: baseline; }
+.review-mushaf-slot.is-revealed { display: inline-block; }
+.review-mushaf-ayah-number { min-width: 2.1em; min-height: 2.1em; margin-inline: 0.12em; font-size: 0.42em; white-space: nowrap; }
+.review-empty-state { margin-block: 0.25rem; }
+.review-mushaf-page-footer { min-height: 2rem; font-size: 0.8rem; }
+.quran-controls-review .button { min-height: 48px; }
+
+@media (max-width: 920px) {
+    .quran-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .quran-controls-review { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .review-mushaf-page { max-width: 100%; }
+    .review-mushaf-lines { min-height: 0; font-size: clamp(1.55rem, 3vw, 1.85rem); line-height: 2.45; }
+}
+
+@media (max-width: 700px) {
+    .quran-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .quran-heading { align-items: flex-start; }
+    .quran-tool-nav { margin-block-end: 1rem; padding: 0.3rem; }
+    .quran-tool-nav a { min-height: 44px; padding-inline: 0.8rem; }
+    .quran-reading { padding: 1rem; }
+    .quran-reading .verse-list { font-size: 1.48rem; line-height: 2.35; }
+    .quran-reading .verse-list li:not(.verse-surah-heading) { font-size: inherit; }
+    .quran-reading .ayah-actions { display: inline-flex; }
+    .quran-reading .ayah-actions button { min-width: 44px; min-height: 44px; }
+    .quran-controls-review { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .review-mushaf-page { min-height: 0; padding: 0.85rem; }
+    .review-mushaf-lines { min-height: 0; font-size: clamp(1.45rem, 5vw, 1.75rem); line-height: 2.45; }
+    .review-mushaf-slot { width: clamp(1rem, calc(var(--slot-units) * 0.48rem), 4.8rem); margin-inline: 0.05em; }
+    .recitation-review-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .quran-audio { padding: 1rem; }
+    .quran-tool-nav a { font-size: 0.84rem; }
+}
+
+@media (max-width: 390px) {
+    .quran-controls { grid-template-columns: 1fr; }
+    .quran-controls-review { grid-template-columns: 1fr; }
+    .quran-controls-review .button { grid-column: auto; }
+    .quran-reading .verse-list { font-size: 1.35rem; line-height: 2.3; }
+    .review-mushaf-page-header { gap: 0.4rem; }
+    .review-mushaf-page-header strong { font-size: 1rem; }
+    .review-mushaf-page-header small { font-size: 0.72rem; }
+    .review-mushaf-lines { min-height: 0; font-size: 1.4rem; line-height: 2.35; }
+    .review-mushaf-slot { width: clamp(0.92rem, calc(var(--slot-units) * 0.43rem), 4.3rem); }
 }
