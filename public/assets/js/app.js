@@ -159,6 +159,13 @@
         const tafsirSection = quranReader.querySelector('[data-quran-tafsir]');
         const tafsirButton = quranReader.querySelector('[data-tafsir-toggle]');
         const tafsirFrame = quranReader.querySelector('[data-tafsir-frame]');
+        const reviewPanel = quranReader.querySelector('[data-recitation-review]');
+        const reviewStart = quranReader.querySelector('[data-review-start]');
+        const reviewStop = quranReader.querySelector('[data-review-stop]');
+        const reviewStatus = quranReader.querySelector('[data-review-status]');
+        const reviewResult = quranReader.querySelector('[data-review-result]');
+        const reviewActions = quranReader.querySelector('[data-review-actions]');
+        const reviewBeep = quranReader.querySelector('[data-review-beep]');
         const baseUrl = 'https://api.quranpedia.net/v1';
         const surahNames = Array.from(surahInput.options, (option) => option.textContent.replace(/^\d+\.\s*/, '').trim());
         let fontSize = 1.8;
@@ -283,7 +290,13 @@
                     previousSurah = verse.surah;
                 }
                 const item = document.createElement('li'); item.id = `ayah-${verse.surah}-${verse.numberInSurah}`;
-                const text = document.createElement('span'); text.className = 'verse-text'; text.textContent = verse.text;
+                const text = document.createElement('span'); text.className = 'verse-text';
+                if (quranReader.dataset.tool === 'review') {
+                    verse.text.trim().split(/\s+/u).forEach((part, index) => {
+                        const word = document.createElement('span'); word.className = 'verse-word'; word.dataset.wordIndex = String(index); word.textContent = part;
+                        text.append(word, document.createTextNode(index ? ' ' : ''));
+                    });
+                } else text.textContent = verse.text;
                 const reveal = document.createElement('button'); reveal.type = 'button'; reveal.className = 'verse-reveal'; reveal.textContent = 'أظهر الآية'; reveal.hidden = true;
                 reveal.setAttribute('aria-label', `إظهار الآية ${verse.numberInSurah} من ${surahNames[verse.surah - 1]}`);
                 reveal.addEventListener('click', () => { text.hidden = false; reveal.hidden = true; });
@@ -345,7 +358,7 @@
                 if (!allVerses.length) throw new Error('provider-shape');
                 if (thisRequest !== requestVersion) return;
                 if (quranReader.dataset.tool === 'daily') loadedVerses = allVerses;
-                else if (quranReader.dataset.tool === 'ayah' || quranReader.dataset.tool === 'tafsir') loadedVerses = ayah ? allVerses.filter((verse) => verse.numberInSurah === ayah) : allVerses;
+                else if (['ayah', 'tafsir', 'review'].includes(quranReader.dataset.tool)) loadedVerses = ayah ? allVerses.filter((verse) => verse.numberInSurah === ayah) : allVerses;
                 else loadedVerses = mode === 'surah' && ayah && quranReader.dataset.tool !== 'listen' ? allVerses.filter((verse) => verse.numberInSurah >= ayah) : allVerses;
                 if (!loadedVerses.length) throw new Error('empty-range');
                 const currentVerse = loadedVerses[0];
@@ -370,6 +383,7 @@
                 }
                 status.hidden = true; status.dataset.state = 'ready';
                 if (audioWrap) audioWrap.hidden = quranReader.dataset.tool !== 'listen';
+                if (reviewPanel) reviewPanel.hidden = quranReader.dataset.tool !== 'review' || !ayah;
                 if (mode === 'surah' && ayah) content.querySelector(`#ayah-${surah}-${ayah}`)?.scrollIntoView({ block: 'center' });
                 configurePlayback(false);
                 if (audioStatus) audioStatus.textContent = 'الموضع جاهز. اضغط تشغيل للاستماع.';
@@ -411,9 +425,182 @@
             const query = new URLSearchParams({ tool: quranReader.dataset.tool, mode: modeInput.value, surah: surahInput.value, juz: juzInput.value, hizb: hizbInput?.value || '1', page: pageInput.value });
             if (modeInput.value === 'surah' && ayahInput.value) query.set('ayah', ayahInput.value);
             history.replaceState(null, '', `/quran?${query}`);
+            if (quranReader.dataset.tool === 'review' && reviewWorker) {
+                reviewStopCapture(); reviewWorker.terminate(); reviewWorker = null; reviewReady = false; reviewStartQueued = false;
+                if (reviewResult) reviewResult.hidden = true;
+                reviewSetStatus(reviewText('يتم تحميل الآية المختارة.', 'Loading the selected verse.'));
+            }
             loadReading();
         });
         quranReader.querySelectorAll('[data-font-step]').forEach((button) => button.addEventListener('click', () => { fontSize = Math.min(2.8, Math.max(1.2, fontSize + Number(button.dataset.fontStep) * 0.2)); quranReader.style.setProperty('--reading-font-size', `${fontSize}rem`); }));
+
+        let reviewWorker = null;
+        let reviewStream = null;
+        let reviewContext = null;
+        let reviewProcessor = null;
+        let reviewPendingChunks = [];
+        let reviewPendingLength = 0;
+        let reviewReady = false;
+        let reviewStartQueued = false;
+        let reviewIssueKey = '';
+        let reviewCounted = false;
+        const reviewText = (ar, en) => root.lang === 'en' ? en : ar;
+        const reviewSetStatus = (message, state = 'info') => { if (reviewStatus) { reviewStatus.textContent = message; reviewStatus.dataset.state = state; } };
+        const reviewStopCapture = () => {
+            if (reviewProcessor) { reviewProcessor.onaudioprocess = null; reviewProcessor.disconnect(); reviewProcessor = null; }
+            if (reviewStream) { reviewStream.getTracks().forEach((track) => track.stop()); reviewStream = null; }
+            reviewPendingChunks = []; reviewPendingLength = 0;
+            if (reviewStart) reviewStart.disabled = !loadedVerses.length;
+            if (reviewStop) reviewStop.disabled = true;
+        };
+        const reviewResample = (input, fromRate) => {
+            const ratio = fromRate / 16000;
+            const length = Math.max(1, Math.floor(input.length / ratio));
+            const output = new Float32Array(length);
+            for (let i = 0; i < length; i++) {
+                const at = i * ratio; const left = Math.floor(at); const fraction = at - left;
+                output[i] = input[left] * (1 - fraction) + (input[Math.min(left + 1, input.length - 1)] || 0) * fraction;
+            }
+            return output;
+        };
+        const reviewStartCapture = async () => {
+            if (!reviewContext || !reviewStream || !reviewReady) return;
+            const expected = loadedVerses.find((verse) => verse.surah === Number(surahInput.value) && verse.numberInSurah === Number(ayahInput.value));
+            if (!expected) { reviewSetStatus(reviewText('اختر آية صالحة أولًا.', 'Choose a valid verse first.'), 'error'); return; }
+            reviewWorker.postMessage({ type: 'start', passage: { surah: expected.surah, ayah: expected.numberInSurah } });
+            const source = reviewContext.createMediaStreamSource(reviewStream);
+            reviewProcessor = reviewContext.createScriptProcessor(4096, 1, 1);
+            const muted = reviewContext.createGain(); muted.gain.value = 0;
+            reviewProcessor.onaudioprocess = (event) => {
+                const data = event.inputBuffer.getChannelData(0);
+                reviewPendingChunks.push(new Float32Array(data)); reviewPendingLength += data.length;
+                if (reviewPendingLength < reviewContext.sampleRate * 0.42) return;
+                const merged = new Float32Array(reviewPendingLength); let offset = 0;
+                reviewPendingChunks.forEach((chunk) => { merged.set(chunk, offset); offset += chunk.length; });
+                reviewPendingChunks = []; reviewPendingLength = 0;
+                const samples = reviewResample(merged, reviewContext.sampleRate);
+                reviewWorker.postMessage({ type: 'audio', samples }, [samples.buffer]);
+            };
+            source.connect(reviewProcessor); reviewProcessor.connect(muted); muted.connect(reviewContext.destination);
+            reviewStartQueued = false; reviewStart.disabled = true; reviewStop.disabled = false; reviewCounted = false; reviewIssueKey = '';
+            reviewResult.hidden = true; reviewSetStatus(reviewText('نستمع الآن. اقرأ الآية الظاهرة بوضوح وبوتيرة معتدلة.', 'Listening. Recite the displayed verse clearly at a steady pace.'), 'ready');
+        };
+        const reviewBeepOnce = () => {
+            if (!reviewBeep?.checked || !reviewContext) return;
+            const oscillator = reviewContext.createOscillator(); const gain = reviewContext.createGain();
+            oscillator.frequency.value = 660; gain.gain.setValueAtTime(0.0001, reviewContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, reviewContext.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, reviewContext.currentTime + 0.18);
+            oscillator.connect(gain); gain.connect(reviewContext.destination); oscillator.start(); oscillator.stop(reviewContext.currentTime + 0.2);
+        };
+        const reviewHandleEvent = (message) => {
+            if (message.type === 'correction') {
+                const issue = message.state?.issue;
+            content.querySelectorAll('.verse-word.is-possible-error, .verse-word.is-reviewed-correct').forEach((word) => word.classList.remove('is-possible-error', 'is-reviewed-correct'));
+                if (issue && ['possible_omission', 'possible_substitution', 'possible_vowel', 'possible_repetition', 'possible_skipped_ayah', 'unclear_ayah'].includes(issue.kind)) {
+                    const targetVerse = content.querySelector(`#ayah-${issue.surah}-${issue.ayah}`);
+                    const words = targetVerse?.querySelectorAll('.verse-word') || [];
+                    const wholeAyah = ['possible_skipped_ayah', 'unclear_ayah'].includes(issue.kind);
+                    const word = wholeAyah ? null : words[issue.word];
+                    if (targetVerse && (word || wholeAyah)) {
+                        const corrected = message.state?.phase === 'corrected';
+                        const markedWords = wholeAyah ? words : [word];
+                        markedWords.forEach((item) => item.classList.add(corrected ? 'is-reviewed-correct' : 'is-possible-error'));
+                        if (corrected) {
+                            reviewSetStatus(reviewText('تم رصد تحسن في إعادة المحاولة.', 'The retry appears improved.'), 'ready');
+                            reviewResult.textContent = reviewText('تحسّنت المحاولة بحسب النموذج. تظل النتيجة استرشادية.', 'The model detected an improved retry. This result is still advisory.');
+                            reviewActions.hidden = false;
+                            reviewActions.querySelector('[data-review-action="retry"]').hidden = true;
+                            reviewActions.querySelector('[data-review-action="continue"]').hidden = false;
+                            reviewActions.querySelector('[data-review-action="dismiss"]').hidden = true;
+                        } else {
+                            const issueKey = `${issue.surah}:${issue.ayah}:${issue.word}:${issue.kind}`;
+                            if (issueKey !== reviewIssueKey) { reviewIssueKey = issueKey; reviewBeepOnce(); }
+                            reviewResult.textContent = wholeAyah
+                                ? reviewText('لم يتمكن النموذج من متابعة الآية بثقة؛ راجعها كاملة بنفسك.', 'The model could not confidently follow this verse; please check the whole verse yourself.')
+                                : reviewText(`تنبيه: قد تحتاج كلمة «${word.textContent}» إلى مراجعة. قد يخطئ النموذج؛ استمع إلى تلاوتك وتحقق بنفسك.`, `Possible issue near “${word.textContent}”. The model can be wrong; listen and check the word yourself.`);
+                            reviewActions.hidden = message.state?.phase !== 'error' && message.state?.phase !== 'retrying';
+                            reviewActions.querySelector('[data-review-action="retry"]').hidden = message.state?.phase === 'retrying';
+                            reviewActions.querySelector('[data-review-action="continue"]').hidden = message.state?.phase === 'retrying';
+                            reviewActions.querySelector('[data-review-action="dismiss"]').hidden = message.state?.phase === 'retrying';
+                        }
+                        reviewResult.hidden = false;
+                    }
+                } else reviewActions.hidden = true;
+            } else if (message.type === 'correction_note') {
+                reviewSetStatus(reviewText('ملاحظة استرشادية: ربما تكررت كلمة. راجع الآية بنفسك.', 'Advisory: a word may have been repeated. Please check the verse.'), 'info');
+            } else if (message.type === 'verse_match') {
+                reviewSetStatus(reviewText('تمت مطابقة الآية مع موضع القراءة.', 'The recitation matched the selected verse.'), 'ready');
+            } else if (message.type === 'loading') {
+                reviewSetStatus(reviewText(`جارٍ تنزيل النموذج وحفظه على جهازك: ${message.percent}%`, `Downloading and caching the on-device model: ${message.percent}%`), 'loading');
+            } else if (message.type === 'loading_status') {
+                reviewSetStatus(reviewText('جارٍ تجهيز أداة المراجعة…', 'Preparing the review engine…'), 'loading');
+            } else if (message.type === 'ready') {
+                reviewReady = true;
+                if (reviewStartQueued) reviewStartCapture();
+                else reviewSetStatus(reviewText('النموذج جاهز على هذا الجهاز. اضغط «ابدأ الاستماع».', 'The model is ready on this device. Press “Start listening”.'), 'ready');
+            } else if (message.type === 'stopped') {
+                if (reviewActions) reviewActions.hidden = true;
+                reviewSetStatus(reviewText('اكتملت هذه المحاولة. التنبيهات استرشادية؛ تحقّق من الكلمات بنفسك.', 'This review is complete. Alerts are advisory; check each word yourself.'), 'ready');
+            } else if (message.type === 'error') {
+                reviewReady = false; reviewStartQueued = false; reviewStopCapture();
+                reviewWorker?.terminate(); reviewWorker = null;
+                reviewSetStatus(reviewText(`تعذر تشغيل المراجعة: ${message.message}`, `Review could not start: ${message.message}`), 'error');
+            }
+        };
+        const reviewEnsureWorker = () => {
+            if (!reviewWorker) {
+                reviewWorker = new Worker('/assets/js/recitation-worker.js', { type: 'module' });
+                reviewWorker.addEventListener('message', (event) => reviewHandleEvent(event.data));
+                reviewWorker.addEventListener('error', () => { reviewStartQueued = false; reviewStopCapture(); reviewWorker?.terminate(); reviewWorker = null; reviewReady = false; reviewSetStatus(reviewText('تعذر تحميل محرك المراجعة. تحقق من الاتصال وحاول مجددًا.', 'The review engine failed to load. Check your connection and try again.'), 'error'); });
+                reviewWorker.postMessage({ type: 'init', quran: loadedVerses.map((item) => ({ surah: item.surah, ayah: item.numberInSurah, text_uthmani: item.text, surah_name: surahNames[item.surah - 1], surah_name_en: `Surah ${item.surah}` })) });
+            } else if (reviewReady) return;
+            reviewStartQueued = true;
+            reviewSetStatus(reviewText('يتم تجهيز النموذج القرآني المجاني على جهازك. التنزيل الأول نحو 75 ميجابايت.', 'Preparing the free Quran model on your device. The first download is about 75 MB.'), 'loading');
+        };
+        reviewStart?.addEventListener('click', async () => {
+            if (!loadedVerses.length || !Number(ayahInput.value)) { reviewSetStatus(reviewText('اختر السورة والآية ثم اضغط «اختيار الآية».', 'Choose a surah and verse, then press “Select verse”.'), 'error'); return; }
+            reviewStart.disabled = true;
+            try {
+                if (!navigator.mediaDevices?.getUserMedia) throw new Error('microphone-unavailable');
+                reviewStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                reviewContext ||= new AudioContextClass();
+                await reviewContext.resume(); reviewEnsureWorker();
+                if (reviewReady) reviewStartCapture();
+            } catch (_) {
+                reviewStopCapture();
+                reviewSetStatus(reviewText('لم نتمكن من فتح الميكروفون. اسمح به وتأكد من استخدام HTTPS أو localhost.', 'Microphone access failed. Allow access and use HTTPS or localhost.'), 'error');
+            }
+        });
+        reviewStop?.addEventListener('click', () => {
+            if (reviewPendingLength && reviewWorker) {
+                const merged = new Float32Array(reviewPendingLength); let offset = 0;
+                reviewPendingChunks.forEach((chunk) => { merged.set(chunk, offset); offset += chunk.length; });
+                const samples = reviewResample(merged, reviewContext.sampleRate);
+                reviewWorker.postMessage({ type: 'audio', samples }, [samples.buffer]);
+            }
+            reviewStopCapture(); reviewStartQueued = false;
+            if (reviewWorker && reviewReady) reviewWorker.postMessage({ type: 'stop' });
+            reviewSetStatus(reviewText('انتهى التسجيل. جارٍ إنهاء المراجعة…', 'Recording stopped. Finishing the review…'), 'loading');
+            if (!reviewCounted && quranReader.dataset.signedIn === 'true') {
+                reviewCounted = true;
+                const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
+                const body = new URLSearchParams({ surah: surahInput.value, ayah: ayahInput.value, action: 'review' });
+                fetch('/api/quran/progress', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'X-CSRF-Token': token, Accept: 'application/json' }, body, credentials: 'same-origin' }).catch(() => {});
+            }
+        });
+        reviewActions?.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-review-action]');
+            if (!button || !reviewWorker) return;
+            reviewWorker.postMessage({ type: 'correct', action: button.dataset.reviewAction });
+            if (button.dataset.reviewAction === 'retry') reviewSetStatus(reviewText('أعد الآية كاملة؛ ما زال الميكروفون يعمل.', 'Repeat the full verse; the microphone is still on.'), 'ready');
+            if (['continue', 'dismiss'].includes(button.dataset.reviewAction)) {
+                reviewActions.hidden = true;
+                reviewResult.hidden = true;
+                content.querySelectorAll('.verse-word.is-possible-error, .verse-word.is-reviewed-correct').forEach((word) => word.classList.remove('is-possible-error', 'is-reviewed-correct'));
+            }
+        });
 
         const loadReciters = async (scope = scopeValue()) => {
             if (!reciterInput) return;
@@ -470,9 +657,9 @@
             Object.entries(actions).forEach(([name, handler]) => { try { session.setActionHandler(name, handler); } catch (_) { /* Action is not supported by this browser. */ } });
         }
         if (quranReader.dataset.tool === 'listen') loadReciters(scopeValue());
-        if (['ayah', 'tafsir'].includes(quranReader.dataset.tool) && !quranReader.dataset.ayah) {
+        if (['ayah', 'tafsir', 'review'].includes(quranReader.dataset.tool) && !quranReader.dataset.ayah) {
             status.dataset.state = 'info';
-            status.textContent = 'اختر السورة ورقم الآية ثم اضغط عرض.';
+            status.textContent = quranReader.dataset.tool === 'review' ? 'اختر السورة ورقم الآية ثم اضغط اختيار الآية.' : 'اختر السورة ورقم الآية ثم اضغط عرض.';
         } else loadReading({ mode: quranReader.dataset.mode, surah: Number(quranReader.dataset.surah), ayah: Number(quranReader.dataset.ayah) || null, juz: Number(quranReader.dataset.juz), hizb: Number(quranReader.dataset.hizb), page: Number(quranReader.dataset.page) });
     }
 })();
