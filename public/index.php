@@ -386,7 +386,19 @@ if ($path === '/admin') {
         require_csrf();
         $kind = (string) ($_POST['kind'] ?? '');
         try {
-            if ($kind === 'backup-create') {
+            if ($kind === 'user-role') {
+                if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إدارة صلاحيات المستخدمين متاحة لمالك المنصة فقط.');
+                $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT); $nextRole = (string) ($_POST['role'] ?? '');
+                if (!$targetId || $targetId < 1 || !in_array($nextRole, ['user','admin'], true)) throw new RuntimeException('اختيار المستخدم أو الصلاحية غير صالح.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
+                $target = db()->prepare('SELECT role FROM users WHERE id=?'); $target->execute([$targetId]); $currentRole = $target->fetchColumn();
+                if (!is_string($currentRole) || $currentRole === 'owner') throw new RuntimeException('الحساب غير موجود أو أن دور المالك لا يتغير من هذه الشاشة.');
+                if ($currentRole === $nextRole) { flash('الصلاحية المحددة مطبقة بالفعل.'); redirect('/admin'); }
+                db()->prepare("UPDATE users SET role=?,session_version=session_version+1 WHERE id=? AND role<>'owner'")->execute([$nextRole, $targetId]);
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'user-role-changed-to-' . $nextRole, 'user', (string) $targetId]);
+                flash('تم تحديث الصلاحية وإبطال جلسات الحساب.'); redirect('/admin');
+            } elseif ($kind === 'backup-create') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إنشاء النسخ متاح لمالك المنصة فقط.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
@@ -542,6 +554,16 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
+    $auditRows = db()->query('SELECT a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id ORDER BY a.id DESC LIMIT 100')->fetchAll();
+    $dashboardMetrics = [
+        'users' => (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+        'scholars' => (int) db()->query('SELECT COUNT(*) FROM scholars WHERE is_published=1')->fetchColumn(),
+        'series' => (int) db()->query('SELECT COUNT(*) FROM series WHERE is_published=1')->fetchColumn(),
+        'lessons' => (int) db()->query('SELECT COUNT(*) FROM lessons WHERE is_published=1')->fetchColumn(),
+        'books' => (int) db()->query('SELECT COUNT(*) FROM books WHERE is_published=1')->fetchColumn(),
+    ];
+    $managedUsers = [];
+    if (($admin['role'] ?? '') === 'owner') $managedUsers = db()->query('SELECT id,email,role,email_verified_at,created_at FROM users ORDER BY id DESC LIMIT 100')->fetchAll();
     if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
     $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);
     $title='إدارة أثر'; $activePath=$path; $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php'; $flashMessage=take_flash();
