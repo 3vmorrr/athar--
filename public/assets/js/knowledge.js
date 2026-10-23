@@ -34,6 +34,28 @@
         return link;
     };
     const parseSearchParams = () => new URLSearchParams(window.location.search);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    document.querySelectorAll('[data-favorite]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            button.disabled = true;
+            try {
+                const response = await fetch('/api/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'X-CSRF-Token': csrfToken, Accept: 'application/json' },
+                    body: new URLSearchParams({ type: button.dataset.type || '', id: button.dataset.id || '' }),
+                    credentials: 'same-origin',
+                });
+                const result = await response.json();
+                if (!response.ok || !result.ok) throw new Error('favorite-failed');
+                button.dataset.saved = String(result.saved);
+                button.setAttribute('aria-pressed', String(result.saved));
+                button.textContent = result.saved ? 'إزالة من المفضلة' : 'أضف للمفضلة';
+            } catch (_) {
+                button.textContent = 'تعذر الحفظ؛ حاول مجددًا';
+            } finally { button.disabled = false; }
+        });
+    });
 
     const quranReader = document.querySelector('[data-quran-reader]');
     if (quranReader) {
@@ -315,6 +337,7 @@
         const input = form.elements.video;
         const status = lessonsPage.querySelector('[data-video-status]');
         const player = lessonsPage.querySelector('[data-video-player]');
+        const progressStatus = lessonsPage.querySelector('[data-video-progress-status]');
         const parseVideoId = (raw) => {
             try {
                 const url = new URL(raw);
@@ -326,26 +349,101 @@
                 return match?.[1] || '';
             } catch (_) { return ''; }
         };
-        const loadVideo = (raw, updateUrl = false) => {
+        let youtubePlayer = null;
+        let progressTimer = null;
+        let activeLessonId = 0;
+        let resumeSeconds = 0;
+        let apiPromise = null;
+        const loadYouTubeApi = () => {
+            if (window.YT?.Player) return Promise.resolve();
+            if (apiPromise) return apiPromise;
+            apiPromise = new Promise((resolve, reject) => {
+                const previousReady = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = () => {
+                    if (typeof previousReady === 'function') previousReady();
+                    resolve();
+                };
+                const script = document.createElement('script');
+                script.src = 'https://www.youtube.com/iframe_api';
+                script.async = true;
+                script.onerror = () => reject(new Error('youtube-api-unavailable'));
+                document.head.append(script);
+            });
+            return apiPromise;
+        };
+        const saveVideoProgress = (complete = false) => {
+            if (!activeLessonId || !youtubePlayer || typeof youtubePlayer.getCurrentTime !== 'function') return;
+            const position = Math.max(0, Math.floor(youtubePlayer.getCurrentTime() || 0));
+            const duration = Math.max(0, Math.floor(youtubePlayer.getDuration() || 0));
+            const data = new URLSearchParams({ lesson_id: String(activeLessonId), position: String(position), duration: String(duration), complete: complete ? '1' : '0' });
+            fetch('/api/lesson/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'X-CSRF-Token': csrfToken, Accept: 'application/json' },
+                body: data,
+                credentials: 'same-origin',
+                keepalive: true,
+            }).then((response) => {
+                if (response.ok && progressStatus) {
+                    progressStatus.hidden = false;
+                    progressStatus.textContent = complete ? 'اكتمل هذا الدرس.' : 'حُفظ موضع المشاهدة بشكل تقريبي.';
+                }
+            }).catch(() => {});
+        };
+        const loadVideo = async (raw, updateUrl = false, lessonId = 0, startAt = 0) => {
             const id = parseVideoId(raw);
+            if (progressTimer) window.clearInterval(progressTimer);
+            if (activeLessonId) saveVideoProgress();
+            youtubePlayer?.destroy?.();
+            youtubePlayer = null;
             player.replaceChildren();
+            activeLessonId = 0;
+            if (progressStatus) { progressStatus.hidden = true; progressStatus.textContent = ''; }
             if (!/^[\w-]{11}$/.test(id)) {
                 player.hidden = true;
                 setStatus(status, 'الرابط غير صالح. استخدم رابط فيديو YouTube عاديًا أو رابط youtu.be.', 'error');
                 return;
             }
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0`;
-            iframe.title = 'مشغل درس YouTube';
-            iframe.loading = 'lazy';
-            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-            iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-            iframe.allowFullscreen = true;
-            player.append(iframe);
+            const host = document.createElement('div');
+            host.id = 'athar-youtube-player';
+            host.setAttribute('aria-label', 'مشغل درس YouTube');
+            player.append(host);
             player.hidden = false;
             status.hidden = true;
+            activeLessonId = Number(lessonId) || 0;
+            resumeSeconds = Math.max(0, Number(startAt) || 0);
+            try {
+                await loadYouTubeApi();
+                if (!player.isConnected || !host.isConnected) return;
+                youtubePlayer = new window.YT.Player(host, {
+                    width: '100%', height: '100%', videoId: id,
+                    playerVars: { rel: 0, playsinline: 1, origin: window.location.origin },
+                    events: {
+                        onReady: (event) => { if (resumeSeconds > 3) event.target.seekTo(resumeSeconds, true); },
+                        onStateChange: (event) => {
+                            if (!activeLessonId) return;
+                            if (event.data === window.YT.PlayerState.PLAYING) {
+                                if (progressTimer) window.clearInterval(progressTimer);
+                                progressTimer = window.setInterval(() => saveVideoProgress(false), 30000);
+                            } else if (event.data === window.YT.PlayerState.PAUSED) {
+                                if (progressTimer) window.clearInterval(progressTimer);
+                                progressTimer = null;
+                                saveVideoProgress(false);
+                            } else if (event.data === window.YT.PlayerState.ENDED) {
+                                if (progressTimer) window.clearInterval(progressTimer);
+                                progressTimer = null;
+                                saveVideoProgress(true);
+                            }
+                        },
+                        onError: () => setStatus(status, 'هذا الفيديو غير متاح للتضمين. افتحه من YouTube أو اختر درسًا آخر.', 'error'),
+                    },
+                });
+            } catch (_) {
+                activeLessonId = 0;
+                setStatus(status, 'تعذر تحميل مشغل YouTube الآن. يمكنك فتح الرابط مباشرة من المصدر.', 'error');
+            }
             if (updateUrl) history.replaceState(null, '', `/lessons?${new URLSearchParams({ video: raw })}`);
         };
+        window.addEventListener('pagehide', () => saveVideoProgress(false));
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             loadVideo(input.value.trim(), true);
@@ -354,11 +452,11 @@
             button.addEventListener('click', () => {
                 const video = button.dataset.curatedVideo || '';
                 input.value = video;
-                loadVideo(video, true);
+                loadVideo(video, true, button.dataset.lessonId, button.dataset.resumeSeconds);
                 player.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         });
         const initialVideo = lessonsPage.dataset.video.trim();
-        if (initialVideo) { input.value = initialVideo; loadVideo(initialVideo); }
+        if (initialVideo) { input.value = initialVideo; loadVideo(initialVideo, false, lessonsPage.dataset.lessonId, lessonsPage.dataset.resumeSeconds); }
     }
 })();

@@ -22,7 +22,7 @@ header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-Frame-Options: DENY');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self' https://cdn.islamic.network https://cdn.jsdelivr.net; style-src 'self'; script-src 'self'; connect-src 'self' https://api.quranpedia.net https://api.alquran.cloud https://pray.api.islamic.network https://ummahapi.com https://cdn.jsdelivr.net; frame-src https://api.quranpedia.net https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self' https://cdn.islamic.network https://cdn.jsdelivr.net; style-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com; connect-src 'self' https://api.quranpedia.net https://api.alquran.cloud https://pray.api.islamic.network https://ummahapi.com https://cdn.jsdelivr.net https://www.youtube.com; frame-src https://api.quranpedia.net https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
 
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
@@ -45,6 +45,36 @@ if ($path === '/api/quran/progress' && $method === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+if ($path === '/api/favorites' && $method === 'POST') {
+    $user = require_login(); require_csrf();
+    $type = (string) ($_POST['type'] ?? ''); $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+    if (!in_array($type, ['book','lesson'], true) || !$id || $id < 1) { http_response_code(422); exit('بيانات العنصر غير صالحة.'); }
+    $table = $type === 'book' ? 'books' : 'lessons';
+    $exists = db()->prepare("SELECT id FROM {$table} WHERE id=? AND is_published=1 LIMIT 1"); $exists->execute([$id]);
+    if (!$exists->fetchColumn()) { http_response_code(404); exit('المحتوى غير متاح.'); }
+    $saved = db()->prepare('SELECT id FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?'); $saved->execute([$user['id'], $type, $id]);
+    if ($saved->fetchColumn()) { db()->prepare('DELETE FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?')->execute([$user['id'], $type, $id]); $isSaved = false; }
+    else { db()->prepare('INSERT IGNORE INTO user_favorites (user_id,target_type,target_id) VALUES (?,?,?)')->execute([$user['id'], $type, $id]); $isSaved = true; }
+    header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => true, 'saved' => $isSaved]); exit;
+}
+
+if ($path === '/api/lesson/progress' && $method === 'POST') {
+    $user = require_login(); require_csrf();
+    $lessonId = filter_var($_POST['lesson_id'] ?? null, FILTER_VALIDATE_INT);
+    $position = filter_var($_POST['position'] ?? null, FILTER_VALIDATE_INT);
+    $duration = filter_var($_POST['duration'] ?? null, FILTER_VALIDATE_INT);
+    $complete = ($_POST['complete'] ?? '') === '1';
+    if (!$lessonId || $lessonId < 1 || $position === false || $duration === false || $position < 0 || $duration < 0 || $position > 86400 || $duration > 86400 || ($duration > 0 && $position > $duration + 5)) { http_response_code(422); exit('بيانات التقدم غير صالحة.'); }
+    $lesson = db()->prepare('SELECT id FROM lessons WHERE id=? AND is_published=1'); $lesson->execute([$lessonId]);
+    if (!$lesson->fetchColumn()) { http_response_code(404); exit('الدرس غير متاح.'); }
+    $complete = $complete && $duration > 0 && $position >= $duration - 10;
+    $last = db()->prepare('SELECT UNIX_TIMESTAMP(updated_at) FROM video_progress WHERE user_id=? AND lesson_id=?'); $last->execute([$user['id'], $lessonId]);
+    $lastSaved = $last->fetchColumn();
+    if (!$complete && $lastSaved && time() - (int) $lastSaved < 25) { header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => true, 'throttled' => true]); exit; }
+    db()->prepare('INSERT INTO video_progress (user_id,lesson_id,position_seconds,duration_seconds,is_complete) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE position_seconds=VALUES(position_seconds),duration_seconds=VALUES(duration_seconds),is_complete=VALUES(is_complete)')->execute([$user['id'], $lessonId, $position, $duration, $complete ? 1 : 0]);
+    header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => true]); exit;
 }
 
 if ($path === '/book-download' && $method === 'GET') {
@@ -174,9 +204,13 @@ if ($path === '/account') {
         $statement->execute([$user['id']]); $position = $statement->fetch() ?: null;
         $statement = db()->prepare('SELECT start_date,target_date,total_pages,completed_pages,status FROM khatmah_plans WHERE user_id=?');
         $statement->execute([$user['id']]); $plan = $statement->fetch() ?: null;
+        $statement = db()->prepare('SELECT l.title,l.youtube_id,v.position_seconds,v.duration_seconds,v.is_complete,v.updated_at FROM video_progress v JOIN lessons l ON l.id=v.lesson_id WHERE v.user_id=? ORDER BY v.updated_at DESC');
+        $statement->execute([$user['id']]); $videoProgress = $statement->fetchAll();
+        $statement = db()->prepare("SELECT f.target_type,f.created_at,b.title FROM user_favorites f JOIN books b ON f.target_id=b.id WHERE f.user_id=? AND f.target_type='book' UNION ALL SELECT f.target_type,f.created_at,l.title FROM user_favorites f JOIN lessons l ON f.target_id=l.id WHERE f.user_id=? AND f.target_type='lesson'");
+        $statement->execute([$user['id'], $user['id']]); $favoriteExport = $statement->fetchAll();
         header('Content-Type: application/json; charset=utf-8');
         header('Content-Disposition: attachment; filename="athar-account-export.json"');
-        echo json_encode(['email' => $user['email'], 'bookmarks' => $bookmarks, 'quran_position' => $position, 'khatmah_plan' => $plan], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); exit;
+        echo json_encode(['email' => $user['email'], 'bookmarks' => $bookmarks, 'quran_position' => $position, 'khatmah_plan' => $plan, 'video_progress' => $videoProgress, 'favorites' => $favoriteExport], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); exit;
     }
     $statement = db()->prepare('SELECT id,surah,ayah,label,created_at FROM quran_bookmarks WHERE user_id=? ORDER BY created_at DESC');
     $statement->execute([$user['id']]); $bookmarks = $statement->fetchAll();
@@ -184,6 +218,10 @@ if ($path === '/account') {
     $statement->execute([$user['id']]); $position = $statement->fetch() ?: null;
     $statement = db()->prepare('SELECT * FROM khatmah_plans WHERE user_id=? ORDER BY id DESC LIMIT 1');
     $statement->execute([$user['id']]); $plan = $statement->fetch() ?: null;
+    $statement = db()->prepare('SELECT l.id,l.title,l.youtube_id,v.position_seconds,v.duration_seconds,v.is_complete,v.updated_at FROM video_progress v JOIN lessons l ON l.id=v.lesson_id WHERE v.user_id=? ORDER BY v.updated_at DESC');
+    $statement->execute([$user['id']]); $videoProgress = $statement->fetchAll();
+    $statement = db()->prepare("SELECT b.id,b.title,b.author,'book' AS target_type FROM user_favorites f JOIN books b ON f.target_id=b.id WHERE f.user_id=? AND f.target_type='book' AND b.is_published=1 UNION ALL SELECT l.id,l.title,s.name AS author,'lesson' AS target_type FROM user_favorites f JOIN lessons l ON f.target_id=l.id LEFT JOIN scholars s ON s.id=l.scholar_id WHERE f.user_id=? AND f.target_type='lesson' AND l.is_published=1 ORDER BY title");
+    $statement->execute([$user['id'], $user['id']]); $favorites = $statement->fetchAll();
     $title = 'حسابي'; $activePath = $path; $viewPath = dirname(__DIR__) . '/app/Views/pages/account.php';
     $flashMessage = take_flash();
     ob_start(); require $viewPath; $content = (string) ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
@@ -197,10 +235,49 @@ if ($path === '/admin') {
         $kind = (string) ($_POST['kind'] ?? '');
         try {
             if ($kind === 'content') {
-                $table = ['scholar' => 'scholars', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
+                $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
                 if ($table === '' || !$id || $id < 1) throw new RuntimeException('عنصر المحتوى غير صالح.');
-                if (($_POST['content_action'] ?? '') === 'toggle') {
+                $type = (string) $_POST['content_type'];
+                if (($_POST['content_action'] ?? '') === 'update') {
+                    $published = isset($_POST['publish']) ? 1 : 0;
+                    if ($type === 'scholar') {
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        if (!is_https_url($source) || trim((string) ($_POST['rights_basis'] ?? '')) === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
+                        db()->prepare('UPDATE scholars SET name=?,biography=?,source_url=?,rights_basis=?,is_published=? WHERE id=?')->execute([trim((string) $_POST['name']), trim((string) $_POST['biography']), $source, trim((string) $_POST['rights_basis']), $published, $id]);
+                    } elseif ($type === 'lesson') {
+                        $url = trim((string) ($_POST['source_url'] ?? '')); $videoId = youtube_video_id($url);
+                        if (!$videoId) throw new RuntimeException('رابط فيديو YouTube غير صالح.');
+                        db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), (int) ($_POST['series_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, $id]);
+                    } elseif ($type === 'series') {
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
+                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, $id]);
+                    } elseif ($type === 'book') {
+                        $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                        if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
+                        $current = db()->prepare('SELECT file_key FROM books WHERE id=?'); $current->execute([$id]); $previousKey = $current->fetchColumn();
+                        if ($previousKey === false) throw new RuntimeException('الكتاب غير موجود.');
+                        $nextKey = $previousKey ?: null; $nextSize = null; $storage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
+                        if (isset($_FILES['book_pdf']) && ($_FILES['book_pdf']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                            $uploaded = store_book_pdf($_FILES['book_pdf'], $storage); $nextKey = $uploaded['key']; $nextSize = $uploaded['size'];
+                        }
+                        $canDownload = isset($_POST['can_download']) && $nextKey ? 1 : 0;
+                        try {
+                            db()->prepare('UPDATE books SET title=?,author=?,description=?,source_url=?,rights_basis=?,file_key=?,file_size=COALESCE(?,file_size),can_download=?,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), $source, $rights, $nextKey, $nextSize, $canDownload, $published, $id]);
+                        } catch (Throwable $saveFailure) {
+                            if ($nextKey !== $previousKey && is_string($nextKey)) { $newPath = $storage . DIRECTORY_SEPARATOR . $nextKey; if (is_file($newPath)) unlink($newPath); }
+                            throw $saveFailure;
+                        }
+                        if ($nextKey !== $previousKey && is_string($previousKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $previousKey)) { $oldPath = $storage . DIRECTORY_SEPARATOR . $previousKey; if (is_file($oldPath)) unlink($oldPath); }
+                    } elseif ($type === 'adhkar') {
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        if (!is_https_url($source) || trim((string) ($_POST['source_reference'] ?? '')) === '' || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا ومرجعًا وأكد المراجعة.');
+                        $count = ($_POST['repeat_count'] ?? '') === '' ? null : max(1, min(1000, (int) $_POST['repeat_count']));
+                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, $id]);
+                    }
+                    $auditAction = 'update';
+                } elseif (($_POST['content_action'] ?? '') === 'toggle') {
                     db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
                     $auditAction = 'toggle-publication';
                 } elseif (($_POST['content_action'] ?? '') === 'delete') {
@@ -215,30 +292,25 @@ if ($path === '/admin') {
                     }
                     $auditAction = 'delete';
                 } else throw new RuntimeException('الإجراء غير معروف.');
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, (string) $_POST['content_type'], (string) $id]);
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
                 flash('تم تحديث المحتوى.'); redirect('/admin');
             } elseif ($kind === 'scholar') {
                 if (!is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يجب إدخال رابط مصدر آمن يبدأ بـ HTTPS.');
                 db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,is_published,sort_order) VALUES (?,?,?,?,?,?,?)')->execute([trim((string) $_POST['name']), trim((string) $_POST['biography']), 'ar', trim((string) $_POST['source_url']), trim((string) $_POST['rights_basis']), isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
+            } elseif ($kind === 'series') {
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
+                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
             } elseif ($kind === 'lesson') {
-                $url = trim((string) $_POST['source_url']); $host = strtolower((string) parse_url($url, PHP_URL_HOST)); $id = '';
-                if (in_array($host, ['www.youtube.com','youtube.com','m.youtube.com'], true) && parse_url($url, PHP_URL_PATH) === '/watch') $id = (string) (parse_url($url, PHP_URL_QUERY) ? (function ($q) { parse_str($q, $p); return $p['v'] ?? ''; })(parse_url($url, PHP_URL_QUERY)) : '');
-                if ($host === 'youtu.be') $id = trim((string) parse_url($url, PHP_URL_PATH), '/');
-                if (!preg_match('/^[A-Za-z0-9_-]{11}$/', $id) || strlen(trim((string) $_POST['title'])) < 2) throw new RuntimeException('رابط الفيديو أو العنوان غير صالح.');
-                db()->prepare('INSERT INTO lessons (scholar_id,title,description,youtube_id,source_url,sort_order,is_published) VALUES (NULLIF(?,0),?,?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $id, $url, (int) ($_POST['sort_order'] ?? 0), isset($_POST['publish']) ? 1 : 0]);
+                $url = trim((string) $_POST['source_url']); $id = youtube_video_id($url);
+                if (!$id || strlen(trim((string) $_POST['title'])) < 2) throw new RuntimeException('رابط الفيديو أو العنوان غير صالح.');
+                db()->prepare('INSERT INTO lessons (scholar_id,series_id,title,description,youtube_id,source_url,sort_order,is_published) VALUES (NULLIF(?,0),NULLIF(?,0),?,?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), (int) ($_POST['series_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $id, $url, (int) ($_POST['sort_order'] ?? 0), isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'book') {
                 if (trim((string) $_POST['rights_basis']) === '' || !is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
                 $fileKey = null; $fileSize = null;
                 $storage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
                 if (isset($_FILES['book_pdf']) && ($_FILES['book_pdf']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-                    $file = $_FILES['book_pdf'];
-                    if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 15 * 1024 * 1024 || !is_uploaded_file($file['tmp_name'])) throw new RuntimeException('تعذر قبول الملف. الحد الأقصى 15 ميجابايت.');
-                    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-                    $signature = file_get_contents($file['tmp_name'], false, null, 0, 5);
-                    if ($mime !== 'application/pdf' || $signature !== '%PDF-') throw new RuntimeException('الملف المرفوع ليس PDF صالحًا.');
-                    if (!is_dir($storage) && !mkdir($storage, 0700, true) && !is_dir($storage)) throw new RuntimeException('تعذر إعداد التخزين الخاص.');
-                    $fileKey = bin2hex(random_bytes(20)) . '.pdf'; $fileSize = (int) $file['size'];
-                    if (!move_uploaded_file($file['tmp_name'], $storage . DIRECTORY_SEPARATOR . $fileKey)) throw new RuntimeException('تعذر حفظ الملف.');
+                    $uploaded = store_book_pdf($_FILES['book_pdf'], $storage); $fileKey = $uploaded['key']; $fileSize = $uploaded['size'];
                 }
                 $canDownload = isset($_POST['can_download']) && $fileKey ? 1 : 0;
                 try {
@@ -256,6 +328,7 @@ if ($path === '/admin') {
         } catch (Throwable $exception) { $adminError = $exception instanceof RuntimeException ? $exception->getMessage() : 'تعذر حفظ المحتوى. راجع الحقول أو الاتصال بقاعدة البيانات.'; }
     }
     $scholars = db()->query('SELECT id,name,is_published FROM scholars ORDER BY sort_order,id DESC')->fetchAll();
+    $seriesItems = db()->query('SELECT * FROM series ORDER BY sort_order,id DESC')->fetchAll();
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
@@ -265,8 +338,16 @@ if ($path === '/admin') {
 
 $curatedBooks = $curatedLessons = $curatedAdhkar = [];
 try {
-    if ($path === '/books') $curatedBooks = db()->query('SELECT id,title,author,description,source_url,can_download,file_key FROM books WHERE is_published=1 ORDER BY title LIMIT 50')->fetchAll();
-    if ($path === '/lessons') $curatedLessons = db()->query('SELECT l.title,l.description,l.youtube_id,l.source_url,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id WHERE l.is_published=1 ORDER BY l.sort_order,l.id DESC LIMIT 50')->fetchAll();
+    if ($path === '/books') {
+        $user = current_user();
+        $query = 'SELECT b.id,b.title,b.author,b.description,b.source_url,b.can_download,b.file_key,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'book\' AND f.target_id=b.id) AS is_favorite FROM books b WHERE b.is_published=1 ORDER BY b.title LIMIT 50';
+        $statement = db()->prepare($query); $statement->execute([(int) ($user['id'] ?? 0)]); $curatedBooks = $statement->fetchAll();
+    }
+    if ($path === '/lessons') {
+        $user = current_user();
+        $query = 'SELECT l.id,l.title,l.description,l.youtube_id,l.source_url,l.series_id,s.name AS scholar_name,r.title AS series_name,(SELECT position_seconds FROM video_progress vp WHERE vp.user_id=? AND vp.lesson_id=l.id) AS position_seconds,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'lesson\' AND f.target_id=l.id) AS is_favorite FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id LEFT JOIN series r ON r.id=l.series_id AND r.is_published=1 WHERE l.is_published=1 ORDER BY r.sort_order,r.id,l.sort_order,l.id DESC LIMIT 50';
+        $statement = db()->prepare($query); $statement->execute([(int) ($user['id'] ?? 0), (int) ($user['id'] ?? 0)]); $curatedLessons = $statement->fetchAll();
+    }
     if ($path === '/adhkar') $curatedAdhkar = db()->query('SELECT title,formula,source_reference,source_url,repeat_count,category FROM adhkar_items WHERE is_published=1 AND is_reviewed=1 ORDER BY category,sort_order,id DESC LIMIT 100')->fetchAll();
 } catch (Throwable $exception) { /* The live provider pages remain available before local database setup. */ }
 

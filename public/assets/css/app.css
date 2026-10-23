@@ -238,6 +238,7 @@ h1, h2, p { margin-block-start: 0; }
 .dhikr-source { margin-block: 0.6rem 0; color: var(--color-text-secondary); font-size: 0.82rem; }
 .video-player-wrap { width: min(100%, 900px); aspect-ratio: 16 / 9; margin-block: 1.5rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1rem; background: #000; }
 .video-player-wrap iframe { width: 100%; height: 100%; border: 0; }
+.video-player-wrap > div { width: 100%; height: 100%; }
 
 /* Account and content-management surfaces */
 .account-link { min-height: 40px; display: inline-flex; align-items: center; padding-inline: 0.65rem; border-radius: 0.65rem; color: var(--color-primary); font-size: 0.84rem; font-weight: 700; }
@@ -288,6 +289,11 @@ h1, h2, p { margin-block-start: 0; }
 .inventory-row p { margin-block: 0.45rem; }
 .inventory-actions { display: flex; gap: 0.6rem; }
 .inventory-actions form { margin: 0; }
+.favorite-button { min-height: 40px; padding: 0.45rem 0.75rem; font-size: 0.8rem; }
+.favorite-login { color: var(--color-primary); font-size: 0.8rem; font-weight: 700; }
+.inventory-edit { margin-block-start: 0.55rem; }
+.inventory-edit summary { color: var(--color-primary); font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+.inventory-edit .form-stack { margin-block-start: 0.7rem; padding-block-start: 0.7rem; border-block-start: 1px solid var(--color-border); }
 .ayah-actions { display: inline-flex; align-items: center; gap: 0.4rem; margin-inline-start: 0.6rem; vertical-align: middle; }
 .ayah-actions button { min-width: 40px; min-height: 40px; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-primary); cursor: pointer; font-family: var(--font-ui); font-size: 0.72rem; }
 .ayah-actions button:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
