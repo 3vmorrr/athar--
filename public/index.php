@@ -183,11 +183,42 @@ if (in_array($path, ['/register', '/login'], true)) {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190 || strlen($password) < 10 || strlen($password) > 200) {
             $authError = 'أدخل بريدًا صالحًا وكلمة مرور من 10 أحرف على الأقل.';
         } else {
+            $guestMerge = null;
+            if ($path === '/register' && ($_POST['merge_guest_progress'] ?? '') === '1') {
+                $rawProgress = (string) ($_POST['guest_progress_json'] ?? '');
+                try {
+                    if (strlen($rawProgress) > 65536) throw new RuntimeException('بيانات التقدم المحلي أكبر من الحد المسموح.');
+                    $decoded = json_decode($rawProgress, true, 32, JSON_THROW_ON_ERROR);
+                    if (!is_array($decoded)) throw new RuntimeException('بيانات التقدم المحلي غير صالحة.');
+                    $guestMerge = ['bookmarks' => [], 'position' => null];
+                    foreach (array_slice(is_array($decoded['bookmarks'] ?? null) ? $decoded['bookmarks'] : [], 0, 1000) as $item) {
+                        $s = filter_var($item['surah'] ?? null, FILTER_VALIDATE_INT); $a = filter_var($item['ayah'] ?? null, FILTER_VALIDATE_INT);
+                        if ($s && $s >= 1 && $s <= 114 && $a && $a >= 1 && $a <= quran_ayah_count($s)) $guestMerge['bookmarks'][] = [$s, $a];
+                    }
+                    $position = $decoded['position'] ?? null;
+                    if (is_array($position)) {
+                        $s = filter_var($position['surah'] ?? null, FILTER_VALIDATE_INT); $a = filter_var($position['ayah'] ?? null, FILTER_VALIDATE_INT); $stamp = filter_var($position['updatedAt'] ?? null, FILTER_VALIDATE_INT);
+                        if ($s && $s >= 1 && $s <= 114 && $a && $a >= 1 && $a <= quran_ayah_count($s) && $stamp && $stamp >= (time() - 7776000) * 1000 && $stamp <= (time() + 300) * 1000) $guestMerge['position'] = [$s, $a, gmdate('Y-m-d H:i:s', (int) floor($stamp / 1000))];
+                    }
+                } catch (Throwable $mergeError) { $guestMerge = null; $authError = 'تعذر التحقق من بيانات القرآن المحلية. راجعها أو أزل اختيار الدمج.'; }
+            }
+            if ($authError === '') {
+            $mergeTransaction = false;
             try {
                 if ($path === '/register') {
+                    if (is_array($guestMerge)) { db()->beginTransaction(); $mergeTransaction = true; }
                     $statement = db()->prepare('INSERT INTO users (email,password_hash) VALUES (?,?)');
                     $statement->execute([$email, password_hash($password, PASSWORD_DEFAULT)]);
                     $id = (int) db()->lastInsertId();
+                    if (is_array($guestMerge)) {
+                        $pdo = db();
+                        foreach ($guestMerge['bookmarks'] as [$surah, $ayah]) $pdo->prepare('INSERT IGNORE INTO quran_bookmarks (user_id,surah,ayah) VALUES (?,?,?)')->execute([$id, $surah, $ayah]);
+                        if ($guestMerge['position']) {
+                            [$surah, $ayah, $updatedAt] = $guestMerge['position'];
+                            $pdo->prepare('INSERT INTO quran_positions (user_id,surah,ayah,updated_at) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE surah=IF(VALUES(updated_at)>updated_at,VALUES(surah),surah),ayah=IF(VALUES(updated_at)>updated_at,VALUES(ayah),ayah),updated_at=GREATEST(updated_at,VALUES(updated_at))')->execute([$id, $surah, $ayah, $updatedAt]);
+                        }
+                        $pdo->commit(); $mergeTransaction = false; $_SESSION['guest_merge_complete'] = true;
+                    }
                 } else {
                     $statement = db()->prepare('SELECT id,email,password_hash,role,session_version FROM users WHERE email=? LIMIT 1');
                     $statement->execute([$email]);
@@ -218,9 +249,11 @@ if (in_array($path, ['/register', '/login'], true)) {
                     redirect('/account');
                 }
             } catch (PDOException $exception) {
+                if ($mergeTransaction && db()->inTransaction()) db()->rollBack();
                 $authError = $path === '/register' && $exception->getCode() === '23000'
                     ? 'تعذر إنشاء الحساب بهذه البيانات.'
                     : 'تعذر الاتصال بقاعدة البيانات. راجع إعدادات التشغيل.';
+            }
             }
         }
     }
@@ -246,6 +279,8 @@ if ($path === '/logout' && $method === 'POST') {
 
 if ($path === '/account') {
     $user = require_login();
+    $clearGuestProgress = !empty($_SESSION['guest_merge_complete']);
+    unset($_SESSION['guest_merge_complete']);
     $accountError = '';
     if ($method === 'POST') {
         assert_no_maintenance_lock();
@@ -273,6 +308,15 @@ if ($path === '/account') {
             if ($check->fetchColumn()) flash('تم التحقق من البريد مسبقًا.');
             else { try { $sent = send_account_token((string) $user['email'], 'verify_email'); } catch (Throwable $mailError) { error_log('[Athar] Verification mail delivery failed.'); $sent = false; } flash($sent ? 'أرسلنا رابط تحقق جديدًا إلى بريدك.' : 'تعذر إرسال البريد الآن. راجع إعدادات خدمة البريد.', $sent ? 'success' : 'error'); }
             redirect('/account');
+        } elseif ($action === 'save-preferences') {
+            $themePreference = (string) ($_POST['theme'] ?? 'system');
+            if (!in_array($themePreference, ['system','light','dark'], true)) $accountError = 'اختيار المظهر غير صالح.';
+            else {
+                $preferences = json_decode((string) ($user['preferences_json'] ?? '{}'), true); if (!is_array($preferences)) $preferences = [];
+                $preferences['theme'] = $themePreference;
+                db()->prepare('UPDATE users SET preferences_json=? WHERE id=?')->execute([json_encode($preferences, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $user['id']]);
+                flash('تم حفظ تفضيلات الحساب.'); redirect('/account');
+            }
         } elseif ($action === 'change-password') {
             $currentPassword = (string) ($_POST['current_password'] ?? '');
             $newPassword = (string) ($_POST['new_password'] ?? '');
@@ -323,6 +367,8 @@ if ($path === '/account') {
     $statement->execute([$user['id']]); $videoProgress = $statement->fetchAll();
     $statement = db()->prepare("SELECT b.id,b.title,b.author,'book' AS target_type FROM user_favorites f JOIN books b ON f.target_id=b.id WHERE f.user_id=? AND f.target_type='book' AND b.is_published=1 UNION ALL SELECT l.id,l.title,s.name AS author,'lesson' AS target_type FROM user_favorites f JOIN lessons l ON f.target_id=l.id LEFT JOIN scholars s ON s.id=l.scholar_id WHERE f.user_id=? AND f.target_type='lesson' AND l.is_published=1 ORDER BY title");
     $statement->execute([$user['id'], $user['id']]); $favorites = $statement->fetchAll();
+    $userPreferences = json_decode((string) ($user['preferences_json'] ?? '{}'), true); if (!is_array($userPreferences)) $userPreferences = [];
+    $themePreference = in_array(($userPreferences['theme'] ?? 'system'), ['system','light','dark'], true) ? $userPreferences['theme'] : 'system';
     $title = 'حسابي'; $activePath = $path; $viewPath = dirname(__DIR__) . '/app/Views/pages/account.php';
     $flashMessage = take_flash();
     ob_start(); require $viewPath; $content = (string) ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;

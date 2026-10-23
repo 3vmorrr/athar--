@@ -6,6 +6,8 @@
     const nav = document.querySelector('#primary-nav');
 
     const readSavedTheme = () => {
+        const serverTheme = root.dataset.savedTheme;
+        if (serverTheme === 'light' || serverTheme === 'dark') return serverTheme;
         try {
             const saved = window.localStorage.getItem('athar-theme');
             if (saved === 'light' || saved === 'dark') return saved;
@@ -29,6 +31,35 @@
         const form = event.target;
         if (form instanceof HTMLFormElement && form.dataset.confirm && !window.confirm(form.dataset.confirm)) event.preventDefault();
     });
+
+    const mergeCheckbox = document.querySelector('[data-merge-guest-progress]');
+    const guestProgressInput = document.querySelector('[data-guest-progress-json]');
+    const guestProgressSummary = document.querySelector('[data-guest-progress-summary]');
+    try {
+        const rawGuestProgress = window.localStorage.getItem('athar-guest-quran');
+        const guestProgress = rawGuestProgress ? JSON.parse(rawGuestProgress) : null;
+        const validGuestProgress = guestProgress && typeof guestProgress === 'object' ? guestProgress : null;
+        const guestBookmarkCount = Array.isArray(validGuestProgress?.bookmarks) ? validGuestProgress.bookmarks.length : 0;
+        if (guestProgressSummary) guestProgressSummary.textContent = guestBookmarkCount || validGuestProgress?.position ? `العناصر المتاحة: موضع قراءة ${validGuestProgress?.position ? 'واحد' : 'لا يوجد'}، وعلامات ${guestBookmarkCount}.` : 'لا توجد بيانات قرآن محفوظة محليًا.';
+        document.querySelector('[data-register-form]')?.addEventListener('submit', (event) => {
+            if (!mergeCheckbox?.checked) {
+                if (guestProgressInput) guestProgressInput.value = '';
+                return;
+            }
+            if (!validGuestProgress || !guestProgressInput) {
+                event.preventDefault();
+                if (guestProgressSummary) guestProgressSummary.textContent = 'تعذر قراءة مساحة التخزين؛ أزل اختيار الدمج لإكمال إنشاء الحساب.';
+                return;
+            }
+            guestProgressInput.value = JSON.stringify(validGuestProgress);
+        });
+    } catch (_) {
+        if (guestProgressSummary) guestProgressSummary.textContent = 'مساحة التخزين غير متاحة؛ أزل اختيار الدمج لإكمال إنشاء الحساب.';
+    }
+
+    if (document.querySelector('[data-clear-guest-progress]')) {
+        try { window.localStorage.removeItem('athar-guest-quran'); } catch (_) { /* Keep the account flow working when storage is unavailable. */ }
+    }
 
     themeButton?.addEventListener('click', () => {
         const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -72,6 +103,24 @@
         let fontSize = 1.8;
 
         const saveAyah = async (surah, ayah, action, button) => {
+            if (quranReader.dataset.signedIn !== 'true') {
+                try {
+                    const saved = JSON.parse(window.localStorage.getItem('athar-guest-quran') || '{}');
+                    if (action === 'bookmark') {
+                        const bookmarks = Array.isArray(saved.bookmarks) ? saved.bookmarks : [];
+                        if (!bookmarks.some((item) => item.surah === surah && item.ayah === ayah)) bookmarks.push({ surah, ayah });
+                        saved.bookmarks = bookmarks;
+                    } else saved.position = { surah, ayah, updatedAt: Date.now() };
+                    window.localStorage.setItem('athar-guest-quran', JSON.stringify(saved));
+                    button.textContent = action === 'bookmark' ? 'حُفظت محليًا' : 'حُفظ محليًا';
+                    button.setAttribute('aria-label', 'حُفظت هذه البيانات في هذا المتصفح فقط. سجّل الدخول لدمجها باختيارك.');
+                    return;
+                } catch (_) {
+                    button.textContent = 'سجّل الدخول للحفظ';
+                    button.setAttribute('aria-label', 'تعذر استخدام التخزين المحلي. سجّل الدخول للحفظ.');
+                    return;
+                }
+            }
             const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
             const body = new URLSearchParams({ surah: String(surah), ayah: String(ayah), action });
             button.disabled = true;
