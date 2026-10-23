@@ -40,7 +40,7 @@
             <div class="header-actions">
                 <?php if (!empty($user)): ?>
                     <a class="account-link" href="/account">حسابي</a>
-                    <?php if (($user['role'] ?? '') === 'admin'): ?><a class="account-link" href="/admin">الإدارة</a><?php endif; ?>
+                    <?php if (in_array(($user['role'] ?? ''), ['admin','owner'], true)): ?><a class="account-link" href="/admin">الإدارة</a><?php endif; ?>
                     <form method="post" action="/logout" class="logout-form"><?= csrf_field() ?><button class="text-button" type="submit">خروج</button></form>
                 <?php else: ?>
                     <a class="account-link" href="/login">دخول</a>

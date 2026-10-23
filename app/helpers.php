@@ -59,10 +59,10 @@ function require_login(): array
         header('Location: /login?next=' . rawurlencode($_SERVER['REQUEST_URI'] ?? '/account'), true, 303);
         exit;
     }
-    $statement = db()->prepare('SELECT id,email,role FROM users WHERE id=? LIMIT 1');
+    $statement = db()->prepare('SELECT id,email,role,session_version,email_verified_at,preferences_json FROM users WHERE id=? LIMIT 1');
     $statement->execute([(int) $sessionUser['id']]);
     $activeUser = $statement->fetch();
-    if (!$activeUser) {
+    if (!$activeUser || (int) ($sessionUser['session_version'] ?? 0) !== (int) $activeUser['session_version']) {
         unset($_SESSION['user'], $_SESSION['authenticated_at'], $_SESSION['last_activity']);
         header('Location: /login', true, 303);
         exit;
@@ -75,9 +75,19 @@ function require_login(): array
 function require_admin(): array
 {
     $user = require_login();
-    if (($user['role'] ?? '') !== 'admin') {
+    if (!in_array(($user['role'] ?? ''), ['admin', 'owner'], true)) {
         http_response_code(403);
         exit('غير مصرح بعرض هذه الصفحة.');
+    }
+    return $user;
+}
+
+function require_owner(): array
+{
+    $user = require_login();
+    if (($user['role'] ?? '') !== 'owner') {
+        http_response_code(403);
+        exit('هذه العملية متاحة لمالك المنصة فقط.');
     }
     return $user;
 }

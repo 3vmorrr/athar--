@@ -15,7 +15,7 @@ if (!hash_equals("PROMOTE {$email}", $confirmation)) {
     exit(1);
 }
 
-$statement = db()->prepare("UPDATE users SET role='admin' WHERE email=?");
+$statement = db()->prepare("UPDATE users SET role='admin',session_version=session_version+1 WHERE email=?");
 $statement->execute([$email]);
 if ($statement->rowCount() !== 1) {
     fwrite(STDERR, "No matching account was changed. Create the account first.\n");

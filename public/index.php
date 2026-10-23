@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/helpers.php';
+require_once dirname(__DIR__) . '/app/backup.php';
 ini_set('display_errors', '0');
 set_exception_handler(static function (Throwable $exception): void {
     error_log('[Athar] ' . $exception->getMessage());
@@ -28,7 +29,51 @@ $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 if (in_array($path, ['/login','/register','/account','/admin'], true)) header('Cache-Control: no-store, private');
 
+function send_account_token(string $email, string $type): bool
+{
+    $base = rtrim((string) (getenv('ATHAR_BASE_URL') ?: ''), '/');
+    $from = (string) (getenv('ATHAR_MAIL_FROM') ?: '');
+    if ($base === '' || !is_https_url($base . '/') || !filter_var($from, FILTER_VALIDATE_EMAIL)) return false;
+    $raw = bin2hex(random_bytes(32));
+    $tokenType = $type === 'verify_email' ? 'verify_email' : 'password_reset';
+    db()->prepare('DELETE FROM auth_tokens WHERE user_id=(SELECT id FROM users WHERE email=?) AND token_type=?')->execute([$email, $tokenType]);
+    $userQuery = db()->prepare('SELECT id FROM users WHERE email=? LIMIT 1'); $userQuery->execute([$email]); $userId = $userQuery->fetchColumn();
+    if (!$userId) return false;
+    $minutes = $tokenType === 'verify_email' ? 1440 : 60;
+    db()->prepare('INSERT INTO auth_tokens (user_id,token_type,token_hash,expires_at) VALUES (?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL ? MINUTE))')->execute([$userId, $tokenType, hash('sha256', $raw), $minutes]);
+    $route = $tokenType === 'verify_email' ? '/verify-email' : '/reset-password';
+    $subject = $tokenType === 'verify_email' ? 'Verify your Athar email' : 'Reset your Athar password';
+    $url = $base . $route . '?token=' . rawurlencode($raw);
+    $body = $tokenType === 'verify_email' ? "Verify your email address using this one-time link (valid for 24 hours):\n\n{$url}\n" : "Reset your password using this one-time link (valid for 60 minutes):\n\n{$url}\n";
+    return mail($email, $subject, $body, ['From' => $from, 'Content-Type' => 'text/plain; charset=UTF-8']);
+}
+
+if ($path === '/verify-email' && $method === 'GET') {
+    $raw = (string) ($_GET['token'] ?? ''); $verified = false;
+    if (preg_match('/^[a-f0-9]{64}$/', $raw)) {
+        $query = db()->prepare("SELECT id,user_id FROM auth_tokens WHERE token_hash=? AND token_type='verify_email' AND consumed_at IS NULL AND expires_at>UTC_TIMESTAMP() LIMIT 1"); $query->execute([hash('sha256', $raw)]); $record = $query->fetch();
+        if ($record) { db()->prepare('UPDATE users SET email_verified_at=UTC_TIMESTAMP() WHERE id=?')->execute([$record['user_id']]); db()->prepare('UPDATE auth_tokens SET consumed_at=UTC_TIMESTAMP() WHERE id=? AND consumed_at IS NULL')->execute([$record['id']]); $verified = true; }
+    }
+    flash($verified ? 'تم التحقق من بريدك الإلكتروني.' : 'رابط التحقق غير صالح أو انتهت صلاحيته.', $verified ? 'success' : 'error'); redirect(current_user() ? '/account' : '/login');
+}
+
+if ($path === '/forgot-password') {
+    $authError = ''; $authNotice = '';
+    if ($method === 'POST') { require_csrf(); $email = strtolower(trim((string) ($_POST['email'] ?? ''))); if (filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($email) <= 190) { try { send_account_token($email, 'password_reset'); } catch (Throwable $exception) { error_log('[Athar] Password reset mail delivery failed.'); } } $authNotice = 'إذا كان البريد مسجلًا ويمكنه استقبال الرسائل، ستصلك تعليمات إعادة التعيين.'; }
+    $title = 'استعادة كلمة المرور'; $activePath = $path; ob_start(); require dirname(__DIR__) . '/app/Views/pages/auth.php'; $content=(string)ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
+}
+
+if ($path === '/reset-password') {
+    $authError = ''; $authNotice = ''; $rawToken = (string) ($_GET['token'] ?? $_POST['token'] ?? '');
+    if ($method === 'POST') { require_csrf(); $password=(string)($_POST['password']??'');
+        if (!preg_match('/^[a-f0-9]{64}$/',$rawToken) || strlen($password)<10 || strlen($password)>200) $authError='الرابط أو كلمة المرور غير صالح.';
+        else { $pdo=db(); $pdo->beginTransaction(); try { $q=$pdo->prepare("SELECT id,user_id FROM auth_tokens WHERE token_hash=? AND token_type='password_reset' AND consumed_at IS NULL AND expires_at>UTC_TIMESTAMP() FOR UPDATE"); $q->execute([hash('sha256',$rawToken)]); $record=$q->fetch(); if (!$record) throw new RuntimeException('انتهت صلاحية رابط التعيين أو استُخدم.'); $pdo->prepare('UPDATE users SET password_hash=?,session_version=session_version+1 WHERE id=?')->execute([password_hash($password,PASSWORD_DEFAULT),$record['user_id']]); $pdo->prepare('UPDATE auth_tokens SET consumed_at=UTC_TIMESTAMP() WHERE user_id=? AND consumed_at IS NULL')->execute([$record['user_id']]); $pdo->prepare("INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)")->execute([$record['user_id'],'password-reset','user',(string)$record['user_id']]); $pdo->commit(); flash('تم تغيير كلمة المرور. سجّل الدخول من جديد.'); redirect('/login'); } catch(Throwable $exception) { if($pdo->inTransaction())$pdo->rollBack(); $authError=$exception instanceof RuntimeException?$exception->getMessage():'تعذر إعادة تعيين كلمة المرور.'; } }
+    }
+    $title = 'تعيين كلمة مرور جديدة'; $activePath = $path; ob_start(); require dirname(__DIR__) . '/app/Views/pages/auth.php'; $content=(string)ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
+}
+
 if ($path === '/api/quran/progress' && $method === 'POST') {
+    assert_no_maintenance_lock();
     $user = require_login();
     require_csrf();
     $surah = filter_var($_POST['surah'] ?? null, FILTER_VALIDATE_INT);
@@ -48,6 +93,7 @@ if ($path === '/api/quran/progress' && $method === 'POST') {
 }
 
 if ($path === '/api/favorites' && $method === 'POST') {
+    assert_no_maintenance_lock();
     $user = require_login(); require_csrf();
     $type = (string) ($_POST['type'] ?? ''); $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
     if (!in_array($type, ['book','lesson'], true) || !$id || $id < 1) { http_response_code(422); exit('بيانات العنصر غير صالحة.'); }
@@ -61,6 +107,7 @@ if ($path === '/api/favorites' && $method === 'POST') {
 }
 
 if ($path === '/api/lesson/progress' && $method === 'POST') {
+    assert_no_maintenance_lock();
     $user = require_login(); require_csrf();
     $lessonId = filter_var($_POST['lesson_id'] ?? null, FILTER_VALIDATE_INT);
     $position = filter_var($_POST['position'] ?? null, FILTER_VALIDATE_INT);
@@ -90,6 +137,36 @@ if ($path === '/book-download' && $method === 'GET') {
     header('Content-Length: ' . filesize($filePath)); readfile($filePath); exit;
 }
 
+if ($path === '/backup-download' && $method === 'POST') {
+    $owner = require_owner(); require_csrf();
+    $grantId = (int) ($_SESSION['backup_grant_id'] ?? 0);
+    $rawToken = (string) ($_SESSION['backup_grant_token'] ?? '');
+    unset($_SESSION['backup_grant_id'], $_SESSION['backup_grant_token']);
+    if (!$grantId || !preg_match('/^[a-f0-9]{64}$/', $rawToken)) { http_response_code(403); exit('لا يوجد إذن تنزيل صالح.'); }
+    $pdo = db();
+    $statement = $pdo->prepare("SELECT g.id,g.backup_id,g.token_hash,a.storage_key,a.sha256,a.byte_size,a.status FROM backup_download_grants g JOIN backup_artifacts a ON a.id=g.backup_id WHERE g.id=? AND g.owner_id=? AND g.expires_at>UTC_TIMESTAMP() AND g.consumed_at IS NULL AND a.status='ready' AND a.expires_at>UTC_TIMESTAMP() LIMIT 1");
+    $statement->execute([$grantId, $owner['id']]); $grant = $statement->fetch();
+    if (!$grant || !hash_equals((string) $grant['token_hash'], hash('sha256', $rawToken))) { http_response_code(403); exit('انتهت صلاحية إذن التنزيل أو استُخدم بالفعل.'); }
+    $claim = $pdo->prepare('UPDATE backup_download_grants SET consumed_at=UTC_TIMESTAMP() WHERE id=? AND owner_id=? AND consumed_at IS NULL AND expires_at>UTC_TIMESTAMP()');
+    $claim->execute([$grantId, $owner['id']]);
+    if ($claim->rowCount() !== 1) { http_response_code(409); exit('إذن التنزيل استُخدم بالفعل.'); }
+    $key = (string) $grant['storage_key'];
+    if (!preg_match('/^[a-f0-9]{40}\.enc$/', $key)) { http_response_code(404); exit('النسخة غير متاحة.'); }
+    $file = backup_directory() . DIRECTORY_SEPARATOR . $key;
+    if (!is_file($file) || !hash_equals((string) $grant['sha256'], hash_file('sha256', $file) ?: '')) { http_response_code(404); exit('تعذر التحقق من النسخة الاحتياطية.'); }
+    $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$owner['id'], 'backup-download-started', 'backup', (string) $grant['backup_id']]);
+    $downloadSize = filesize($file);
+    session_write_close();
+    header('Content-Type: application/octet-stream'); header('X-Content-Type-Options: nosniff'); header('Cache-Control: no-store, private');
+    header('Content-Disposition: attachment; filename="athar-backup-' . (int) $grant['backup_id'] . '.athar.enc"'); header('Content-Length: ' . $downloadSize);
+    $sent = readfile($file);
+    if ($sent === $downloadSize) {
+        $pdo->prepare("UPDATE backup_artifacts SET status='downloaded',downloaded_at=UTC_TIMESTAMP() WHERE id=?")->execute([$grant['backup_id']]);
+        $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$owner['id'], 'backup-downloaded', 'backup', (string) $grant['backup_id']]);
+    }
+    exit;
+}
+
 if (in_array($path, ['/register', '/login'], true)) {
     $authError = '';
     if ($method === 'POST') {
@@ -112,7 +189,7 @@ if (in_array($path, ['/register', '/login'], true)) {
                     $statement->execute([$email, password_hash($password, PASSWORD_DEFAULT)]);
                     $id = (int) db()->lastInsertId();
                 } else {
-                    $statement = db()->prepare('SELECT id,email,password_hash,role FROM users WHERE email=? LIMIT 1');
+                    $statement = db()->prepare('SELECT id,email,password_hash,role,session_version FROM users WHERE email=? LIMIT 1');
                     $statement->execute([$email]);
                     $record = $statement->fetch();
                     if (!$record || !password_verify($password, $record['password_hash'])) {
@@ -125,7 +202,11 @@ if (in_array($path, ['/register', '/login'], true)) {
                     }
                 }
                 if ($authError === '') {
-                    $statement = db()->prepare('SELECT id,email,role FROM users WHERE id=?');
+                    if ($path === '/register') {
+                        try { $verificationSent = send_account_token($email, 'verify_email'); }
+                        catch (Throwable $mailError) { error_log('[Athar] Verification mail delivery failed.'); $verificationSent = false; }
+                    }
+                    $statement = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?');
                     $statement->execute([$id]);
                     session_regenerate_id(true);
                     $_SESSION['user'] = $statement->fetch();
@@ -133,6 +214,7 @@ if (in_array($path, ['/register', '/login'], true)) {
                     $_SESSION['authenticated_at'] = time();
                     $_SESSION['last_activity'] = time();
                     unset($_SESSION['auth_attempts']);
+                    if ($path === '/register') flash($verificationSent ? 'أرسلنا رابط التحقق إلى بريدك الإلكتروني.' : 'تم إنشاء الحساب. لم يتوفر إرسال البريد الآن؛ اطلب من الإدارة ضبط خدمة البريد لإرسال رابط التحقق.', $verificationSent ? 'success' : 'error');
                     redirect('/account');
                 }
             } catch (PDOException $exception) {
@@ -166,6 +248,7 @@ if ($path === '/account') {
     $user = require_login();
     $accountError = '';
     if ($method === 'POST') {
+        assert_no_maintenance_lock();
         require_csrf();
         $action = (string) ($_POST['action'] ?? '');
         if ($action === 'plan-status') {
@@ -185,6 +268,24 @@ if ($path === '/account') {
         } elseif ($action === 'bookmark-delete') {
             db()->prepare('DELETE FROM quran_bookmarks WHERE id=? AND user_id=?')->execute([(int) ($_POST['id'] ?? 0), $user['id']]);
             flash('تم حذف العلامة.'); redirect('/account');
+        } elseif ($action === 'resend-verification') {
+            $check = db()->prepare('SELECT email_verified_at FROM users WHERE id=?'); $check->execute([$user['id']]);
+            if ($check->fetchColumn()) flash('تم التحقق من البريد مسبقًا.');
+            else { try { $sent = send_account_token((string) $user['email'], 'verify_email'); } catch (Throwable $mailError) { error_log('[Athar] Verification mail delivery failed.'); $sent = false; } flash($sent ? 'أرسلنا رابط تحقق جديدًا إلى بريدك.' : 'تعذر إرسال البريد الآن. راجع إعدادات خدمة البريد.', $sent ? 'success' : 'error'); }
+            redirect('/account');
+        } elseif ($action === 'change-password') {
+            $currentPassword = (string) ($_POST['current_password'] ?? '');
+            $newPassword = (string) ($_POST['new_password'] ?? '');
+            $check = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $check->execute([$user['id']]); $hash = (string) $check->fetchColumn();
+            if (!password_verify($currentPassword, $hash)) $accountError = 'كلمة المرور الحالية غير صحيحة.';
+            elseif (strlen($newPassword) < 10 || strlen($newPassword) > 200) $accountError = 'كلمة المرور الجديدة يجب أن تكون بين 10 و200 حرفًا.';
+            else {
+                db()->prepare('UPDATE users SET password_hash=?,session_version=session_version+1 WHERE id=?')->execute([password_hash($newPassword, PASSWORD_DEFAULT), $user['id']]);
+                $_SESSION['user']['session_version'] = (int) $_SESSION['user']['session_version'] + 1;
+                $_SESSION['authenticated_at'] = time();
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$user['id'], 'password-changed-and-other-sessions-revoked', 'user', (string) $user['id']]);
+                flash('تم تغيير كلمة المرور وتسجيل الخروج من الجلسات الأخرى.'); redirect('/account');
+            }
         } elseif ($action === 'delete-account') {
             $password = (string) ($_POST['password'] ?? '');
             $statement = db()->prepare('SELECT password_hash FROM users WHERE id=?');
@@ -230,11 +331,74 @@ if ($path === '/account') {
 if ($path === '/admin') {
     $admin = require_admin();
     $adminError = '';
+    $backupArtifacts = [];
+    if (($admin['role'] ?? '') === 'owner') {
+        try { expire_backup_artifacts(); } catch (Throwable $exception) { $adminError = 'تعذر تنظيف النسخ المنتهية. راجع مساحة التخزين.'; }
+    }
     if ($method === 'POST') {
+        if (!in_array((string) ($_POST['kind'] ?? ''), ['backup-restore','local-reset'], true)) assert_no_maintenance_lock();
         require_csrf();
         $kind = (string) ($_POST['kind'] ?? '');
         try {
-            if ($kind === 'content') {
+            if ($kind === 'backup-create') {
+                if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إنشاء النسخ متاح لمالك المنصة فقط.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
+                if ((string) ($_POST['manifest_confirmation'] ?? '') !== 'CREATE FULL BACKUP') throw new RuntimeException('اكتب عبارة التأكيد كما تظهر في نموذج النسخة.');
+                $artifact = build_backup_archive((int) $admin['id']);
+                flash('أُنشئت نسخة كاملة مشفرة وتحققنا من محتوياتها. اطلب إذن تنزيل منفصلًا أدناه.'); redirect('/admin');
+            } elseif ($kind === 'backup-restore') {
+                if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('الاستعادة متاحة لمالك المنصة فقط.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
+                if ((string) ($_POST['restore_confirmation'] ?? '') !== 'RESTORE FULL BACKUP') throw new RuntimeException('اكتب عبارة الاستعادة كما تظهر في النموذج.');
+                $backupId = filter_var($_POST['backup_id'] ?? null, FILTER_VALIDATE_INT); if (!$backupId || $backupId < 1) throw new RuntimeException('اختر نسخة صالحة.');
+                append_owner_audit(['action' => 'backup-restore-started', 'actor_id' => (int) $admin['id'], 'backup_id' => $backupId]);
+                acquire_maintenance_lock();
+                try { restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
+                session_regenerate_id(true); $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin');
+            } elseif ($kind === 'local-reset') {
+                if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إعادة الضبط متاحة لمالك المنصة فقط.');
+                $environment = strtolower((string) (getenv('APP_ENV') ?: 'production'));
+                if (!in_array($environment, ['local','development'], true)) throw new RuntimeException('إعادة الضبط موقوفة على هذه البيئة؛ يجب أن تكون APP_ENV=local أو development.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
+                if ((string) ($_POST['environment_confirmation'] ?? '') !== $environment || (string) ($_POST['reset_confirmation'] ?? '') !== 'RESET ATHAR DATA') throw new RuntimeException('أكد البيئة المحلية وعبارة الحذف حرفيًا.');
+                $recent = db()->query("SELECT id FROM backup_artifacts WHERE status IN ('ready','downloaded') AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) ORDER BY verified_at DESC LIMIT 1")->fetchColumn();
+                if (!$recent) throw new RuntimeException('أنشئ نسخة كاملة تم التحقق منها خلال آخر 24 ساعة قبل إعادة الضبط.');
+                append_owner_audit(['action' => 'local-reset-started', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
+                acquire_maintenance_lock();
+                try {
+                    $pdo = db(); $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
+                    try {
+                        $keep = ['users','schema_migrations','backup_artifacts'];
+                        $database = getenv('ATHAR_DB_NAME') ?: 'athar';
+                        $tables = $pdo->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=" . $pdo->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
+                        foreach ($tables as $table) if (!in_array($table, $keep, true)) $pdo->exec('DELETE FROM `' . $table . '`');
+                        $pdo->prepare('DELETE FROM users WHERE id<>?')->execute([$admin['id']]);
+                        $pdo->prepare('UPDATE users SET session_version=session_version+1 WHERE id=?')->execute([$admin['id']]);
+                    } finally { $pdo->exec('SET FOREIGN_KEY_CHECKS=1'); }
+                    $assets = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
+                    foreach (glob($assets . DIRECTORY_SEPARATOR . '*.pdf') ?: [] as $pdf) if (preg_match('/^[a-f0-9]{40}\.pdf$/', basename($pdf))) @unlink($pdf);
+                    append_owner_audit(['action' => 'local-reset-completed', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
+                } finally { release_maintenance_lock(); }
+                $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin');
+            } elseif ($kind === 'backup-grant') {
+                if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إذن التنزيل متاح لمالك المنصة فقط.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
+                $backupId = filter_var($_POST['backup_id'] ?? null, FILTER_VALIDATE_INT);
+                $artifactQuery = db()->prepare("SELECT id FROM backup_artifacts WHERE id=? AND status='ready' AND expires_at>UTC_TIMESTAMP()"); $artifactQuery->execute([$backupId]);
+                if (!$backupId || !$artifactQuery->fetchColumn()) throw new RuntimeException('النسخة غير متاحة أو انتهت صلاحيتها.');
+                $token = bin2hex(random_bytes(32));
+                $grant = db()->prepare('INSERT INTO backup_download_grants (backup_id,owner_id,token_hash,expires_at) VALUES (?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE))');
+                $grant->execute([$backupId, $admin['id'], hash('sha256', $token)]);
+                $_SESSION['backup_grant_id'] = (int) db()->lastInsertId(); $_SESSION['backup_grant_token'] = $token;
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'backup-download-grant-issued', 'backup', (string) $backupId]);
+                flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin');
+            } elseif ($kind === 'content') {
                 $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
                 if ($table === '' || !$id || $id < 1) throw new RuntimeException('عنصر المحتوى غير صالح.');
@@ -332,6 +496,8 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
+    if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
+    $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);
     $title='إدارة أثر'; $activePath=$path; $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php'; $flashMessage=take_flash();
     ob_start(); require $viewPath; $content=(string) ob_get_clean(); require dirname(__DIR__).'/app/Views/layout.php'; exit;
 }
