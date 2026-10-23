@@ -718,7 +718,7 @@ $homeLessons = $homeSeries = $homeBooks = [];
 $curatedBookTotal = 0; $bookPage = 1; $bookPageCount = 1; $localBookSearch = '';
 try {
     if ($path === '/') {
-        $homeLessons = db()->query('SELECT l.id,l.title,l.description,l.series_id,r.title AS series_title FROM lessons l LEFT JOIN series r ON r.id=l.series_id AND r.is_published=1 WHERE l.is_published=1 ORDER BY l.id DESC LIMIT 4')->fetchAll();
+        $homeLessons = db()->query('SELECT l.id,l.title,l.description,l.youtube_id,l.series_id,r.title AS series_title,s.name AS scholar_name FROM lessons l LEFT JOIN series r ON r.id=l.series_id AND r.is_published=1 LEFT JOIN scholars s ON s.id=l.scholar_id AND s.is_published=1 WHERE l.is_published=1 ORDER BY l.id DESC LIMIT 3')->fetchAll();
         $homeSeries = db()->query('SELECT id,title,description FROM series WHERE is_published=1 ORDER BY id DESC LIMIT 3')->fetchAll();
         $homeBooks = db()->query('SELECT id,title,author FROM books WHERE is_published=1 ORDER BY id DESC LIMIT 3')->fetchAll();
     }

@@ -103,6 +103,11 @@
         'محتوى منظّم، ومصادر واضحة، وتجربة مريحة على كل جهاز.': 'Organized content, clear sources, and a comfortable experience on every device.',
         'تابع قراءتك واحفظ تقدّمك وإحصاءاتك.': 'Keep track of your reading, progress, and activity.', 'صُمّم ليكون قريبًا منك، أينما قرأت.': 'Made to be with you, wherever you read.',
         'قراءة ومصادر': 'Reading & sources', 'قراءة القرآن والاستماع': 'Read and listen to the Quran', 'البحث في الحديث': 'Search hadith',
+        'جديد أثر': 'New on Athar', 'أحدث المحاضرات': 'Latest lectures', 'تابع أحدث ما أُضيف إلى مكتبة الدروس.': 'Explore the newest additions to the lesson library.',
+        'كل المحاضرات': 'All lectures', 'شاهد المحاضرة:': 'Watch lecture:', 'محاضرة مستقلة': 'Standalone lecture', 'شاهد المحاضرة': 'Watch lecture',
+        'قريبًا في مكتبة الدروس': 'Coming soon to the lesson library', 'ستظهر هنا أحدث المحاضرات التي يضيفها فريق المحتوى.': 'The latest lectures added by the content team will appear here.',
+        'مساحات للمعرفة': 'Explore the library', 'اكتشف المزيد': 'Discover more', 'كتب متاحة للقراءة': 'Books to read', 'تظهر هنا السلاسل المنشورة من العلماء.': 'Published scholar series appear here.',
+        'تصفح كتب التفسير وعلوم القرآن المتاحة للجميع.': 'Browse public books on Quranic studies and tafsir.',
         'سياسة المحتوى والإحالات': 'Content and source policy', 'ملفي الشخصي والإحصاءات': 'Profile and activity', 'إنشاء حساب اختياري': 'Create an optional account',
         'مساحتك الخاصة': 'Your personal space', 'علاماتك وتقدمك لا يراها غيرك.': 'Your bookmarks and progress are private.', 'نشاطك في أثر': 'Your activity on Athar',
         'جلسات القرآن': 'Quran sessions', 'دروس مكتملة': 'Lessons completed', 'أذكار مكتملة': 'Adhkar completed', 'كتب نُزّلت': 'Books downloaded', 'أيام نشطة': 'Active days',
@@ -143,6 +148,7 @@
         'التشغيل عبر المشغل الرسمي، وتوافر الفيديو يعتمد على إعدادات صاحبه وسياسات YouTube.': 'Videos play in the official player. Availability depends on the video owner and YouTube policies.',
     };
     const patterns = [
+        [/^شاهد المحاضرة: (.+)$/, 'Watch lecture: $1'],
         [/^سورة (.+) · (\d+) آية$/, 'Surah $1 · $2 verses'],
         [/^الجزء (\d+) · (\d+) آية$/, 'Juz $1 · $2 verses'],
         [/^صفحة (\d+) · (\d+) آية$/, 'Page $1 · $2 verses'],

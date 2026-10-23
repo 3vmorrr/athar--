@@ -126,7 +126,7 @@
     });
 
     nav?.addEventListener('click', (event) => {
-        if (event.target instanceof HTMLAnchorElement && window.matchMedia('(max-width: 700px)').matches) {
+        if (event.target instanceof HTMLAnchorElement && window.matchMedia('(max-width: 820px)').matches) {
             menuButton?.setAttribute('aria-expanded', 'false');
             menuButton?.setAttribute('aria-label', 'فتح القائمة');
             nav.setAttribute('data-open', 'false');

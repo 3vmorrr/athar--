@@ -72,12 +72,38 @@
     </div>
 </section>
 
+<section class="latest-lectures section-wrap" aria-labelledby="latest-lectures-heading">
+    <div class="section-heading latest-lectures-heading">
+        <div><span class="eyebrow">جديد أثر</span><h2 id="latest-lectures-heading">أحدث المحاضرات</h2><p>تابع أحدث ما أُضيف إلى مكتبة الدروس.</p></div>
+        <a class="button button-secondary" href="/lessons">كل المحاضرات <span aria-hidden="true">←</span></a>
+    </div>
+    <?php if ($homeLessons): ?>
+        <div class="latest-lecture-grid">
+            <?php foreach ($homeLessons as $lesson): $watchUrl = $lesson['series_id'] ? '/series?id=' . (int) $lesson['series_id'] . '&lesson=' . (int) $lesson['id'] : '/lessons?lesson=' . (int) $lesson['id']; ?>
+                <article class="latest-lecture-card">
+                    <a class="lecture-card-media" href="<?= e($watchUrl) ?>" aria-label="شاهد المحاضرة: <?= e($lesson['title']) ?>">
+                        <?php if (!empty($lesson['youtube_id'])): ?><img src="https://i.ytimg.com/vi/<?= e($lesson['youtube_id']) ?>/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><?php else: ?><span class="lecture-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><?php endif; ?>
+                        <span class="lecture-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 10 6-10 6V6Z"/></svg></span>
+                    </a>
+                    <div class="lecture-card-body">
+                        <div class="lecture-card-meta"><span class="lecture-kind"><?= e($lesson['series_title'] ?: ($lesson['scholar_name'] ?: 'محاضرة مستقلة')) ?></span><?php if (!empty($lesson['scholar_name'])): ?><span><?= e($lesson['scholar_name']) ?></span><?php endif; ?></div>
+                        <h3><a href="<?= e($watchUrl) ?>"><?= e($lesson['title']) ?></a></h3>
+                        <?php if (!empty($lesson['description'])): ?><p><?= e(mb_strimwidth((string) $lesson['description'], 0, 150, '…', 'UTF-8')) ?></p><?php else: ?><p>شاهد المحاضرة وتابع بقية الدروس من صفحة المحتوى.</p><?php endif; ?>
+                        <a class="lecture-watch-link" href="<?= e($watchUrl) ?>">شاهد المحاضرة <span aria-hidden="true">←</span></a>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="lecture-empty-state"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><div><h3>قريبًا في مكتبة الدروس</h3><p>ستظهر هنا أحدث المحاضرات التي يضيفها فريق المحتوى.</p></div><a class="button button-secondary" href="/lessons">استكشف الدروس</a></div>
+    <?php endif; ?>
+</section>
+
 <section class="home-recent section-wrap" aria-labelledby="home-recent-heading">
-    <div class="section-heading"><div><span class="eyebrow">محتوى الموقع</span><h2 id="home-recent-heading">ابدأ من هنا</h2></div></div>
+    <div class="section-heading"><div><span class="eyebrow">مساحات للمعرفة</span><h2 id="home-recent-heading">اكتشف المزيد</h2></div></div>
     <div class="home-recent-grid">
-        <article class="knowledge-card home-feature-card"><h3>الدروس والسلاسل</h3><?php if($homeLessons): ?><ul class="home-link-list"><?php foreach($homeLessons as $lesson): ?><li><a href="<?= $lesson['series_id']?'/series?id='.(int)$lesson['series_id'].'&lesson='.(int)$lesson['id']:'/lessons?lesson='.(int)$lesson['id'] ?>"><?= e($lesson['title']) ?></a><small><?= e($lesson['series_title']?:'درس مستقل') ?></small></li><?php endforeach; ?></ul><?php else: ?><p>استكشف الدروس المنشورة في مكتبة العلماء.</p><?php endif; ?><a class="button button-secondary" href="/lessons">كل الدروس</a></article>
-        <article class="knowledge-card home-feature-card"><h3>السلاسل العلمية</h3><?php if($homeSeries): ?><ul class="home-link-list"><?php foreach($homeSeries as $series): ?><li><a href="/series?id=<?= (int)$series['id'] ?>"><?= e($series['title']) ?></a></li><?php endforeach; ?></ul><?php else: ?><p>تظهر هنا السلاسل التي يضيفها فريق المحتوى.</p><?php endif; ?><a class="button button-secondary" href="/lessons">تصفح السلاسل</a></article>
-        <article class="knowledge-card home-feature-card"><h3>الكتب المتاحة</h3><?php if($homeBooks): ?><ul class="home-link-list"><?php foreach($homeBooks as $book): ?><li><a href="/books"><?= e($book['title']) ?></a><small><?= e($book['author']) ?></small></li><?php endforeach; ?></ul><?php else: ?><p>تصفح مكتبة الكتب العامة.</p><?php endif; ?><a class="button button-secondary" href="/books">فتح المكتبة</a></article>
+        <article class="knowledge-card home-feature-card"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M4 6v15m4-14h8m-8 4h8"/></svg></span><h3>السلاسل العلمية</h3><?php if($homeSeries): ?><ul class="home-link-list"><?php foreach($homeSeries as $series): ?><li><a href="/series?id=<?= (int)$series['id'] ?>"><?= e($series['title']) ?></a></li><?php endforeach; ?></ul><?php else: ?><p>تظهر هنا السلاسل المنشورة من العلماء.</p><?php endif; ?><a class="button button-secondary" href="/lessons">تصفح السلاسل</a></article>
+        <article class="knowledge-card home-feature-card"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M4 6v15m5-14h7m-7 4h7"/></svg></span><h3>كتب متاحة للقراءة</h3><?php if($homeBooks): ?><ul class="home-link-list"><?php foreach($homeBooks as $book): ?><li><a href="/books"><?= e($book['title']) ?></a><small><?= e($book['author']) ?></small></li><?php endforeach; ?></ul><?php else: ?><p>تصفح كتب التفسير وعلوم القرآن المتاحة للجميع.</p><?php endif; ?><a class="button button-secondary" href="/books">فتح المكتبة</a></article>
     </div>
 </section>
 

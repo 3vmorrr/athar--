@@ -159,8 +159,35 @@ h1, h2, p { margin-block-start: 0; }
 .area-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .area-card { position: relative; min-height: 218px; display: flex; flex-direction: column; align-items: flex-start; padding: 1.35rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
 .area-card:hover { transform: translateY(-3px); border-color: var(--color-primary); box-shadow: 0 12px 24px var(--color-shadow); }
+.latest-lectures { padding-block: 1rem 4rem; }
+.latest-lectures-heading { align-items: end; margin-block-end: 1.35rem; }
+.latest-lectures-heading h2 { margin-block: 0.25rem 0; font-family: var(--font-reading); font-size: 2rem; }
+.latest-lectures-heading p { margin-block: 0.4rem 0; color: var(--color-text-secondary); }
+.latest-lecture-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 1.1rem; }
+.latest-lecture-card { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1.1rem; background: var(--color-surface); box-shadow: 0 12px 32px var(--color-shadow); transition: transform 180ms ease, box-shadow 180ms ease; }
+.latest-lecture-card:hover { transform: translateY(-3px); box-shadow: 0 18px 38px var(--color-shadow); }
+.lecture-card-media { position: relative; display: grid; aspect-ratio: 16 / 9; place-items: center; overflow: hidden; background: radial-gradient(circle at 75% 25%, #79b294 0, transparent 36%), linear-gradient(135deg, #1f604a, #18382f); }
+.lecture-card-media > img { width: 100%; height: 100%; object-fit: cover; transition: transform 220ms ease; }
+.latest-lecture-card:hover .lecture-card-media > img { transform: scale(1.035); }
+.lecture-placeholder { display: grid; width: 4.5rem; height: 4.5rem; place-items: center; border: 1px solid #ffffff55; border-radius: 50%; color: #fff; }
+.lecture-placeholder svg { width: 2rem; height: 2rem; }
+.lecture-play { position: absolute; inset: 0; display: grid; place-items: center; color: white; background: linear-gradient(0deg, #141c1890, transparent 55%); }
+.lecture-play svg { width: 3rem; height: 3rem; padding: 0.75rem; border: 1px solid #ffffffaa; border-radius: 50%; background: #17251f7a; fill: currentColor; stroke: none; }
+.lecture-card-body { min-height: 235px; display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 1.1rem 1.15rem 1rem; }
+.lecture-card-meta { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-block-end: 0.65rem; color: var(--color-text-muted); font-size: 0.75rem; }
+.lecture-card-meta > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lecture-card-meta .lecture-kind { max-width: 68%; padding: 0.16rem 0.55rem; border-radius: 999px; background: var(--color-primary-soft); color: var(--color-primary-strong); font-weight: 700; }
+.lecture-card-body h3 { display: -webkit-box; overflow: hidden; margin: 0 0 0.5rem; font-size: 1.04rem; line-height: 1.65; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.lecture-card-body h3 a:hover, .lecture-watch-link:hover { color: var(--color-primary); }
+.lecture-card-body > p { display: -webkit-box; overflow: hidden; margin-block: 0 0.9rem; color: var(--color-text-secondary); font-size: 0.85rem; line-height: 1.8; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.lecture-watch-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-block-start: auto; color: var(--color-primary); font-size: 0.84rem; font-weight: 800; }
+.lecture-empty-state { display: flex; align-items: center; gap: 1rem; padding: 1.3rem; border: 1px dashed var(--color-border); border-radius: 1rem; background: var(--color-surface); }
+.lecture-empty-state .area-icon { flex: 0 0 auto; }
+.lecture-empty-state h3 { margin-block: 0 0.2rem; font-size: 1rem; }
+.lecture-empty-state p { margin: 0; color: var(--color-text-secondary); font-size: 0.87rem; }
+.lecture-empty-state .button { margin-inline-start: auto; }
 .home-recent { padding-block: 0 3.5rem; }
-.home-recent-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+.home-recent-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
 .home-feature-card { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; }
 .home-feature-card h3 { margin: 0; }
 .home-feature-card > .button { margin-block-start: auto; }
@@ -438,6 +465,7 @@ ol.knowledge-results > li { padding-inline-start: 0.5rem; }
 
 @media (max-width: 920px) {
     .footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+    .latest-lecture-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .quran-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .header-inner { gap: 1rem; }
     .primary-nav { gap: 0.8rem; }
@@ -445,6 +473,17 @@ ol.knowledge-results > li { padding-inline-start: 0.5rem; }
     .hero { min-height: 500px; grid-template-columns: 1fr 0.8fr; gap: 1.2rem; }
     .hero-art { min-height: 360px; }
     .art-card { min-height: 310px; }
+}
+
+@media (max-width: 820px) {
+    .header-inner { min-height: 72px; gap: 0.45rem; }
+    .brand-logo { width: 112px; height: 70px; }
+    .menu-toggle { display: inline-flex; margin-inline-start: auto; }
+    .primary-nav { position: absolute; inset-block-start: calc(100% + 1px); inset-inline: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0.2rem; padding: 0.65rem 1rem 1rem; border-block-end: 1px solid var(--color-border); background: var(--color-page); box-shadow: 0 12px 18px var(--color-shadow); }
+    .primary-nav[data-open="false"] { display: none; }
+    .primary-nav a { min-height: 44px; display: flex; align-items: center; padding-inline: 0.8rem; border-radius: 0.6rem; font-size: 0.95rem; }
+    .primary-nav a[aria-current="page"] { background: var(--color-primary-soft); }
+    .header-actions { margin-inline-start: 0.2rem; }
 }
 
 @media (max-width: 700px) {
@@ -482,6 +521,20 @@ ol.knowledge-results > li { padding-inline-start: 0.5rem; }
     .footer-nav { gap: 0.5rem; }
     .footer-account { gap: 0.5rem; }
     .footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .latest-lectures { padding-block: 0.5rem 3rem; }
+    .latest-lectures-heading { align-items: flex-start; flex-direction: row; }
+    .latest-lectures-heading .button { width: auto; flex: 0 0 auto; padding-inline: 0.7rem; font-size: 0.8rem; }
+    .latest-lecture-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+    .latest-lecture-card { display: grid; grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.2fr); }
+    .lecture-card-media { height: 100%; min-height: 190px; aspect-ratio: auto; }
+    .lecture-card-body { min-height: 190px; padding: 0.85rem; }
+    .lecture-card-meta { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
+    .lecture-card-meta .lecture-kind { max-width: 100%; }
+    .lecture-card-body h3 { font-size: 0.95rem; }
+    .lecture-card-body > p { font-size: 0.8rem; -webkit-line-clamp: 2; }
+    .lecture-empty-state { align-items: flex-start; flex-wrap: wrap; }
+    .lecture-empty-state > div { flex: 1 1 calc(100% - 4rem); }
+    .lecture-empty-state .button { margin-inline-start: 3.8rem; }
     .quran-heading { align-items: flex-start; flex-direction: column; gap: 0.75rem; }
     .quran-tool-nav { position: static; width: 100%; justify-content: flex-start; border-radius: 0.9rem; }
     .quran-tool-nav a { padding-inline: 0.8rem; }
@@ -506,12 +559,20 @@ ol.knowledge-results > li { padding-inline-start: 0.5rem; }
 @media (max-width: 390px) {
     .footer-inner { grid-template-columns: 1fr; }
     .footer-main, .footer-bottom { grid-column: auto; }
+    .header-inner { gap: 0.2rem; }
+    .brand-logo { width: 88px; height: 58px; }
+    .header-actions { max-width: calc(100% - 140px); flex-wrap: wrap; justify-content: flex-end; gap: 0; }
+    .account-link { padding-inline: 0.25rem; font-size: 0.76rem; }
     .quran-controls { grid-template-columns: 1fr; }
     .quran-controls .button { grid-column: auto; }
     .reading-size { justify-content: space-between; }
     .quran-audio-actions { grid-template-columns: 1fr; }
     .area-grid { grid-template-columns: 1fr; }
     .home-recent-grid { grid-template-columns: 1fr; }
+    .latest-lectures-heading { flex-direction: column; }
+    .latest-lecture-card { grid-template-columns: 1fr; }
+    .lecture-card-media { min-height: 0; aspect-ratio: 16 / 9; }
+    .lecture-card-body { min-height: 205px; }
     .area-card { min-height: 190px; }
     .hero-actions { align-items: stretch; flex-direction: column; }
     .button { width: 100%; }
