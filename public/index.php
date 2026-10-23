@@ -488,6 +488,8 @@ if ($path === '/admin') {
                     } elseif ($type === 'book') {
                         $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? ''));
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
+                        $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
+                        if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
                         $current = db()->prepare('SELECT file_key FROM books WHERE id=?'); $current->execute([$id]); $previousKey = $current->fetchColumn();
                         if ($previousKey === false) throw new RuntimeException('الكتاب غير موجود.');
                         $nextKey = $previousKey ?: null; $nextSize = null; $storage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
@@ -496,7 +498,7 @@ if ($path === '/admin') {
                         }
                         $canDownload = isset($_POST['can_download']) && $nextKey ? 1 : 0;
                         try {
-                            db()->prepare('UPDATE books SET title=?,author=?,description=?,source_url=?,rights_basis=?,file_key=?,file_size=COALESCE(?,file_size),can_download=?,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), $source, $rights, $nextKey, $nextSize, $canDownload, $published, $id]);
+                            db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,rights_basis=?,file_key=?,file_size=COALESCE(?,file_size),can_download=?,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')), $source, $rights, $nextKey, $nextSize, $canDownload, $published, $id]);
                         } catch (Throwable $saveFailure) {
                             if ($nextKey !== $previousKey && is_string($nextKey)) { $newPath = $storage . DIRECTORY_SEPARATOR . $nextKey; if (is_file($newPath)) unlink($newPath); }
                             throw $saveFailure;
@@ -539,6 +541,8 @@ if ($path === '/admin') {
                 db()->prepare('INSERT INTO lessons (scholar_id,series_id,title,description,youtube_id,source_url,sort_order,is_published) VALUES (NULLIF(?,0),NULLIF(?,0),?,?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), (int) ($_POST['series_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $id, $url, (int) ($_POST['sort_order'] ?? 0), isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'book') {
                 if (trim((string) $_POST['rights_basis']) === '' || !is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
+                $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
+                if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
                 $fileKey = null; $fileSize = null;
                 $storage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
                 if (isset($_FILES['book_pdf']) && ($_FILES['book_pdf']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
@@ -546,7 +550,7 @@ if ($path === '/admin') {
                 }
                 $canDownload = isset($_POST['can_download']) && $fileKey ? 1 : 0;
                 try {
-                    db()->prepare('INSERT INTO books (title,author,description,source_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) $_POST['source_url']), trim((string) $_POST['rights_basis']), $fileKey, $fileSize, $canDownload, isset($_POST['publish']) ? 1 : 0]);
+                    db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')) ?: null, trim((string) $_POST['source_url']), trim((string) $_POST['rights_basis']), $fileKey, $fileSize, $canDownload, isset($_POST['publish']) ? 1 : 0]);
                 } catch (Throwable $saveFailure) {
                     if ($fileKey && is_file($storage . DIRECTORY_SEPARATOR . $fileKey)) unlink($storage . DIRECTORY_SEPARATOR . $fileKey);
                     throw $saveFailure;
@@ -583,11 +587,19 @@ if ($path === '/admin') {
 $curatedBooks = $curatedLessons = $curatedAdhkar = $curatedScholars = [];
 $publicScholar = $publicSeries = null;
 $scholarSeries = $scholarLessons = $seriesLessons = [];
+$curatedBookTotal = 0; $bookPage = 1; $bookPageCount = 1; $localBookSearch = '';
 try {
     if ($path === '/books') {
         $user = current_user();
-        $query = 'SELECT b.id,b.title,b.author,b.description,b.source_url,b.can_download,b.file_key,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'book\' AND f.target_id=b.id) AS is_favorite FROM books b WHERE b.is_published=1 ORDER BY b.title LIMIT 50';
-        $statement = db()->prepare($query); $statement->execute([(int) ($user['id'] ?? 0)]); $curatedBooks = $statement->fetchAll();
+        $localBookSearch = trim(mb_substr((string) ($_GET['local_q'] ?? ''), 0, 80, 'UTF-8'));
+        $bookPage = max(1, min(10000, (int) ($_GET['book_page'] ?? 1)));
+        $where = ' FROM books WHERE is_published=1'; $searchParams = [];
+        if ($localBookSearch !== '') { $where .= ' AND (title LIKE ? OR author LIKE ? OR COALESCE(keywords,\'\') LIKE ?)'; $like = '%' . $localBookSearch . '%'; $searchParams = [$like, $like, $like]; }
+        $count = db()->prepare('SELECT COUNT(*)' . $where); $count->execute($searchParams); $curatedBookTotal = (int) $count->fetchColumn();
+        $bookPageCount = max(1, (int) ceil($curatedBookTotal / 20)); $bookPage = min($bookPage, $bookPageCount);
+        $offset = ($bookPage - 1) * 20;
+        $query = 'SELECT b.id,b.title,b.author,b.description,b.keywords,b.language,b.publication_year,b.rights_holder,b.source_url,b.can_download,b.file_key,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'book\' AND f.target_id=b.id) AS is_favorite' . $where . ' ORDER BY b.title LIMIT 20 OFFSET ' . $offset;
+        $statement = db()->prepare($query); $statement->execute(array_merge([(int) ($user['id'] ?? 0)], $searchParams)); $curatedBooks = $statement->fetchAll();
     }
     if ($path === '/lessons') {
         $user = current_user();

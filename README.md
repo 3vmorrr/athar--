@@ -4,7 +4,7 @@ Arabic-first platform for Quran reading, Islamic knowledge, worship tools, and s
 
 ## Local setup
 
-Requires PHP 8.0 or newer and MySQL/MariaDB with PDO MySQL, mbstring, and fileinfo. For a fresh local database, configure the connection and apply each migration once in filename order:
+Requires PHP 8.0 or newer and MySQL/MariaDB with PDO MySQL, mbstring, fileinfo, OpenSSL, and ZipArchive. For a fresh local database, configure the connection and apply each migration once in filename order:
 
 ```powershell
 $env:ATHAR_DB_HOST = '127.0.0.1'
@@ -31,7 +31,7 @@ Open <http://127.0.0.1:8000/> and create an account. Promote a content administr
 
 The owner-only backup feature requires `ATHAR_BACKUP_KEY`, a separate 32-byte key encoded as 64 hexadecimal characters. Generate one with `& 'C:\xampp\php\php.exe' -r "echo bin2hex(random_bytes(32)), PHP_EOL;"`; store it in the machine/service secret store and a separate recovery location, never in Git. The owner dashboard creates and verifies an encrypted archive, then issues a separate one-time download grant. Archives are retained privately for 24 hours, including after download, so an owner can restore from the same host. Restore requires a recent verified archive, a matching schema version, password confirmation, and the exact `RESTORE FULL BACKUP` phrase. A local reset is denied unless `APP_ENV` is exactly `local` or `development`; it also requires a recent verified archive, password confirmation, the typed environment, and `RESET ATHAR DATA`. Reset keeps the schema, migration ledger, owner account, and backup artifacts. Both operations use a MySQL maintenance lock; content and account writes receive a retryable 503 while it is held. Changing a password increments the session version to revoke other devices.
 
-Email verification and password recovery use one-time database-hashed tokens. Configure `ATHAR_BASE_URL` with the public HTTPS origin and `ATHAR_MAIL_FROM` with a sender accepted by the host's mail transport. Recovery responses do not disclose whether an email is registered. Apply new database migrations once in filename order; migration `005` adds email verification and preferences fields.
+Email verification and password recovery use one-time database-hashed tokens. Configure `ATHAR_BASE_URL` with the public HTTPS origin and `ATHAR_MAIL_FROM` with a sender accepted by the host's mail transport. Recovery responses do not disclose whether an email is registered. Apply new database migrations once in filename order; migration `005` adds email verification and preferences fields, and `006` adds curated book metadata.
 
 ## Product and source documentation
 
