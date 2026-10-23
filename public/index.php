@@ -48,6 +48,14 @@ function send_account_token(string $email, string $type): bool
     return mail($email, $subject, $body, ['From' => $from, 'Content-Type' => 'text/plain; charset=UTF-8']);
 }
 
+function allow_session_rate(string $key, int $limit, int $windowSeconds): bool
+{
+    $now = time(); $attempts = $_SESSION[$key] ?? ['started' => $now, 'count' => 0];
+    if (!is_array($attempts) || $now - (int) ($attempts['started'] ?? 0) > $windowSeconds) $attempts = ['started' => $now, 'count' => 0];
+    $attempts['count'] = (int) ($attempts['count'] ?? 0) + 1; $_SESSION[$key] = $attempts;
+    return $attempts['count'] <= $limit;
+}
+
 if ($path === '/verify-email' && $method === 'GET') {
     $raw = (string) ($_GET['token'] ?? ''); $verified = false;
     if (preg_match('/^[a-f0-9]{64}$/', $raw)) {
@@ -59,7 +67,7 @@ if ($path === '/verify-email' && $method === 'GET') {
 
 if ($path === '/forgot-password') {
     $authError = ''; $authNotice = '';
-    if ($method === 'POST') { require_csrf(); $email = strtolower(trim((string) ($_POST['email'] ?? ''))); if (filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($email) <= 190) { try { send_account_token($email, 'password_reset'); } catch (Throwable $exception) { error_log('[Athar] Password reset mail delivery failed.'); } } $authNotice = 'إذا كان البريد مسجلًا ويمكنه استقبال الرسائل، ستصلك تعليمات إعادة التعيين.'; }
+    if ($method === 'POST') { require_csrf(); $email = strtolower(trim((string) ($_POST['email'] ?? ''))); if (allow_session_rate('password_reset_requests', 3, 900) && filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($email) <= 190) { try { send_account_token($email, 'password_reset'); } catch (Throwable $exception) { error_log('[Athar] Password reset mail delivery failed.'); } } $authNotice = 'إذا كان البريد مسجلًا ويمكنه استقبال الرسائل، ستصلك تعليمات إعادة التعيين.'; }
     $title = 'استعادة كلمة المرور'; $activePath = $path; ob_start(); require dirname(__DIR__) . '/app/Views/pages/auth.php'; $content=(string)ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
 }
 
@@ -306,6 +314,7 @@ if ($path === '/account') {
         } elseif ($action === 'resend-verification') {
             $check = db()->prepare('SELECT email_verified_at FROM users WHERE id=?'); $check->execute([$user['id']]);
             if ($check->fetchColumn()) flash('تم التحقق من البريد مسبقًا.');
+            elseif (!allow_session_rate('verification_resends', 3, 900)) flash('محاولات كثيرة. انتظر 15 دقيقة قبل طلب رابط جديد.', 'error');
             else { try { $sent = send_account_token((string) $user['email'], 'verify_email'); } catch (Throwable $mailError) { error_log('[Athar] Verification mail delivery failed.'); $sent = false; } flash($sent ? 'أرسلنا رابط تحقق جديدًا إلى بريدك.' : 'تعذر إرسال البريد الآن. راجع إعدادات خدمة البريد.', $sent ? 'success' : 'error'); }
             redirect('/account');
         } elseif ($action === 'save-preferences') {
@@ -338,6 +347,7 @@ if ($path === '/account') {
             if ($hash === '' || !password_verify($password, $hash)) $accountError = 'كلمة المرور غير صحيحة.';
             else {
                 db()->prepare('DELETE FROM users WHERE id=?')->execute([$user['id']]);
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$user['id'], 'account-deleted-minimal-audit-retained', 'user', (string) $user['id']]);
                 $_SESSION = []; session_destroy(); redirect('/');
             }
         }
