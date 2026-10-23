@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#F5F3ED">
+    <meta name="theme-color" content="#F4F3ED">
     <meta name="description" content="<?= e($seoDescription ?? 'اقرأ القرآن، وابحث عن الحديث، واستكشف الدروس والكتب والأذكار في منصة أثر العربية.') ?>">
     <meta name="robots" content="<?= e($seoRobots ?? (!empty($canonicalUrl) ? 'index,follow,max-image-preview:large' : 'noindex,nofollow')) ?>">
     <?php if (!empty($canonicalUrl)): ?><link rel="canonical" href="<?= e($canonicalUrl) ?>"><?php endif; ?>
@@ -34,7 +34,7 @@
     <header class="site-header">
         <div class="header-inner">
             <a class="brand" href="/" aria-label="الصفحة الرئيسية">
-                <img class="brand-logo" src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="150" height="92" fetchpriority="high">
+                <img class="brand-logo" src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="94" height="86" fetchpriority="high">
             </a>
 
             <button class="icon-button menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="primary-nav" data-menu-toggle>
@@ -59,9 +59,7 @@
                 <?php else: ?>
                     <a class="account-link" href="/login">دخول</a>
                 <?php endif; ?>
-                <button class="theme-toggle" type="button" data-theme-toggle aria-label="الوضع الداكن" title="الوضع الداكن" aria-pressed="false">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.5 8.5 0 1 0 20.2 15.2Z" /></svg>
-                </button>
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="الوضع الداكن" title="الوضع الداكن" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.5 8.5 0 1 0 20.2 15.2Z" /></svg></button>
             </div>
         </div>
     </header>
@@ -73,7 +71,7 @@
 
     <footer class="site-footer">
         <div class="footer-inner">
-            <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="120" height="76" loading="lazy"></a><p>مساحة هادئة للقرآن والمعرفة والعبادة.</p><span class="footer-note">محتوى منظّم، ومصادر واضحة، وتجربة مريحة على كل جهاز.</span></div>
+            <div class="footer-main"><a class="footer-brand" href="/" aria-label="أثر"><img src="/assets/images/athar-logo-cropped.png?v=<?= (int) (@filemtime(dirname(__DIR__, 2) . '/public/assets/images/athar-logo-cropped.png') ?: 1) ?>" alt="أثر" width="106" height="96" loading="lazy"></a><p>مساحة هادئة للقرآن والمعرفة والعبادة.</p><span class="footer-note">محتوى منظّم، ومصادر واضحة، وتجربة مريحة على كل جهاز.</span></div>
             <nav class="footer-nav" aria-label="روابط الموقع"><strong>استكشف أثر</strong><a href="/quran">القرآن الكريم</a><a href="/hadith">الحديث النبوي</a><a href="/dorar">موسوعة الدرر السنية</a><a href="/adhkar">الأذكار والأدعية</a><a href="/books">المكتبة</a><a href="/lessons">الدروس والمحاضرات</a></nav>
             <nav class="footer-nav" aria-label="روابط القراءة والمصادر"><strong>قراءة ومصادر</strong><a href="/quran">قراءة القرآن والاستماع</a><a href="/hadith">البحث في الحديث</a><a href="/about">منهجية المصادر</a><a href="/about">سياسة المحتوى والإحالات</a></nav>
             <div class="footer-account"><strong>حسابك</strong><p>تابع قراءتك واحفظ تقدّمك وإحصاءاتك، مع بقاء التصفح العام متاحًا.</p><?php if (!empty($user)): ?><a href="/account">ملفي الشخصي والإحصاءات</a><?php else: ?><a href="/login">تسجيل الدخول</a><a href="/register">إنشاء حساب اختياري</a><?php endif; ?></div>
