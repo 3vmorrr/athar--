@@ -1,6 +1,6 @@
 # Athar
 
-Arabic-first platform for Quran reading, Islamic knowledge, worship tools, and source-attributed content.
+Arabic-first platform for Quran reading, Islamic knowledge, worship tools, and source-attributed content. The Quran reader supports navigation by surah, juz, or page; Arabic verse search; tafsir; selectable reciters; verse-by-verse playback; repeat and skip controls; and a memorization review mode.
 
 ## Local setup
 
