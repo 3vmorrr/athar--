@@ -50,6 +50,9 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
     private fun validDay(value:String?):Boolean =
         value != null && Regex("""\d{4}-\d{2}-\d{2}""").matches(value)
 
+    fun isCurrentDay(state:CounterState):Boolean = state.day==utcDay()
+
+
     private fun decode(row: CachedDocument):CounterState {
         val raw=requireNotNull(gson.fromJson(cipher.open(row.payloadCipher), CounterState::class.java))
         require(raw.item>0&&row.cacheKey==key(raw.item)&&raw.target in 1..65535&&raw.count in 0..raw.target&&raw.revision>=0&&raw.localVersion>=0)
