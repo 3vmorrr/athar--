@@ -74,15 +74,94 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
     Column(Modifier.fillMaxSize()) {
         if (mode == null) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.quran), style = MaterialTheme.typography.headlineMedium)
-                listOf("read" to R.string.read, "listen" to R.string.listen, "tafsir" to R.string.tafsir, "radio" to R.string.radio).forEach { (key, label) ->
-                    OutlinedButton(onClick = { mode = key }, Modifier.fillMaxWidth().heightIn(min = 64.dp)) { Text(stringResource(label)) }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item(key = "quran-hero") {
+                    AtharHeroSurface(Modifier.fillMaxWidth()) {
+                        Text(
+                            stringResource(R.string.quran),
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                        Text(
+                            stringResource(R.string.quran_source),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Button(
+                            onClick = { mode = "read" },
+                            modifier = Modifier.heightIn(min = 52.dp),
+                        ) {
+                            Icon(AtharIcons.MenuBook, null, Modifier.size(20.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.read))
+                        }
+                    }
+                }
+                item(key = "quran-tools") {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        AtharSectionHeader(stringResource(R.string.quran_tools))
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.MenuBook,
+                                stringResource(R.string.read),
+                                { mode = "read" },
+                                Modifier.weight(1f),
+                                emphasized = true,
+                            )
+                            AtharQuickAction(
+                                AtharIcons.PlayArrow,
+                                stringResource(R.string.listen),
+                                { mode = "listen" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.School,
+                                stringResource(R.string.tafsir),
+                                { mode = "tafsir" },
+                                Modifier.weight(1f),
+                            )
+                            AtharQuickAction(
+                                AtharIcons.NightsStay,
+                                stringResource(R.string.radio),
+                                { mode = "radio" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                    }
                 }
             }
         } else {
-            TextButton(onClick = { mode = null }, Modifier.padding(horizontal = 12.dp)) { Text(stringResource(R.string.quran_tools)) }
-            Box(Modifier.weight(1f)) { when(mode) { "read" -> QuranReaderScreen(graph, fontSize); "tafsir" -> TafsirScreen(graph, fontSize); else -> org.athar.app.media.AudioScreen(graph, mode == "radio") } }
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                tonalElevation = 0.dp,
+            ) {
+                TextButton(
+                    onClick = { mode = null },
+                    Modifier.padding(horizontal = 12.dp),
+                ) {
+                    Icon(AtharIcons.ArrowBack, null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.quran_tools))
+                }
+            }
+            Box(Modifier.weight(1f)) {
+                when(mode) {
+                    "read" -> QuranReaderScreen(graph, fontSize)
+                    "tafsir" -> TafsirScreen(graph, fontSize)
+                    else -> org.athar.app.media.AudioScreen(graph, mode == "radio")
+                }
+            }
         }
     }
 }
