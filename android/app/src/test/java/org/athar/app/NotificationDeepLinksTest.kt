@@ -10,6 +10,7 @@ class NotificationDeepLinksTest {
         val destinations = listOf(
             NotificationDestination.Lesson(42),
             NotificationDestination.Series(7),
+            NotificationDestination.Home,
             NotificationDestination.Quran,
             NotificationDestination.Adhkar,
             NotificationDestination.NightPrayer,

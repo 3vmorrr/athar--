@@ -7,6 +7,7 @@ import org.athar.app.MainActivity
 sealed interface NotificationDestination {
     data class Lesson(val id: Int) : NotificationDestination
     data class Series(val id: Int) : NotificationDestination
+    data object Home : NotificationDestination
     data object Quran : NotificationDestination
     data object Adhkar : NotificationDestination
     data object NightPrayer : NotificationDestination
@@ -25,6 +26,7 @@ object NotificationDeepLinks {
     fun encode(destination: NotificationDestination): String = when (destination) {
         is NotificationDestination.Lesson -> "lesson:" + destination.id
         is NotificationDestination.Series -> "series:" + destination.id
+        NotificationDestination.Home -> "home"
         NotificationDestination.Quran -> "quran"
         NotificationDestination.Adhkar -> "adhkar"
         NotificationDestination.NightPrayer -> "night"
@@ -34,6 +36,7 @@ object NotificationDeepLinks {
     fun decode(raw: String?): NotificationDestination? {
         val value = raw?.trim().orEmpty()
         return when {
+            value == "home" -> NotificationDestination.Home
             value == "quran" -> NotificationDestination.Quran
             value == "adhkar" -> NotificationDestination.Adhkar
             value == "night" -> NotificationDestination.NightPrayer
