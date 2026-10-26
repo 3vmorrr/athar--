@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
 require_once dirname(__DIR__) . '/admin/auth.php';
+require_once dirname(__DIR__) . '/admin/authorization.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -630,6 +631,7 @@ if ($path === '/admin') {
         require_csrf();
         $kind = (string) ($_POST['kind'] ?? '');
         try {
+            admin_authorize_kind($admin, $kind);
             if ($kind === 'comment-review') {
                 $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
                 if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
@@ -745,9 +747,9 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190 || mb_strlen($displayName, 'UTF-8') < 2 || mb_strlen($displayName, 'UTF-8') > 80 || !preg_match('/^[a-z0-9_]{3,24}$/', $username) || in_array($username, ['admin','administrator','root','support','athar','api','www','owner'], true)) throw new RuntimeException('راجع البريد والاسم واسم المستخدم (3–24 حرفًا إنجليزيًا أو رقمًا أو _).');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
-                $targetQuery = db()->prepare('SELECT role,email FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || $targetId === (int) $admin['id']) throw new RuntimeException('لا يمكن تعديل هذا الحساب من لوحة المستخدمين.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير تعديل حساب مدير آخر.');
+                $targetQuery = db()->prepare('SELECT id,role,email FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'profile');
                 $duplicateEmail = db()->prepare('SELECT 1 FROM users WHERE email=? AND id<>? LIMIT 1'); $duplicateEmail->execute([$email, $targetId]);
                 if ($duplicateEmail->fetchColumn()) throw new RuntimeException('البريد الإلكتروني مستخدم بالفعل.');
                 $duplicate = db()->prepare('SELECT 1 FROM users WHERE username=? AND id<>? LIMIT 1'); $duplicate->execute([$username, $targetId]);
@@ -766,9 +768,10 @@ if ($path === '/admin') {
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
                 $pdo = db(); $pdo->beginTransaction();
-                $targetQuery = $pdo->prepare('SELECT email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || !hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('الحساب غير موجود، أو محمي، أو أن تأكيد البريد لا يطابق.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير حذف حساب مدير آخر.');
+                $targetQuery = $pdo->prepare('SELECT id,email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'delete');
+                if (!hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('تأكيد البريد لا يطابق الحساب المحدد.');
                 $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'admin-user-deleted', 'user', (string) $targetId]);
                 $pdo->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='الحساب حُذف.' WHERE user_id=?")->execute([$targetId]);
                 $pdo->prepare('DELETE FROM users WHERE id=?')->execute([$targetId]);
@@ -780,8 +783,10 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !in_array($nextRole, ['user','admin'], true)) throw new RuntimeException('اختيار المستخدم أو الصلاحية غير صالح.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
-                $target = db()->prepare('SELECT role FROM users WHERE id=?'); $target->execute([$targetId]); $currentRole = $target->fetchColumn();
-                if (!is_string($currentRole) || $currentRole === 'owner') throw new RuntimeException('الحساب غير موجود أو أن دور المالك لا يتغير من هذه الشاشة.');
+                $targetQuery = db()->prepare('SELECT id,role FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'role');
+                $currentRole = (string) $target['role'];
                 if ($currentRole === $nextRole) { flash('الصلاحية المحددة مطبقة بالفعل.'); redirect('/admin'); }
                 db()->prepare("UPDATE users SET role=?,session_version=session_version+1 WHERE id=? AND role<>'owner'")->execute([$nextRole, $targetId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'user-role-changed-to-' . $nextRole, 'user', (string) $targetId]);
