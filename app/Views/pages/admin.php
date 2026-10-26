@@ -13,6 +13,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'comments' => 'Comment moderation',
     'campaigns' => 'Email campaigns',
     'services' => 'Service settings',
+    'night_prayer' => 'Night Prayer defaults',
     'users' => 'User management',
     'backups' => 'Backup & recovery',
     'audit' => 'Audit log',
@@ -30,6 +31,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'comments' => 'مراجعة التعليقات',
     'campaigns' => 'حملات البريد',
     'services' => 'إعدادات الخدمات',
+    'night_prayer' => 'إعدادات قيام الليل',
     'users' => 'إدارة المستخدمين',
     'backups' => 'النسخ والاستعادة',
     'audit' => 'سجل العمليات',
@@ -54,6 +56,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
                 <a href="#admin-comments" aria-controls="admin-comments"><?= e($adminShellCopy['comments']) ?> <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
                 <?php if (admin_can($admin, 'campaigns')): ?><a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a><?php endif; ?>
                 <?php if (admin_can($admin, 'services')): ?><a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a><?php endif; ?>
+                <?php if (admin_can($admin, 'night_prayer_defaults')): ?><a href="#admin-night-prayer" aria-controls="admin-night-prayer"><?= e($adminShellCopy['night_prayer']) ?></a><?php endif; ?>
                 <?php if (admin_can($admin, 'users')): ?><a href="#admin-users" aria-controls="admin-users"><?= e($adminShellCopy['users']) ?> <span><?= $managedUserTotal ?></span></a><?php endif; ?>
                 <?php if (admin_can($admin, 'recovery')): ?><a href="#admin-backups" aria-controls="admin-backups"><?= e($adminShellCopy['backups']) ?></a><?php endif; ?>
                 <?php if (admin_can($admin, 'audit')): ?><a href="#admin-audit" aria-controls="admin-audit"><?= e($adminShellCopy['audit']) ?></a><?php endif; ?>
@@ -93,6 +96,33 @@ $adminShellCopy = $adminLocale === 'en' ? [
         <article class="knowledge-card admin-service-card"><h3>بحث الدرر السنية</h3><p class="source-note">هذا الإعداد خاص بواجهة البحث الحديثي ولا يغيّر بريد Gmail. يلزم رمز API بعد موافقة الدرر.</p>
             <form class="form-stack" method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="dorar-settings"><label>رمز API المعتمد<input name="dorar_api_token" type="password" maxlength="500" autocomplete="new-password" placeholder="<?= $dorarTokenConfigured ? 'محفوظ؛ اتركه فارغًا للإبقاء عليه' : 'أدخل الرمز بعد موافقة الدرر' ?>"></label><?php if ($dorarTokenConfigured): ?><label class="check-label"><input type="checkbox" name="clear_dorar_token"> حذف الرمز المحفوظ</label><?php endif; ?><p class="source-note">حالة الربط: <?= $dorarTokenConfigured ? 'مُعدّ' : 'ينتظر رمز API رسميًا' ?>.</p><button class="button button-secondary" type="submit">حفظ إعدادات الدرر</button></form>
         </article>
+    </section>
+    <?php endif; ?>
+    <?php if (admin_can($admin, 'night_prayer_defaults')): ?>
+    <section class="admin-inventory admin-panel" id="admin-night-prayer" data-admin-panel hidden>
+        <div class="section-heading">
+            <div><span class="eyebrow">إعدادات عامة فقط</span><h2>قيام الليل</h2></div>
+            <span class="source-chip">revision <?= (int)$nightPrayerPublicDefaults['revision'] ?></span>
+        </div>
+        <p class="source-note">هذه الشاشة تدير defaults ونصوص المصدر العامة فقط. لا تقرأ أو تعرض جلسات المستخدمين، الملاحظات الخاصة، بيانات الإعفاءات، أو أي سجل عبادة شخصي.</p>
+        <form class="form-stack" method="post">
+            <?= csrf_field() ?><input type="hidden" name="kind" value="night-prayer-defaults">
+            <label class="check-label"><input type="checkbox" name="enabled"<?= $nightPrayerPublicDefaults['enabled'] ? ' checked' : '' ?>> تفعيل حفظ جلسات قيام الليل</label>
+            <div class="admin-form-grid">
+                <label>طريقة الحساب الافتراضية<input name="calculation_method" maxlength="40" value="<?= e((string)$nightPrayerPublicDefaults['calculation_method']) ?>" required></label>
+                <label>المذهب الافتراضي<select name="madhab"><option value="standard"<?= $nightPrayerPublicDefaults['madhab']==='standard'?' selected':'' ?>>Standard</option><option value="hanafi"<?= $nightPrayerPublicDefaults['madhab']==='hanafi'?' selected':'' ?>>Hanafi</option></select></label>
+                <label>قاعدة خطوط العرض العليا<select name="high_latitude_rule"><option value="middle_of_night"<?= $nightPrayerPublicDefaults['high_latitude_rule']==='middle_of_night'?' selected':'' ?>>Middle of night</option><option value="seventh_of_night"<?= $nightPrayerPublicDefaults['high_latitude_rule']==='seventh_of_night'?' selected':'' ?>>Seventh of night</option><option value="angle_based"<?= $nightPrayerPublicDefaults['high_latitude_rule']==='angle_based'?' selected':'' ?>>Angle based</option></select></label>
+                <label>هدف الآيات الافتراضي<input type="number" name="target_verses" min="1" max="6236" value="<?= (int)$nightPrayerPublicDefaults['target_verses'] ?>" required></label>
+            </div>
+            <div class="admin-form-grid">
+                <label>اسم المصدر بالعربية<input name="source_name_ar" maxlength="120" value="<?= e((string)$nightPrayerPublicDefaults['source_name_ar']) ?>" required></label>
+                <label>Source name<input name="source_name_en" maxlength="120" value="<?= e((string)$nightPrayerPublicDefaults['source_name_en']) ?>" required></label>
+            </div>
+            <label>رابط المصدر العام<input type="url" name="source_url" maxlength="500" value="<?= e((string)$nightPrayerPublicDefaults['source_url']) ?>" required></label>
+            <label>النص التعريفي العربي<textarea name="intro_ar" maxlength="1200" rows="4"><?= e((string)$nightPrayerPublicDefaults['intro_ar']) ?></textarea></label>
+            <label>English intro<textarea name="intro_en" maxlength="1200" rows="4"><?= e((string)$nightPrayerPublicDefaults['intro_en']) ?></textarea></label>
+            <button class="button button-primary" type="submit">حفظ الإعدادات العامة</button>
+        </form>
     </section>
     <?php endif; ?>
     <section class="admin-inventory admin-panel" id="admin-campaigns" data-admin-panel hidden>
