@@ -200,6 +200,19 @@ $adminShellCopy = $adminLocale === 'en' ? [
                     <?php foreach ($previewDeps as $channel=>$reason): ?><strong><?= e((string)$channel) ?>: <?= e((string)$reason) ?></strong> <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+            <?php if (($previewCampaign['status'] ?? '')==='draft' && in_array((string)$previewCampaign['channel'],['email','push_email'],true)): ?>
+                <form class="form-stack admin-campaign-test" method="post">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="kind" value="engagement-campaign-test-email">
+                    <input type="hidden" name="campaign_id" value="<?= (int)$previewCampaign['id'] ?>">
+                    <div class="admin-form-grid">
+                        <label>لغة رسالة الاختبار<select name="test_locale"><option value="ar">العربية</option><option value="en">English</option></select></label>
+                        <div><span class="source-note">المستلم المصرح: <?= e($smtpTestRecipientMasked) ?></span></div>
+                    </div>
+                    <button class="button button-secondary" type="submit"<?= $smtpTestRecipientConfigured ? '' : ' disabled' ?>>وضع رسالة اختبار في الطابور</button>
+                    <?php if (!$smtpTestRecipientConfigured): ?><p class="source-note">حدد مستلم اختبار مصرحًا به من إعدادات الخدمات أولًا.</p><?php endif; ?>
+                </form>
+            <?php endif; ?>
             <?php if (($previewCampaign['status'] ?? '')==='draft' && ($admin['role'] ?? '')==='owner'): ?>
                 <form class="form-stack admin-final-confirm" method="post">
                     <?= csrf_field() ?>
