@@ -218,6 +218,11 @@
 <string name="prayer_calculation_failed">تعذر حساب ليلة صحيحة لهذا الموقع والتاريخ. راجع المدخلات أو استخدم مواقيت محلية موثوقة؛ لم نعرض موعدًا تخمينيًا.</string>
 <string name="night_boundaries">المغرب: %1$s\nبداية الثلث الأخير: %2$s\nفجر اليوم التالي: %3$s</string>
 <string name="local_exemptions">فترات مستثناة على جهازك</string>
+<string name="exemption_add_period">إضافة الفترة المحلية</string>
+<string name="exemption_saved_periods">الفترات المحفوظة على هذا الجهاز</string>
+<string name="exemption_period">%1$s — %2$s · %3$d يوم</string>
+<string name="exemption_remove_period">حذف الفترة</string>
+<string name="exemption_clear_confirm">سيتم حذف كل الفترات المستثناة المحلية من هذا الجهاز فقط. لن يُحذف أي سجل قيام أو بيانات حساب.</string>
 <string name="exemptions_notice">اختيارية ومشفرة على هذا الجهاز فقط. لا تُرفع للخادم ولا تظهر للإدارة ولا تزيد عدد ليالي العبادة.</string>
 <string name="exemption_days">%1$d يوم محفوظ على الجهاز</string>
 <string name="start_date">من تاريخ YYYY-MM-DD</string>
