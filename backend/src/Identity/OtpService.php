@@ -11,16 +11,24 @@ final class OtpService
     public function issue(int $userId, string $purpose): bool
     {
         if (!in_array($purpose, ['verify_email','password_reset'], true)) throw new InvalidArgumentException('Invalid OTP purpose.');
-        $q = $this->db->prepare('SELECT email FROM users WHERE id=?'); $q->execute([$userId]); $email = $q->fetchColumn();
-        if (!is_string($email)) return false;
+        $q = $this->db->prepare('SELECT email,preferences_json FROM users WHERE id=?'); $q->execute([$userId]); $user = $q->fetch(PDO::FETCH_ASSOC);
+        if (!$user || !is_string($user['email'] ?? null)) return false;
+        $email=(string)$user['email'];
+        $preferences=json_decode((string)($user['preferences_json']??'{}'),true)?:[];
+        $locale=($preferences['language']??'ar')==='en'?'en':'ar';
         $code = (string) random_int(100000, 999999);
         $hash = $this->hash($userId, $purpose, $code);
         $this->db->prepare("INSERT INTO auth_tokens (user_id,token_type,token_hash,hash_scheme,expires_at) VALUES (?,?,?,'hmac-sha256-v1',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 10 MINUTE))")->execute([$userId, $purpose, $hash]);
         $id = (int) $this->db->lastInsertId();
-        $subject = $purpose === 'verify_email' ? 'رمز تأكيد البريد الإلكتروني في أثر' : 'رمز إعادة تعيين كلمة مرور أثر';
-        $body = "رمز التحقق الخاص بك: {$code}\n\nتنتهي صلاحية الرمز خلال 10 دقائق. لا تشاركه مع أي شخص.\n\nAthar | أثر";
-        try { $sent = (bool) ($this->mailer)($email, $subject, $body); }
-        catch (Throwable $e) { error_log('[Athar] OTP provider unavailable.'); $sent = false; }
+        if($locale==='en'){
+            $subject=$purpose==='verify_email'?'Your Athar email verification code':'Your Athar password reset code';
+            $body="Your verification code is: {$code}\n\nThis code expires in 10 minutes. Do not share it with anyone.\n\nAthar | أثر";
+        }else{
+            $subject = $purpose === 'verify_email' ? 'رمز تأكيد البريد الإلكتروني في أثر' : 'رمز إعادة تعيين كلمة مرور أثر';
+            $body = "رمز التحقق الخاص بك: {$code}\n\nتنتهي صلاحية الرمز خلال 10 دقائق. لا تشاركه مع أي شخص.\n\nAthar | أثر";
+        }
+        try { $sent = (bool) ($this->mailer)($email,$subject,$body,$userId,$purpose,$id,$locale); }
+        catch (Throwable $e) { error_log('[Athar] OTP queue unavailable.'); $sent = false; }
         if ($sent) $this->db->prepare('UPDATE auth_tokens SET consumed_at=UTC_TIMESTAMP() WHERE user_id=? AND token_type=? AND id<? AND consumed_at IS NULL')->execute([$userId, $purpose, $id]);
         else $this->db->prepare('DELETE FROM auth_tokens WHERE id=?')->execute([$id]);
         return $sent;
