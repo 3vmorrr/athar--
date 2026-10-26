@@ -77,6 +77,8 @@
 <string name="syncing">Saving</string>
 <string name="remove_bookmark">Remove bookmark</string>
 <string name="your_journey">Your space in Athar</string>
+<string name="your_activity">Your activity</string>
+<string name="quick_actions">Quick actions</string>
 <string name="reading_sessions">Reading sessions</string>
 <string name="completed_lessons">Lessons completed</string>
 <string name="completed_adhkar">Adhkar completed</string>
