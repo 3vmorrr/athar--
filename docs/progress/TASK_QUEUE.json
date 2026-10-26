@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "22.1",
+  "current_task": "22.4",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -2451,7 +2451,7 @@
       "name": "Release startup baseline",
       "parent": "Work package 22: Performance/reliability",
       "scope": "Create reproducible profileable/release startup measurements on representative hardware, then fix measured regressions only.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "21.17"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "0d60a6dfa6c45c0fd77a2548696aff4e1ea2b775",
-    "last_landed_task": "21.21",
-    "next_task": "22.1",
+    "head": "35af781f1cbbb540611973be7b94e69311f916c4",
+    "last_landed_task": "22.1",
+    "next_task": "22.4",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2823,7 +2823,8 @@
       "20.4",
       "21.19",
       "21.20",
-      "21.21"
+      "21.21",
+      "22.1"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2919,6 +2920,9 @@
       ],
       "21.21": [
         "0d60a6dfa6c4"
+      ],
+      "22.1": [
+        "35af781f1cbb"
       ]
     },
     "preexisting_parallel_admin": {
