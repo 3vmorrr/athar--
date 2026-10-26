@@ -98,9 +98,9 @@ private fun AtharNavIcon(
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "quran" || path == "adhkar") {
+        if (path == "home" || path == "quran" || path == "adhkar") {
             navigateTab(path)
-        } else if (path == "night-prayer" || path == "upcoming") {
+        } else if (path == "night-prayer" || path == "upcoming" || path == "inbox") {
             navigation.navigate(path) { launchSingleTop = true }
         } else if (path == "catalog-books") {
             navigation.navigate("catalog/books") { launchSingleTop = true }
@@ -146,9 +146,7 @@ private fun AtharNavIcon(
             NotificationDestination.Quran -> navigateTab("quran")
             NotificationDestination.Adhkar -> navigateTab("adhkar")
             NotificationDestination.NightPrayer -> open("night-prayer")
-            NotificationDestination.Inbox -> {
-                // WP16 registers the private inbox destination. Never misroute it to another account/screen.
-            }
+            NotificationDestination.Inbox -> open("inbox")
         }
         onNotificationLaunchConsumed(launch)
     }
@@ -188,6 +186,7 @@ private fun AtharNavIcon(
                                 stringResource(
                                     when {
                                         route == "night-prayer" -> R.string.night_prayer
+                                        route == "inbox" -> R.string.notification_inbox
                                         route.startsWith("quran/") -> R.string.quran
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
                                         route.startsWith("book-reader/") -> R.string.books
@@ -256,6 +255,7 @@ private fun AtharNavIcon(
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }
                         composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph) }
+                        composable("inbox") { org.athar.app.notifications.NotificationInboxScreen(vm.graph, open) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
                         composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") }
@@ -371,6 +371,7 @@ private fun AtharNavIcon(
                 "activity" to R.string.activity,
                 "khatmah" to R.string.khatmah,
                 "reminders" to R.string.reminder_settings,
+                "inbox" to R.string.notification_inbox,
                 "bookmarks" to R.string.bookmarks,
                 "favorites" to R.string.favorites,
                 "export" to R.string.export_data,

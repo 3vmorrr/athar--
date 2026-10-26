@@ -385,6 +385,7 @@ import java.time.LocalDate
         }
 
         "reminders" -> org.athar.app.notifications.RoutineReminderSettingsScreen(graph, open)
+        "inbox" -> org.athar.app.notifications.NotificationInboxScreen(graph, open)
         "khatmah" -> KhatmahScreen(graph)
         else -> {
             val path = if (tool == "bookmarks") {

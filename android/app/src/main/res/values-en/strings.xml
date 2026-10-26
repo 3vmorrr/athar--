@@ -630,4 +630,13 @@
     <string name="reminder_quiet_end">Until %1$s</string>
     <string name="reminder_quiet_saved">Quiet-hours policy was saved locally.</string>
     <string name="reminder_quiet_failed">Quiet hours could not be saved.</string>
+    <string name="notification_inbox">Notification inbox</string>
+    <string name="notification_inbox_unread">Unread: %1$d</string>
+    <string name="inbox_unread">New</string>
+    <string name="inbox_empty">There are no retained notifications right now.</string>
+    <string name="inbox_load_failed">The notification inbox could not be loaded.</string>
+    <string name="inbox_more_failed">More notifications could not be loaded. Try again.</string>
+    <string name="inbox_detail_failed">This notification state could not be updated.</string>
+    <string name="inbox_open_destination">Open related content</string>
+    <string name="load_more">Load more</string>
 </resources>

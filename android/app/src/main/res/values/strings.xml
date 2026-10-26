@@ -658,4 +658,13 @@
     <string name="reminder_quiet_end">إلى %1$s</string>
     <string name="reminder_quiet_saved">تم حفظ سياسة ساعات الهدوء محليًا.</string>
     <string name="reminder_quiet_failed">تعذر حفظ ساعات الهدوء.</string>
+    <string name="notification_inbox">صندوق الإشعارات</string>
+    <string name="notification_inbox_unread">غير المقروء: %1$d</string>
+    <string name="inbox_unread">جديد</string>
+    <string name="inbox_empty">لا توجد إشعارات محفوظة حاليًا.</string>
+    <string name="inbox_load_failed">تعذر تحميل صندوق الإشعارات.</string>
+    <string name="inbox_more_failed">تعذر تحميل المزيد. حاول مرة أخرى.</string>
+    <string name="inbox_detail_failed">تعذر تحديث حالة هذا الإشعار.</string>
+    <string name="inbox_open_destination">فتح المحتوى المرتبط</string>
+    <string name="load_more">تحميل المزيد</string>
 </resources>
