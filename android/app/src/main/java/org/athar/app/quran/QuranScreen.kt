@@ -166,6 +166,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun QuranReaderScreen(graph: AppGraph, fontSize: Int) {
     val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
     val state by vm.state.collectAsStateWithLifecycle()
@@ -249,16 +250,101 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             }
         }
     }
-    if (selector) AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.surah)) }, text = {
-        LazyColumn(Modifier.heightIn(max = 460.dp)) { items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah -> TextButton(onClick = { vm.select(surah.number); selector = false }, Modifier.fillMaxWidth()) { Text("${surah.number}. ${surah.name}") } } }
-    }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
+    if (selector) {
+        ModalBottomSheet(onDismissRequest = { selector = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(stringResource(R.string.surah), style = MaterialTheme.typography.titleLarge)
+                LazyColumn(Modifier.heightIn(max = 460.dp)) {
+                    items(
+                        state.index?.surahs.orEmpty(),
+                        key = { it.number },
+                        contentType = { "surah" },
+                    ) { surah ->
+                        TextButton(
+                            onClick = {
+                                vm.select(surah.number)
+                                selector = false
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("${surah.number}. ${surah.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
     if (fontDialog) {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
-        AlertDialog(onDismissRequest = { fontDialog = false }, title = { Text(stringResource(R.string.font_size)) }, text = { Slider(size, { size = it }, valueRange = 18f..48f) }, confirmButton = { TextButton(onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false }) { Text(stringResource(R.string.save)) } })
+        ModalBottomSheet(onDismissRequest = { fontDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(stringResource(R.string.font_size), style = MaterialTheme.typography.titleLarge)
+                Slider(size, { size = it }, valueRange = 18f..48f)
+                Button(
+                    onClick = {
+                        scope.launch { graph.settings.quranFontSize(size.toInt()) }
+                        fontDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
     }
     if (numberDialog) {
         var number by remember { mutableStateOf("${state.sectionNumber}") }
         val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; else -> 60 }
-        AlertDialog(onDismissRequest = { numberDialog = false }, title = { Text(stringResource(when(state.sectionKind) { "page" -> R.string.page; "juz" -> R.string.juz; else -> R.string.hizb })) }, text = { OutlinedTextField(number, { number = it.filter(Char::isDigit).take(3) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }, confirmButton = { TextButton(enabled = (number.toIntOrNull() ?: 0) in 1..maximum, onClick = { vm.section(state.sectionKind, number.toInt()); numberDialog = false }) { Text(stringResource(R.string.read)) } })
+        ModalBottomSheet(onDismissRequest = { numberDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(
+                    stringResource(
+                        when(state.sectionKind) {
+                            "page" -> R.string.page
+                            "juz" -> R.string.juz
+                            else -> R.string.hizb
+                        },
+                    ),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                OutlinedTextField(
+                    number,
+                    { number = it.filter(Char::isDigit).take(3) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                    ),
+                )
+                Button(
+                    enabled = (number.toIntOrNull() ?: 0) in 1..maximum,
+                    onClick = {
+                        vm.section(state.sectionKind, number.toInt())
+                        numberDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.read))
+                }
+            }
+        }
     }
 }
