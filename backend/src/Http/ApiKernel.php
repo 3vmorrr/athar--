@@ -174,6 +174,28 @@ final class ApiKernel
         if(preg_match('#^/me/lesson-reminders/([1-9][0-9]*)$#',$path,$m)){
             $this->method($r,'PUT');return [(new \Athar\Engagement\LessonReminderService($this->db))->set($user,(int)$m[1],$r->body),200];
         }
+        if($path==='/me/notification-inbox'){
+            $this->method($r,'GET');
+            return [(new \Athar\Engagement\NotificationInboxService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::apiToken()
+            ))->page($user,$r->query),200];
+        }
+        if(preg_match('#^/me/notification-inbox/([1-9][0-9]*)$#',$path,$m)){
+            $inbox=new \Athar\Engagement\NotificationInboxService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::apiToken()
+            );
+            if($r->method==='GET')return [$inbox->detail($user,(int)$m[1]),200];
+            $this->method($r,'DELETE');return [$inbox->delete($user,(int)$m[1]),200];
+        }
+        if(preg_match('#^/me/notification-inbox/([1-9][0-9]*)/read$#',$path,$m)){
+            $this->method($r,'PUT');
+            return [(new \Athar\Engagement\NotificationInboxService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::apiToken()
+            ))->markRead($user,(int)$m[1]),200];
+        }
         if($path==='/me/push-devices'){
             $this->method($r,'GET');
             return [(new \Athar\Engagement\PushDeviceService(
