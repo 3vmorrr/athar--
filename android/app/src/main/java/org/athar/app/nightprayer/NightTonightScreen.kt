@@ -31,6 +31,7 @@ private data class NightSavedSettings(
 fun NightTonightScreen(
     graph: AppGraph,
     vm: NightViewModel,
+    timerVm: NightTimerViewModel,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     var settings by remember(graph.session.userId) {
@@ -243,6 +244,16 @@ fun NightTonightScreen(
                     }
                 }
             }
+        }
+
+        item(key = "measured-timer", contentType = "timer") {
+            NightSessionTimerCard(
+                graph = graph,
+                nightViewModel = vm,
+                timer = timerVm,
+                identity = identity,
+                calculationMethod = settings?.method,
+            )
         }
 
         if (state.conflicts > 0 || state.rows.any { it.first.dirty }) {
