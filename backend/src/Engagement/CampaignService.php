@@ -230,6 +230,7 @@ final class CampaignService
 
     private function resolveAudience(array $campaign,string $channel,int $actorId,bool $preview): array
     {
+        if($channel==='push'&&!$this->tableExists('notification_devices'))return ['available'=>false,'reason'=>'push_device_delivery_not_ready','users'=>[]];
         if($campaign['audience_type']==='test_recipient'&&$channel==='email')return ['available'=>false,'reason'=>'email_test_uses_authorized_smtp_recipient','users'=>[]];
         $where=["u.suspended_at IS NULL","u.email_verified_at IS NOT NULL"];$args=[];
         if($channel==='push')$where[]='p.push_campaign_opt_in=1';
