@@ -45,6 +45,13 @@ data class NightPaceInsight(
     val secondsPerVerse: Double,
 )
 
+data class NightStreakInsight(
+    val threshold: Int,
+    val current: Int?,
+    val longest: Int,
+    val qualifyingNights: Int,
+)
+
 object NightRules {
     fun serverTimezone(zone: ZoneId): String = if (zone.normalized() == ZoneOffset.UTC) "UTC" else zone.id
     fun milestone(count: Int): Int = when { count >= 1000 -> 1000; count >= 100 -> 100; count >= 10 -> 10; else -> 0 }
@@ -94,17 +101,84 @@ object NightRules {
             secondsPerVerse = seconds.toDouble() / verses.toDouble(),
         )
     }
-    fun streak(totals: Map<LocalDate, Int>, threshold: Int, current: LocalDate, nightInProgress: Boolean, exemptions: Set<LocalDate> = emptySet()): Pair<Int, Int> {
+    fun streak(
+        totals: Map<LocalDate, Int>,
+        threshold: Int,
+        current: LocalDate,
+        nightInProgress: Boolean,
+        exemptions: Set<LocalDate> = emptySet(),
+    ): Pair<Int, Int> {
+        val insight = streakInsight(
+            totals = totals,
+            threshold = threshold,
+            current = current,
+            nightInProgress = nightInProgress,
+            exemptions = exemptions,
+        )
+        return (insight.current ?: 0) to insight.longest
+    }
+
+    fun streakInsight(
+        totals: Map<LocalDate, Int>,
+        threshold: Int,
+        current: LocalDate?,
+        nightInProgress: Boolean,
+        exemptions: Set<LocalDate> = emptySet(),
+    ): NightStreakInsight {
         require(threshold in listOf(1, 10, 100, 1000))
-        val eligible = totals.filterValues { it >= threshold }.keys
-        if (eligible.isEmpty()) return 0 to 0
-        var day = if (nightInProgress && current !in eligible) current.minusDays(1) else current
-        var active = 0
-        val first = eligible.minOrNull()!!
-        while (day >= first && (day in eligible || day in exemptions)) { if (day in eligible) active++; day = day.minusDays(1) }
-        var best = 0; var run = 0; day = first
-        val last = eligible.maxOrNull()!!
-        while (day <= last) { if (day in eligible) run++ else if (day !in exemptions) run = 0; best = maxOf(best, run); day = day.plusDays(1) }
-        return active to best
+        val eligible = totals
+            .filterValues { it >= threshold }
+            .keys
+        if (eligible.isEmpty()) {
+            return NightStreakInsight(
+                threshold = threshold,
+                current = current?.let { 0 },
+                longest = 0,
+                qualifyingNights = 0,
+            )
+        }
+
+        val first = requireNotNull(eligible.minOrNull())
+        val last = requireNotNull(eligible.maxOrNull())
+        var day = first
+        var longest = 0
+        var run = 0
+        while (day <= last) {
+            when {
+                day in eligible -> {
+                    run++
+                    longest = maxOf(longest, run)
+                }
+                day !in exemptions -> run = 0
+            }
+            day = day.plusDays(1)
+        }
+
+        val currentRun = current?.let { currentNight ->
+            var cursor = if (
+                nightInProgress &&
+                currentNight !in eligible
+            ) {
+                currentNight.minusDays(1)
+            } else {
+                currentNight
+            }
+            var active = 0
+            while (
+                cursor >= first &&
+                (cursor in eligible || cursor in exemptions)
+            ) {
+                if (cursor in eligible) active++
+                cursor = cursor.minusDays(1)
+            }
+            active
+        }
+
+        return NightStreakInsight(
+            threshold = threshold,
+            current = currentRun,
+            longest = longest,
+            qualifyingNights = eligible.size,
+        )
     }
 }
