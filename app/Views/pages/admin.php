@@ -200,6 +200,32 @@ $adminShellCopy = $adminLocale === 'en' ? [
                     <?php foreach ($previewDeps as $channel=>$reason): ?><strong><?= e((string)$channel) ?>: <?= e((string)$reason) ?></strong> <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+            <?php
+                $previewAnalytics=(array)($previewCampaign['delivery_analytics']??[]);
+                $previewReasons=(array)($previewAnalytics['reasons']??[]);
+                $previewHistory=(array)($previewCampaign['history']??[]);
+            ?>
+            <?php if ($previewReasons): ?>
+                <div class="admin-campaign-reasons">
+                    <strong>أسباب عدم التسليم المجمعة</strong>
+                    <?php foreach ($previewReasons as $reason): ?><span class="source-chip"><?= e((string)$reason['code']) ?> · <?= (int)$reason['count'] ?></span><?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($previewHistory): ?>
+                <details class="admin-campaign-history">
+                    <summary>سجل الحملة التشغيلي</summary>
+                    <div class="knowledge-results">
+                        <?php foreach ($previewHistory as $event): ?>
+                            <article class="admin-history-event">
+                                <strong><?= e((string)$event['event_type']) ?></strong>
+                                <time><?= e((string)$event['created_at']) ?></time>
+                                <?php if (!empty($event['summary'])): ?><code><?= e(json_encode($event['summary'],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)) ?></code><?php endif; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="source-note">هذا السجل يعرض أحداثًا وأعدادًا مجمعة فقط، ولا يعرض مستلمين أو payloads فردية.</p>
+                </details>
+            <?php endif; ?>
             <?php if (($previewCampaign['status'] ?? '')==='draft' && in_array((string)$previewCampaign['channel'],['email','push_email'],true)): ?>
                 <form class="form-stack admin-campaign-test" method="post">
                     <?= csrf_field() ?>
