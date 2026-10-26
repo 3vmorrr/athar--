@@ -813,6 +813,34 @@ if ($path === '/admin') {
                 }
                 flash('تم حفظ الحملة كمسودة فقط. لم تُرسل أي رسالة.');
                 redirect('/admin?campaign_preview='.(int)$savedCampaign['id'].'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-test-email') {
+                $campaignId = filter_var($_POST['campaign_id'] ?? null,FILTER_VALIDATE_INT);
+                $locale = (string)($_POST['test_locale'] ?? 'ar');
+                if(!$campaignId||$campaignId<1||!in_array($locale,['ar','en'],true)) throw new RuntimeException('بيانات اختبار الحملة غير صالحة.');
+                if(!$smtpTestRecipientConfigured) throw new RuntimeException('حدد مستلم اختبار مصرحًا به من إعدادات الخدمات أولًا.');
+                if(!allow_session_rate('campaign_test_email',3,3600)) throw new RuntimeException('تمت جدولة عدة اختبارات مؤخرًا. حاول لاحقًا.');
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                try {$preview=$campaignService->preview($admin,(int)$campaignId);}
+                catch(\Athar\Http\ApiError $campaignError){throw new RuntimeException('تعذر تجهيز معاينة الحملة للاختبار.');}
+                $campaign=$preview['campaign'];
+                if(($campaign['status']??'')!=='draft') throw new RuntimeException('يمكن إرسال اختبار للحملات المسودة فقط.');
+                if(!in_array((string)$campaign['channel'],['email','push_email'],true)) throw new RuntimeException('اختبار البريد متاح للحملات التي تتضمن Email فقط.');
+                $message=$preview['preview'][$locale];
+                $htmlBody='<p style="margin:0;white-space:pre-line">'.nl2br(e((string)$message['body']),false).'</p>';
+                $recipientCipher=platform_setting('smtp_test_recipient_cipher');
+                $queued=(new \Athar\Engagement\EmailOutboxService(db()))->enqueueAuthorizedTest(
+                    $recipientCipher,
+                    (string)$message['title'],
+                    (string)$message['body'],
+                    $locale,
+                    'campaign:'.(int)$campaignId.':revision:'.(int)$campaign['revision'].':'.$locale.':'.bin2hex(random_bytes(8)),
+                    $htmlBody
+                );
+                if(!$queued) throw new RuntimeException('تعذر وضع رسالة الاختبار في الطابور.');
+                db()->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                    ->execute([$admin['id'],'engagement-campaign-test-email-queued','engagement-campaign',(string)$campaignId]);
+                flash('تم وضع معاينة البريد في طابور الاختبار للمستلم المصرح فقط: '.$smtpTestRecipientMasked);
+                redirect('/admin?campaign_preview='.(int)$campaignId.'#admin-campaigns');
             } elseif ($kind === 'engagement-campaign-confirm') {
                 $campaignService = new \Athar\Engagement\CampaignService(db());
                 $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
