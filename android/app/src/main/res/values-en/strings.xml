@@ -183,6 +183,12 @@
 <string name="range_error">Check the surah, ayah and count. A range cannot pass the final verse or wrap to the beginning.</string>
 <string name="last_third">Last third of the night</string>
 <string name="latitude">Latitude</string>
+<string name="city">City</string>
+<string name="night_preferences_manual_notice">These settings are entered and saved manually. Athar does not request location permission or read GPS automatically.</string>
+<string name="night_preferences_save">Save city and calculation settings</string>
+<string name="night_preferences_saved">City, timezone, and calculation settings were saved.</string>
+<string name="night_preferences_conflict">Night Prayer settings changed on another device. Reload the current account version before saving.</string>
+<string name="night_preferences_unavailable">Night Prayer settings could not be loaded or saved right now. The saved account version was not changed.</string>
 <string name="longitude">Longitude</string>
 <string name="prayer_calculation_notice">Enter your coordinates and calculation method. These are calculated times; consult your local mosque when they differ. Your location is not accessed without permission.</string>
 <string name="hanafi_asr">Hanafi Asr calculation</string>
