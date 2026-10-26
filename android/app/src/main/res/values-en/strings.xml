@@ -102,6 +102,10 @@
 <string name="export_scope_account">Synced account data: profile, bookmarks, favorites, plans, recorded progress and activity statistics.</string>
 <string name="export_scope_device">Retained device data that has not been discarded: lesson progress and local Night Prayer sessions.</string>
 <string name="export_private_excluded">Local private exemption periods are excluded</string>
+<string name="export_security_excluded">Passwords, sign-in tokens, refresh tokens, and local encryption keys are not included.</string>
+<string name="export_confirm_title">Create a copy of your data?</string>
+<string name="export_confirm_body">You will choose where to save a JSON file containing the exportable account and progress data. Treat it as a private file.</string>
+<string name="export_choose_location">Choose save location</string>
 <string name="export_requires_current_account">A complete export requires access to the current account. If account data cannot be retrieved, Athar will not write a partial export.</string>
 <string name="export_saved_complete">The complete account export was saved to the location you chose.</string>
 <string name="export_account_unavailable">Current account data could not be retrieved. Check the connection and session, then try again. No partial export was written.</string>
