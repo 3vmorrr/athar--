@@ -66,8 +66,11 @@ fun LessonReminderControl(graph: AppGraph, event: UpcomingLesson) {
     fun saveChoice() {
         scope.launch {
             try {
-                graph.lessonReminderChoices.enable(event.id, owner)
-                message = R.string.lesson_reminder_saved_choice
+                message = when (graph.lessonReminders.enable(event, owner)) {
+                    LessonReminderEnableResult.SCHEDULED -> R.string.lesson_reminder_scheduled
+                    LessonReminderEnableResult.TOO_LATE -> R.string.lesson_reminder_too_late
+                    LessonReminderEnableResult.UNAVAILABLE -> R.string.lesson_reminder_unavailable
+                }
             } catch (failure: CancellationException) { throw failure }
             catch (_: Exception) { message = R.string.lesson_reminder_save_failed }
         }
@@ -130,6 +133,21 @@ fun LessonReminderControl(graph: AppGraph, event: UpcomingLesson) {
     val eligible = event.status == EventStatus.SCHEDULED && event.start != null && event.remindersEnabled
     val permissionStatus = remember(permissionRevision, activity) { activity?.let { permission.state(it).status } }
 
+    LaunchedEffect(enabled, event.revision, event.start, event.scheduleTimezone, event.remindersEnabled) {
+        if (!enabled) return@LaunchedEffect
+        try {
+            when (graph.lessonReminders.ensureScheduled(event, owner)) {
+                LessonReminderEnableResult.TOO_LATE -> message = R.string.lesson_reminder_too_late
+                LessonReminderEnableResult.UNAVAILABLE -> message = R.string.lesson_reminder_unavailable
+                else -> Unit
+            }
+        } catch (failure: CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            message = R.string.lesson_reminder_save_failed
+        }
+    }
+
     ElevatedCard(Modifier.fillMaxWidth()) {
         Column(
             Modifier.fillMaxWidth().padding(AtharSpacing.Lg),
@@ -150,7 +168,7 @@ fun LessonReminderControl(graph: AppGraph, event: UpcomingLesson) {
                 enabled -> OutlinedButton(onClick = {
                     scope.launch {
                         try {
-                            graph.lessonReminderChoices.disable(event.id, owner)
+                            graph.lessonReminders.disable(event.id, owner)
                             message = R.string.lesson_reminder_disabled
                         } catch (failure: CancellationException) { throw failure }
                         catch (_: Exception) { message = R.string.lesson_reminder_save_failed }

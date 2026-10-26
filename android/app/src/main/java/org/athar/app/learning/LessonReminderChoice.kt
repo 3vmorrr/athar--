@@ -65,6 +65,14 @@ class LessonReminderChoiceStore(
         session.requireVerifiedOwner(owner)
     }
 
+    suspend fun current(owner: Long, lessonId: Int): LessonReminderChoice? {
+        session.requireVerifiedOwner(owner)
+        val row = dao.cache(owner, key(lessonId)) ?: return null
+        val value = decode(row.payloadCipher, lessonId)
+        session.requireVerifiedOwner(owner)
+        return value
+    }
+
     private fun decode(ciphertext: String, expectedLesson: Int): LessonReminderChoice {
         val root = JsonParser.parseString(cipher.open(ciphertext)).asJsonObject
         require(root["version"]?.asInt == 1)

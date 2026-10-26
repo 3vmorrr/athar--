@@ -485,4 +485,7 @@
     <string name="lesson_reminder_consent_confirm">تفعيل تذكيرات الدروس</string>
     <string name="lesson_reminder_permission_title">إذن الإشعارات مطلوب</string>
     <string name="lesson_reminder_permission_settings_body">الإشعارات موقوفة لهذا التطبيق من إعدادات النظام. افتح الإعدادات إذا أردت السماح بتذكيرات الدروس.</string>
+    <string name="lesson_reminder_scheduled">تم جدولة التذكير قبل الدرس بـ 15 دقيقة.</string>
+    <string name="lesson_reminder_too_late">باقي أقل من 15 دقيقة على الموعد، لذلك لن نرسل تذكيرًا متأخرًا أو فوريًا بدل اختيارك.</string>
+    <string name="lesson_reminder_notification_body">يبدأ الدرس بعد %1$d دقيقة.</string>
 </resources>

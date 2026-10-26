@@ -31,6 +31,8 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val notificationPolicyLedger = org.athar.app.notifications.NotificationPolicyLedgerRepository(database.dao(), session, cipher)
     val reminderStore = org.athar.app.notifications.LocalReminderStore(database.dao(), session, cipher)
     val lessonReminderChoices = org.athar.app.learning.LessonReminderChoiceStore(database.dao(), session, cipher)
+    val lessonReminderBindings = org.athar.app.learning.LessonReminderBindingStore(database.dao(), session, cipher)
+    val lessonReminders = org.athar.app.learning.LessonReminderManager(application, session, lessonReminderChoices, lessonReminderBindings, reminders)
     val reminders = org.athar.app.notifications.LocalReminderCoordinator(application, partition, session, reminderStore, notificationPolicyLedger)
     private var persistentSync:org.athar.app.core.sync.PersistentSyncCoordinator?=null
     private fun requestSync(owner:Long,module:org.athar.app.core.sync.SyncModule){persistentSync?.request(owner,module)}

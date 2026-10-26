@@ -1,15 +1,15 @@
-# Lesson reminder choice and consent
+# Lesson reminder local scheduling
 
-Task: 11.1  
+Task: 11.2  
 Implementation branch: \`parallel/admin-foundation\`  
 Status: **IMPLEMENTED / ACCEPTANCE PENDING**
 
-Lesson reminders keep campaign/announcement consent separate, require explicit versioned \`lesson_reminders\` category consent, and keep a separate encrypted owner-scoped opt-in for each lesson.
+A selected lesson now creates one real WorkManager reminder through the WP10 owner-scoped scheduler. Canonical server \`scheduled_at\` is used as an Instant; \`schedule_timezone\` is validated and retained as source metadata without reinterpreting the UTC instant.
 
-The first opt-in shows an explicit explanation. If accepted, Athar enables only the lesson-reminder category and requests Android notification permission only from that user action when required. A denied OS permission does not save the lesson choice.
+The reminder is due 15 minutes before start and expires at start. If the 15-minute point has passed, Athar refuses to invent an immediate/late replacement.
 
-Each selected lesson uses one fixed default reminder at 15 minutes before the event. The choice is encrypted under \`private:lesson-reminder-choice:<lesson id>\` and contains only lesson id plus the 15-minute lead. Absence means off; unreadable ciphertext fails closed.
+Unique work identity is stable per lesson. Idempotency includes event identity, event revision, canonical start and lead. An encrypted binding under \`private:lesson-reminder-binding:<lesson id>\` retains event id, revision, canonical start, source timezone and opaque work id.
 
-Upcoming payload parsing now retains event id, source schedule timezone, revision, and Admin \`reminders_enabled\`. The detail UI always exposes opt-out for an existing choice and only offers new opt-in for a scheduled event with a real start time whose reminder flag is enabled.
+Choice persistence happens before schedule creation so a crash cannot leave a hidden reminder with no visible opt-out. Scheduling failures roll back the choice. Opt-out removes work before the visible choice.
 
-Task 11.2 owns creating the actual WorkManager reminder from this choice. Acceptance still requires Android build/resource/UI/API33+ device checks, offline/corruption/account-switch behavior, RTL/LTR and accessibility.
+Task 11.3 owns authoritative change/cancellation reconciliation. Acceptance remains pending for build/unit/device timing, process death, near-start, permission, account-switch, timezone and reboot journeys.

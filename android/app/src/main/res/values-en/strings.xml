@@ -457,4 +457,7 @@
     <string name="lesson_reminder_consent_confirm">Enable lesson reminders</string>
     <string name="lesson_reminder_permission_title">Notification permission required</string>
     <string name="lesson_reminder_permission_settings_body">Notifications are disabled for this app in system settings. Open settings if you want to allow lesson reminders.</string>
+    <string name="lesson_reminder_scheduled">The reminder is scheduled for 15 minutes before the lesson.</string>
+    <string name="lesson_reminder_too_late">The lesson is less than 15 minutes away, so Athar will not substitute a late or immediate reminder for your choice.</string>
+    <string name="lesson_reminder_notification_body">The lesson starts in %1$d minutes.</string>
 </resources>
