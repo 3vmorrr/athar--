@@ -8,7 +8,7 @@ data class CachedDocument(val userId: Long, val cacheKey: String, val payloadCip
 @Entity(tableName = "night_sessions", primaryKeys = ["userId", "id"], indices = [Index(value = ["userId", "nightDate"])])
 data class LocalNightSession(val userId: Long, val id: String, val nightDate: String, val verseCount: Int, val measuredSeconds: Int?, val payloadCipher: String, val localRevision: Int, val serverRevision: Int, val deleted: Boolean, val dirty: Boolean, val updatedAt: Long)
 @Entity(tableName = "outbox", indices = [Index(value = ["userId", "mutationId"], unique = true), Index(value = ["userId", "sessionId"])])
-data class OutboxMutation(@PrimaryKey(autoGenerate = true) val sequence: Long = 0, val userId: Long, val mutationId: String, val sessionId: String, val operation: String, val expectedRevision: Int, val payloadCipher: String, val conflict: Boolean = false)
+data class OutboxMutation(@PrimaryKey(autoGenerate = true) val sequence: Long = 0, val userId: Long, val mutationId: String, val sessionId: String, val operation: String, val expectedRevision: Int, val payloadCipher: String, val conflict: Boolean = false, val rejectedStatus: Int? = null)
 @Entity(tableName = "private_exemptions", primaryKeys = ["userId"])
 data class PrivateExemptions(val userId: Long, val encryptedPayload: String)
 
@@ -35,8 +35,12 @@ interface AtharDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun night(session: LocalNightSession)
     @Insert suspend fun enqueue(mutation: OutboxMutation)
     @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence LIMIT 50") suspend fun pending(user: Long): List<OutboxMutation>
-    @Query("SELECT o.* FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND c.conflict=1) ORDER BY o.sequence LIMIT 50") suspend fun eligiblePending(user:Long):List<OutboxMutation>
-    @Query("SELECT EXISTS (SELECT 1 FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND c.conflict=1))") suspend fun hasEligiblePending(user:Long):Boolean
+    @Query("SELECT o.* FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND (c.conflict=1 OR c.rejectedStatus IS NOT NULL OR c.sequence<o.sequence)) ORDER BY o.sequence LIMIT 50") suspend fun eligiblePending(user:Long):List<OutboxMutation>
+    @Query("SELECT EXISTS (SELECT 1 FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND (c.conflict=1 OR c.rejectedStatus IS NOT NULL)))") suspend fun hasEligiblePending(user:Long):Boolean
+    @Query("SELECT DISTINCT sessionId FROM outbox WHERE userId=:user AND rejectedStatus IS NOT NULL ORDER BY sequence") fun observeNightRejectionIds(user:Long):Flow<List<String>>
+    @Query("SELECT EXISTS (SELECT 1 FROM outbox WHERE userId=:user AND sessionId=:id AND rejectedStatus IS NOT NULL)") suspend fun hasNightRejection(user:Long,id:String):Boolean
+    @Query("UPDATE outbox SET rejectedStatus=:status WHERE userId=:user AND mutationId=:id") suspend fun markRejected(user:Long,id:String,status:Int)
+    @Query("UPDATE outbox SET rejectedStatus=NULL WHERE userId=:user AND sessionId=:id") suspend fun retryRejected(user:Long,id:String)
     @Query("SELECT o.sessionId FROM outbox o LEFT JOIN night_sessions n ON n.userId=o.userId AND n.id=o.sessionId WHERE o.userId=:user AND o.conflict=1 GROUP BY o.sessionId ORDER BY MIN(o.sequence)") fun observeNightConflictIds(user:Long):Flow<List<String>>
     @Query("SELECT EXISTS (SELECT 1 FROM outbox WHERE userId=:user AND sessionId=:id AND conflict=1)") suspend fun hasNightConflict(user:Long,id:String):Boolean
     @Query("SELECT * FROM outbox WHERE userId=:user AND sessionId=:id ORDER BY sequence") suspend fun sessionMutations(user:Long,id:String):List<OutboxMutation>
@@ -53,5 +57,14 @@ interface AtharDao {
     @Transaction suspend fun deleteUser(user: Long) { deleteCache(user); deleteNights(user); deleteOutbox(user); deleteExemptions(user) }
 }
 
-@Database(entities = [CachedDocument::class, LocalNightSession::class, OutboxMutation::class, PrivateExemptions::class], version = 1, exportSchema = true)
-abstract class AppDatabase : RoomDatabase() { abstract fun dao(): AtharDao }
+@Database(entities = [CachedDocument::class, LocalNightSession::class, OutboxMutation::class, PrivateExemptions::class], version = 2, exportSchema = true)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun dao(): AtharDao
+    companion object {
+        val MIGRATION_1_2 = object : androidx.room.migration.Migration(1,2) {
+            override fun migrate(db:androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE outbox ADD COLUMN rejectedStatus INTEGER")
+            }
+        }
+    }
+}

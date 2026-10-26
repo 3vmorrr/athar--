@@ -191,4 +191,14 @@
 <string name="night_review_duration">Recorded duration: %1$d seconds</string>
 <string name="night_edit_conflict">Another change arrived for this session. Your draft is still here; close this form and review the pending change before saving.</string>
     <string name="account_data_unavailable">Account data could not be read. Retry; your data has not been treated as empty or changed.</string>
+    <string name="night_rejected">Sync operation needs attention</string>
+    <string name="night_rejection_retained">Your record is retained on this device and is not synced. Other records can continue syncing.</string>
+    <string name="night_rejection_review">Review rejected operation</string>
+    <string name="night_rejection_invalid">The server rejected the operation data. Review and correct the record before retrying.</string>
+    <string name="night_rejection_missing">The requested record is unavailable on the account. Retrying may return the same rejection.</string>
+    <string name="night_rejection_other">This operation could not be accepted. Check access and data before retrying.</string>
+    <string name="night_rejection_retry_notice">Retry sends the retained operation unchanged. Saving a correction replaces only this record’s pending edits with the form data.</string>
+    <string name="night_rejection_retry">Retry retained operation</string>
+    <string name="night_rejection_repair">Correct record</string>
+    <string name="night_rejection_retry_only">A deletion or timed session can be retried unchanged; this editor does not support changing it.</string>
 </resources>

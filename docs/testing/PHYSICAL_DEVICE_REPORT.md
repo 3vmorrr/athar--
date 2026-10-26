@@ -1,5 +1,9 @@
 # Physical Android integration —2026-10-25
 
+##26 October — permanent rejection recovery02.7.2
+
+Final API27 SM-M105G Arabic10/10 (40.074s), English29/29 (78.1s), main API1/1 (5.563s) PASS. New real Room/Keystore/storage tests retain422/404 rejection bytes, mixed429/503/401/408 results, reopen/stale/owner/corruption/malformed/healthy-queue outcomes; additive v1→v2 migration compares all private table rows and flags. Real fixture HTTP journey exercises422/cancel/recreation/unchanged retry/validated correction/landscape while another record synchronizes. Dark200-percent deletion/recovery actions remain reachable. Owned Arabic/English settled captures inspected. Full56 JVM/build/test APK/lint/316 resources pass. Initial migration-helper runtime incompatibility and Gradle-daemon loss retained in TEST_REPORT; neither is hidden by suppression. No data reset/uninstall/global settings change or real message send.
+
 ##26 October — context/related-reading final gate
 
 After the context and compact preview update, final physical Arabic3/3 (22.414s) and English3/3 (21.911s) passed. Actual fixture Admin API→DB→native detail carried bilingual course/topics/explicit pages, and book detail navigation returned correctly to the event. Final unavailable-thumbnail captures were inspected in both languages. The initial lazy-header lookup and device-sleep failures remain in TEST_REPORT; test windows alone now keep themselves awake.27 JVM cases,291 resources and current APK/test packaging/lint pass. This does not certify independent Admin or real provider broadcast playback.

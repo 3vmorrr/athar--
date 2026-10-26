@@ -1,10 +1,10 @@
 # Ordered execution queue
 
-Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
+Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. Parallel branch parallel/admin-foundation owns17.1–17.3 (issues1–3, Draft PR4); do not duplicate/change that branch or count source-only work as complete. Integrate only after recorded acceptance and reconciliation against this branch. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **02.7.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.7**. Open tasks: **139**. Overall estimate: **46%** (engineering estimate, not test coverage).
 
-The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
+The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks within this track; reserved Admin work proceeds on its separate branch.
 
 Contribution values are approximate remaining scope budgets in percentage points, not automatic earned credit. Overall estimates must be reviewed against actual source and verification after each completion. Previously completed rows have zero new contribution because their work is already included in the baseline. Phase2 task weights are recorded separately in JSON; shared visual infrastructure belongs to phase21, even when ordered early as a dependency.
 
@@ -100,7 +100,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.7.2 — Actionable permanent Night Prayer rejection recovery
 
-- Parent: Work package 2; state: **NOT STARTED**; dependencies: 02.5, 02.7.1.
+- Parent: Work package 2; state: **COMPLETE**; dependencies: 02.5, 02.7.1.
 - Exact scope: Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/androidTest/.
 - Automated gates: 422/404/429/503 operation outcomes; retained rejection after restart; explicit retry/repair/stale review; unreadable and owner isolation; healthy queue progress; native Arabic/English UI/build/lint/resources.

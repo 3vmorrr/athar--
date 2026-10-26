@@ -22,7 +22,7 @@ open class AtharApplication : Application() {
 class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.API_BASE_URL,enablePersistentSync:Boolean=true) {
     val partition = java.security.MessageDigest.getInstance("SHA-256").digest(apiBaseUrl.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }.take(12)
     val cipher = PrivateCipher()
-    val database = Room.databaseBuilder(application, AppDatabase::class.java, "athar-$partition.db").build()
+    val database = Room.databaseBuilder(application, AppDatabase::class.java, "athar-$partition.db").addMigrations(AppDatabase.MIGRATION_1_2).build()
     val settings = SettingsStore(application)
     val session = SessionRepository(RetrofitTransport(apiBaseUrl), KeystoreTokenStore(application, cipher, namespace = partition), language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
     val content = ContentRepository(session, database.dao(), cipher, language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })

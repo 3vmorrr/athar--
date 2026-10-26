@@ -52,13 +52,22 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         ids.map{id->val row=requireNotNull(dao.night(user,id));NightConflict(row,retainedBody(row))}
     }.flowOn(Dispatchers.IO)
 
+    fun observeRejections(user:Long)=dao.observeNightRejectionIds(user).map{ids->
+        ids.mapNotNull{id->database.withTransaction{
+            val mutations=dao.sessionMutations(user,id)
+            if(mutations.none{it.rejectedStatus!=null})null
+            else{val row=requireNotNull(dao.night(user,id));val body=validateRetained(row)
+                NightRejectionReview(user,row,body,mutations)}
+        }}
+    }.flowOn(Dispatchers.IO)
+
     suspend fun save(payload: JsonObject, id: String = UUID.randomUUID().toString(),expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = user()
         session.requireVerifiedOwner(expectedOwner)
         database.withTransaction {
             session.requireVerifiedOwner(user)
             val previous = dao.night(user, id)
-            check(!dao.hasNightConflict(user,id))
+            check(!dao.hasNightConflict(user,id)&&!dao.hasNightRejection(user,id))
             require(previous?.deleted != true)
             if(previous!=null)read(previous)
             val expected = previous?.localRevision ?: 0
@@ -79,7 +88,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         database.withTransaction {
             session.requireVerifiedOwner(user)
             val previous = requireNotNull(dao.night(user, id)); if (previous.deleted) return@withTransaction
-            check(!dao.hasNightConflict(user,id));read(previous)
+            check(!dao.hasNightConflict(user,id)&&!dao.hasNightRejection(user,id));read(previous)
             val mutation = UUID.randomUUID().toString()
             val body = JsonObject().apply { addProperty("mutation_id", mutation); addProperty("expected_revision", previous.localRevision) }
             dao.night(previous.copy(nightDate = "", verseCount = 0, measuredSeconds = null, payloadCipher = cipher.seal("{}"), localRevision = previous.localRevision + 1, deleted = true, dirty = true))
@@ -105,6 +114,15 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
             val operations = eligible.map { mapOf("id" to it.sessionId, "operation" to it.operation, "data" to JsonParser.parseString(cipher.open(it.payloadCipher))) }
             val reply = session.request("POST", "night-prayer/sync", mapOf("cursor" to cursor, "operations" to operations),expectedUser=user).asJsonObject
             session.requireVerifiedOwner(user)
+            val results=reply["results"].asJsonArray
+            require(results.size()==eligible.size)
+            results.forEachIndexed{index,element->
+                val result=element.asJsonObject
+                require(result["id"].asString==eligible[index].sessionId)
+                require(result["status"].asString in setOf("applied","rejected"))
+                if(result["status"].asString=="applied")require(result["result"].asJsonObject["revision"].asInt==eligible[index].expectedRevision+1)
+            }
+            var retryStatus:Int?=null
             database.withTransaction {
                 session.requireVerifiedOwner(user)
                 reply["results"].asJsonArray.forEachIndexed { index, element ->
@@ -114,8 +132,11 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
                         dao.night(user, mutation.sessionId)?.let { local -> dao.night(local.copy(serverRevision = result["result"].asJsonObject["revision"].asInt, dirty = dao.pendingCount(user, mutation.sessionId) > 0)) }
                     } else {
                         val status=result["error"].asJsonObject["status"].asInt
-                        if(status!=409)throw ApiException(status,"night_sync_rejected","")
-                        dao.markConflict(user, mutation.mutationId); conflicts++
+                        when(nightOperationOutcome(status)){
+                            NightOperationOutcome.CONFLICT->{dao.markConflict(user,mutation.mutationId);conflicts++}
+                            NightOperationOutcome.REJECTED->dao.markRejected(user,mutation.mutationId,status)
+                            NightOperationOutcome.RETRY->retryStatus=status
+                        }
                     }
                 }
                 reply["changes"].asJsonArray.forEach { element ->
@@ -124,12 +145,46 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
                 }
                 dao.cache(CachedDocument(user, "night-sync-cursor", cipher.seal(reply["next_cursor"].asString), System.currentTimeMillis()))
             }
+            // Commit independent acknowledgements before reporting temporary delivery failure.
+            retryStatus?.let{throw ApiException(it,"night_sync_retry","")}
             more = reply["has_more"].asBoolean || dao.hasEligiblePending(user)
             batches++
         } while (more && batches < 20)
         continuationOwner=if(more)user else null
         conflicts
     } }
+
+    suspend fun reviewRejection(id:String,expectedOwner:Long?=session.userId):NightRejectionReview=syncLock.withLock{withContext(Dispatchers.IO){
+        val owner=user();session.requireVerifiedOwner(expectedOwner)
+        database.withTransaction{
+            session.requireVerifiedOwner(owner)
+            check(dao.hasNightRejection(owner,id)&&!dao.hasNightConflict(owner,id))
+            val local=requireNotNull(dao.night(owner,id));val body=validateRetained(local)
+            NightRejectionReview(owner,local,body,dao.sessionMutations(owner,id))
+        }
+    }}
+    /** Explicit retry preserves mutation IDs and ciphertext. Repair replaces only the reviewed queue. */
+    suspend fun recoverRejection(review:NightRejectionReview,repair:JsonObject?=null)=syncLock.withLock{withContext(Dispatchers.IO){
+        val owner=user();session.requireVerifiedOwner(review.owner)
+        val repaired=repair?.deepCopy()
+        if(repaired!=null){require(canRepairNight(review));validateNightRepair(repaired)}
+        database.withTransaction{
+            session.requireVerifiedOwner(owner)
+            val local=requireNotNull(dao.night(owner,review.local.id));val queued=dao.sessionMutations(owner,local.id)
+            if(local!=review.local||queued!=review.mutations||!dao.hasNightRejection(owner,local.id)||dao.hasNightConflict(owner,local.id))throw NightConflictChanged()
+            val retained=validateRetained(local)
+            if(repaired!=null)require(canRepairNight(review.copy(body=retained)))
+            if(repaired==null)dao.retryRejected(owner,local.id)
+            else{
+                val expected=queued.first().expectedRevision;val mutation=UUID.randomUUID().toString()
+                val outgoing=repaired.deepCopy().apply{addProperty("mutation_id",mutation);addProperty("expected_revision",expected)}
+                dao.removeSessionMutations(owner,local.id)
+                dao.night(local.copy(nightDate=repaired["night_date"].asString,verseCount=verseCount(repaired),measuredSeconds=null,payloadCipher=cipher.seal(repaired.toString()),localRevision=expected+1,dirty=true,updatedAt=System.currentTimeMillis()))
+                dao.enqueue(OutboxMutation(userId=owner,mutationId=mutation,sessionId=local.id,operation="put",expectedRevision=expected,payloadCipher=cipher.seal(outgoing.toString())))
+            }
+        }
+        requestSync(owner)
+    }}
 
     private suspend fun validateRetained(row:LocalNightSession):JsonObject? {
         try{

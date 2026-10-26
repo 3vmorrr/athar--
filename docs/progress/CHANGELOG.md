@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task02.7.2 — retained permanent Night Prayer rejection recovery
+
+- Persist permanent operation rejection separately from409 conflict and temporary delivery failure; isolate the oldest eligible mutation per session and commit healthy acknowledgements in mixed batches.
+- Add explicit owner/snapshot-validated unchanged retry and manual untimed correction, retaining original bytes until that deliberate choice. Protect unreadable/stale queues; keep timed/calculated/deletion retry-only to preserve hidden data.
+- Register additive Room1→2 migration and retain old schema; actual migration/reopen, real422 native correction, AR/EN/dark200-percent/landscape and regression acceptance pass.56 JVM/build/test APK/lint/316 resources; API27 Arabic10/English29/main API1.
+- Overall engineering estimate46% (weighted45.71, uncertainty±10pp), offline phase86%,139 open tasks; next02.7. Parallel17.1–17.3 remain reserved and uncredited until accepted integration.
+
 ## Task21.18 — immersive hero specification
 
 - Documented original layered heroes, section-specific data/actions, compact reading/adaptive behavior, bounded scroll/shared-art/sheet motion, reduced motion, accessibility, original asset provenance/fallbacks and performance budgets from the six user inspiration references.

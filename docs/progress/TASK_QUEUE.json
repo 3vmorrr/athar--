@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "02.7.2",
-  "overall_estimate_percent": 45,
-  "overall_estimate_detail": 45.46,
+  "current_task": "02.7",
+  "overall_estimate_percent": 46,
+  "overall_estimate_detail": 45.71,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -16,7 +16,7 @@
     "02.7.1": 3,
     "02.7.2": 3
   },
-  "policy": "Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.",
+  "policy": "Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. Parallel branch parallel/admin-foundation owns17.1–17.3 (issues1–3, Draft PR4); do not duplicate/change that branch or count source-only work as complete. Integrate only after recorded acceptance and reconciliation against this branch. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.",
   "reviewed_ui_branch": {
     "ref": "origin/uiux/athar-premium-v2",
     "sha": "0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32",
@@ -213,7 +213,7 @@
       "name": "Actionable permanent Night Prayer rejection recovery",
       "parent": "Work package 2",
       "scope": "Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions.",
-      "state": "NOT STARTED",
+      "state": "COMPLETE",
       "dependencies": [
         "02.5",
         "02.7.1"
@@ -2748,7 +2748,7 @@
     }
   ],
   "estimate_basis": {
-    "Android": 61,
+    "Android": 62,
     "Backend/API": 61,
     "Independent Admin": 0,
     "Database": 74,
@@ -2767,5 +2767,5 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses fixed task weights and is83%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
+  "phase_completion_method": "Phase2 uses fixed task weights and is86%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
 }
