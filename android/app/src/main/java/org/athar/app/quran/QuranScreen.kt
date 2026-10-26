@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -251,24 +250,66 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            reading?.let { position ->
-                Surface(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
-                    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f)) {
-                                Text(stringResource(R.string.reading_position_label, state.index?.surahs?.getOrNull(position.surah - 1)?.name ?: "${position.surah}", position.ayah), style = MaterialTheme.typography.bodySmall)
-                                if (position.pending && !position.conflict) Text(stringResource(R.string.reading_pending), style = MaterialTheme.typography.labelSmall)
-                            }
-                            IconButton(onClick = { searchMode = false; vm.select(position.surah, position.ayah) }) { Icon(AtharIcons.ArrowForward, stringResource(R.string.resume_reading)) }
-                            if (position.pending && !position.conflict) TextButton(onClick = { scope.launch { try { vm.syncReading() } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.retry)) }
+            when {
+                storedReading == ProtectedRead.Unreadable -> {
+                    MessagePanel(stringResource(R.string.local_data_unreadable), true) {
+                        TextButton(onClick = vm::retryReading) {
+                            Text(stringResource(R.string.retry))
                         }
-                        if (position.conflict) {
-                            Text(stringResource(R.string.reading_conflict), style = MaterialTheme.typography.bodySmall)
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                listOf(true to R.string.reading_use_account, false to R.string.reading_keep_device).forEach { (remote, label) ->
-                                    TextButton(onClick = { scope.launch { try { vm.resolvePosition(remote) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(label)) }
+                    }
+                }
+                reading?.conflict == true -> {
+                    MessagePanel(stringResource(R.string.reading_conflict), true) {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                            listOf(
+                                true to R.string.reading_use_account,
+                                false to R.string.reading_keep_device,
+                            ).forEach { (remote, label) ->
+                                TextButton(
+                                    onClick = {
+                                        scope.launch {
+                                            try {
+                                                vm.resolvePosition(remote)
+                                            } catch (failure: CancellationException) {
+                                                throw failure
+                                            } catch (_: Exception) {
+                                                snackbar.showSnackbar(failed)
+                                            }
+                                        }
+                                    },
+                                ) {
+                                    Text(stringResource(label))
                                 }
                             }
+                        }
+                    }
+                }
+                reading?.pending == true -> {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Xs),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                    ) {
+                        AtharStatusPill(
+                            stringResource(R.string.reading_pending),
+                            Modifier.weight(1f),
+                        )
+                        TextButton(
+                            onClick = {
+                                scope.launch {
+                                    try {
+                                        vm.syncReading()
+                                    } catch (failure: CancellationException) {
+                                        throw failure
+                                    } catch (_: Exception) {
+                                        snackbar.showSnackbar(failed)
+                                    }
+                                }
+                            },
+                        ) {
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -295,26 +336,81 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             when {
                 state.loading -> LoadingScreen()
                 state.error -> FailurePanel(null) { vm.select(1) }
-                state.verses.isEmpty() -> Text(stringResource(R.string.empty_state), Modifier.padding(24.dp))
-                else -> LazyColumn(Modifier.fillMaxSize().testTag("quran-reader-list"), state = listState, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if(storedReading==ProtectedRead.Unreadable)item(key="unreadable-position",contentType="state"){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryReading){Text(stringResource(R.string.retry))}}}
-                    items(state.verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { ayah ->
-                        Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
-                            if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
-                                MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
-                            }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                        }
-                    }
-                    item(key = "source", contentType = "source") { Text(stringResource(R.string.quran_source), style = MaterialTheme.typography.bodySmall) }
+                state.verses.isEmpty() -> Text(
+                    stringResource(R.string.empty_state),
+                    Modifier.padding(AtharSpacing.Xxl),
+                )
+                searchMode -> QuranSearchResults(
+                    verses = state.verses,
+                    fontSize = fontSize,
+                    modifier = Modifier.fillMaxSize(),
+                    onLongPressAyah = { selectedAyah = it },
+                )
+                else -> Column(
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(mushafScrollState)
+                        .padding(horizontal = AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    QuranMushafPage(
+                        verses = state.verses,
+                        fontSize = fontSize,
+                        scrollState = mushafScrollState,
+                        scrollTargetGlobalIndex = state.scrollTarget,
+                        scrollRequest = state.scrollRequest,
+                        onLongPressAyah = { selectedAyah = it },
+                    )
+                    Text(
+                        stringResource(R.string.quran_source),
+                        modifier = Modifier.padding(
+                            horizontal = AtharSpacing.Sm,
+                            vertical = AtharSpacing.Lg,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
     }
+    selectedAyah?.let { ayah ->
+        QuranAyahActionSheet(
+            ayah = ayah,
+            bookmarked = ayah.position.globalIndex in bookmarks,
+            canSavePosition = storedReading is ProtectedRead.Ready &&
+                reading?.conflict != true,
+            onDismiss = { selectedAyah = null },
+            onSavePosition = {
+                scope.launch {
+                    try {
+                        vm.savePosition(ayah)
+                        snackbar.showSnackbar(saved)
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        snackbar.showSnackbar(failed)
+                    }
+                }
+            },
+            onToggleBookmark = {
+                scope.launch {
+                    try {
+                        vm.bookmark(
+                            ayah,
+                            ayah.position.globalIndex !in bookmarks,
+                        )
+                        snackbar.showSnackbar(saved)
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        snackbar.showSnackbar(failed)
+                    }
+                }
+            },
+        )
+    }
+
     if (selector) AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.surah)) }, text = {
         LazyColumn(Modifier.heightIn(max = 460.dp)) { items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah -> TextButton(onClick = { vm.select(surah.number); selector = false }, Modifier.fillMaxWidth()) { Text("${surah.number}. ${surah.name}") } } }
     }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
