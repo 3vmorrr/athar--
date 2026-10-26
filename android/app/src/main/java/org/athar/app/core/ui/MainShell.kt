@@ -344,9 +344,9 @@ private fun AtharNavIcon(
     var deletePassword by remember { mutableStateOf("") }
 
     val normalizedName = name.trim()
-    val normalizedUsername = username.trim().lowercase()
-    val nameValid = name.isBlank() || AccountInput.validDisplayName(name)
-    val usernameValid = username.isBlank() || AccountInput.validUsername(username)
+    val normalizedUsername = AccountInput.normalizeUsernameInput(username).trim()
+    val nameValid = AccountInput.validDisplayName(name)
+    val usernameValid = AccountInput.validUsername(username)
     val profileValid = AccountInput.validProfile(name, username)
     val profileChanged =
         normalizedName != auth.user.displayName.orEmpty() ||
@@ -357,23 +357,38 @@ private fun AtharNavIcon(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(key = "profile", contentType = "heading") {
-            AtharHeroSurface(Modifier.fillMaxWidth()) {
-                Text(
-                    stringResource(R.string.profile),
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                Text(
-                    auth.user.email,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            AtharImmersiveHero(
+                presentation = AtharHeroPresentation(
+                    artwork = AtharHeroArtwork.Generic,
+                    eyebrow = stringResource(R.string.account),
+                    title = auth.user.displayName.orEmpty().ifBlank {
+                        auth.user.username.orEmpty()
+                    },
+                    supportingText = auth.user.email,
+                    statusText = if (auth.offline) {
+                        stringResource(R.string.offline_notice)
+                    } else {
+                        null
+                    },
+                    statusTone = if (auth.offline) {
+                        AtharHeroStatusTone.Offline
+                    } else {
+                        AtharHeroStatusTone.Neutral
+                    },
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
 
         item(key = "name", contentType = "field") {
             OutlinedTextField(
                 value = name,
-                onValueChange = { name = it.take(80) },
+                onValueChange = {
+                    name = it.take(80)
+                    if (operation.error != null || operation.message != null) {
+                        vm.clearFeedback()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.display_name)) },
                 supportingText = {
@@ -389,13 +404,25 @@ private fun AtharNavIcon(
                 value = username,
                 onValueChange = {
                     username = AccountInput.normalizeUsernameInput(it)
+                    if (operation.error != null || operation.message != null) {
+                        vm.clearFeedback()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.username)) },
                 supportingText = {
-                    Text(stringResource(R.string.username_hint))
+                    Text(
+                        stringResource(
+                            if (operation.error == "account_conflict") {
+                                R.string.username_unavailable
+                            } else {
+                                R.string.username_hint
+                            },
+                        ),
+                    )
                 },
-                isError = username.isNotBlank() && !usernameValid,
+                isError = !usernameValid ||
+                    operation.error == "account_conflict",
                 singleLine = true,
                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Ascii,
@@ -406,6 +433,7 @@ private fun AtharNavIcon(
         item(key = "save", contentType = "action") {
             Button(
                 onClick = {
+                    vm.clearFeedback()
                     vm.perform(successMessage = "saved") {
                         vm.graph.session.updateProfile(
                             normalizedName,
