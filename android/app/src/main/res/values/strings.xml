@@ -200,4 +200,8 @@
     </plurals>
     <string name="upcoming_unavailable">هذا الدرس لم يعد متاحًا. ارجع إلى قائمة الدروس للاطلاع على أحدث المواعيد.</string>
     <string name="upcoming_replay_pending">انتهى الدرس، والتسجيل غير متاح للمشاهدة حاليًا.</string>
+    <string name="upcoming_course">الدورة: %1$s</string>
+    <string name="upcoming_related_book">القراءة المرتبطة بالدرس</string>
+    <string name="upcoming_book_pages">من الصفحة %1$d إلى الصفحة %2$d</string>
+    <string name="upcoming_preview_unavailable">صورة الدرس غير متاحة</string>
 </resources>

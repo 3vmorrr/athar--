@@ -79,6 +79,33 @@ isolated_database(static function(PDO $db):void{
     $noReplay=$service->save($admin,60,['expected_revision'=>1,'status'=>'published','is_live_event'=>true,'replay_available'=>false]);
     event_assert(!$noReplay['can_watch'],'an ended live event without an available replay is not a playable archive');
     event_assert((int)$db->query('SELECT is_published FROM lessons WHERE id=60')->fetchColumn()===0,'unavailable replay cannot leak through ordinary watch catalog');
+    $db->exec("INSERT INTO books(title,author,source_url,rights_basis,is_published) VALUES ('Published context fixture','Fixture author','https://example.invalid/book','Fixture permission',1),('Private context fixture','Fixture author','https://example.invalid/draft','',0)");
+    $context=$service->save($admin,6,['expected_revision'=>1,'course_title_ar'=>'دورة تجريبية','topics_ar'=>['موضوع تجريبي','موضوع تجريبي'],'related_book_id'=>1,'related_page_start'=>10,'related_page_end'=>20]);
+    event_assert($context['revision']===2&&$context['course_title']==='دورة تجريبية'&&$context['topics']===['موضوع تجريبي'],'localized context is bounded, normalized and revision checked');
+    event_assert($context['related_book']===['id'=>1,'title'=>'Published context fixture','page_start'=>10,'page_end'=>20],'published related book preserves explicit page references');
+    event_assert(!isset($service->detail(6)['editor_context']),'ordinary readers never receive the editorial context DTO');
+    event_assert($service->detail(6,'en')['course_title']===null&&$service->detail(6,'en')['topics']===[],'missing English context does not silently copy Arabic metadata');
+    $service->save($admin,6,['expected_revision'=>2,'course_title_en'=>'Fixture course','topics_en'=>['Fixture topic']]);
+    event_assert($service->detail(6,'en')['course_title']==='Fixture course'&&$service->detail(6,'en')['topics']===['Fixture topic'],'English context is independently localized');
+    foreach([
+        ['course_title_ar'=>42],['course_title_ar'=>str_repeat('x',201)],['topics_ar'=>['nested'=>['invalid']]],
+        ['topics_ar'=>array_fill(0,13,'Too many')],['topics_ar'=>['']],['topics_ar'=>[42]],
+        ['related_book_id'=>999999],['related_book_id'=>'1'],['related_page_start'=>0],['related_page_start'=>21],
+        ['related_page_start'=>null],['related_page_end'=>'20'],['related_book_id'=>null,'related_page_start'=>2],
+    ] as $bad)event_denied(fn()=>$service->save($admin,6,array_merge(['expected_revision'=>3],$bad)),422,'invalid context rejected atomically');
+    event_assert($service->detail(6)['revision']===3,'invalid context never increments revision');
+    event_denied(fn()=>$service->save($admin,6,['expected_revision'=>2,'course_title_ar'=>'Stale context']),409,'stale context cannot overwrite new editorial data');
+    $db->exec('UPDATE books SET is_published=0 WHERE id=1');
+    event_assert($service->detail(6)['related_book']===null,'unpublished related book title and pages are suppressed');
+    event_assert($service->detail(6,'ar',$admin)['editor_context']['related_book_id']===1,'admin retains the hidden relationship for correction');
+    $db->exec('UPDATE books SET is_published=1 WHERE id=1');
+    $cleared=$service->save($admin,6,['expected_revision'=>3,'related_book_id'=>null]);
+    event_assert($cleared['related_book']===null&&$cleared['editor_context']['related_page_start']===null,'clearing a related book clears its page range');
+    $service->save($admin,6,['expected_revision'=>4,'related_book_id'=>1,'related_page_start'=>1,'related_page_end'=>1]);
+    $db->exec('DELETE FROM books WHERE id=1');
+    event_assert($service->detail(6)['related_book']===null,'deleted related books cannot leave visible orphan page references');
+    event_assert($service->save($admin,6,['expected_revision'=>5,'course_title_ar'=>null])['editor_context']['related_page_end']===null,'later edits safely clear orphaned page metadata');
+    event_assert($service->page()['items'][1]['course_title']===null,'optional context cannot create fabricated course labels');
     $db->exec('UPDATE series SET is_published=0 WHERE id=1');
     event_assert($service->page()['items']===[],'hidden parent series suppresses all descendants');
     event_assert($service->page([], 'ar',$admin)['pagination']['total']===60,'admin catalog can inspect hidden ancestry without a public leak');

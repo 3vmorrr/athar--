@@ -1,6 +1,16 @@
 # Verification report
 
-##26 October — upcoming home/state increment (verification in progress)
+##26 October — optional upcoming context (tested increment)
+
+Final preview build/test APK/lint PASS (3m9s);27 JVM cases and291 paired resources PASS. Current production APK was installed with retained data. Final physical Arabic3/3 PASS (22.414s), English3/3 PASS (21.911s), logs `event-context-preview-physical-ar.log` / `event-context-preview-physical-en.log`. Updated Arabic/English live-detail captures were inspected: the invalid fixture thumbnail correctly collapses to localized compact unavailable text, while course/topics/date layout remains readable and scrolling/book navigation/playback gating assertions pass. This is not proof of real live video playback. Initial lazy-header/sleep failures remain documented below.
+
+Corrected-harness rerun: Arabic3/3 PASS (23.117s), English3/3 PASS (22.484s). The actual route checked localized course/topics/page references, opened the published related book and returned to the same event, then completed schedule/live/replay/cancellation assertions. Detail captures were inspected; their intentionally invalid fixture thumbnail showed an oversized empty preview fallback. Production preview handling now has explicit loading feedback, stops its spinner after completion and collapses image failures to a compact localized row. This visual change requires the subsequent build/device gate before the increment is checkpointed.
+
+All10 backend suites executed successfully after migration015/service changes: **20,000 assertions**, including80 upcoming/context/visibility/revision/validation cases. Private backed-up development/fixture migration succeeded; development read-only verification reports15 matching versions/34 tables. Native build/test APK/lint passed (3m39s),27 JVM cases and290 resources passed.
+
+Initial context physical batch is **not a pass**: Arabic reached the new book/course/topic navigation assertions, then its refresh lookup failed because the separate lazy header item had been virtualized after scrolling deep into the larger detail card. English UI cases had no active Compose hierarchy; device diagnostics confirmed `Wakefulness=Asleep`, display OFF, with no matching current Athar fatal in the scoped crash review. The device was woken and its nonsecure keyguard dismissed; no credential bypass or global timeout/locale/permission setting was changed. The journey now explicitly scrolls the lazy list to index0 before refresh, and test windows hold KEEP_SCREEN_ON only for their own lifetime. Initial logs `event-context-physical-ar.log`/`event-context-physical-en.log` are retained. Rerun outcomes follow execution.
+
+##26 October — upcoming home/state increment (tested increment)
 
 Final rerun: **Arabic3/3 PASS (21.487s), English3/3 PASS (20.883s)** on the same physical API27 device. Logs `upcoming-home-physical-ar-retry.log` / `upcoming-home-physical-en-retry.log`. Actual home→event→back→view-all→state-transition journey passes, alongside isolated cached-live/unavailable/replay presentation and real Room/Keystore encrypted cache/locale/owner/404-removal tests. Arabic and English home captures were inspected after retrieval from app-private test output. The earlier English harness failure remains below. Test-only APK/lint rebuild passed (1m13s); production main source was unchanged by that correction. No new backend migration or real broadcast/message send occurred.
 

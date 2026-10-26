@@ -67,6 +67,10 @@ GET `/quran/reciters?surah=1&page=1&per_page=25&q=...` returns stable reciter ID
 
 ### Upcoming/live events (migration014)
 
+Migration015 adds optional event context to the same revision-checked Admin PUT: `course_title_ar/en` (nullable,200 characters), `topics_ar/en` (ordered lists, at most12 distinct labels,2–80 characters each), `related_book_id` and paired `related_page_start/end` (positive integers, end>=start). Context changes share the event transaction/revision/audit/change fact; there is no separate unversioned mutation route. Use null book ID to clear its page range. Book existence is validated, and public responses suppress the entire relationship when the book is unpublished or deleted. Admin detail alone includes `editor_context` for correcting hidden relationships.
+
+Reader DTOs include localized `course_title`, `topics`, and nullable `related_book:{id,title,page_start,page_end}`. Missing English optional context stays empty rather than copying Arabic text silently. Book titles remain source proper names. Page numbers are editorial references, not PDF-verified page counts; downloads still require the normal rights-aware book endpoint. Existing `youtube_id` supplies official-provider thumbnails through a fixed HTTPS thumbnail origin; no arbitrary image/media URL is fetched server-side. Apply migration015 before deploying code that joins the context table; older clients ignore the additive fields.
+
 - GET `/upcoming-lessons`: verified native session, paginated visible scheduled/live events; `Accept-Language` selects Arabic or available English metadata. Response includes authoritative server time. Passing the scheduled time never promotes an event to live.
 - GET `/upcoming-lessons/{lesson_id}`: visible event detail, including cancellation/replay state. Hidden/draft/hidden-parent content is not public.
 - GET `/admin/lesson-events`: verified admin/owner list, including editorial states.

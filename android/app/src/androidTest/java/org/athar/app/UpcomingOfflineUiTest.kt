@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.test.*
@@ -30,6 +31,8 @@ class UpcomingOfflineUiTest {
         var state by mutableStateOf(UpcomingState(loading=false,offline=true,items=listOf(event)))
         var opened="";var refreshes=0
         compose.setContent {
+            val view=LocalView.current
+            DisposableEffect(view){val previous=view.keepScreenOn;view.keepScreenOn=true;onDispose{view.keepScreenOn=previous}}
             CompositionLocalProvider(LocalContext provides localized,LocalConfiguration provides configuration,LocalLayoutDirection provides if(language=="ar")LayoutDirection.Rtl else LayoutDirection.Ltr){
                 AtharTheme("light"){UpcomingContent(state,true,{refreshes++},{},{opened=it})}
             }

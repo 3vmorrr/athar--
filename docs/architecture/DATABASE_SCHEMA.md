@@ -1,5 +1,7 @@
 # Database schema
 
+Subsequent26 October context increment: additive015 creates `lesson_event_context` (one row per event, localized optional course/topics, nullable book FK and paired page references). It contains public editorial content only. Event deletion cascades; book deletion clears its FK, and the serializer suppresses orphan page references. Context writes share the event revision transaction. The healthy development and generated fixture targets now have15 versions/34 tables, checked after separate private logical backups; the corrupt original is unchanged. Earlier14/33 evidence below describes the checkpoint before this increment.
+
 Checkpoint26 October2026: the explicit healthy development runtime has14 matching migration versions and33 tables, all passing read-only CHECK TABLE. This includes existing legacy tables as well as new additions; migration count and table count are different measures. The original corrupt database is unchanged. Full encrypted archive restore remains a separate open acceptance gate.
 Baseline migrations 001–009 define users, bookmarks/positions/khatmah, scholars/series/lessons/books/reviewed adhkar, favorites/video progress, audit, OTP, owner archives/grants, preferences/username/activity, encrypted settings/comments, email campaigns/events and scholar image keys. Existing IDs, constraints, password hashes and user records remain.
 

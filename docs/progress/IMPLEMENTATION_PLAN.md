@@ -2,6 +2,8 @@
 
 ## Formal checkpoint roadmap —2026-10-25
 
+26 October continuation: phase1's native/API upcoming/live home, optional context, unavailable/replay/offline and related-book navigation functional gates now pass (E01/E01a/E01b). Independent Admin event editing and reminder delivery remain their separate later dependencies; no real broadcast acceptance is inferred. Continue work package2, offline/synchronization hardening, beginning with unreadable retained local-record handling (QF03). The original24-package snapshot remains historical;23 packages now remain open, with release acceptance across all modules still required.
+
 The current source audit and24 remaining dependency-based work packages are recorded in [the formal checkpoint](../audit/CHECKPOINT_2026-10-25.md). These refine existing P4–P8 rather than restarting completed foundations. E01 has migration/API/native list/detail and focused hardware evidence; phase1 closes its remaining extended metadata/home/offline acceptance before the next work package. Stable milestones receive meaningful commits and normal pushes after verification and secret review. Independent Admin remains NOT STARTED; the legacy dashboard is not its acceptance substitute.
 
 Scope follows the approved master plus mandatory Night Prayer addendum. Existing website and local modifications are preserved. No silent paid services, destructive production migrations or feature removal.

@@ -172,4 +172,8 @@
     </plurals>
     <string name="upcoming_unavailable">This lesson is no longer available. Return to the lesson list for the latest schedule.</string>
     <string name="upcoming_replay_pending">The lesson has ended. Its recording is not currently available to watch.</string>
+    <string name="upcoming_course">Course: %1$s</string>
+    <string name="upcoming_related_book">Related reading</string>
+    <string name="upcoming_book_pages">Pages %1$d–%2$d</string>
+    <string name="upcoming_preview_unavailable">Lesson preview unavailable</string>
 </resources>

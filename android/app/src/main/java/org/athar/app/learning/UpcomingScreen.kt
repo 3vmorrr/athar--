@@ -3,6 +3,7 @@ package org.athar.app.learning
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -16,6 +17,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,14 +67,29 @@ import java.time.format.FormatStyle
     val zone=ZoneId.systemDefault()
     val date=remember(event.start,locale,zone){event.start?.atZone(zone)?.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT).withLocale(locale))}
     var expanded by rememberSaveable(event.id){mutableStateOf(false)}
+    var previewFailed by remember(event.youtubeId){mutableStateOf(false)}
+    var previewLoading by remember(event.youtubeId){mutableStateOf(true)}
     val reduced=reducedMotion()
     ElevatedCard(Modifier.fillMaxWidth().testTag("upcoming-event-${event.id}")) {
         Column(Modifier.padding(20.dp).animateContentSize(tween(if(reduced)0 else AtharMotion.Normal)),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            if(detail&&event.youtubeId.matches(Regex("[A-Za-z0-9_-]{11}"))){
+                if(previewFailed)Row(Modifier.fillMaxWidth().padding(vertical=8.dp),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically){
+                    Icon(AtharIcons.CalendarMonth,null,Modifier.size(20.dp),tint=MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.upcoming_preview_unavailable),style=MaterialTheme.typography.bodySmall)
+                }else Box(Modifier.fillMaxWidth().aspectRatio(16f/9f).background(MaterialTheme.colorScheme.surfaceContainer),contentAlignment=Alignment.Center){
+                    if(previewLoading)CircularProgressIndicator(Modifier.size(24.dp))
+                    AsyncImage(model="https://i.ytimg.com/vi/${event.youtubeId}/hqdefault.jpg",contentDescription=null,modifier=Modifier.fillMaxSize(),contentScale=ContentScale.Crop,onSuccess={previewLoading=false},onError={previewLoading=false;previewFailed=true})
+                }
+            }
             val status=when(event.status){EventStatus.LIVE->if(offline)R.string.upcoming_last_live else R.string.upcoming_live;EventStatus.SCHEDULED->R.string.upcoming_scheduled;EventStatus.PUBLISHED->R.string.upcoming_published;EventStatus.CANCELLED->R.string.upcoming_cancelled;else->R.string.upcoming_draft}
             Surface(shape=MaterialTheme.shapes.small,color=if(event.status==EventStatus.LIVE&&!offline)MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh){Text(stringResource(status),Modifier.padding(horizontal=12.dp,vertical=6.dp),style=MaterialTheme.typography.labelLarge)}
             Text(event.title,style=MaterialTheme.typography.headlineSmall,maxLines=if(detail)6 else 3,overflow=TextOverflow.Ellipsis)
             if(event.scholarName.isNotBlank())TextButton(onClick={event.scholarId?.let{open("scholars/$it")}},enabled=event.scholarId!=null,contentPadding=PaddingValues(0.dp)){Text(event.scholarName)}
             if(event.seriesName.isNotBlank())TextButton(onClick={event.seriesId?.let{open("series/$it")}},enabled=event.seriesId!=null,contentPadding=PaddingValues(0.dp)){Text(event.seriesName)}
+            if(detail&&event.courseTitle.isNotBlank())Text(stringResource(R.string.upcoming_course,event.courseTitle),style=MaterialTheme.typography.titleMedium)
+            if(detail&&event.topics.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
+                event.topics.forEach{topic->Surface(shape=MaterialTheme.shapes.small,color=MaterialTheme.colorScheme.secondaryContainer){Text(topic,Modifier.padding(horizontal=10.dp,vertical=6.dp),style=MaterialTheme.typography.labelMedium)}}
+            }
             Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.CalendarMonth,null,Modifier.size(20.dp));Column{Text(date?:stringResource(R.string.upcoming_time_unset),style=MaterialTheme.typography.titleMedium);Text(stringResource(R.string.upcoming_device_time),style=MaterialTheme.typography.bodySmall)}}
             if(event.status==EventStatus.SCHEDULED&&event.start!=null)EventCountdownLabel(event.start,clockOffset)
             event.durationMinutes?.let{Text(pluralStringResource(R.plurals.upcoming_duration,it,it),style=MaterialTheme.typography.bodySmall)}
@@ -80,6 +98,13 @@ import java.time.format.FormatStyle
             if(detail&&event.description.isNotBlank()){
                 Text(event.description,maxLines=if(expanded)Int.MAX_VALUE else 5,overflow=TextOverflow.Ellipsis)
                 TextButton(onClick={expanded=!expanded}){Text(stringResource(if(expanded)R.string.watch_show_less else R.string.more))}
+            }
+            if(detail)event.relatedBook?.let{book->
+                Column(Modifier.fillMaxWidth().testTag("event-related-book")){
+                    Text(stringResource(R.string.upcoming_related_book),style=MaterialTheme.typography.labelLarge)
+                    TextButton(onClick={open("books/${book.id}")},contentPadding=PaddingValues(0.dp)){Text(book.title)}
+                    if(book.pageStart!=null&&book.pageEnd!=null)Text(stringResource(R.string.upcoming_book_pages,book.pageStart,book.pageEnd),style=MaterialTheme.typography.bodyMedium)
+                }
             }
             if(!detail)OutlinedButton(onClick={open("upcoming/${event.id}")},modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.upcoming_details))}
             else if(event.canWatch&&!offline)Button(onClick={open("lessons/${event.id}")},modifier=Modifier.fillMaxWidth()){Icon(AtharIcons.PlayArrow,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.play))}

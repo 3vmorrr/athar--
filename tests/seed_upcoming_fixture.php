@@ -30,5 +30,8 @@ try{
     }
 }catch(\Athar\Http\ApiError $e){if($e->status!==404)throw $e;}
 $row=$service->save($actor,(int)$lesson,['expected_revision'=>$revision,'status'=>'scheduled','scheduled_at'=>gmdate('Y-m-d\TH:i:s\Z',time()+15*60),'schedule_timezone'=>'UTC','is_live_event'=>true,'reminders_enabled'=>true,'replay_available'=>false,'visibility'=>'public','title_en'=>'Upcoming interface fixture','description_en'=>'Development fixture, not a real broadcast.']);
+$book=$db->query("SELECT id FROM books WHERE title='Interface test book' AND is_published=1")->fetchColumn();
+if($book===false)throw new RuntimeException('Expected generated book fixture, not real catalogue data.');
+$row=$service->save($actor,(int)$lesson,['expected_revision'=>$row['revision'],'course_title_ar'=>'دورة واجهة تجريبية','course_title_en'=>'Interface fixture course','topics_ar'=>['موضوع اختباري'],'topics_en'=>['Fixture topic'],'related_book_id'=>(int)$book,'related_page_start'=>10,'related_page_end'=>20]);
 file_put_contents($repo.'/storage/engineering/upcoming-fixture.json',json_encode(['lesson_id'=>$row['id'],'admin_id'=>(int)$adminId,'revision'=>$row['revision'],'fixture_only'=>true],JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR));
 echo "Seeded only the generated upcoming fixture; no real lesson, recipient or campaign changed.\n";

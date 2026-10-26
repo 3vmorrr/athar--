@@ -8,6 +8,7 @@ import java.time.Instant
 enum class EventStatus { DRAFT, SCHEDULED, LIVE, PUBLISHED, CANCELLED }
 enum class CountdownUnit { MINUTES, HOURS, DAYS, AWAITING_START }
 data class EventCountdown(val amount:Int,val unit:CountdownUnit)
+data class EventBook(val id:Int,val title:String,val pageStart:Int?,val pageEnd:Int?)
 
 fun eventCountdown(start:Instant,now:Instant):EventCountdown {
     val remaining=Duration.between(now,start)
@@ -25,6 +26,7 @@ data class UpcomingLesson(
     val id:Int,val title:String,val description:String,val status:EventStatus,val start:Instant?,
     val scholarId:Int?,val scholarName:String,val seriesId:Int?,val seriesName:String,
     val durationMinutes:Int?,val revision:Int,val canWatch:Boolean,
+    val courseTitle:String="",val topics:List<String> = emptyList(),val relatedBook:EventBook?=null,val youtubeId:String="",
 ) {
     companion object {
         fun from(value:JsonElement):UpcomingLesson {
@@ -33,7 +35,9 @@ data class UpcomingLesson(
                 value.text("scheduled_at").takeIf(String::isNotBlank)?.let(Instant::parse),
                 value.text("scholar_id").toIntOrNull(),value.text("scholar_name"),value.text("series_id").toIntOrNull(),value.text("series_title"),
                 value.text("estimated_duration_minutes").toIntOrNull(),value.text("revision").toInt(),
-                value.text("can_watch")=="true"&&status in setOf(EventStatus.LIVE,EventStatus.PUBLISHED))
+                value.text("can_watch")=="true"&&status in setOf(EventStatus.LIVE,EventStatus.PUBLISHED),
+                value.text("course_title"),value.asJsonObject["topics"]?.takeIf{it.isJsonArray}?.asJsonArray?.map{it.asString}.orEmpty(),
+                value.asJsonObject["related_book"]?.takeUnless{it.isJsonNull}?.let{EventBook(it.text("id").toInt(),it.text("title"),it.text("page_start").toIntOrNull(),it.text("page_end").toIntOrNull())},value.text("youtube_id"))
         }
     }
 }

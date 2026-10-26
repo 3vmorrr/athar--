@@ -7,6 +7,12 @@ require dirname(__DIR__).'/backend/bootstrap.php';
 use Athar\Infrastructure\MigrationRunner;
 
 $repo=dirname(__DIR__);
+$migration=$argv[2]??'014_lesson_events';
+$reviewed=[
+    '014_lesson_events'=>['tables'=>['lesson_events','lesson_translations','lesson_event_changes'],'proof'=>'events-014'],
+    '015_lesson_event_context'=>['tables'=>['lesson_event_context'],'proof'=>'context-015'],
+];
+if(!isset($reviewed[$migration]))throw new RuntimeException('Only an explicitly reviewed event migration is accepted.');
 $runtime=json_decode((string)file_get_contents($repo.'/storage/local-runtime.json'),true,512,JSON_THROW_ON_ERROR);
 $pointer=json_decode((string)file_get_contents($repo.'/storage/engineering/recovery-pointer.json'),true,512,JSON_THROW_ON_ERROR);
 $expected=realpath((string)$pointer['HealthyDataDirectory']);$privateRoot=realpath((string)$pointer['RecoveryRoot']);
@@ -29,9 +35,9 @@ $db->exec("SET time_zone='+00:00'");
 $versions=$db->query('SELECT version FROM schema_migrations')->fetchAll(PDO::FETCH_COLUMN);
 $pending=[];foreach(glob($repo.'/database/migrations/*.sql')?:[] as $file){$version=basename($file,'.sql');if(!in_array($version,$versions,true))$pending[]=$version;}sort($pending);
 if(!$pending){echo "Development event migration already applied. No changes.\n";exit;}
-if($pending!==['014_lesson_events'])throw new RuntimeException('Unexpected pending migrations. Review them separately; nothing was migrated.');
+if($pending!==[$migration])throw new RuntimeException('Unexpected pending migrations. Review them separately; nothing was migrated.');
 $tables=$db->query("SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE' ORDER BY table_name")->fetchAll(PDO::FETCH_COLUMN);
-$backup=$privateRoot.'/before-events-014-'.($argv[1]).'-'.gmdate('Ymd-His').'-'.bin2hex(random_bytes(3)).'.sql';
+$backup=$privateRoot.'/before-'.$migration.'-'.($argv[1]).'-'.gmdate('Ymd-His').'-'.bin2hex(random_bytes(3)).'.sql';
 $dump=dirname((string)$runtime['mysql']).'/mysqldump.exe';
 if(!is_file($dump))throw new RuntimeException('Configured local dump executable is unavailable.');
 $environment=getenv();$environment['MYSQL_PWD']=$password;
@@ -44,11 +50,11 @@ if(!is_string($dumpText)||strpos($dumpText,'-- Dump completed on ')===false||pre
 $hash=hash_file('sha256',$backup);
 if(!$hash||strlen($hash)!==64)throw new RuntimeException('Backup checksum verification failed.');
 $applied=MigrationRunner::apply($db,$repo.'/database/migrations');
-if($applied!==['014_lesson_events'])throw new RuntimeException('Unexpected migration result. Inspect the private version ledger.');
-foreach(['lesson_events','lesson_translations','lesson_event_changes'] as $table){
+if($applied!==[$migration])throw new RuntimeException('Unexpected migration result. Inspect the private version ledger.');
+foreach($reviewed[$migration]['tables'] as $table){
     $check=$db->query('CHECK TABLE `'.$table.'`')->fetchAll();
     if(!$check||end($check)['Msg_text']!=='OK')throw new RuntimeException('New table check failed. The private logical snapshot is retained.');
 }
-$proof=['target'=>$argv[1],'migration'=>$applied[0],'backup_path'=>$backup,'sha256'=>$hash,'source_table_count'=>count($tables),'new_tables_checked'=>3,'restore_tested'=>false];
-file_put_contents($repo.'/storage/engineering/events-014-'.$argv[1].'-proof.json',json_encode($proof,JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR));
-echo "Private logical backup checksum/table-coverage verified; migration014 applied to the explicit development target;3 new tables checked. Full restore acceptance is separate.\n";
+$proof=['target'=>$argv[1],'migration'=>$applied[0],'backup_path'=>$backup,'sha256'=>$hash,'source_table_count'=>count($tables),'new_tables_checked'=>count($reviewed[$migration]['tables']),'restore_tested'=>false];
+file_put_contents($repo.'/storage/engineering/'.$reviewed[$migration]['proof'].'-'.$argv[1].'-proof.json',json_encode($proof,JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR));
+echo 'Private logical backup checksum/table-coverage verified; '.$migration.' applied to the explicit development target;'.count($reviewed[$migration]['tables'])." new tables checked. Full restore acceptance is separate.\n";

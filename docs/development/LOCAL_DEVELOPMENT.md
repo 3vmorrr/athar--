@@ -1,5 +1,7 @@
 # Local development stack
 
+Reviewed optional context migration: `php scripts/apply-development-events.php application 015_lesson_event_context` (or `fixture`) requires explicit process-only migration credentials and accepts only the expected pending version against the known private healthy3309 datadir. It makes/verifies a logical dump outside the webroot before applying the additive migration. Do not use this machine-specific helper for production. Run the disposable backend suite first. Current context-stage read-only check:15 migrations/34 tables OK; historical checkpoint14/33 remains below.
+
 Read-only schema gate: `php scripts/check-development-schema.php` checks the configured isolated loopback3309 migration ledger and tables. It never repairs or applies migrations. Checkpoint26 October observed14 versions/33 tables OK. Keep the corrupt original untouched; `scripts/start-local.ps1 -LoopbackOnly` can restart the healthy local stack after a reboot.
 
 Start the existing stack from the repository root:

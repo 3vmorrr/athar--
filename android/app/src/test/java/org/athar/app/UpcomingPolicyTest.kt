@@ -7,6 +7,13 @@ import org.junit.Test
 import java.time.Instant
 
 class UpcomingPolicyTest {
+    @Test fun optionalContextKeepsOldPayloadsCompatibleAndPreservesExplicitReferences() {
+        val old=UpcomingLesson.from(JsonParser.parseString("""{"id":5,"title":"Fixture","status":"scheduled","revision":1}"""))
+        assertEquals("",old.courseTitle);assertTrue(old.topics.isEmpty());assertNull(old.relatedBook)
+        val current=UpcomingLesson.from(JsonParser.parseString("""{"id":5,"title":"Fixture","status":"scheduled","revision":2,"course_title":"Fixture course","topics":["Fixture topic"],"related_book":{"id":7,"title":"Fixture book","page_start":10,"page_end":20},"youtube_id":"M7lc1UVf-VE"}"""))
+        assertEquals("Fixture course",current.courseTitle);assertEquals(listOf("Fixture topic"),current.topics)
+        assertEquals(EventBook(7,"Fixture book",10,20),current.relatedBook);assertEquals("M7lc1UVf-VE",current.youtubeId)
+    }
     @Test fun countdownUsesRealInstantsAndRoundsUpWithoutLosingTheLastMinute() {
         val now=Instant.parse("2026-10-25T17:00:00Z")
         assertEquals(EventCountdown(1,CountdownUnit.MINUTES),eventCountdown(now.plusMillis(1),now))

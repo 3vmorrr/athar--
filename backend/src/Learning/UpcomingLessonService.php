@@ -32,11 +32,15 @@ final class UpcomingLessonService
     {
         return ' FROM lesson_events e JOIN lessons l ON l.id=e.lesson_id
             LEFT JOIN scholars s ON s.id=l.scholar_id LEFT JOIN series se ON se.id=l.series_id
-            LEFT JOIN scholars ss ON ss.id=se.scholar_id ';
+            LEFT JOIN scholars ss ON ss.id=se.scholar_id
+            LEFT JOIN lesson_event_context ctx ON ctx.event_id=e.id
+            LEFT JOIN books rb ON rb.id=ctx.related_book_id AND rb.is_published=1 ';
     }
     private function select(): string
     {
         return 'SELECT e.*,l.youtube_id,l.is_published,l.series_id,se.title series_title,
+            ctx.course_title_ar,ctx.course_title_en,ctx.topics_ar_json,ctx.topics_en_json,
+            ctx.related_book_id,ctx.related_page_start,ctx.related_page_end,rb.id public_book_id,rb.title related_book_title,
             COALESCE(l.scholar_id,se.scholar_id) scholar_id,COALESCE(s.name,ss.name) scholar_name,
             COALESCE(t.title,l.title) title,
             CASE WHEN t.lesson_id IS NULL THEN l.description ELSE t.description END description,
@@ -58,7 +62,7 @@ final class UpcomingLessonService
         $q=$this->db->prepare('SELECT COUNT(*)'.$this->from().' WHERE '.$where);$q->execute($bindings);$total=(int)$q->fetchColumn();
         $q=$this->db->prepare($this->select().$this->from().' LEFT JOIN lesson_translations t ON t.lesson_id=l.id AND t.locale=? WHERE '.$where." ORDER BY (e.status='live') DESC,e.scheduled_at ASC,e.id ASC LIMIT $size OFFSET ".(($page-1)*$size));
         $q->execute(array_merge([$this->locale($language)],$bindings));
-        return ['items'=>array_map([$this,'present'],$q->fetchAll()),'server_now'=>gmdate('Y-m-d\TH:i:s\Z'),
+        return ['items'=>array_map(fn(array $row):array=>$this->present($row,$language),$q->fetchAll()),'server_now'=>gmdate('Y-m-d\TH:i:s\Z'),
             'pagination'=>['page'=>$page,'per_page'=>$size,'total'=>$total,'has_more'=>$page*$size<$total]];
     }
     public function detail(int $lesson,string $language='ar',?array $admin=null): array
@@ -67,24 +71,64 @@ final class UpcomingLessonService
         $q=$this->db->prepare($this->select().$this->from().' LEFT JOIN lesson_translations t ON t.lesson_id=l.id AND t.locale=? WHERE e.lesson_id=?'.($admin===null?' AND '.$this->publicScope():''));
         $q->execute([$this->locale($language),$lesson]);$row=$q->fetch();
         if(!$row)throw new ApiError('not_found',404);
-        $result=$this->present($row);
+        $result=$this->present($row,$language);
         $result['server_now']=gmdate('Y-m-d\TH:i:s\Z');
         if($admin!==null){
+            $result['editor_context']=$this->context($row);
             $q=$this->db->prepare("SELECT title,description FROM lesson_translations WHERE lesson_id=? AND locale='en'");$q->execute([$lesson]);
             $result['translations']=['ar'=>['title'=>$row['title'],'description'=>$row['description']],'en'=>$q->fetch()?:null];
         }
         return $result;
     }
-    private function present(array $row): array
+    private function present(array $row,string $language): array
     {
         return ['id'=>(int)$row['lesson_id'],'event_id'=>(int)$row['id'],'title'=>$row['title'],'description'=>$row['description'],
             'content_language'=>$row['content_language'],'status'=>$row['status'],'scheduled_at'=>$this->instant($row['scheduled_at']),
+            'course_title'=>$row[$this->locale($language)==='en'?'course_title_en':'course_title_ar'],
+            'topics'=>json_decode($row[$this->locale($language)==='en'?'topics_en_json':'topics_ar_json']??'[]',true,512,JSON_THROW_ON_ERROR),
+            'related_book'=>$row['public_book_id']===null?null:['id'=>(int)$row['public_book_id'],'title'=>$row['related_book_title'],'page_start'=>$row['related_page_start']===null?null:(int)$row['related_page_start'],'page_end'=>$row['related_page_end']===null?null:(int)$row['related_page_end']],
             'schedule_timezone'=>$row['schedule_timezone'],'estimated_duration_minutes'=>$row['estimated_duration_minutes']===null?null:(int)$row['estimated_duration_minutes'],
             'is_live_event'=>(bool)$row['is_live_event'],'reminders_enabled'=>(bool)$row['reminders_enabled'],'replay_available'=>(bool)$row['replay_available'],
             'visibility'=>$row['visibility'],'revision'=>(int)$row['revision'],'scholar_id'=>$row['scholar_id']===null?null:(int)$row['scholar_id'],
             'scholar_name'=>$row['scholar_name'],'series_id'=>$row['series_id']===null?null:(int)$row['series_id'],'series_title'=>$row['series_title'],
             'youtube_id'=>$row['youtube_id'],'live_source'=>$row['live_source'],'live_confirmed_at'=>$this->instant($row['live_confirmed_at']),
             'can_watch'=>(bool)$row['is_published']&&$row['visibility']==='public'&&in_array($row['status'],['live','published'],true)];
+    }
+    /** Editorial metadata only; never includes user progress, prayer records or audiences. */
+    private function context(array $row): array
+    {
+        return ['course_title_ar'=>$row['course_title_ar']??null,'course_title_en'=>$row['course_title_en']??null,
+            'topics_ar'=>json_decode($row['topics_ar_json']??'[]',true,512,JSON_THROW_ON_ERROR),'topics_en'=>json_decode($row['topics_en_json']??'[]',true,512,JSON_THROW_ON_ERROR),
+            'related_book_id'=>isset($row['related_book_id'])?(int)$row['related_book_id']:null,
+            'related_page_start'=>isset($row['related_page_start'])?(int)$row['related_page_start']:null,'related_page_end'=>isset($row['related_page_end'])?(int)$row['related_page_end']:null];
+    }
+    private function validateContext(array $old,array $input): array
+    {
+        $context=$this->context($old);
+        foreach(['ar','en'] as $locale){
+            $key='course_title_'.$locale;
+            if(array_key_exists($key,$input))$context[$key]=$this->text($input[$key],$key,200,true)?:null;
+            $key='topics_'.$locale;
+            if(array_key_exists($key,$input)){
+                $topics=$input[$key];
+                if(!is_array($topics)||count($topics)>12||($topics!==[]&&array_keys($topics)!==range(0,count($topics)-1)))throw new ApiError('invalid_fields',422,[$key=>'invalid']);
+                $context[$key]=array_values(array_unique(array_map(fn($topic):string=>$this->text($topic,$key,80),$topics)));
+            }
+        }
+        foreach(['related_book_id','related_page_start','related_page_end'] as $key){
+            if(array_key_exists($key,$input))$context[$key]=$input[$key];
+            if($context[$key]!==null&&(!is_int($context[$key])||$context[$key]<1||($key!=='related_book_id'&&$context[$key]>100000)))throw new ApiError('invalid_fields',422,[$key=>'invalid']);
+        }
+        if($context['related_book_id']===null){
+            foreach(['related_page_start','related_page_end'] as $key)if(isset($input[$key]))throw new ApiError('invalid_fields',422,[$key=>'book_required']);
+            $context['related_page_start']=$context['related_page_end']=null;
+        }else{
+            $q=$this->db->prepare('SELECT id FROM books WHERE id=?');$q->execute([$context['related_book_id']]);
+            if(!$q->fetchColumn())throw new ApiError('invalid_fields',422,['related_book_id'=>'not_found']);
+            $start=$context['related_page_start'];$end=$context['related_page_end'];
+            if(($start===null)!==($end===null)||($start!==null&&$end<$start))throw new ApiError('invalid_fields',422,['related_page_end'=>'invalid_range']);
+        }
+        return $context;
     }
     private function instant(?string $value): ?string
     {
@@ -114,7 +158,7 @@ final class UpcomingLessonService
     public function save(array $actor,int $lesson,array $input): array
     {
         $this->admin($actor);
-        $allowed=['expected_revision','status','scheduled_at','schedule_timezone','estimated_duration_minutes','is_live_event','reminders_enabled','replay_available','visibility','title_ar','description_ar','title_en','description_en'];
+        $allowed=['expected_revision','status','scheduled_at','schedule_timezone','estimated_duration_minutes','is_live_event','reminders_enabled','replay_available','visibility','title_ar','description_ar','title_en','description_en','course_title_ar','course_title_en','topics_ar','topics_en','related_book_id','related_page_start','related_page_end'];
         if(array_diff(array_keys($input),$allowed))throw new ApiError('invalid_fields',422,['input'=>'unsupported_field']);
         $expected=$input['expected_revision']??null;
         if(!is_int($expected)||$expected<0)throw new ApiError('invalid_fields',422,['expected_revision'=>'required']);
@@ -125,6 +169,8 @@ final class UpcomingLessonService
             if(!$parent)throw new ApiError('not_found',404);
             $q=$this->db->prepare('SELECT * FROM lesson_events WHERE lesson_id=? FOR UPDATE');$q->execute([$lesson]);$old=$q->fetch()?:null;
             if(($old===null?0:(int)$old['revision'])!==$expected)throw new ApiError('conflict',409);
+            $q=$this->db->prepare('SELECT * FROM lesson_event_context WHERE event_id=?');$q->execute([$old['id']??0]);
+            $context=$this->validateContext($q->fetch()?:[],$input);
             $status=array_key_exists('status',$input)?$input['status']:($old['status']??'draft');
             if(!is_string($status)||!in_array($status,self::STATES,true))throw new ApiError('invalid_fields',422,['status'=>'invalid']);
             $previous=$old['status']??'draft';
@@ -170,6 +216,7 @@ final class UpcomingLessonService
                 $event=(int)$old['id'];
                 $this->db->prepare('UPDATE lesson_events SET status=?,scheduled_at=?,schedule_timezone=?,estimated_duration_minutes=?,is_live_event=?,reminders_enabled=?,replay_available=?,visibility=?,live_confirmed_at=?,live_source=?,revision=?,updated_by=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute(array_merge($values,[$event]));
             }
+            $this->db->prepare('INSERT INTO lesson_event_context(event_id,course_title_ar,course_title_en,topics_ar_json,topics_en_json,related_book_id,related_page_start,related_page_end) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE course_title_ar=VALUES(course_title_ar),course_title_en=VALUES(course_title_en),topics_ar_json=VALUES(topics_ar_json),topics_en_json=VALUES(topics_en_json),related_book_id=VALUES(related_book_id),related_page_start=VALUES(related_page_start),related_page_end=VALUES(related_page_end)')->execute([$event,$context['course_title_ar'],$context['course_title_en'],json_encode($context['topics_ar'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),json_encode($context['topics_en'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$context['related_book_id'],$context['related_page_start'],$context['related_page_end']]);
             $change=$old===null?'created':($previous!==$status?'status_changed':($old['scheduled_at']!==$start?'rescheduled':'metadata_changed'));
             $payload=['lesson_id'=>$lesson,'status'=>$status,'scheduled_at'=>$this->instant($start),'previous_status'=>$old['status']??null,'previous_scheduled_at'=>$this->instant($old['scheduled_at']??null),'visibility'=>$visibility,'reminders_enabled'=>$flags['reminders_enabled']];
             $this->db->prepare('INSERT INTO lesson_event_changes(event_id,revision,change_type,payload_json,created_at) VALUES (?,?,?,?,UTC_TIMESTAMP())')->execute([$event,$revision,$change,json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);

@@ -1,5 +1,9 @@
 # Physical Android integration —2026-10-25
 
+##26 October — context/related-reading final gate
+
+After the context and compact preview update, final physical Arabic3/3 (22.414s) and English3/3 (21.911s) passed. Actual fixture Admin API→DB→native detail carried bilingual course/topics/explicit pages, and book detail navigation returned correctly to the event. Final unavailable-thumbnail captures were inspected in both languages. The initial lazy-header lookup and device-sleep failures remain in TEST_REPORT; test windows alone now keep themselves awake.27 JVM cases,291 resources and current APK/test packaging/lint pass. This does not certify independent Admin or real provider broadcast playback.
+
 ##26 October — upcoming home continuation
 
 Current native build/test APK/lint passed;26 JVM cases and287 resources passed. Physical Arabic3/3 (21.487s) and English3/3 (20.883s) reruns passed for home discovery/navigation, event transitions, cached-live/unavailable/replay presentation, and real encrypted Room cache isolation/removal. Arabic/English home captures were inspected. An initial English isolated-Compose harness case failed because only its configuration/direction was localized; supplying the matching localized Context fixed the test surface, and both full reruns passed. The initial failure is preserved in the test report. This is fixture/API and presentation acceptance, not physical YouTube live playback, reminder delivery or independent Admin UI acceptance.

@@ -1,5 +1,7 @@
 # Physical Android development
 
+Long instrumentation journeys must keep only their test Activity/window awake while active, then restore/close it. Do not change the phone's global timeout or disable its secure lock. If the display is asleep, normal `KEYCODE_WAKEUP` and `wm dismiss-keyguard` may resume an already authorized nonsecure session; a secure credential prompt requires the user's physical action. Lazy-list tests must scroll the containing list to a known index before looking up a virtualized header/control; absence from the semantics tree is not proof that the user cannot scroll to it.
+
 The25–26 October checkpoint successfully updated/launched the physical API27 app, exercised the real USB API and Arabic/English upcoming fixture journeys. Use [the physical report](../testing/PHYSICAL_DEVICE_REPORT.md) for exact scope; this does not certify API33 notification permission, independent Admin, real broadcast or release smoothness. Reapply reverse mappings after an old-device install/reconnect.
 
 The current user explicitly authorized installation and testing on the attached physical Android phone. This supersedes the previous emulator-only precaution. Select an exact detected serial for every ADB mutation; never use an unqualified install or target all devices. Device identifiers belong only in necessary ignored local logs, not committed reports.

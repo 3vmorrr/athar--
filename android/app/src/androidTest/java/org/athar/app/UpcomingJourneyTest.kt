@@ -28,6 +28,10 @@ class UpcomingJourneyTest {
         val language=InstrumentationRegistry.getArguments().getString("nativeLanguage")?:"ar"
         val resources=app.createConfigurationContext(Configuration(app.resources.configuration).apply{setLocale(Locale.forLanguageTag(language))}).resources
         fun label(id:Int)=resources.getString(id)
+        fun refresh(){
+            compose.onNodeWithTag("upcoming-list").performScrollToIndex(0)
+            compose.onNodeWithText(label(R.string.upcoming_refresh)).performClick()
+        }
         fun capture(stage:String) {
             android.os.SystemClock.sleep(350)
             val bitmap=requireNotNull(InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot())
@@ -50,6 +54,7 @@ class UpcomingJourneyTest {
             if(current=="live")change(mapOf("status" to "cancelled","replay_available" to false))
             change(mapOf("status" to "scheduled","scheduled_at" to Instant.now().plusSeconds(900).truncatedTo(java.time.temporal.ChronoUnit.SECONDS).toString(),"is_live_event" to true,"replay_available" to false))
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                scenario.onActivity{it.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)}
                 compose.waitUntil(25_000){compose.onAllNodesWithText(label(R.string.your_journey)).fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithTag("home-upcoming").performScrollTo()
                 compose.waitUntil(20_000){compose.onAllNodesWithTag("home-event-5").fetchSemanticsNodes().isNotEmpty()}
@@ -67,29 +72,36 @@ class UpcomingJourneyTest {
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_details)).fetchSemanticsNodes().isEmpty()}
                 compose.onNodeWithText(label(R.string.play)).assertDoesNotExist()
                 capture("scheduled")
+                compose.onNodeWithText(resources.getString(R.string.upcoming_course,if(language=="en")"Interface fixture course" else "دورة واجهة تجريبية")).performScrollTo().assertIsDisplayed()
+                compose.onNodeWithText(if(language=="en")"Fixture topic" else "موضوع اختباري").performScrollTo().assertIsDisplayed()
+                compose.onNodeWithText(resources.getString(R.string.upcoming_book_pages,10,20)).performScrollTo().assertIsDisplayed()
+                compose.onNodeWithText("Interface test book").performScrollTo().performClick()
+                compose.waitUntil(15_000){compose.onAllNodesWithTag("event-related-book").fetchSemanticsNodes().isEmpty()&&compose.onAllNodesWithText("Interface test book").fetchSemanticsNodes().isNotEmpty()}
+                compose.onNodeWithContentDescription(label(R.string.back)).performClick()
+                compose.waitUntil(15_000){compose.onAllNodesWithTag("upcoming-event-5").fetchSemanticsNodes().isNotEmpty()}
                 change(mapOf("scheduled_at" to "2020-01-01T00:00:00Z"))
-                compose.onNodeWithText(label(R.string.upcoming_refresh)).performScrollTo().performClick()
+                refresh()
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_awaiting)).fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithText(label(R.string.upcoming_live)).assertDoesNotExist()
                 compose.onNodeWithText(label(R.string.play)).assertDoesNotExist()
                 change(mapOf("status" to "live"))
-                compose.onNodeWithText(label(R.string.upcoming_refresh)).performScrollTo().performClick()
+                refresh()
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_live)).fetchSemanticsNodes().isNotEmpty()}
                 capture("live")
                 compose.onNodeWithText(label(R.string.play)).performScrollTo().assertIsEnabled()
                 change(mapOf("status" to "published","replay_available" to true))
-                compose.onNodeWithText(label(R.string.upcoming_refresh)).performScrollTo().performClick()
+                refresh()
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_published)).fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithText(label(R.string.play)).performScrollTo().assertIsEnabled()
                 change(mapOf("status" to "draft","replay_available" to false))
                 change(mapOf("status" to "scheduled","scheduled_at" to Instant.now().plusSeconds(900).truncatedTo(java.time.temporal.ChronoUnit.SECONDS).toString()))
                 change(mapOf("status" to "cancelled"))
-                compose.onNodeWithText(label(R.string.upcoming_refresh)).performScrollTo().performClick()
+                refresh()
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_cancelled)).fetchSemanticsNodes().isNotEmpty()}
                 capture("cancelled")
                 compose.onNodeWithText(label(R.string.play)).assertDoesNotExist()
                 compose.onNodeWithContentDescription(label(R.string.back)).performClick()
-                compose.onNodeWithText(label(R.string.upcoming_refresh)).performScrollTo().performClick()
+                refresh()
                 compose.waitUntil(15_000){compose.onAllNodesWithText(label(R.string.upcoming_empty)).fetchSemanticsNodes().isNotEmpty()}
                 scenario.onActivity{assertEquals(language,it.resources.configuration.locales[0].language)}
             }

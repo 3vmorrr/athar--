@@ -1,5 +1,12 @@
 # Engineering change log
 
+##2026-10-26 — Upcoming context and related reading
+
+- Added additive migration015 and revision-checked localized course/topics/book-page metadata. Hidden/deleted books are suppressed publicly; source page references never bypass rights-aware book access.
+- Applied the reviewed schema to the private healthy development and generated fixture targets only after separate verified logical backups;15 versions/34 tables pass read-only checks. Original damaged data is unchanged.
+- Native detail supports optional context, related-book navigation and provider thumbnails with compact localized failure feedback.20,000 backend assertions,27 JVM cases,291 resources, build/lint and final Arabic3/3 +English3/3 physical cases pass. Updated captures inspected; initial lazy-header and sleeping-device failures retained.
+- Completed phase1's scoped native/API gate; continue phase2 local data recovery. Independent Admin, real broadcast playback, reminders and release gates remain separate work.
+
 ##2026-10-26 — Upcoming home and offline-state acceptance
 
 - Added bounded three-row home discovery with authoritative live status, view-all/detail navigation and localized controller identity.
