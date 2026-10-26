@@ -5,6 +5,7 @@ require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
 require_once dirname(__DIR__) . '/admin/auth.php';
 require_once dirname(__DIR__) . '/admin/authorization.php';
+require_once dirname(__DIR__) . '/admin/editorial.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -1015,13 +1016,53 @@ if ($path === '/admin') {
                         if (is_string($legacyFileKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $legacyFileKey)) { $legacyPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $legacyFileKey; if (is_file($legacyPath)) unlink($legacyPath); }
                     } elseif ($type === 'adhkar') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if (!is_https_url($source) || trim((string) ($_POST['source_reference'] ?? '')) === '' || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا ومرجعًا وأكد المراجعة.');
-                        $count = ($_POST['repeat_count'] ?? '') === '' ? null : max(1, min(1000, (int) $_POST['repeat_count']));
-                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, (int) ($_POST['sort_order'] ?? 0), $id]);
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        $formula = trim((string) ($_POST['formula'] ?? ''));
+                        $reference = trim((string) ($_POST['source_reference'] ?? ''));
+                        $category = trim((string) ($_POST['category'] ?? ''));
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 200 || mb_strlen($formula,'UTF-8') < 2 || mb_strlen($formula,'UTF-8') > 5000 || mb_strlen($reference,'UTF-8') < 2 || mb_strlen($reference,'UTF-8') > 300 || mb_strlen($category,'UTF-8') < 2 || mb_strlen($category,'UTF-8') > 80) throw new RuntimeException('راجع عنوان الذكر ونصه ومرجعه وتصنيفه.');
+                        if (!is_https_url($source) || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا وأكد المراجعة.');
+                        $countRaw = trim((string) ($_POST['repeat_count'] ?? ''));
+                        $count = $countRaw === '' ? null : filter_var($countRaw, FILTER_VALIDATE_INT);
+                        if ($countRaw !== '' && ($count === false || $count < 1 || $count > 1000)) throw new RuntimeException('عدد التكرار يجب أن يكون من 1 إلى 1000 أو يترك فارغًا.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $nextRevision = (int) $current['revision'] + 1;
+                        $pdo->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=?,revision=? WHERE id=?')
+                            ->execute([$title,$formula,$reference,$source,$count,$category,$published,(int) ($_POST['sort_order'] ?? 0),$nextRevision,$id]);
+                        $freshQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                        $freshQuery->execute([$id]);
+                        admin_record_adhkar_revision($pdo, $freshQuery->fetch(), 'updated', (int) $admin['id']);
+                        $pdo->commit();
                     }
                     $auditAction = 'update';
                 } elseif (($_POST['content_action'] ?? '') === 'toggle') {
-                    db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
+                    if ($type === 'adhkar') {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $nextRevision = (int) $current['revision'] + 1;
+                        $pdo->prepare('UPDATE adhkar_items SET is_published=1-is_published,revision=? WHERE id=?')->execute([$nextRevision,$id]);
+                        $freshQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                        $freshQuery->execute([$id]);
+                        admin_record_adhkar_revision($pdo, $freshQuery->fetch(), 'publication_changed', (int) $admin['id']);
+                        $pdo->commit();
+                    } else {
+                        db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
+                    }
                     $auditAction = 'toggle-publication';
                 } elseif (($_POST['content_action'] ?? '') === 'delete') {
                     if ($type === 'series') {
@@ -1035,6 +1076,24 @@ if ($path === '/admin') {
                         $lessonDependency = db()->prepare('SELECT COUNT(*) FROM lessons WHERE scholar_id=?');
                         $lessonDependency->execute([$id]);
                         if ((int) $seriesDependency->fetchColumn() > 0 || (int) $lessonDependency->fetchColumn() > 0) throw new RuntimeException('لا يمكن حذف العالم قبل نقل السلاسل والدروس المرتبطة به.');
+                    }
+                    if ($type === 'adhkar') {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $current['revision'] = (int) $current['revision'] + 1;
+                        admin_record_adhkar_revision($pdo, $current, 'deleted', (int) $admin['id']);
+                        $pdo->prepare('DELETE FROM adhkar_items WHERE id=?')->execute([$id]);
+                        $pdo->commit();
+                        $auditAction = 'delete';
+                        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
+                        flash('تم تحديث المحتوى.'); redirect('/admin#admin-content');
                     }
                     $fileKey = null;
                     if (in_array($type, ['book','lesson'], true)) db()->prepare('DELETE FROM user_favorites WHERE target_type=? AND target_id=?')->execute([$type, $id]);
@@ -1100,10 +1159,28 @@ if ($path === '/admin') {
                 if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
                 db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,NULLIF(?,\'\'),?,NULL,NULL,?,?)')->execute([$title,$author,$description,$keywords ?: null,$language,$year,$rightsHolder ?: null,$source,$downloadUrl,$rights,$downloadUrl !== '' ? 1 : 0,isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'adhkar') {
-                if (trim((string) $_POST['source_reference']) === '' || !is_https_url(trim((string) $_POST['source_url'])) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن نشر الذكر دون مصدر آمن ومراجعة موثقة.');
-                db()->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order) VALUES (?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), trim((string) $_POST['source_url']), ($_POST['repeat_count'] ?? '') === '' ? null : (int) $_POST['repeat_count'], trim((string) $_POST['category']), 1, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
+                $title = trim((string) ($_POST['title'] ?? ''));
+                $formula = trim((string) ($_POST['formula'] ?? ''));
+                $reference = trim((string) ($_POST['source_reference'] ?? ''));
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $category = trim((string) ($_POST['category'] ?? ''));
+                $countRaw = trim((string) ($_POST['repeat_count'] ?? ''));
+                $count = $countRaw === '' ? null : filter_var($countRaw, FILTER_VALIDATE_INT);
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 200 || mb_strlen($formula,'UTF-8') < 2 || mb_strlen($formula,'UTF-8') > 5000 || mb_strlen($reference,'UTF-8') < 2 || mb_strlen($reference,'UTF-8') > 300 || mb_strlen($category,'UTF-8') < 2 || mb_strlen($category,'UTF-8') > 80) throw new RuntimeException('راجع عنوان الذكر ونصه ومرجعه وتصنيفه.');
+                if (!is_https_url($source) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن حفظ الذكر دون مصدر آمن ومراجعة موثقة.');
+                if ($countRaw !== '' && ($count === false || $count < 1 || $count > 1000)) throw new RuntimeException('عدد التكرار يجب أن يكون من 1 إلى 1000 أو يترك فارغًا.');
+                $pdo = db();
+                $pdo->beginTransaction();
+                $pdo->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order,revision) VALUES (?,?,?,?,?,?,?,?,?,1)')
+                    ->execute([$title,$formula,$reference,$source,$count,$category,1,isset($_POST['publish']) ? 1 : 0,(int) ($_POST['sort_order'] ?? 0)]);
+                $createdId = (int) $pdo->lastInsertId();
+                $createdQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                $createdQuery->execute([$createdId]);
+                admin_record_adhkar_revision($pdo, $createdQuery->fetch(), 'created', (int) $admin['id']);
+                $pdo->commit();
             } else { throw new RuntimeException('نوع المحتوى غير مدعوم.'); }
-            db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) db()->lastInsertId()]);
+            $createdTargetId = isset($createdId) && $createdId > 0 ? $createdId : (int) db()->lastInsertId();
+            db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) $createdTargetId]);
             flash('تم حفظ المحتوى.'); redirect('/admin');
         } catch (Throwable $exception) {
             if (db()->inTransaction()) db()->rollBack();
