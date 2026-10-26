@@ -47,7 +47,17 @@ class DataViewModel(private val graph: AppGraph, private val path: String, priva
                 if (state.result!!.offline) Box(Modifier.padding(16.dp)) { MessagePanel(stringResource(R.string.offline_notice)) }
                 content(state.result!!.data, vm::load)
             }
-            state.loading -> ContentLoadingSkeleton()
+            state.loading -> ContentLoadingSkeleton(
+                when {
+                    path == "home" -> ContentSkeletonKind.Grid
+                    path.startsWith("lessons/") ||
+                        path.startsWith("series/") ||
+                        path.startsWith("scholars/") ||
+                        path.startsWith("books/") ||
+                        path.startsWith("upcoming/") -> ContentSkeletonKind.Detail
+                    else -> ContentSkeletonKind.List
+                },
+            )
             else -> Box(Modifier.padding(24.dp)) { FailurePanel(state.error, vm::load) }
         }
     }
