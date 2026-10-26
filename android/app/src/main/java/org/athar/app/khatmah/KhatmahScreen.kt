@@ -171,6 +171,7 @@ fun KhatmahScreen(graph: AppGraph) {
         }
         is ProtectedRead.Ready -> {
             KhatmahContent(
+                graph = graph,
                 plan = state.value,
                 repository = vm.repository,
                 operation = operation,
@@ -188,6 +189,7 @@ fun KhatmahScreen(graph: AppGraph) {
 
 @Composable
 private fun KhatmahContent(
+    graph: AppGraph,
     plan: KhatmahPlanState?,
     repository: KhatmahRepository,
     operation: KhatmahOperationState,
@@ -296,6 +298,11 @@ private fun KhatmahContent(
 
             item(key = "khatmah-workload", contentType = "metrics") {
                 KhatmahWorkload(plan, metrics)
+            }
+            item(key = "khatmah-reminder", contentType = "reminder") {
+                Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                    KhatmahReminderCard(graph, plan, metrics)
+                }
             }
 
             item(key = "khatmah-actions", contentType = "actions") {

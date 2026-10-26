@@ -586,4 +586,20 @@
     <string name="reminder_center_update_failed">Reminder settings could not be updated. Try again.</string>
     <string name="manage">Manage</string>
     <string name="open">Open</string>
+    <string name="khatmah_reminder_title">Khatmah workload reminder</string>
+    <string name="khatmah_reminder_explainer">An optional reminder for the remaining daily workload in your plan. It suppresses itself when the plan is paused, finished, conflicted, or has no valid daily workload.</string>
+    <string name="khatmah_reminder_workload">Current daily workload: %1$d pages; %2$d pages remain in the plan.</string>
+    <string name="khatmah_reminder_time">Reminder time: %1$s</string>
+    <string name="khatmah_reminder_enable">Enable Khatmah reminder</string>
+    <string name="khatmah_reminder_disable">Turn off Khatmah reminder</string>
+    <string name="khatmah_reminder_active">Reminder active for the current plan</string>
+    <string name="khatmah_reminder_suppressed">Reminder saved but currently suppressed by the plan state</string>
+    <string name="khatmah_reminder_saved">The Khatmah reminder was saved and its next occurrence was scheduled locally.</string>
+    <string name="khatmah_reminder_disabled">The Khatmah reminder was turned off.</string>
+    <string name="khatmah_reminder_failed">The Khatmah reminder could not be updated.</string>
+    <string name="khatmah_reminder_consent_title">Enable Khatmah reminders?</string>
+    <string name="khatmah_reminder_consent_body">Only the Khatmah reminder category will be enabled. Your Khatmah plan and daily-workload calculation are not used for campaign targeting.</string>
+    <string name="khatmah_reminder_consent_confirm">Enable Khatmah reminders</string>
+    <string name="khatmah_reminder_notification_title">Khatmah workload</string>
+    <string name="khatmah_reminder_notification_body">Today’s plan workload is %1$d pages; %2$d pages remain.</string>
 </resources>

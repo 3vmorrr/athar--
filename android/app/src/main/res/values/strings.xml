@@ -614,4 +614,20 @@
     <string name="reminder_center_update_failed">تعذر تحديث إعداد التذكيرات. حاول مرة أخرى.</string>
     <string name="manage">إدارة</string>
     <string name="open">فتح</string>
+    <string name="khatmah_reminder_title">تذكير ورد الختمة</string>
+    <string name="khatmah_reminder_explainer">تذكير اختياري بعبء اليوم المتبقي من خطتك. يتوقف تلقائيًا إذا أوقفت الخطة أو أنهيتها أو لم يعد لها عبء يومي صالح.</string>
+    <string name="khatmah_reminder_workload">عبء اليوم الحالي: %1$d صفحة، والمتبقي في الخطة %2$d صفحة.</string>
+    <string name="khatmah_reminder_time">وقت التذكير: %1$s</string>
+    <string name="khatmah_reminder_enable">تفعيل تذكير الختمة</string>
+    <string name="khatmah_reminder_disable">إيقاف تذكير الختمة</string>
+    <string name="khatmah_reminder_active">التذكير مفعّل للخطة الحالية</string>
+    <string name="khatmah_reminder_suppressed">التذكير محفوظ لكنه متوقف حاليًا بسبب حالة الخطة</string>
+    <string name="khatmah_reminder_saved">تم حفظ تذكير الختمة وجدولة الموعد التالي محليًا.</string>
+    <string name="khatmah_reminder_disabled">تم إيقاف تذكير الختمة.</string>
+    <string name="khatmah_reminder_failed">تعذر تحديث تذكير الختمة.</string>
+    <string name="khatmah_reminder_consent_title">تفعيل تذكيرات الختمة؟</string>
+    <string name="khatmah_reminder_consent_body">سيُفعَّل نوع تذكيرات الختمة فقط. خطة الختمة وحساب عبء اليوم لا يُستخدمان لاستهداف الحملات.</string>
+    <string name="khatmah_reminder_consent_confirm">تفعيل تذكيرات الختمة</string>
+    <string name="khatmah_reminder_notification_title">ورد الختمة</string>
+    <string name="khatmah_reminder_notification_body">عبء خطتك اليوم %1$d صفحة، والمتبقي %2$d صفحة.</string>
 </resources>
