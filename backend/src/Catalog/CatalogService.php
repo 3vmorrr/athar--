@@ -19,7 +19,7 @@ final class CatalogService
         $page=max(1,min(10000,(int)($params['page']??1)));$size=max(1,min(50,(int)($params['per_page']??20)));$bindings=[];
         $q=trim((string)($params['q']??''));if(mb_strlen($q,'UTF-8')>100)throw new ApiError('invalid_fields',422,['q'=>'too_long']);
         if($q!==''){
-            $columns=$type==='scholars'?['c.name']:($type==='books'?['c.title','c.author','c.keywords']:($type==='adhkar'?['c.title','c.formula','c.category']:['c.title']));
+            $columns=$type==='scholars'?['c.name']:($type==='books'?['c.title','c.author','c.keywords']:($type==='adhkar'?['c.title','c.formula','c.category','c.source_reference']:['c.title']));
             $where.=' AND ('.implode(' OR ',array_map(static fn(string $column):string=>$column.' LIKE ?',$columns)).')';foreach($columns as $_)$bindings[]='%'.$q.'%';
         }
         if(isset($params['scholar_id'])&&in_array($type,['series','lessons'],true)){$where.=$type==='lessons'?' AND COALESCE(c.scholar_id,r.scholar_id)=?':' AND c.scholar_id=?';$bindings[]=(int)$params['scholar_id'];}
