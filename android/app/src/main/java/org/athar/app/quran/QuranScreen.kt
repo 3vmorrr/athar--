@@ -339,6 +339,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     vm: QuranViewModel,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    val searchPage = state.searchPage
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
@@ -524,13 +525,13 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         stringResource(R.string.quran_search_prompt),
                         Modifier.padding(AtharSpacing.Xxl),
                     )
-                    state.searchPage == null -> LoadingScreen()
-                    state.searchPage.hits.isEmpty() -> Text(
+                    searchPage == null -> LoadingScreen()
+                    searchPage.hits.isEmpty() -> Text(
                         stringResource(R.string.quran_search_no_results),
                         Modifier.padding(AtharSpacing.Xxl),
                     )
                     else -> QuranSearchResults(
-                        page = state.searchPage,
+                        page = searchPage,
                         fontSize = fontSize,
                         modifier = Modifier.fillMaxSize(),
                         onOpenAyah = { ayah ->
