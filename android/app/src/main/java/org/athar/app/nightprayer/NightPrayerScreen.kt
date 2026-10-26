@@ -168,7 +168,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         AtharPageTransition(section, Modifier.weight(1f)) {
             when (it) {
                 "tonight" -> NightTonightScreen(graph, vm)
-                "plan" -> NightPlanScreen(graph)
+                "plan" -> NightPlanScreen(graph, vm)
                 "tools" -> NightToolsScreen(graph)
                 "calendar" -> NightCalendarScreen(vm)
                 else -> NightHistoryScreen(graph, vm, addRequest)
