@@ -66,6 +66,7 @@ class KhatmahRepository(
     private val cipher: PrivateCipher,
     private val session: SessionRepository,
     private val today: () -> LocalDate = { LocalDate.now(ZoneOffset.UTC) },
+    private val onStateChanged: suspend (Long, KhatmahPlanState?) -> Unit = { _, _ -> },
 ) {
     private val gson = Gson()
     private val local = Mutex()
@@ -96,7 +97,7 @@ class KhatmahRepository(
                 local.withLock {
                     session.requireVerifiedOwner(owner)
                     if (server == null) {
-                        dao.removeCache(owner, key)
+                        remove(owner)
                         null
                     } else {
                         val next = server.toLocal(
@@ -303,7 +304,7 @@ class KhatmahRepository(
                 session.requireVerifiedOwner(owner)
                 val current = saved(owner)
                 if (server == null) {
-                    dao.removeCache(owner, key)
+                    remove(owner)
                     null
                 } else {
                     val next = server.toLocal(
@@ -441,6 +442,12 @@ class KhatmahRepository(
                 updatedAt = System.currentTimeMillis(),
             ),
         )
+        onStateChanged(owner, value)
+    }
+
+    private suspend fun remove(owner: Long) {
+        dao.removeCache(owner, key)
+        onStateChanged(owner, null)
     }
 
     private fun validateStoredDates(start: String, target: String) {

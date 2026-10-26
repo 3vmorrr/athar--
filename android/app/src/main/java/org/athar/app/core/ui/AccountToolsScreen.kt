@@ -34,13 +34,7 @@ import java.time.LocalDate
     var busy by remember { mutableStateOf(false) }
     var confirmExport by remember(owner, tool) { mutableStateOf(false) }
     val context = LocalContext.current
-    val khatmahRepository = remember(graph) {
-        KhatmahRepository(
-            dao = graph.database.dao(),
-            cipher = graph.cipher,
-            session = graph.session,
-        )
-    }
+    val khatmahRepository = graph.khatmah
     val exporter = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->

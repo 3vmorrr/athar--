@@ -39,11 +39,7 @@ private class KhatmahViewModel(
     private val graph: AppGraph,
     private val owner: Long,
 ) : ViewModel() {
-    val repository = KhatmahRepository(
-        dao = graph.database.dao(),
-        cipher = graph.cipher,
-        session = graph.session,
-    )
+    val repository = graph.khatmah
     val plan = repository
         .observe(owner)
         .protectedReads()

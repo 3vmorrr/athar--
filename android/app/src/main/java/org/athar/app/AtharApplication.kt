@@ -50,6 +50,13 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
         requestSync = { requestSync(it,org.athar.app.core.sync.SyncModule.READING) },
         onSavedProgress = { owner, previous, current -> quranWird.recordProgress(owner, previous, current) },
     )
+    val khatmahReminders = org.athar.app.khatmah.KhatmahReminderManager(application, partition, database.dao(), session, cipher, reminderStore, reminders)
+    val khatmah = org.athar.app.khatmah.KhatmahRepository(
+        database.dao(),
+        cipher,
+        session,
+        onStateChanged = { owner, plan -> khatmahReminders.recordPlan(owner, plan) },
+    )
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     val adhkarReminders = org.athar.app.adhkar.AdhkarReminderManager(application, partition, database.dao(), session, cipher, reminderStore, reminders)
     val counters = CounterRepository(
