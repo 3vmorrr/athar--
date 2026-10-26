@@ -448,6 +448,7 @@ fun AdhkarScreen(graph: AppGraph) {
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
+}
 private data class AdhkarStatsUiState(
     val loading: Boolean = true,
     val result: CachedResult? = null,
