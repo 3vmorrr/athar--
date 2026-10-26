@@ -16,6 +16,48 @@ final class NightPrayerService
     private string $key;
     public function __construct(PDO $db,string $key) { $this->db=$db;$this->key=$key; }
 
+    public function publicConfig(): array
+    {
+        $defaults=[
+            'night_prayer_enabled'=>'1',
+            'night_prayer_public_revision'=>'1',
+            'night_prayer_default_calculation_method'=>'MuslimWorldLeague',
+            'night_prayer_default_madhab'=>'standard',
+            'night_prayer_default_high_latitude_rule'=>'middle_of_night',
+            'night_prayer_default_target_verses'=>'100',
+            'night_prayer_source_name_ar'=>'مصدر مواقيت الصلاة',
+            'night_prayer_source_name_en'=>'Prayer times source',
+            'night_prayer_source_url'=>'https://pray.api.islamic.network',
+            'night_prayer_intro_ar'=>'قيام الليل عبادة تطوعية، وهذه الأدوات للمساعدة في التنظيم دون حكم على العبادة.',
+            'night_prayer_intro_en'=>'Night prayer is voluntary worship. These tools support planning without judging worship.',
+        ];
+        $keys=array_keys($defaults);
+        $placeholders=implode(',',array_fill(0,count($keys),'?'));
+        $q=$this->db->prepare('SELECT setting_key,setting_value FROM platform_settings WHERE setting_key IN ('.$placeholders.')');
+        $q->execute($keys);
+        $stored=[];foreach($q->fetchAll() as $row)$stored[(string)$row['setting_key']]=(string)$row['setting_value'];
+        $value=static fn(string $key):string=>$stored[$key]??$defaults[$key];
+        return [
+            'enabled'=>$value('night_prayer_enabled')!=='0',
+            'revision'=>max(1,(int)$value('night_prayer_public_revision')),
+            'defaults'=>[
+                'calculation_method'=>$value('night_prayer_default_calculation_method'),
+                'madhab'=>$value('night_prayer_default_madhab'),
+                'high_latitude_rule'=>$value('night_prayer_default_high_latitude_rule'),
+                'target_verses'=>max(1,min(6236,(int)$value('night_prayer_default_target_verses'))),
+            ],
+            'source'=>[
+                'name_ar'=>$value('night_prayer_source_name_ar'),
+                'name_en'=>$value('night_prayer_source_name_en'),
+                'url'=>$value('night_prayer_source_url'),
+            ],
+            'intro'=>[
+                'ar'=>$value('night_prayer_intro_ar'),
+                'en'=>$value('night_prayer_intro_en'),
+            ],
+        ];
+    }
+
     public function write(int $user,string $id,array $input,bool $delete=false): array
     {
         $id=$this->uuid($id);$mutation=$this->uuid((string)($input['mutation_id']??''));
