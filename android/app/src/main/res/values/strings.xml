@@ -22,7 +22,21 @@
 <string name="audio_current_playback">التشغيل الحالي</string>
 <string name="audio_interrupted">متوقف مؤقتًا بسبب صوت أو مكالمة أخرى</string><string name="tafsir">تفسير</string><string name="recitation_review">مراجعة التلاوة</string><string name="surah">السورة</string><string name="ayah">الآية</string><string name="juz">الجزء</string><string name="hizb">الحزب</string><string name="page">الصفحة</string><string name="open_reader">افتح في المصحف</string><string name="bookmark">حفظ علامة</string><string name="bookmarks">علاماتي</string><string name="resume_reading">متابعة القراءة</string><string name="font_size">حجم خط القرآن</string><string name="quran_source">النص: مشروع تنزيل، نسخة 1.1. النص محفوظ كما ورد في المصدر.</string><string name="source">المصدر</string><string name="reference">المرجع</string>
     <string name="choose_reciter">اختر القارئ</string><string name="play">تشغيل</string><string name="pause">إيقاف مؤقت</string><string name="stop">إيقاف</string><string name="full_surah">السورة كاملة</string><string name="one_ayah">آية محددة</string><string name="radio">الإذاعة</string><string name="no_timing">تتبّع الآيات غير متاح لهذه الرواية؛ يستمر الصوت بصورة طبيعية.</string><string name="unavailable_review">المراجعة الصوتية المحلية على Android غير متاحة بعد التحقق من توافق هذا الجهاز والنموذج. يظل صوتك على جهازك.</string>
-    <string name="favorites">المفضلة</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
+    <string name="favorites">المفضلة</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string>
+<string name="book_download_allowed">متاح للتحميل وفق الحقوق المسجلة</string>
+<string name="book_download_unavailable">التحميل غير متاح لهذا الكتاب</string>
+<string name="book_metadata">بيانات الكتاب</string>
+<string name="book_publication_year">سنة النشر: %1$s</string>
+<string name="book_language">اللغة: %1$s</string>
+<string name="book_rights">الحقوق والمصدر</string>
+<string name="book_rights_holder">صاحب الحق</string>
+<string name="book_rights_basis">أساس الإتاحة</string>
+<string name="book_download_permission">إذن التحميل</string>
+<string name="book_open_source">فتح المصدر</string>
+<string name="book_open">فتح الكتاب</string>
+<string name="book_download_progress">جارٍ التحميل · %1$d%%</string>
+<string name="book_download_waiting">التحميل في الانتظار حتى يتوفر الاتصال</string>
+<string name="book_download_failed">تعذر تحميل الكتاب. يمكنك المحاولة مرة أخرى.</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
     <string name="reset_counter">تصفير العدّاد</string><string name="next_dhikr">الذكر التالي</string><string name="count_action">سبّح وعدّ</string><string name="completed">اكتمل</string><string name="category">القسم</string><string name="progress_count">%1$d من %2$d</string>
     <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
 <string name="sync">مزامنة</string>
