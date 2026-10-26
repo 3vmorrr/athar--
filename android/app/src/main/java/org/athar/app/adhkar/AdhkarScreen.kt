@@ -12,6 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -276,43 +280,124 @@ fun AdhkarScreen(graph: AppGraph) {
                                                         }
                                                     }
                                                 }
-                                                LinearProgressIndicator(
-                                                    progress = { counter.count.toFloat() / target },
-                                                    modifier = Modifier.fillMaxWidth(),
+                                                val progressDescription = stringResource(
+                                                    R.string.progress_count,
+                                                    counter.count,
+                                                    target,
                                                 )
-                                                AtharStatusPill(
-                                                    stringResource(
-                                                        R.string.progress_count,
-                                                        counter.count,
-                                                        target,
+                                                Column(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .semantics(mergeDescendants = true) {
+                                                            progressBarRangeInfo = ProgressBarRangeInfo(
+                                                                current = counter.count.toFloat(),
+                                                                range = 0f..target.toFloat(),
+                                                                steps = (target - 1).coerceAtLeast(0),
+                                                            )
+                                                            stateDescription = progressDescription
+                                                        },
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.spacedBy(
+                                                        AtharSpacing.Sm,
                                                     ),
-                                                    emphasized = counter.count >= target,
-                                                )
-                                                Button(onClick = {
-                                                    val originalPage = page
-                                                    busy = true
-                                                    scope.launch {
-                                                        try {
-                                                            val next = graph.counters.tap(id, target,expectedOwner=owner)
-                                                            if (
-                                                                next.count == target &&
-                                                                page == originalPage &&
-                                                                position == index
-                                                            ) {
-                                                                statsRevision++
-                                                                advance()
+                                                ) {
+                                                    Text(
+                                                        "${counter.count}",
+                                                        style = MaterialTheme.typography.displaySmall,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                    )
+                                                    LinearProgressIndicator(
+                                                        progress = {
+                                                            counter.count.toFloat() / target
+                                                        },
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                    )
+                                                    Text(
+                                                        progressDescription,
+                                                        style = MaterialTheme.typography.labelLarge,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    )
+                                                }
+                                                Button(
+                                                    onClick = {
+                                                        val originalPage = page
+                                                        busy = true
+                                                        scope.launch {
+                                                            try {
+                                                                val next = graph.counters.tap(
+                                                                    id,
+                                                                    target,
+                                                                    expectedOwner = owner,
+                                                                )
+                                                                if (
+                                                                    next.count == target &&
+                                                                    page == originalPage &&
+                                                                    position == index
+                                                                ) {
+                                                                    statsRevision++
+                                                                    advance()
+                                                                }
+                                                            } catch (failure: CancellationException) {
+                                                                throw failure
+                                                            } catch (_: Exception) {
+                                                                snackbar.showSnackbar(failed)
+                                                            } finally {
+                                                                busy = false
                                                             }
-                                                        } catch (failure: CancellationException) { throw failure }
-                                                        catch (_: Exception) { snackbar.showSnackbar(failed) }
-                                                        finally { busy = false }
-                                                    }
-                                                }, enabled = !busy && !counter.conflict && !previousDayPending && counter.count < target, modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)) {
-                                                    Text(stringResource(if (counter.count >= target) R.string.completed else R.string.count_action))
+                                                        }
+                                                    },
+                                                    enabled = !busy &&
+                                                        !counter.conflict &&
+                                                        !previousDayPending &&
+                                                        counter.count < target,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .heightIn(min = 76.dp)
+                                                        .testTag("adhkar-count-action"),
+                                                    shape = MaterialTheme.shapes.extraLarge,
+                                                ) {
+                                                    Text(
+                                                        stringResource(
+                                                            if (counter.count >= target) {
+                                                                R.string.completed
+                                                            } else {
+                                                                R.string.count_action
+                                                            },
+                                                        ),
+                                                        style = MaterialTheme.typography.titleLarge,
+                                                    )
                                                 }
                                                 if (counter.conflict) MessagePanel(stringResource(R.string.counter_conflict), true) {
                                                     TextButton(onClick = { scope.launch { try { graph.counters.useServer(id, target,owner) } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.use_server)) }
                                                 }
-                                                TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true,expectedOwner=owner); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict && !previousDayPending) { Text(stringResource(R.string.reset_counter)) }
+                                                OutlinedButton(
+                                                    onClick = {
+                                                        scope.launch {
+                                                            try {
+                                                                graph.counters.tap(
+                                                                    id,
+                                                                    target,
+                                                                    reset = true,
+                                                                    expectedOwner = owner,
+                                                                )
+                                                                reachedEnd = false
+                                                            } catch (failure: CancellationException) {
+                                                                throw failure
+                                                            } catch (_: Exception) {
+                                                                snackbar.showSnackbar(failed)
+                                                            }
+                                                        }
+                                                    },
+                                                    enabled = !busy &&
+                                                        !counter.conflict &&
+                                                        !previousDayPending,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .heightIn(min = 52.dp)
+                                                        .testTag("adhkar-reset-action"),
+                                                ) {
+                                                    Text(stringResource(R.string.reset_counter))
+                                                }
                                                 }
                                             }
                                         }
@@ -321,9 +406,38 @@ fun AdhkarScreen(graph: AppGraph) {
                             }
                             if (reachedEnd) item(key = "end", contentType = "status") { MessagePanel(stringResource(R.string.adhkar_section_end)) }
                             item(key = "navigation", contentType = "controls") {
-                                Row(Modifier.widthIn(max = 720.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    TextButton(onClick = { reachedEnd = false; if (index > 0) position = index - 1 else { page--; position = 19 } }, enabled = page > 1 || index > 0) { Text(stringResource(R.string.back)) }
-                                    TextButton(onClick = { advance() }, enabled = rows.isNotEmpty() && !reachedEnd) { Text(stringResource(R.string.next_dhikr)) }
+                                Row(
+                                    Modifier
+                                        .widthIn(max = 720.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                                ) {
+                                    OutlinedButton(
+                                        onClick = {
+                                            reachedEnd = false
+                                            if (index > 0) {
+                                                position = index - 1
+                                            } else {
+                                                page--
+                                                position = 19
+                                            }
+                                        },
+                                        enabled = page > 1 || index > 0,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .heightIn(min = 52.dp),
+                                    ) {
+                                        Text(stringResource(R.string.back))
+                                    }
+                                    OutlinedButton(
+                                        onClick = { advance() },
+                                        enabled = rows.isNotEmpty() && !reachedEnd,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .heightIn(min = 52.dp),
+                                    ) {
+                                        Text(stringResource(R.string.next_dhikr))
+                                    }
                                 }
                             }
                         }
