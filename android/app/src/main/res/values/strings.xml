@@ -193,7 +193,7 @@
 <string name="export_explanation">اختر مكان حفظ نسخة بياناتك الشخصية. تتضمن جلسات الجهاز غير المتزامنة؛ الفترات المستثناة المحلية لا تُصدّر.</string>
 <string name="export_scope_title">محتوى النسخة</string>
 <string name="export_scope_account">بيانات الحساب المتزامنة: الملف الشخصي، العلامات، المفضلة، الخطط، التقدم والإحصائيات المسجلة.</string>
-<string name="export_scope_device">بيانات محتفظ بها على هذا الجهاز ولم تُفقد: تقدم الدروس وجلسات قيام الليل المحلية.</string>
+<string name="export_scope_device">بيانات محتفظ بها على هذا الجهاز ولم تُفقد: تقدم الدروس وجلسات قيام الليل وخطة الختمة المحلية المعلّقة.</string>
 <string name="export_private_excluded">الفترات الخاصة المحلية مستبعدة من النسخة</string>
 <string name="export_security_excluded">لا تتضمن النسخة كلمات المرور أو رموز الدخول أو refresh tokens أو مفاتيح التشفير المحلية.</string>
 <string name="export_confirm_title">إنشاء نسخة من بياناتك؟</string>
