@@ -75,7 +75,8 @@ user = service(
     "echo json_encode(['id'=>$id]);"
 )
 
-base = f"http://{state['host']}:{state['port']}"
+http_port = int(os.environ.get("ATHAR_TEST_HTTP_PORT", "8004"))
+base = f"http://{state['host']}:{http_port}"
 jar = http.cookiejar.CookieJar()
 http = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
 checks = 0
@@ -142,7 +143,7 @@ check(post_login_cookie is not None and post_login_cookie.value != pre_login_coo
 
 # The /admin cookie path means the public site does not receive Admin auth state.
 url, public_page = request("/")
-check(url.rstrip("/").endswith(f":{state['port']}"), "Public root remains accessible")
+check(url.rstrip("/").endswith(f":{http_port}"), "Public root remains accessible")
 check("خروج من الإدارة" not in public_page, "Admin auth does not leak into public root")
 
 # Revoking session_version invalidates the retained Admin cookie on the next request.
