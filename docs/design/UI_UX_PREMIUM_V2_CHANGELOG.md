@@ -402,3 +402,172 @@ Merge only after:
 4. Arabic RTL and English LTR are visually reviewed.
 5. reduced motion works.
 6. physical API27 acceptance has no new blocker.
+
+
+## Synchronization with ongoing Codex work
+
+During this UI/UX pass, `codex/android-ecosystem` advanced from the branch-creation base to:
+
+`6989a8a42ece5438972df13c186ea37c076b9874`
+
+That commit added protected local-read/recovery behavior for Quran reading position, Adhkar counters, Night Prayer sessions and private exemptions.
+
+The premium branch was not allowed to overwrite that work. It was merged as a true second parent, then the visual layer was re-applied on top of the latest source for the three overlapping screens.
+
+Merge commit:
+
+`b1444026b8159b6993ac4f3aaf255708bd32d77d`
+
+After that merge, the premium branch compared against `codex/android-ecosystem` as **ahead, behind 0**. The final diff contains presentation-layer Compose files and design documentation only.
+
+### Recovery logic explicitly preserved
+
+The UI pass retains:
+
+- `ProtectedRead.Loading / Ready / Unreadable`
+- retry behavior for unreadable local records
+- disabled unsafe writes when retained private data cannot be decoded
+- existing ciphertext/pending-operation preservation
+- account isolation
+- Night Prayer unreadable-state gating
+- Quran reading-position unreadable-state gating
+- Adhkar counter unreadable-state gating
+
+Visual redesign must never reinterpret unreadable private data as empty/zero/default state.
+
+## Additional full-app polish after the first pass
+
+The complete review continued beyond the first high-priority screens.
+
+### Authentication
+
+`auth/AuthScreens.kt`
+
+- login/register/recovery/verification now use the common Athar hero surface
+- existing OTP normalization, validation and callbacks are unchanged
+- no authentication state transition was animated or delayed
+
+### Account tools / Khatmah
+
+`core/ui/AccountToolsScreen.kt`
+
+- export and Khatmah receive the shared hierarchy
+- calculated daily workload is promoted into the Khatmah hero
+- bookmarks/favorites empty state uses the shared Athar empty treatment
+- export, save, delete and navigation requests are unchanged
+
+### Discussion
+
+`learning/DiscussionPanel.kt`
+
+- individual comments use consistent Athar surfaces instead of loose divider-only rows
+- moderation state uses the shared status treatment
+- sorting, pagination, replies and composer behavior are unchanged
+
+### Upcoming on Home
+
+`learning/UpcomingHomeSection.kt`
+
+- section heading now uses the common section component
+- event cards use the same status and border language as the full Upcoming screen
+- the server-bounded three-item query and minute refresh behavior are unchanged
+
+### Quran audio
+
+`media/AudioScreen.kt`
+
+- added a branded audio/radio hero
+- follow-along ayahs now use calm selected/non-selected surfaces
+- Surah and reciter selection use native Material bottom sheets
+- Media3 playback, source identity, timings, radio behavior and selection ownership are unchanged
+
+### Tafsir
+
+`quran/TafsirScreen.kt`
+
+- controls and selected-book metadata use the shared Athar hierarchy
+- Tafsir book selection is now a native bottom sheet
+- provider/source validation and API pagination remain unchanged
+
+### Night Prayer tools
+
+`nightprayer/NightToolsScreen.kt`
+
+- verse calculator, last-third calculator and local exemption sections use consistent section hierarchy
+- calculation methods, timezone handling and private exemption storage are unchanged
+
+### Screen-aware loading
+
+`core/ui/LoadingSkeleton.kt` and `core/ui/DataScreen.kt`
+
+Added three native skeleton families:
+
+- List
+- Grid
+- Detail
+
+`DataScreen` selects the visual skeleton from the content surface without changing the request/cache state machine. Reduced motion continues to disable the opacity pulse.
+
+## Screens deliberately not rewritten
+
+A complete review does not mean every file must change.
+
+### Onboarding
+
+The current onboarding already has:
+
+- original Athar illustrations
+- pager hierarchy
+- animated restrained progress indicator
+- reduced-motion support
+- responsive width and scrolling
+- Arabic/English resource usage
+
+It was therefore retained rather than redesigned for cosmetic churn.
+
+### Player engine / repositories / ViewModels
+
+No UI requirement justified changing:
+
+- `YouTubePlayer.kt`
+- lesson repository/state rules
+- audio ViewModel/playback service
+- Quran repository/index
+- Room entities/DAO
+- authentication repository
+- backend/provider code
+
+Those remain out of scope for this presentation branch.
+
+## Final presentation-layer diff scope
+
+At the final review checkpoint, the intended branch-only source differences are limited to native Compose presentation files such as:
+
+- Adhkar screen
+- Auth screens
+- Account tools
+- shared DataScreen/loading surfaces
+- Home
+- navigation shell
+- motion and premium UI primitives
+- discussion/scholar/series/upcoming/watch presentation
+- audio presentation/selectors
+- Night Prayer presentation/tools
+- Quran hub/reader controls/Tafsir presentation
+- design documentation
+
+No `backend/`, `database/`, migration, PHP API, Room repository or provider file is intended to differ from the latest Codex branch.
+
+## Static integrity review
+
+Because this environment cannot run the repository's local Gradle/Android SDK toolchain, build success is **not** claimed.
+
+A source-level structural check was run over every changed Kotlin file after synchronization:
+
+- no Git conflict markers
+- balanced code brackets/braces/parentheses after excluding strings/comments
+- latest Codex protected-read logic retained in overlapping screens
+
+All changed Kotlin files passed that structural check.
+
+This is a sanity check, not a compiler, lint, instrumentation or physical-device result. The existing merge rule and Android gate below remain mandatory.
