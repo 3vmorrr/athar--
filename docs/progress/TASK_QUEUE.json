@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "21.19",
+  "current_task": "21.20",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -2102,7 +2102,7 @@
       "name": "Implement immersive hero and layered-content primitives",
       "parent": "Work package21: UX/accessibility",
       "scope": "Evolve accepted shared Compose primitives with original branded lightweight artwork/fallback registry, image scrim/contrast treatment, adaptive hero/compact-header and layered-content structure, truthful accessible CTA/state handling and reduced-motion-aware lifecycle/scroll behavior. Preserve auth isolation and player/data ownership; no arbitrary backend/runtime change.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "21.1",
         "21.18"
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "192fb0054149e23af196557bb5d4866c1818be08",
-    "last_landed_task": "16.4",
-    "next_task": "21.19",
+    "head": "4c3ca400b13d72facb04ce11de64cdf2586cbe4b",
+    "last_landed_task": "21.19",
+    "next_task": "21.20",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2820,7 +2820,8 @@
       "20.1",
       "20.2",
       "20.3",
-      "20.4"
+      "20.4",
+      "21.19"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2907,6 +2908,9 @@
       ],
       "16.4": [
         "192fb0054149"
+      ],
+      "21.19": [
+        "4c3ca400b13d"
       ]
     },
     "preexisting_parallel_admin": {

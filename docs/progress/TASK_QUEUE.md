@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **21.19**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **21.20**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -1150,7 +1150,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 21.19 — Implement immersive hero and layered-content primitives
 
-- Parent: Work package21: UX/accessibility; state: **NOT STARTED**; dependencies: 21.1, 21.18.
+- Parent: Work package21: UX/accessibility; state: **PARTIAL**; dependencies: 21.1, 21.18.
 - Exact scope: Evolve accepted shared Compose primitives with original branded lightweight artwork/fallback registry, image scrim/contrast treatment, adaptive hero/compact-header and layered-content structure, truthful accessible CTA/state handling and reduced-motion-aware lifecycle/scroll behavior. Preserve auth isolation and player/data ownership; no arbitrary backend/runtime change.
 - Files/modules: android/app/src/main/java/org/athar/app/core/ui/; android/app/src/main/res/drawable/; docs/design/ARTWORK_LIBRARY.md; android/app/src/androidTest/.
 - Automated gates: Component state/contrast/semantics/RTL/LTR/large-font and reduced-motion/scroll/draft retention tests; asset provenance/dimensions/budget checks; build/JVM/test APK/lint/resources; no backend/data regression.
