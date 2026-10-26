@@ -88,6 +88,72 @@ final class ProgressService
             if($complete&&!(bool)$was){$this->activity($user,(string)($data['event_id']??''),'lesson_completion');}$this->db->commit();return (array)$this->lessonProgress($user,$id);
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
+    public function activitySummary(int $user):array
+    {
+        $totals=$this->db->prepare(
+            'SELECT
+                COALESCE(SUM(adhkar_completions),0) adhkar_completions,
+                COALESCE(SUM(lesson_completions),0) lesson_completions,
+                COALESCE(SUM(book_downloads),0) book_downloads,
+                COALESCE(SUM(quran_sessions),0) recorded_quran_sessions,
+                COALESCE(SUM(CASE WHEN adhkar_completions>0 OR lesson_completions>0 OR book_downloads>0 OR quran_sessions>0 THEN 1 ELSE 0 END),0) active_days
+             FROM account_daily_stats
+             WHERE user_id=?'
+        );
+        $totals->execute([$user]);
+        $row=$totals->fetch()?:[];
+
+        $lessons=$this->db->prepare(
+            'SELECT
+                COUNT(*) lessons_started,
+                COALESCE(SUM(CASE WHEN is_complete=1 THEN 1 ELSE 0 END),0) lessons_complete,
+                COALESCE(SUM(position_seconds),0) watched_seconds
+             FROM video_progress
+             WHERE user_id=?'
+        );
+        $lessons->execute([$user]);
+        $lesson=$lessons->fetch()?:[];
+
+        $recent=$this->db->prepare(
+            'SELECT activity_date,quran_sessions,lesson_completions,adhkar_completions,book_downloads
+             FROM account_daily_stats
+             WHERE user_id=?
+               AND activity_date>=DATE_SUB(UTC_DATE(),INTERVAL 13 DAY)
+             ORDER BY activity_date'
+        );
+        $recent->execute([$user]);
+
+        return [
+            'generated_date'=>gmdate('Y-m-d'),
+            'availability'=>[
+                'reading_sessions'=>false,
+                'listening_history'=>false,
+                'adhkar_completions'=>true,
+                'lesson_progress'=>true,
+                'book_downloads'=>true,
+            ],
+            'recorded'=>[
+                'adhkar_completions'=>(int)($row['adhkar_completions']??0),
+                'lesson_completions'=>(int)($row['lesson_completions']??0),
+                'book_downloads'=>(int)($row['book_downloads']??0),
+                'legacy_quran_sessions'=>(int)($row['recorded_quran_sessions']??0),
+                'active_days'=>(int)($row['active_days']??0),
+                'lessons_started'=>(int)($lesson['lessons_started']??0),
+                'lessons_complete'=>(int)($lesson['lessons_complete']??0),
+                'watched_seconds'=>(int)($lesson['watched_seconds']??0),
+            ],
+            'recent'=>array_map(
+                static fn(array $day):array=>[
+                    'date'=>(string)$day['activity_date'],
+                    'lesson_completions'=>(int)$day['lesson_completions'],
+                    'adhkar_completions'=>(int)$day['adhkar_completions'],
+                    'book_downloads'=>(int)$day['book_downloads'],
+                ],
+                $recent->fetchAll(),
+            ),
+        ];
+    }
+
     public function khatmah(int $user): ?array
     {
         $q=$this->db->prepare('SELECT start_date,target_date,total_pages,completed_pages,status,updated_at FROM khatmah_plans WHERE user_id=?');$q->execute([$user]);$plan=$q->fetch();if(!$plan)return null;
