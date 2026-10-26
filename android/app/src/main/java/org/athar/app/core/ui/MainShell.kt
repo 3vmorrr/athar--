@@ -26,6 +26,8 @@ import org.athar.app.R
 import org.athar.app.auth.AuthState
 import org.athar.app.quran.QuranScreen
 import org.athar.app.adhkar.AdhkarScreen
+import org.athar.app.books.BookDetailScreen
+import org.athar.app.books.BookReaderScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
@@ -86,12 +88,31 @@ private fun AtharNavIcon(
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "night-prayer" || path == "upcoming") navigation.navigate(path) { launchSingleTop = true }
-        else if (path == "catalog-books") navigation.navigate("catalog/books") { launchSingleTop = true }
-        else {
+        if (path == "night-prayer" || path == "upcoming") {
+            navigation.navigate(path) { launchSingleTop = true }
+        } else if (path == "catalog-books") {
+            navigation.navigate("catalog/books") { launchSingleTop = true }
+        } else {
             val parts = path.split('/')
-            if(parts.size==2 && parts[0]=="upcoming" && (parts[1].toIntOrNull()?:0)>0) navigation.navigate(path){launchSingleTop=true}
-            else if (parts.size == 2 && parts[0] in listOf("books","scholars","series","lessons") && (parts[1].toIntOrNull() ?: 0) > 0) navigation.navigate("content/${parts[0]}/${parts[1]}") { launchSingleTop = true }
+            when {
+                parts.size == 2 &&
+                    parts[0] == "upcoming" &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate(path) { launchSingleTop = true }
+                }
+                parts.size == 2 &&
+                    parts[0] == "book-reader" &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate(path) { launchSingleTop = true }
+                }
+                parts.size == 2 &&
+                    parts[0] in listOf("books","scholars","series","lessons") &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate("content/${parts[0]}/${parts[1]}") {
+                        launchSingleTop = true
+                    }
+                }
+            }
         }
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -131,6 +152,7 @@ private fun AtharNavIcon(
                                     when {
                                         route == "night-prayer" -> R.string.night_prayer
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
+                                        route.startsWith("book-reader/") -> R.string.books
                                         currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
                                         currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars
                                         currentEntry?.arguments?.getString("kind") == "series" -> R.string.series
@@ -186,6 +208,15 @@ private fun AtharNavIcon(
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
                         composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") }
                         composable("content/{kind}/{id}", arguments = listOf(navArgument("kind") { type = NavType.StringType }, navArgument("id") { type = NavType.IntType })) { entry -> CatalogDetail(vm.graph, "${entry.arguments?.getString("kind")}/${entry.arguments?.getInt("id")}", open) }
+                        composable(
+                            "book-reader/{id}",
+                            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+                        ) { entry ->
+                            BookReaderScreen(
+                                owner = requireNotNull(vm.graph.session.userId),
+                                bookId = entry.arguments?.getInt("id") ?: 0,
+                            )
+                        }
                     }
                 }
             }
@@ -235,6 +266,15 @@ private fun AtharNavIcon(
     if(path.startsWith("lessons/")){org.athar.app.learning.WatchScreen(graph,path.substringAfter('/').toInt(),open);return}
     if(path.startsWith("series/")){org.athar.app.learning.SeriesScreen(graph,path.substringAfter('/').toInt(),open);return}
     if(path.startsWith("scholars/")){org.athar.app.learning.ScholarScreen(graph,path.substringAfter('/').toInt(),open);return}
+    if(path.startsWith("books/")){
+        val bookId=path.substringAfter('/').toInt()
+        BookDetailScreen(
+            graph=graph,
+            bookId=bookId,
+            openReader={open("book-reader/$bookId")},
+        )
+        return
+    }
     val uri = LocalUriHandler.current
     val scope = rememberCoroutineScope()
     var feedback by remember(path) { mutableStateOf<String?>(null) }
