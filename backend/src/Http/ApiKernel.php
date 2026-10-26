@@ -156,6 +156,15 @@ final class ApiKernel
         if(preg_match('#^/me/lesson-reminders/([1-9][0-9]*)$#',$path,$m)){
             $this->method($r,'PUT');return [(new \Athar\Engagement\LessonReminderService($this->db))->set($user,(int)$m[1],$r->body),200];
         }
+        if($path==='/me/follows'){
+            $this->method($r,'GET');return [(new \Athar\Engagement\FollowService($this->db))->list($user,$r->query),200];
+        }
+        if(preg_match('#^/me/follows/(scholar|series)/([1-9][0-9]*)$#',$path,$m)){
+            $follows=new \Athar\Engagement\FollowService($this->db);
+            if($r->method==='GET')return [$follows->state($user,$m[1],(int)$m[2]),200];
+            if($r->method==='PUT')return [$follows->follow($user,$m[1],(int)$m[2]),200];
+            $this->method($r,'DELETE');return [$follows->unfollow($user,$m[1],(int)$m[2]),200];
+        }
         if($path==='/me/khatmah/action'){
             $this->method($r,'POST');
             return [$this->progress->khatmahAction($user,$r->body),200];
