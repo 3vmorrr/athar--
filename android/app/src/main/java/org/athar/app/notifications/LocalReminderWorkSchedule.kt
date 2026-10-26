@@ -61,7 +61,7 @@ class LocalReminderWorkSchedule(
     private fun name(owner: Long, reminderId: String): String {
         require(owner > 0)
         require(LocalReminderSpec.validId(reminderId))
-        return "athar-reminder-$partition-$owner-\${digest(reminderId)}"
+        return "athar-reminder-$partition-$owner-${digest(reminderId)}"
     }
 
     private fun ownerTag(owner: Long) = "athar-reminders-$partition-$owner"
