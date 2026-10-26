@@ -159,7 +159,16 @@ import org.athar.app.quran.AyahText
             }
             if (radio && state.radio && state.recording != null) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = vm::toggle) { Text(stringResource(if (state.playing) R.string.pause else R.string.play)) }; OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) } }
             if (state.loading || state.buffer) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (state.error) MessagePanel(stringResource(R.string.audio_failed), true)
+            if (state.error) {
+                MessagePanel(stringResource(R.string.audio_failed), true) {
+                    TextButton(
+                        onClick = vm::retry,
+                        enabled = !state.loading,
+                    ) {
+                        Text(stringResource(R.string.retry))
+                    }
+                }
+            }
             if (!radio && selectedIsLoaded && state.recording != null && state.timings.isEmpty() && !state.loading) Text(stringResource(R.string.no_timing), style = MaterialTheme.typography.bodySmall)
         }
         if (radio) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
