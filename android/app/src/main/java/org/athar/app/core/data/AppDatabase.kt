@@ -17,6 +17,7 @@ interface AtharDao {
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun cache(user: Long, key: String): CachedDocument?
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") fun observeCache(user: Long, key: String): Flow<CachedDocument?>
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix") suspend fun caches(user: Long, prefix: String): List<CachedDocument>
+    @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix ORDER BY cacheKey") fun observeCaches(user: Long, prefix: String): Flow<List<CachedDocument>>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun cache(document: CachedDocument)
     @Query("DELETE FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun removeCache(user: Long, key: String)
     @Query("SELECT cacheKey,updatedAt,LENGTH(payloadCipher) AS bytes FROM cached_documents WHERE userId=:user AND (cacheKey LIKE 'ar:%' OR cacheKey LIKE 'en:%')") suspend fun contentCacheEntries(user:Long):List<ContentCacheEntry>

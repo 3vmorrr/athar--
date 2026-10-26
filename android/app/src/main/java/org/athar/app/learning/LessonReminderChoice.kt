@@ -65,6 +65,23 @@ class LessonReminderChoiceStore(
         session.requireVerifiedOwner(owner)
     }
 
+    fun observeAll(owner: Long): Flow<ProtectedRead<List<LessonReminderChoice>>> = flow {
+        session.requireVerifiedOwner(owner)
+        emitAll(
+            dao.observeCaches(owner, "private:lesson-reminder-choice:%").map { rows ->
+                session.requireVerifiedOwner(owner)
+                require(rows.size <= 128)
+                val values = rows.map { row ->
+                    val lessonId = row.cacheKey.substringAfterLast(':').toIntOrNull()
+                        ?: error("invalid lesson reminder key")
+                    decode(row.payloadCipher, lessonId)
+                }.sortedBy { it.lessonId }
+                require(values.map { it.lessonId }.toSet().size == values.size)
+                values
+            },
+        )
+    }.protectedReads()
+
     suspend fun all(expectedOwner: Long? = session.userId): List<LessonReminderChoice> {
         val owner = session.requireVerifiedOwner(expectedOwner)
         val rows = dao.caches(owner, "private:lesson-reminder-choice:%")
