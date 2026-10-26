@@ -571,4 +571,25 @@
     <string name="salawat_notification_body">التذكير الاختياري الذي اخترته للصلاة على النبي ﷺ.</string>
     <string name="friday_notification_title">تذكير يوم الجمعة</string>
     <string name="friday_notification_body">التذكير الاختياري الذي اخترته ليوم الجمعة.</string>
+    <string name="custom_routines_title">تذكيرات مخصصة</string>
+    <string name="custom_routines_intro">أنشئ حتى 12 تذكيرًا خاصًا بأيام وأوقات من اختيارك. الاسم والجدول يظلان محليًا على جهازك.</string>
+    <string name="custom_routine_add">إضافة</string>
+    <string name="custom_routine_edit">تعديل التذكير</string>
+    <string name="custom_routine_label">اسم التذكير</string>
+    <string name="custom_routine_time">الوقت: %1$s</string>
+    <string name="custom_routine_active">مفعّل</string>
+    <string name="custom_routine_paused">متوقف مؤقتًا</string>
+    <string name="custom_routine_pause">إيقاف مؤقت</string>
+    <string name="custom_routine_resume">استئناف</string>
+    <string name="custom_routine_empty">لا توجد تذكيرات مخصصة بعد.</string>
+    <string name="custom_routine_saved">تم حفظ التذكير.</string>
+    <string name="custom_routine_deleted">تم حذف التذكير.</string>
+    <string name="custom_routine_resumed">تم استئناف التذكير.</string>
+    <string name="custom_routine_failed">تعذر تنفيذ التغيير. حاول مرة أخرى.</string>
+    <string name="custom_routine_delete_title">حذف التذكير؟</string>
+    <string name="custom_routine_delete_body">سيُحذف “%1$s” وجدوله المحلي.</string>
+    <string name="custom_routine_consent_title">تفعيل التذكيرات المخصصة؟</string>
+    <string name="custom_routine_consent_body">سيُفعّل نوع التذكيرات المخصصة فقط. أسماء تذكيراتك وأيامها وأوقاتها لا تُرفع إلى الخادم.</string>
+    <string name="custom_routine_consent_confirm">تفعيل التذكيرات المخصصة</string>
+    <string name="custom_routine_notification_title">تذكير مخصص</string>
 </resources>

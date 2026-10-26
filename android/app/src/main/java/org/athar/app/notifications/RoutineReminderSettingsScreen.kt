@@ -79,6 +79,9 @@ fun RoutineReminderSettingsScreen(graph: AppGraph) {
                         preferences,
                     )
                 }
+                item(key = "custom-routines") {
+                    CustomRoutineSection(graph, owner, preferences)
+                }
             }
         }
     }

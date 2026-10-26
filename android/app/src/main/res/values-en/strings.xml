@@ -543,4 +543,25 @@
     <string name="salawat_notification_body">The optional Salawat reminder you chose.</string>
     <string name="friday_notification_title">Friday reminder</string>
     <string name="friday_notification_body">The optional Friday reminder you chose.</string>
+    <string name="custom_routines_title">Custom reminders</string>
+    <string name="custom_routines_intro">Create up to 12 private reminders on days and at times you choose. The label and schedule stay local to this device.</string>
+    <string name="custom_routine_add">Add</string>
+    <string name="custom_routine_edit">Edit reminder</string>
+    <string name="custom_routine_label">Reminder name</string>
+    <string name="custom_routine_time">Time: %1$s</string>
+    <string name="custom_routine_active">Active</string>
+    <string name="custom_routine_paused">Paused</string>
+    <string name="custom_routine_pause">Pause</string>
+    <string name="custom_routine_resume">Resume</string>
+    <string name="custom_routine_empty">No custom reminders yet.</string>
+    <string name="custom_routine_saved">The reminder was saved.</string>
+    <string name="custom_routine_deleted">The reminder was deleted.</string>
+    <string name="custom_routine_resumed">The reminder was resumed.</string>
+    <string name="custom_routine_failed">The change could not be completed. Try again.</string>
+    <string name="custom_routine_delete_title">Delete reminder?</string>
+    <string name="custom_routine_delete_body">“%1$s” and its local schedule will be deleted.</string>
+    <string name="custom_routine_consent_title">Enable custom reminders?</string>
+    <string name="custom_routine_consent_body">Only the custom-reminder category will be enabled. Your reminder names, days and times are not uploaded to the server.</string>
+    <string name="custom_routine_consent_confirm">Enable custom reminders</string>
+    <string name="custom_routine_notification_title">Custom reminder</string>
 </resources>

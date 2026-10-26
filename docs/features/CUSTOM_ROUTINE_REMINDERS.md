@@ -2,7 +2,7 @@
 
 Task: 13.4  
 Implementation branch: \`parallel/admin-foundation\`  
-Status: **ENGINE IMPLEMENTED / UI ACCEPTANCE PENDING**
+Status: **IMPLEMENTED / ACCEPTANCE PENDING**
 
 Custom reminders are local-only, owner-scoped and encrypted under \`private:custom-routine-reminders:v1\`. A rule contains a bounded user label, selected weekdays, local time, IANA timezone, enabled state and revision/activation metadata.
 
@@ -12,4 +12,6 @@ Create, edit, pause/resume and delete are offline-local operations. Deleting a r
 
 The category is the pre-existing \`custom_routines\` consent category and generic delivery rechecks consent before posting.
 
-Acceptance remains pending for the companion UI controls plus Android build/unit/instrumentation and physical restart/offline/edit/pause/delete evidence.
+The account Reminders surface exposes create/edit/pause/resume/delete controls. Create/resume and edits to active rules require current `custom_routines` consent plus Android notification permission; paused-rule edits and delete remain local operations and never need permission.
+
+Acceptance remains pending for Android build/unit/instrumentation and physical restart/offline/edit/pause/delete, RTL/LTR, large-font, landscape and accessibility evidence.
