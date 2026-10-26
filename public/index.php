@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
+require_once dirname(__DIR__) . '/admin/auth.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -13,11 +14,14 @@ set_exception_handler(static function (Throwable $exception): void {
 });
 
 ini_set('session.use_strict_mode', '1');
+$sessionRequestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$adminSessionRequest = admin_is_request_path($sessionRequestPath);
+if ($adminSessionRequest) session_name('ATHARADMIN');
 session_set_cookie_params([
     'httponly' => true,
     'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-    'samesite' => 'Lax',
-    'path' => '/',
+    'samesite' => $adminSessionRequest ? 'Strict' : 'Lax',
+    'path' => $adminSessionRequest ? '/admin' : '/',
 ]);
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
@@ -49,7 +53,10 @@ if ($path === '/email-unsubscribe') {
     header('Content-Type: text/html; charset=utf-8');
     echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
 }
-if (in_array($path, ['/login','/register','/account','/admin','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)) header('Cache-Control: no-store, private');
+if (
+    in_array($path, ['/login','/register','/account','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)
+    || admin_is_request_path($path)
+) header('Cache-Control: no-store, private');
 
 if (in_array($path, ['/api/hadith/search', '/api/dorar/search'], true) && $method === 'GET') {
     if (!allow_session_rate('dorar_search', 30, 60) || !allow_shared_dorar_rate(55, 60)) { http_response_code(429); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error'=>'rate_limited'],JSON_UNESCAPED_UNICODE); exit; }
@@ -536,8 +543,83 @@ if ($path === '/account') {
     ob_start(); require $viewPath; $content = (string) ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
 }
 
+if ($path === '/admin/login') {
+    if (admin_current_user() !== null) {
+        try {
+            admin_require_auth();
+            redirect('/admin');
+        } catch (Throwable $ignored) {
+            // Invalid retained Admin state falls through to the isolated login form.
+        }
+    }
+
+    $adminAuthError = '';
+    $locale = admin_locale();
+
+    if ($method === 'POST') {
+        require_csrf();
+        $email = strtolower(trim((string) ($_POST['email'] ?? '')));
+        $password = (string) ($_POST['password'] ?? '');
+        $attempts = $_SESSION['admin_auth_attempts'] ?? ['started' => time(), 'count' => 0];
+        if (!is_array($attempts) || time() - (int) ($attempts['started'] ?? 0) > 900) {
+            $attempts = ['started' => time(), 'count' => 0];
+        }
+        $attempts['count'] = (int) ($attempts['count'] ?? 0) + 1;
+        $_SESSION['admin_auth_attempts'] = $attempts;
+
+        if (
+            $attempts['count'] > 8
+            || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || strlen($email) > 190
+            || strlen($password) < 10
+            || strlen($password) > 200
+            || !web_identity_rate('admin-login', $email, 8, 900)
+        ) {
+            $adminAuthError = $locale === 'en'
+                ? 'Unable to sign in with these credentials.'
+                : 'تعذر تسجيل الدخول بهذه البيانات.';
+        } else {
+            try {
+                $result = web_identity_auth()->login($email, $password, false);
+                $candidate = is_array($result['user'] ?? null) ? $result['user'] : [];
+                if (!in_array((string) ($candidate['role'] ?? ''), ['admin', 'owner'], true)) {
+                    if (!empty($candidate['id'])) {
+                        db()->prepare(
+                            "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-login-denied-role','user',?)"
+                        )->execute([(int) $candidate['id'], (string) (int) $candidate['id']]);
+                    }
+                    throw new RuntimeException('Admin role required.');
+                }
+
+                $adminActor = admin_start_authenticated_session((int) $candidate['id']);
+                db()->prepare(
+                    "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-login-succeeded','user',?)"
+                )->execute([(int) $adminActor['id'], (string) (int) $adminActor['id']]);
+                redirect('/admin');
+            } catch (Throwable $exception) {
+                $adminAuthError = $locale === 'en'
+                    ? 'Unable to sign in with these credentials.'
+                    : 'تعذر تسجيل الدخول بهذه البيانات.';
+            }
+        }
+    }
+
+    require dirname(__DIR__) . '/admin/Views/login.php';
+    exit;
+}
+
+if ($path === '/admin/logout' && $method === 'POST') {
+    $adminActor = admin_require_auth();
+    require_csrf();
+    db()->prepare(
+        "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-logout','user',?)"
+    )->execute([(int) $adminActor['id'], (string) (int) $adminActor['id']]);
+    admin_destroy_session();
+    redirect('/admin/login');
+}
+
 if ($path === '/admin') {
-    $admin = require_admin();
+    $admin = admin_require_auth();
     $adminError = '';
     $backupArtifacts = [];
     if (($admin['role'] ?? '') === 'owner') {
