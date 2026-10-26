@@ -42,6 +42,7 @@ class LocalReminderCoordinator(
     private val store: LocalReminderStore,
     private val ledger: NotificationPolicyLedgerRepository,
     private val preferences: NotificationPreferenceRepository,
+    private val globalPolicy: ReminderGlobalPolicyRepository,
 ) {
     private val app = context.applicationContext
     private val schedule = LocalReminderWorkSchedule(app, partition)
@@ -116,6 +117,10 @@ class LocalReminderCoordinator(
             ProtectedRead.Loading, ProtectedRead.Unreadable -> return ReminderExecutionOutcome.ACTION_REQUIRED
         }
         if (!preferenceState.allows(spec.category)) return ReminderExecutionOutcome.CONSENT_REQUIRED
+        val globalPolicyState = when (val read = globalPolicy.read(owner)) {
+            is ProtectedRead.Ready -> read.value
+            ProtectedRead.Loading, ProtectedRead.Unreadable -> return ReminderExecutionOutcome.ACTION_REQUIRED
+        }
 
         val policyLedger = when (val read = ledger.read(owner)) {
             is ProtectedRead.Ready -> read.value
@@ -143,6 +148,8 @@ class LocalReminderCoordinator(
             now = now,
             deliveredKeys = policyLedger.deliveredKeys(),
             lastDeliveredAt = policyLedger.lastDelivered(spec.category),
+            lastDeliveredAnyAt = policyLedger.lastDeliveredAny(),
+            globalQuietHours = globalPolicyState.quietHours(),
         )
         return when (decision) {
             is NotificationPolicyDecision.Drop -> {

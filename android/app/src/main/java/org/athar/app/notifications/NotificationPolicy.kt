@@ -46,6 +46,8 @@ object NotificationPolicy {
         now: Instant,
         deliveredKeys: Set<String> = emptySet(),
         lastDeliveredAt: Instant? = null,
+        lastDeliveredAnyAt: Instant? = null,
+        globalQuietHours: NotificationQuietHours? = null,
     ): NotificationPolicyDecision {
         if (candidate.idempotencyKey in deliveredKeys) {
             return NotificationPolicyDecision.Drop(NotificationDropReason.DUPLICATE)
@@ -55,11 +57,16 @@ object NotificationPolicy {
         }
 
         var eligible = maxOf(now, candidate.scheduledAt)
-        if (lastDeliveredAt != null && !candidate.minimumInterval.isZero) {
-            eligible = maxOf(eligible, lastDeliveredAt.plus(candidate.minimumInterval))
+        if (!candidate.minimumInterval.isZero) {
+            val last = listOfNotNull(lastDeliveredAt, lastDeliveredAnyAt).maxOrNull()
+            if (last != null) eligible = maxOf(eligible, last.plus(candidate.minimumInterval))
         }
-        candidate.quietHours?.let {
-            quietEndIfInside(eligible, it)?.let { quietEnd -> eligible = maxOf(eligible, quietEnd) }
+        val quietWindows = listOfNotNull(candidate.quietHours, globalQuietHours)
+        repeat(8) {
+            val next = quietWindows.mapNotNull { quietEndIfInside(eligible, it) }.maxOrNull()
+                ?: return@repeat
+            if (!next.isAfter(eligible)) return@repeat
+            eligible = next
         }
 
         if (!eligible.isBefore(candidate.expiresAt)) {

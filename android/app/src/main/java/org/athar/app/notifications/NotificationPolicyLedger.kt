@@ -19,6 +19,7 @@ data class NotificationPolicyLedger(
 ) {
     fun deliveredKeys(): Set<String> = delivered.keys
     fun lastDelivered(category: String): Instant? = lastByCategory[category]?.let(Instant::ofEpochMilli)
+    fun lastDeliveredAny(): Instant? = delivered.values.maxOrNull()?.let(Instant::ofEpochMilli)
 }
 
 class NotificationPolicyLedgerRepository(
