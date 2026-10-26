@@ -29,6 +29,9 @@
 <string name="night_plan_reference">مرجع خطة قيام الليل</string>
 <string name="night_plan_verse_count">%1$d آية مخططة</string>
 <string name="night_plan_separate_progress">هذه الخطة مستقلة عن موضع قراءة القرآن وخطة الختمة، ولا تُسجل كتقدم إلا عند اختيار «تسجيل كمكتمل» صراحةً.</string>
+<string name="night_plan_continue_at">الموضع التالي في الخطة: سورة %1$d · آية %2$d</string>
+<string name="night_plan_continue_separate">هذا الموضع خاص بخطة قيام الليل فقط، ولم نغيّر موضع قراءة القرآن أو الختمة.</string>
+<string name="night_plan_recorded_complete">كل نطاق الخطة مغطى بجلسات صريحة مسجلة</string>
 <string name="night_record_completed">تسجيل كمكتمل</string>
 <string name="night_copy_reference">نسخ المرجع</string>
 <string name="night_clear_plan">مسح الخطة المحفوظة</string>
