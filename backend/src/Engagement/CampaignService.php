@@ -251,7 +251,8 @@ final class CampaignService
 
     private function resolveAudience(array $campaign,string $channel,int $actorId,bool $preview): array
     {
-        if($channel==='push'&&!$this->tableExists('notification_devices'))return ['available'=>false,'reason'=>'push_device_delivery_not_ready','users'=>[]];
+        if($channel==='push'&&!$this->pushDeliveryReady())return ['available'=>false,'reason'=>'push_delivery_not_ready','users'=>[]];
+        if($channel==='email'&&!$this->emailDeliveryReady())return ['available'=>false,'reason'=>'email_transport_not_ready','users'=>[]];
         if($campaign['audience_type']==='test_recipient'&&$channel==='email')return ['available'=>false,'reason'=>'email_test_uses_authorized_smtp_recipient','users'=>[]];
         $where=["u.suspended_at IS NULL","u.email_verified_at IS NOT NULL"];$args=[];
         if($channel==='push')$where[]='COALESCE(p.push_campaign_opt_in,0)=1';
@@ -356,6 +357,27 @@ final class CampaignService
     }
     private function channels(string $channel): array{return $channel==='push_email'?['push','email']:[$channel];}
     private function payload(array $campaign,string $locale): array{return ['title'=>$locale==='en'?$campaign['title_en']:$campaign['title_ar'],'body'=>$locale==='en'?$campaign['body_en']:$campaign['body_ar'],'deep_link'=>$campaign['deep_link'],'image_url'=>$campaign['image_url'],'ttl_seconds'=>(int)$campaign['ttl_seconds'],'campaign_id'=>(int)$campaign['id']];}
+    private function pushDeliveryReady(): bool
+    {
+        return $this->tableExists('notification_devices') && $this->setting('push_campaign_delivery_ready')==='1';
+    }
+
+    private function emailDeliveryReady(): bool
+    {
+        $host=$this->setting('smtp_host');
+        $username=$this->setting('smtp_username');
+        $from=$this->setting('smtp_from_email');
+        $passwordCipher=$this->setting('smtp_password_cipher');
+        return $host!==''&&$username!==''&&$passwordCipher!==''&&filter_var($from,FILTER_VALIDATE_EMAIL)!==false;
+    }
+
+    private function setting(string $key): string
+    {
+        $q=$this->db->prepare('SELECT setting_value FROM platform_settings WHERE setting_key=? LIMIT 1');
+        $q->execute([$key]);$value=$q->fetchColumn();
+        return is_string($value)?trim($value):'';
+    }
+
     private function tableExists(string $table): bool{$q=$this->db->prepare('SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1');$q->execute([$table]);return (bool)$q->fetchColumn();}
     private function instant(string $local,string $zone): string{try{$d=new DateTimeImmutable($local,new DateTimeZone($zone));}catch(Throwable $e){throw new ApiError('invalid_fields',422,['scheduled_at'=>'invalid']);}return $d->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');}
     private function nullableUrlLike($value,string $field,int $max,bool $allowDeepLink): ?string{$value=trim((string)$value);if($value==='')return null;if(strlen($value)>$max)throw new ApiError('invalid_fields',422,[$field=>'too_long']);if($allowDeepLink&&preg_match('#^athar://[A-Za-z0-9/_?=&.-]+$#',$value))return $value;if($allowDeepLink&&str_starts_with($value,'/')&&!str_starts_with($value,'//'))return $value;if(filter_var($value,FILTER_VALIDATE_URL)&&strtolower((string)parse_url($value,PHP_URL_SCHEME))==='https')return $value;throw new ApiError('invalid_fields',422,[$field=>'invalid']);}
