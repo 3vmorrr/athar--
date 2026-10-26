@@ -40,6 +40,10 @@ class PrivateSyncWorkerTest {
             val manager=WorkManager.getInstance(app)
             val network=app.getSystemService(android.net.ConnectivityManager::class.java)
             val connected=network.activeNetwork?.let{network.getNetworkCapabilities(it)}?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)==true
+            if(InstrumentationRegistry.getArguments().getString("requireValidatedScheduler")=="true"){
+                val validated=network.activeNetwork?.let{network.getNetworkCapabilities(it)}?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED)==true
+                assertTrue("This gate requires actual connected, validated OS scheduling; direct Worker fallback is insufficient",connected&&validated)
+            }
             val finished=if(connected)withTimeout(60_000){
                 while(true){
                     val info=manager.getWorkInfosForUniqueWork(schedule.name(owner)).get(10,java.util.concurrent.TimeUnit.SECONDS).lastOrNull()
@@ -48,7 +52,10 @@ class PrivateSyncWorkerTest {
                 }
                 @Suppress("UNREACHABLE_CODE") error("unreachable")
             }else null
-            if(finished!=null)assertEquals(finished.outputData.toString(),WorkInfo.State.SUCCEEDED,finished.state)
+            if(finished!=null){
+                assertEquals(finished.outputData.toString(),WorkInfo.State.SUCCEEDED,finished.state)
+                println("OS_CONNECTED_SCHEDULER_SUCCEEDED: installed WorkManager dispatched the owned fixture job")
+            }
             else {
                 delay(3000)
                 val queued=manager.getWorkInfosForUniqueWork(schedule.name(owner)).get(10,java.util.concurrent.TimeUnit.SECONDS).last()

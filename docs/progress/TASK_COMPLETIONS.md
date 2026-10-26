@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|02.7 Cross-module lost-response/storage reopen|795cd3939725fe84732412b4d0e60a401ea20cdd|56 JVM/build/test APK/lint/316 resources; API27 Arabic19/English19/main API1; real HTTP post-commit losses/actual Room file reopen/exact activity totals; normal push/exact remote SHA verified |
 |02.7.2 Permanent Night Prayer rejection recovery|3968a7de621de9eaeb1a8fec2a8e243d22317541|56 JVM/build/test APK/lint/316 resources; API27 Arabic10/English29/main API1; retained rejection/migration/reopen/actual422 repair/captures/no-secret review; normal push/exact remote SHA verified |
 |21.18 Immersive hero specifications|5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e|5 linked design specifications/25 links/9 planned artwork entries; queue149; documentation-only review; normal push/exact remote SHA verified |
 |02.7.1 Captured-owner mutation dispatch|d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f|53 JVM/build/lint/306 resources; Arabic10/English32/main API1 hardware PASS; no-secret review; normal push/exact remote SHA verified |
