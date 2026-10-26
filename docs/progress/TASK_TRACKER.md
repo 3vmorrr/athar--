@@ -1,5 +1,11 @@
 # Implementation tracker
 
+## Parallel integration checkpoint — task17.1
+
+Independent Admin authentication is integrated with corrections and applicable acceptance. Source cursor is `7fd87ade0a9fb5101962e360fee7d48f3fdb871a`; the full pre-integration map and pending groups live in [PARALLEL_INTEGRATION.json](PARALLEL_INTEGRATION.json). Main base checkpoint was `224a18652ff5cc5abfdbbd25d9f1da657479de8b`. Next task17.2 is the independent bilingual shell. WP02.8 remains PARTIAL and deferred under the user's integration-first instruction. No bulk branch merge has occurred; source implementation is not completion evidence.
+
+Task17.1:49 real HTTP assertions and20,000 disposable backend assertions PASS; PHP/Python/JS syntax and Arabic/English browser authentication/logout/password visibility reviewed. No migration or Android change. Scope/fixes/limitations: [authentication acceptance](../testing/ADMIN_AUTHENTICATION.md). WP17 closure1/6 (17% rounded); overall46% (46.38 weighted, uncertainty±10pp);137 tasks open. Only the accepted authentication slice earns credit.
+
 Execution source of truth: [exact ordered queue](TASK_QUEUE.md), [editable task records](TASK_QUEUE.json). Queue states are NOT STARTED / PARTIAL / BLOCKED / COMPLETE; the legacy evidence/status table below remains historical/module-level. Current task is02.7.2 after the completed21.18 immersive design specification. Previously tested O01/O02/O03 map to02.1/02.2/02.3;02.2 is the implemented foundation only, with real OS lifecycle acceptance separately required by02.8. No whole-phase completion follows from a foundation or documentation task.
 Last updated: 2026-10-26. Status vocabulary: TODO, IN_PROGRESS, BLOCKED, IMPLEMENTED, TESTED, VERIFIED. Evidence is mandatory for VERIFIED. Source-based audit/estimates and original24 work packages: [formal checkpoint](../audit/CHECKPOINT_2026-10-25.md). Phase1 is tested; phase2 remains IN_PROGRESS. Current common verification:unchanged20,000 backend assertion baseline;53 JVM cases; focused task02.7.1 Arabic10/English32 physical cases plus main API1; build/test APK/lint;306 resources. Earlier per-task counts below retain the evidence from their original increments.
 

@@ -10,4 +10,4 @@ if (($state['fixture_only'] ?? false) !== true || !preg_match('/^athar_test_nati
 }
 putenv('APP_ENV=local');putenv('ATHAR_LOAD_DOTENV=0');
 foreach(['HOST'=>'host','PORT'=>'port','NAME'=>'database','USER'=>'user','PASSWORD'=>'password'] as $key=>$field) putenv('ATHAR_DB_'.$key.'='.$state[$field]);
-require dirname(__DIR__).'/public/router.php';
+return require dirname(__DIR__).'/public/router.php';

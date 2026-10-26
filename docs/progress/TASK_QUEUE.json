@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "02.8",
+  "current_task": "17.2",
   "overall_estimate_percent": 46,
-  "overall_estimate_detail": 45.78,
+  "overall_estimate_detail": 46.38,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -16,7 +16,7 @@
     "02.7.1": 3,
     "02.7.2": 3
   },
-  "policy": "Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. Parallel branch parallel/admin-foundation owns17.1–17.3 (issues1–3, Draft PR4); do not duplicate/change that branch or count source-only work as complete. Integrate only after recorded acceptance and reconciliation against this branch. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.",
+  "policy": "Parallel/admin-foundation leads implementation; codex/android-ecosystem integrates one logical task at a time from the recorded exact source cursor. Inspect both local worktrees, preserve newer security/offline logic and premium UI, integrate, fix, test, document, commit, push and verify the remote SHA before the next task. Never bulk merge or count source-only implementation as accepted. Keep the parallel worktree and classify every interleaved commit. WP02.8 remains PARTIAL and deferred until all available parallel work is integrated and stabilized, then complete it and audit WP1–WP24. External gates stay open while independent integration proceeds. No per-task permission is required.",
   "reviewed_ui_branch": {
     "ref": "origin/uiux/athar-premium-v2",
     "sha": "0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32",
@@ -1666,18 +1666,22 @@
       "name": "Independent Admin authentication",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections.",
-      "state": "NOT STARTED",
+      "state": "COMPLETE",
       "dependencies": [
         "02.4"
       ],
       "modules": [
-        "admin/ (new)",
-        "backend/src/Identity/"
+        "admin/auth.php",
+        "admin/Views/login.php",
+        "public/index.php",
+        "public/assets/css/admin-auth.css",
+        "public/assets/js/admin-auth.js"
       ],
       "automated_tests": "HTTP session/CSRF/fixation/denial/logout tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.5963
+      "estimated_contribution_pp": 0.5963,
+      "acceptance_evidence": "docs/testing/ADMIN_AUTHENTICATION.md; 49 HTTP assertions, 20,000 isolated backend assertions, PHP/Python/JS syntax, actual Arabic/English browser login/logout/password visibility and clean screenshots. No Android/schema changes. Shell/matrix/recovery acceptance remains17.2/17.3/17.6."
     },
     {
       "id": "17.2",
@@ -2750,7 +2754,7 @@
   "estimate_basis": {
     "Android": 62,
     "Backend/API": 61,
-    "Independent Admin": 0,
+    "Independent Admin": 4,
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,

@@ -1,5 +1,11 @@
 # Engineering change log
 
+## Parallel integration checkpoint — task17.1
+
+Independent Admin authentication is integrated with corrections and applicable acceptance. Source cursor is `7fd87ade0a9fb5101962e360fee7d48f3fdb871a`; the full pre-integration map and pending groups live in [PARALLEL_INTEGRATION.json](PARALLEL_INTEGRATION.json). Main base checkpoint was `224a18652ff5cc5abfdbbd25d9f1da657479de8b`. Next task17.2 is the independent bilingual shell. WP02.8 remains PARTIAL and deferred under the user's integration-first instruction. No bulk branch merge has occurred; source implementation is not completion evidence.
+
+Task17.1:49 real HTTP assertions and20,000 disposable backend assertions PASS; PHP/Python/JS syntax and Arabic/English browser authentication/logout/password visibility reviewed. No migration or Android change. Scope/fixes/limitations: [authentication acceptance](../testing/ADMIN_AUTHENTICATION.md). WP17 closure1/6 (17% rounded); overall46% (46.38 weighted, uncertainty±10pp);137 tasks open. Only the accepted authentication slice earns credit.
+
 ## Task02.7 — cross-module lost-response/storage reopen acceptance
 
 - Add test-only real HTTP post-commit response loss, actual Room disk close/reopen and repeated retry across reading, counters, lesson checkpoints and ordered Night edits/deletion. Exact exported activity totals and stable revisions/UUIDs prove no duplicate completion or lost pending/newer checkpoint.

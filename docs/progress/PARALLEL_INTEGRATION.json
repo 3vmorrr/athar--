@@ -1,0 +1,2435 @@
+{
+  "codex_head": "ddec0d350776dba293bbc60a5e8e61424f4434a9",
+  "parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
+  "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
+  "parallel_worktree": "C:/xampp/athar-parallel",
+  "LAST_PARALLEL_INTEGRATED_SHA": "7fd87ade0a9fb5101962e360fee7d48f3fdb871a",
+  "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
+  "groups": [
+    {
+      "task_or_group": "17.1",
+      "source_commits": [
+        {
+          "sha": "c599fd4d641cba2a3e3e9e889fe63b944cf0ff72",
+          "subject": "Add isolated Admin session authentication helpers"
+        },
+        {
+          "sha": "828cbc96df8ea659567a9bc9cf47f7f4b6ea3f01",
+          "subject": "Add independent bilingual Admin login view"
+        },
+        {
+          "sha": "c4ff34813aa5897b6ab3385c6aeccb4eed686dad",
+          "subject": "Style independent Admin login surface"
+        },
+        {
+          "sha": "0173b001798c13b97d872acac4a9a119370e1257",
+          "subject": "Route Admin through an isolated authenticated session"
+        },
+        {
+          "sha": "e2c2d438e4209e9d23ea6fc6b66403aa4f8f5338",
+          "subject": "Expose isolated Admin logout action"
+        },
+        {
+          "sha": "f5c7bf2ffdd825bd960cda80e28ad754378beaeb",
+          "subject": "Add real HTTP Admin authentication acceptance test"
+        },
+        {
+          "sha": "eb24c1f63d058ae6c26b0b37b8fda010c8125531",
+          "subject": "Document parallel Admin execution track"
+        },
+        {
+          "sha": "7fd87ade0a9fb5101962e360fee7d48f3fdb871a",
+          "subject": "Fix Admin HTTP acceptance port isolation"
+        }
+      ],
+      "files": [
+        "admin/Views/login.php",
+        "admin/auth.php",
+        "app/Views/pages/admin.php",
+        "docs/progress/PARALLEL_ADMIN_TRACK.md",
+        "public/assets/css/admin-auth.css",
+        "public/index.php",
+        "tests/admin_auth_http_test.py"
+      ],
+      "dependencies": [
+        "Identity foundation"
+      ],
+      "overlap": "No textual conflict. Existing owner download and restore/reset session refresh required semantic compatibility fixes; no Android files changed.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "admin/Views/login.php",
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin-auth.css"
+      ],
+      "security_privacy": "Dedicated cookie path/name; live role/session-version/expiry checks; isolated CSRF/login/logout; clear owner backup grants on invalidation. Later full owner-recovery and action matrix acceptance remains pending.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "acceptance": "Integrated/tested17.1; see docs/testing/ADMIN_AUTHENTICATION.md. Commit receipt follows in TASK_COMPLETIONS.md."
+    },
+    {
+      "task_or_group": "CI probes",
+      "source_commits": [
+        {
+          "sha": "1238dc4e43f75f6f7f15ae00e979ec63e59753c4",
+          "subject": "ci: run isolated Admin 17.1 acceptance"
+        },
+        {
+          "sha": "29ee276903446de8016cece25683e61d07a549ac",
+          "subject": "Remove branch-only Admin CI probe"
+        }
+      ],
+      "files": [
+        ".github/workflows/admin-parallel-ci.yml"
+      ],
+      "dependencies": [],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [],
+      "ui_impact": [],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "SUPERSEDED",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "17.2",
+      "source_commits": [
+        {
+          "sha": "10384e657a0e913e4f0583e0c9df71447786d2b3",
+          "subject": "Add independent Admin application shell"
+        },
+        {
+          "sha": "3765e1258440e8921c0d04fcddc1cfe9a2aa2042",
+          "subject": "Add responsive independent Admin design system"
+        },
+        {
+          "sha": "2617368ad0139f79cda3535db85bc685b3dd710f",
+          "subject": "Add Admin shell navigation interactions"
+        },
+        {
+          "sha": "3610258478531bd7d10b244482f6517a41c896f6",
+          "subject": "Persist Admin theme preference independently"
+        },
+        {
+          "sha": "02640ee7e777ca36a0bbb42d2c270448093548d1",
+          "subject": "Render dashboard in independent Admin shell"
+        },
+        {
+          "sha": "6d74f375ab6634de38f83e78cb081d81d9269e8f",
+          "subject": "Localize independent Admin shell navigation"
+        }
+      ],
+      "files": [
+        "admin/Views/layout.php",
+        "admin/auth.php",
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin.css",
+        "public/assets/js/admin.js",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.1"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "admin/Views/layout.php",
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin.css",
+        "public/assets/js/admin.js"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "17.3",
+      "source_commits": [
+        {
+          "sha": "8eef7909b6bc35b01c006e66e3b49702e9837bf5",
+          "subject": "Add centralized Admin authorization matrix"
+        },
+        {
+          "sha": "3443e80076be3bb18c1c9a9c0f5d8332129a531b",
+          "subject": "Enforce centralized Admin action and target authorization"
+        },
+        {
+          "sha": "81b2996522f869440c6b94c5dec270be8d1bdb48",
+          "subject": "Reflect Admin capabilities in dashboard navigation"
+        }
+      ],
+      "files": [
+        "admin/authorization.php",
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.2"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "17.4",
+      "source_commits": [
+        {
+          "sha": "3fbbaaf4463f47b4d1c9aa6e59669c8c22f7f7fc",
+          "subject": "Complete searchable Admin user suspension flows"
+        },
+        {
+          "sha": "834af23dbe9f01bcfc8ec1f0eeb943dc3028feed",
+          "subject": "Expose safe Admin user search and suspension controls"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "17.5",
+      "source_commits": [
+        {
+          "sha": "9cf81ac8b7150dfc5dc43801d5e4ef18c8a0c249",
+          "subject": "Add Admin audit email redaction helper"
+        },
+        {
+          "sha": "4de1736717e13729d75dc03d9f91915cecca3276",
+          "subject": "Redact Admin audit data and remove private worship metrics"
+        },
+        {
+          "sha": "5ad55efbb9d06d5c89395cf663c70da015b90257",
+          "subject": "Remove private worship data from Admin analytics and audit"
+        }
+      ],
+      "files": [
+        "admin/authorization.php",
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "17.6",
+      "source_commits": [
+        {
+          "sha": "7f23e72f15c152f6c8b6beff1c6253f1cb00eff7",
+          "subject": "Keep recovery operations inside isolated Admin session"
+        },
+        {
+          "sha": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
+          "subject": "Route owner recovery through independent Admin shell"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.1",
+      "source_commits": [
+        {
+          "sha": "6feeeb64c24d1d6f2865479f7d3faff90a8bff1c",
+          "subject": "Complete scholar metadata and portrait administration"
+        },
+        {
+          "sha": "98f4e84214f244930848c894f820e512c3e06829",
+          "subject": "Expose full scholar metadata in Admin create form"
+        },
+        {
+          "sha": "393760bbef96caa95f31253c584cbdda10317edd",
+          "subject": "Complete scholar edit metadata controls"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin-row-actions.php",
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin-row-actions.php",
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.2-18.3",
+      "source_commits": [
+        {
+          "sha": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+          "subject": "Harden series ownership and dependency-safe deletion"
+        }
+      ],
+      "files": [
+        "public/index.php"
+      ],
+      "dependencies": [
+        "18.1"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "PARTIAL INTEGRATION",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.4",
+      "source_commits": [
+        {
+          "sha": "826f5211f150b1ac5eb48d60d3570dd6af7d9eca",
+          "subject": "Authorize lesson event editing as Admin content work"
+        },
+        {
+          "sha": "d1a1f05c53dc1824717d7ee88b21a77793aaeed1",
+          "subject": "Add Admin Upcoming and Live event editor backend"
+        },
+        {
+          "sha": "d0cb9b0a3afe7215f385c22f8b742728a11e3602",
+          "subject": "Add full Upcoming and Live Admin editor"
+        },
+        {
+          "sha": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
+          "subject": "Polish Admin event editor responsive layouts"
+        }
+      ],
+      "files": [
+        "admin/authorization.php",
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin.css",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin.css"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.5",
+      "source_commits": [
+        {
+          "sha": "937ae0741e7dadb793ea8b746140a2b714c3b22b",
+          "subject": "Complete rights-safe optional book download administration"
+        },
+        {
+          "sha": "3c103dee7ebbe1d02e66a5b4affadb8d9076eafc",
+          "subject": "Allow catalog-only books without forced downloads"
+        },
+        {
+          "sha": "920e4549d21b83d686ecb052393990f109d30337",
+          "subject": "Allow catalog-only books without forced downloads"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin-row-actions.php",
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin-row-actions.php",
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.6",
+      "source_commits": [
+        {
+          "sha": "95d9adfba6bf9d9250d1842bde8118284a3412a1",
+          "subject": "Add editorial revisions and moderation reasons"
+        },
+        {
+          "sha": "3535b5c9188fe3bac352d8e11a0f16285fe4fb74",
+          "subject": "Add Admin editorial revision helpers"
+        },
+        {
+          "sha": "6a16200b3edb765498e4c3f81d77b3173f4c5ba1",
+          "subject": "Enable versioned CAS-safe Adhkar administration"
+        },
+        {
+          "sha": "0bd7c8f923427b76f8ed8f52634fc1a2c05b3745",
+          "subject": "Carry Adhkar revisions through Admin content forms"
+        }
+      ],
+      "files": [
+        "admin/editorial.php",
+        "app/Views/pages/admin-row-actions.php",
+        "database/migrations/016_admin_editorial_control.sql",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3",
+        "migration016"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "database/migrations/016_admin_editorial_control.sql",
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin-row-actions.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.7",
+      "source_commits": [
+        {
+          "sha": "0fbcf0f7c5e7e2718ded94ab28f668c460d9db88",
+          "subject": "Add durable comment moderation decision log"
+        },
+        {
+          "sha": "2edf0665135ea37d64f8d3dae6be0f0e3f896651",
+          "subject": "Make comment moderation CAS-safe with reasons and durable audit"
+        },
+        {
+          "sha": "b14a32982cf7ccdb1f0197970128792c63184709",
+          "subject": "Route Admin comment decisions through revisioned moderation service"
+        },
+        {
+          "sha": "c68481f7f379e7354c31ec760d6a9bf589fff3a8",
+          "subject": "Add revisioned comment moderation controls with reasons"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin.php",
+        "backend/src/Learning/DiscussionService.php",
+        "database/migrations/017_admin_comment_moderation.sql",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3",
+        "migration017"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Learning/DiscussionService.php",
+        "database/migrations/017_admin_comment_moderation.sql",
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.8",
+      "source_commits": [
+        {
+          "sha": "dbae78636a64cb856da95f3e2d75984238c233bb",
+          "subject": "Secure SMTP test-recipient authorization and diagnostics"
+        },
+        {
+          "sha": "5b9c2601bfea3b6b1d57ba02f19902e26ee90d37",
+          "subject": "Expose safe SMTP diagnostics and authorized test recipient controls"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "18.9",
+      "source_commits": [
+        {
+          "sha": "907112d4053d38ef8bef66ec461809588df7a573",
+          "subject": "Expose privacy-safe Night Prayer public defaults"
+        },
+        {
+          "sha": "d7cd4ca65499e428ea08167f91a9d4a97aff7aae",
+          "subject": "Add Night Prayer public configuration API"
+        },
+        {
+          "sha": "cbd06c023a1ae17a97233704f103be854ee3eef5",
+          "subject": "Add privacy-bounded Night Prayer Admin defaults"
+        },
+        {
+          "sha": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+          "subject": "Add privacy-safe Night Prayer public defaults panel"
+        }
+      ],
+      "files": [
+        "app/Views/pages/admin.php",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/NightPrayer/NightPrayerService.php",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/NightPrayer/NightPrayerService.php",
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "19-20 infrastructure",
+      "source_commits": [
+        {
+          "sha": "5ebeb719f39a5287f390241113c3f310556dce73",
+          "subject": "Add consent-safe engagement campaign queue schema"
+        },
+        {
+          "sha": "2e6a8329d9ed8f04a74491e79e78067528cc2c36",
+          "subject": "Add consent-safe engagement campaign service"
+        },
+        {
+          "sha": "394353504a3e1922e67cbf75b825ebefeed682f1",
+          "subject": "Block push dispatch until device delivery dependency exists"
+        },
+        {
+          "sha": "364b2e2915fdd801cd3b67becd754fbd23e1c6da",
+          "subject": "Authorize generic engagement campaign actions"
+        },
+        {
+          "sha": "12ea191618e2cecd116f929bbdcd701ea7073f98",
+          "subject": "Wire generic campaign drafts preview confirmation and cancellation"
+        },
+        {
+          "sha": "ecb27fea00db05dce9ce3cc672bbdbb72f508ce6",
+          "subject": "Replace legacy campaign UI with consent-safe campaign center"
+        },
+        {
+          "sha": "c191c3a6637f8685936176b3e3fa4d6ee8e709da",
+          "subject": "Make campaign confirmation atomic across requested channels"
+        },
+        {
+          "sha": "d746d4c609f19986683b83124d3e1c85bfa06fcc",
+          "subject": "Add prioritized durable email outbox"
+        },
+        {
+          "sha": "938c53684a47aeaae1e808cfb7a73ddda3efa062",
+          "subject": "Store locale with queued email rendering"
+        },
+        {
+          "sha": "521f921a582bd26a99ced631a7b71a35c8836b95",
+          "subject": "Add prioritized durable email outbox service"
+        },
+        {
+          "sha": "ea8661477c7fa9673eafd535a1c4a03539d28435",
+          "subject": "Avoid duplicate campaign send-event accounting"
+        },
+        {
+          "sha": "b313c2b887183a8854f8bd82ed36ef9f7e1d426b",
+          "subject": "Add CLI worker for prioritized email outbox"
+        },
+        {
+          "sha": "5e42f255e8bed004099156afc0836cad98e11c44",
+          "subject": "Make branded email rendering locale aware"
+        },
+        {
+          "sha": "f728f06e26b26476750495749a97a6b6f162a627",
+          "subject": "Queue localized OTP email as transactional priority"
+        },
+        {
+          "sha": "189ca0a75399a4999c6bf51b025bd5d1c2e579fd",
+          "subject": "Queue web identity emails through durable outbox"
+        },
+        {
+          "sha": "1dffd2241a5a923cbba488c8ae18a2c22bc6ca16",
+          "subject": "Queue API identity emails through durable outbox"
+        },
+        {
+          "sha": "cb9e4e4175beacb18070d6ddbd5dccf7280752ba",
+          "subject": "Use legacy consent and profile locale as safe audience fallback"
+        },
+        {
+          "sha": "519659db27afeac10c702e7dd02fd63a8d31af35",
+          "subject": "Honor legacy email consent when engagement preference row is absent"
+        },
+        {
+          "sha": "a1ced9ed022de2e24e764f7e3498b61ace0b381b",
+          "subject": "Synchronize email consent and cancel campaign-only deliveries"
+        },
+        {
+          "sha": "a5b3bae27b604cbae4386386ef53639c03783196",
+          "subject": "Support authorized campaign-template test emails in outbox"
+        },
+        {
+          "sha": "1d1a92638014a3cddc7f71e978a269c10f629e69",
+          "subject": "Retire legacy browser-send campaign actions and authorize safe tests"
+        },
+        {
+          "sha": "80d944aa2b80d22c0cd120a684e3a49682bd69bd",
+          "subject": "Queue campaign test email only to authorized recipient"
+        },
+        {
+          "sha": "94dc9324a0e9d44ae3af2ce47f46972e7554be01",
+          "subject": "Add authorized test-email control to campaign preview"
+        },
+        {
+          "sha": "5e99067e79b322e77b4fbce24a5aecc307ffe87f",
+          "subject": "Add explicit engagement consent and quiet-hours service"
+        },
+        {
+          "sha": "03fd32af19296632941242a83e818e09851130a0",
+          "subject": "Expose engagement consent and quiet-hours API"
+        },
+        {
+          "sha": "fa5bdd338bedfcded3f13f8b9d3797a31e236ce0",
+          "subject": "Issue expiring signed unsubscribe links"
+        },
+        {
+          "sha": "9d858c97bfc46d4412aa1a470bc26aced8eb0b9c",
+          "subject": "Validate expiring unsubscribe tokens on web route"
+        },
+        {
+          "sha": "3d33bd002beb52c763af3ff72823e2ba7c002ca9",
+          "subject": "Expose redacted aggregate campaign history and delivery reasons"
+        },
+        {
+          "sha": "0cdf9c2d6994a65e8bed17a359ac0108bcf70e63",
+          "subject": "Show redacted campaign history and aggregate failure reasons"
+        },
+        {
+          "sha": "c8c30059fa5d987e1e0f7df67f292dd41f4b9101",
+          "subject": "Resolve authorized campaign test recipient safely during POST"
+        },
+        {
+          "sha": "8883a90b10527cb99021c4bb788855bb484c5a6e",
+          "subject": "Polish campaign previews analytics and service diagnostics"
+        },
+        {
+          "sha": "082a69c8a61451555cdcc0b4945ebcf948d4ee7d",
+          "subject": "Defer campaign delivery to respect frequency windows at send time"
+        },
+        {
+          "sha": "e0ebc7ac4495e3b8f0dba10e52ea38f1aaed54ca",
+          "subject": "Reconcile campaigns after email outbox expiry recovery"
+        },
+        {
+          "sha": "bcd28eb8e05a8ef61ebc29d5d6621b9fe237d4c1",
+          "subject": "Reconcile campaign status after recipient TTL recovery"
+        },
+        {
+          "sha": "22efe39611f0ebb15a0615e3073589acddc91982",
+          "subject": "Remove legacy synchronous campaign send path"
+        },
+        {
+          "sha": "ad6ce86b96e903510da821918f6ad0b5ac6b5029",
+          "subject": "Gate campaign launch on explicit push and SMTP readiness"
+        },
+        {
+          "sha": "1c576d227ccba7770189e74a97f1710034280041",
+          "subject": "Document WP17-WP20 implementation and integration handoff"
+        },
+        {
+          "sha": "281e9b2864e7f75a0ffdbb50f931557b4e413983",
+          "subject": "Require public HTTPS base URL and close all-skipped campaigns"
+        },
+        {
+          "sha": "dae7acb9556b312abbac15dc17637b4c497a9ab3",
+          "subject": "Use explicit UTC retry timestamps for push queue"
+        },
+        {
+          "sha": "0748860ff54ab7b0399613458f36eed0f8da5205",
+          "subject": "Document HTTPS base URL requirement for campaigns"
+        }
+      ],
+      "files": [
+        "admin/authorization.php",
+        "app/Views/pages/admin.php",
+        "app/identity.php",
+        "app/mailer.php",
+        "backend/api.php",
+        "backend/src/Engagement/CampaignService.php",
+        "backend/src/Engagement/EmailOutboxService.php",
+        "backend/src/Engagement/PreferenceService.php",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Identity/OtpService.php",
+        "bin/process-email-outbox.php",
+        "database/migrations/018_engagement_campaigns.sql",
+        "database/migrations/019_email_outbox.sql",
+        "docs/progress/PARALLEL_ADMIN_TRACK.md",
+        "public/assets/css/admin.css",
+        "public/index.php"
+      ],
+      "dependencies": [
+        "17",
+        "18",
+        "migration018",
+        "migration019"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "app/identity.php",
+        "app/mailer.php",
+        "backend/api.php",
+        "backend/src/Engagement/CampaignService.php",
+        "backend/src/Engagement/EmailOutboxService.php",
+        "backend/src/Engagement/PreferenceService.php",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Identity/OtpService.php",
+        "database/migrations/018_engagement_campaigns.sql",
+        "database/migrations/019_email_outbox.sql",
+        "public/index.php"
+      ],
+      "android_impact": [],
+      "ui_impact": [
+        "app/Views/pages/admin.php",
+        "public/assets/css/admin.css"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.19",
+      "source_commits": [
+        {
+          "sha": "73537f2a0e064492694c6cce167ed59e63e27542",
+          "subject": "Implement shared immersive hero and layered content primitives"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/core/ui/ImmersiveHero.kt"
+      ],
+      "dependencies": [
+        "21.1"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/ImmersiveHero.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/ImmersiveHero.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.2",
+      "source_commits": [
+        {
+          "sha": "aebbb0cc57e4d5034eb18175bf4b605872ee8d33",
+          "subject": "Implement immersive layered Home hierarchy"
+        },
+        {
+          "sha": "b5b00872693a33464260d8a5b1904dea342ad744",
+          "subject": "Refine premium navigation selected states"
+        },
+        {
+          "sha": "e2347805b403b31df0849f4cd0c209ae985ccf75",
+          "subject": "Add localized Home hierarchy labels"
+        },
+        {
+          "sha": "797d2b5bbdeba3ce36d04e38eea9dea5c625e01d",
+          "subject": "Add localized Home hierarchy labels"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.4 and WP03",
+      "source_commits": [
+        {
+          "sha": "b4fc8b3263c8e1a74a3748a3dd7f94e18743f9c9",
+          "subject": "Add continuous Mushaf page and long-press ayah actions"
+        },
+        {
+          "sha": "62a5ccab4215cbab29d3697968a258faf7bc7b89",
+          "subject": "Preserve exact resume scrolling in continuous Mushaf text"
+        },
+        {
+          "sha": "111967dc45cbf33ade552962f9dd174df3028fb1",
+          "subject": "Introduce truthful Quran hub hero and shared reader state"
+        },
+        {
+          "sha": "ad9222c1aedf08ad38429087319e58a70d1ec941",
+          "subject": "Render Quran as continuous Mushaf with long-press actions"
+        },
+        {
+          "sha": "865f31e21f3823d93012c77a0b6e3ced37b7fedf",
+          "subject": "Finish Quran premium selection sheets"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/quran/QuranMushafPage.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "dependencies": [
+        "21.19",
+        "protected reading"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranMushafPage.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "PARTIAL INTEGRATION",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.8",
+      "source_commits": [
+        {
+          "sha": "ecb7c2b3d71baebc0ac01baa9b744f04083f8df4",
+          "subject": "Implement Night Prayer immersive truthful hero"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt"
+      ],
+      "dependencies": [
+        "02.7.2",
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "REIMPLEMENT ON TOP OF NEWER CODEX LOGIC",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.9",
+      "source_commits": [
+        {
+          "sha": "30587299f8d2d8108f86af90557241900c21b67e",
+          "subject": "Refine provider-safe premium Watch hierarchy"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/learning/WatchScreen.kt"
+      ],
+      "dependencies": [
+        "21.19",
+        "retained player"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/learning/WatchScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/learning/WatchScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.5",
+      "source_commits": [
+        {
+          "sha": "1cccdcd943aaa16d0562f7d45448cf3cf2a576e3",
+          "subject": "Implement premium Audio hierarchy and selection sheets"
+        },
+        {
+          "sha": "6093ede9af4565e47aedb7b70d588e27ae6296be",
+          "subject": "Remove duplicated Audio screen tail after premium refactor"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "dependencies": [
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.13",
+      "source_commits": [
+        {
+          "sha": "44c842325f0107a4ed8e5f491f808edf53f1eb4d",
+          "subject": "Implement authoritative Upcoming and Live immersive hero"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt"
+      ],
+      "dependencies": [
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "21.7",
+      "source_commits": [
+        {
+          "sha": "e9893d6f0f540f9c6e0aa6e735bca6502f136594",
+          "subject": "Implement calm category-aware Adhkar premium hierarchy"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "dependencies": [
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "04.1",
+      "source_commits": [
+        {
+          "sha": "c61e58c635e855084186380a332d7849f40475dc",
+          "subject": "Harden background playback and lockscreen session lifecycle"
+        },
+        {
+          "sha": "b8f44fd4d135dd573a7b374477d7fd81cec0a323",
+          "subject": "Declare playback service task-removal continuity"
+        },
+        {
+          "sha": "435d8a1c8f7965f54ffc041e0aa7e89a7a49ba73",
+          "subject": "Hydrate Audio UI from retained MediaSession state"
+        },
+        {
+          "sha": "9747b58a35e1539d8943476f841dcca017103e52",
+          "subject": "Expose retained background playback state in Audio UI"
+        },
+        {
+          "sha": "805fda86cb125c0815fbd01ba99768b31df9f20e",
+          "subject": "Add retained playback label"
+        },
+        {
+          "sha": "c4b3f996fabb26a4865f35299a83c7f58b2dce40",
+          "subject": "Add retained playback label"
+        }
+      ],
+      "files": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt",
+        "android/app/src/main/java/org/athar/app/media/PlaybackService.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "Media3 foundation"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt",
+        "android/app/src/main/java/org/athar/app/media/PlaybackService.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "04.2",
+      "source_commits": [
+        {
+          "sha": "db9b7aab9cc6b7613ed4b03b92829b246c9c11c8",
+          "subject": "Expose Media3 audio-focus interruption state"
+        },
+        {
+          "sha": "721a7479b57710083f9b2bebbf7fec49ea2dbc22",
+          "subject": "Show audio focus interruptions without custom autoplay"
+        },
+        {
+          "sha": "b35918a3244b6c7fe25c3c3bcc98becf4992df1a",
+          "subject": "Add localized audio interruption state"
+        },
+        {
+          "sha": "c1cb071744f99386e2cce8e37499c8515e05980e",
+          "subject": "Add localized audio interruption state"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "04.1"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "04.3",
+      "source_commits": [
+        {
+          "sha": "08bbee69565484a5c07c130cc100e93257976945",
+          "subject": "Harden audio network recovery and stale request ownership"
+        },
+        {
+          "sha": "1d6e2bd5766f02a3317b6eaf3aecaef998e047ca",
+          "subject": "Expose explicit audio recovery action"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt"
+      ],
+      "dependencies": [
+        "04.2"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "04.4",
+      "source_commits": [
+        {
+          "sha": "87a10189841b7467b0e4c6e7d9c6d2391926759f",
+          "subject": "Validate provider ayah timing before clipping"
+        },
+        {
+          "sha": "cee3b3d2477b34c38a356cc9dd14a887889eb039",
+          "subject": "Validate ayah timing and retain clip origin metadata"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/media/AudioTiming.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt"
+      ],
+      "dependencies": [
+        "04.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioTiming.kt",
+        "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "04.5",
+      "source_commits": [
+        {
+          "sha": "a7f17479cf1a52a5d238677e702febb72c88d77e",
+          "subject": "Add bounded radio catalog search"
+        },
+        {
+          "sha": "8d19740596370d5a3f6f2a2b85cd621a2f110d84",
+          "subject": "Add searchable source-aware radio catalog"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+        "backend/src/Providers/Mp3Quran.php"
+      ],
+      "dependencies": [
+        "04.4"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Providers/Mp3Quran.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "05.1",
+      "source_commits": [
+        {
+          "sha": "188ee7d9f68d32d60881b58b431f9e3efa69253a",
+          "subject": "Include source references in Adhkar search"
+        },
+        {
+          "sha": "031b88a2d57ba5de2aae71b020fe70252c17b828",
+          "subject": "Add Adhkar all-categories label"
+        },
+        {
+          "sha": "ea33a8858cf26318bffea57c15304126efb76733",
+          "subject": "Add Adhkar all-categories label"
+        },
+        {
+          "sha": "d45b818545288d0dd431b0d883cd4d0c84975be1",
+          "subject": "Complete searchable all-category Adhkar discovery"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Catalog/CatalogService.php"
+      ],
+      "dependencies": [
+        "catalog foundation"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Catalog/CatalogService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "05.2",
+      "source_commits": [
+        {
+          "sha": "078062cb5d75e50e5c90bd4497c777bbe2689342",
+          "subject": "Make Adhkar progress and activity completion day-aware"
+        },
+        {
+          "sha": "d9efa641d35e9fd77f550ae6935a3032bef3a002",
+          "subject": "Accept bounded activity completion dates"
+        },
+        {
+          "sha": "023a72429d57c174967aed127cd90349ff44cd44",
+          "subject": "Add safe UTC day rollover to protected Adhkar counters"
+        },
+        {
+          "sha": "4c6008d7e703951235e074655dfd84d73f88f3a5",
+          "subject": "Expose current-day readiness for protected Adhkar UI"
+        },
+        {
+          "sha": "6086176944dcb8a5b5a5b34dd4147604b31f9c6e",
+          "subject": "Explain and block stale previous-day Adhkar mutations"
+        },
+        {
+          "sha": "6716c788b810f2fff647db4900d2bb88883df904",
+          "subject": "Add previous-day Adhkar pending guidance"
+        },
+        {
+          "sha": "55d0e28024019bfe21e8ba1900e7c50109794bdb",
+          "subject": "Add previous-day Adhkar pending guidance"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "dependencies": [
+        "05.1",
+        "owned mutation guards"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "05.3",
+      "source_commits": [
+        {
+          "sha": "c1e66df303c2a0495fb1da6b8d374040a32aea5d",
+          "subject": "Expose genuine Adhkar completion statistics"
+        },
+        {
+          "sha": "c1ca180ec178a0fad65e461401ac993ed6f2f959",
+          "subject": "Route personal Adhkar statistics"
+        },
+        {
+          "sha": "b959edb5c3aecf384e176adb68ca8069bb08ec30",
+          "subject": "Expose pending genuine Adhkar completion count"
+        },
+        {
+          "sha": "99bf164cf2189277224e3df1c84df7c3e9aaf02c",
+          "subject": "Add truthful Adhkar personal statistics surface"
+        },
+        {
+          "sha": "3097a4529a9697962e0aaedcf27466114a882427",
+          "subject": "Add localized Adhkar statistics labels"
+        },
+        {
+          "sha": "5af04be7a58231f261c1516cfda6f624d984cbe6",
+          "subject": "Add localized Adhkar statistics labels"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "dependencies": [
+        "05.2"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "05.4",
+      "source_commits": [
+        {
+          "sha": "e23a956c673d4b6fa49b92959a0cc5509c37de24",
+          "subject": "Improve one-handed and accessible Adhkar counter controls"
+        },
+        {
+          "sha": "954def6c42d27e11a0d215865a85309b8868bb85",
+          "subject": "Close Adhkar screen after statistics integration"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "dependencies": [
+        "05.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "06.1",
+      "source_commits": [
+        {
+          "sha": "760bfb9bf0bcd3a796afa8443a0a14e804dd8fc7",
+          "subject": "Add rights-first native book detail journey"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt"
+      ],
+      "dependencies": [
+        "catalog rights"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "06.2",
+      "source_commits": [
+        {
+          "sha": "aa0124f54fcbcc10f55223a0cb8cde3d102687fc",
+          "subject": "Implement safe durable private book downloads"
+        },
+        {
+          "sha": "dbf9f0c3c01e2e6f83b16888a6e3ab3e7bfeead4",
+          "subject": "Fix durable book response ownership"
+        },
+        {
+          "sha": "034f64beb7c0cb1196cb50299775f4b262d8ce34",
+          "subject": "Add localized book rights and download states"
+        },
+        {
+          "sha": "bf88032ef252758db99782d8bd6e1d5d1bab1c49",
+          "subject": "Add localized book rights and download states"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "06.1",
+        "environment partition"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "06.3",
+      "source_commits": [
+        {
+          "sha": "a08d60f49f63e6192a8ff366fcbc1c6acf584d0f",
+          "subject": "Add book download cancellation and removal management"
+        },
+        {
+          "sha": "0d3b014f54dc384ce4c764e93b351be96d4d081c",
+          "subject": "Add book download management labels"
+        },
+        {
+          "sha": "5993840377c83ef901a01a1199605d0b4ec81c6d",
+          "subject": "Add book download management labels"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "06.2"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "06.4",
+      "source_commits": [
+        {
+          "sha": "e65b253083a3e3acc9ca34c0aa8ae9a359800cc3",
+          "subject": "Implement native integrity-checked PDF reader state"
+        },
+        {
+          "sha": "22adfdefa2c4fe8c0921a5e7c94076b96c6cd2f4",
+          "subject": "Add localized native book reader states"
+        },
+        {
+          "sha": "65263070953b413d494605462c268aac081bdaae",
+          "subject": "Add localized native book reader states"
+        },
+        {
+          "sha": "bea63d9f01595e437d2272347382b255729b9227",
+          "subject": "Wire native book detail and reader navigation"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "dependencies": [
+        "06.3"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "06.5",
+      "source_commits": [
+        {
+          "sha": "0680197801a05a369c4ce6af6617a107f7dcbb50",
+          "subject": "Harden book URL policy and retry classification"
+        },
+        {
+          "sha": "a49d71a8bf0a688b292b22d4c3a69cab6c664826",
+          "subject": "Reuse safe book URL policy for source links"
+        },
+        {
+          "sha": "b02a115c2a2d0548f115078d66a7690247de2ea2",
+          "subject": "Harden rights-gated book download URLs"
+        },
+        {
+          "sha": "ac90c3f1a12ef0f7107f08cd8aafce3376bf2d7a",
+          "subject": "Polish native book reader navigation labels"
+        },
+        {
+          "sha": "b0a561b229eb93df8765835036a2c94ada9500b2",
+          "subject": "Add native book next-page label"
+        },
+        {
+          "sha": "adfac379aa1fe781cec65214c9e07c2c40ef0079",
+          "subject": "Add native book next-page label"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt",
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Catalog/CatalogService.php"
+      ],
+      "dependencies": [
+        "06.4"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Catalog/CatalogService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt",
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/books/BookDetailScreen.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "07.1-07.6",
+      "source_commits": [
+        {
+          "sha": "6e6ae7bb0f80bed7e61b89a16373b1d94ad958a0",
+          "subject": "Add shared account profile input validation"
+        },
+        {
+          "sha": "1ce54475ca68de7ddea8392c9febb077829a8694",
+          "subject": "Support explicit operation success feedback"
+        },
+        {
+          "sha": "94a70de977198f8a301d1e367041bab6d2e48d30",
+          "subject": "Complete validated account profile editing"
+        },
+        {
+          "sha": "46735c76cddd859dbba3e756c332708f774bdf5c",
+          "subject": "Add account display-name validation hint"
+        },
+        {
+          "sha": "e8a000f3b6d6efcc789e15fbd47cfc18941b58c0",
+          "subject": "Add account display-name validation hint"
+        },
+        {
+          "sha": "0c27fc5ec63de3234b73f0b7625e26a9db410263",
+          "subject": "Extend shared account authentication validation"
+        },
+        {
+          "sha": "76076b5cecce2c9783250f05e70b37be4a98824c",
+          "subject": "Apply shared validation to registration and recovery"
+        },
+        {
+          "sha": "3c58ceacff2871226bcdfe349314e04e37502fba",
+          "subject": "Add safe revoke-other-session-family action"
+        },
+        {
+          "sha": "8477c78e2ff9335da957d4ad18a8a8ddca6723d1",
+          "subject": "Route revoke-other-session action"
+        },
+        {
+          "sha": "9e25d1f2ac06b8e22a7519e52682a5bbcc4b1f62",
+          "subject": "Expose revoke-other-sessions to native account UI"
+        },
+        {
+          "sha": "80d22453167f7713c63d0116926cf8d6737140ca",
+          "subject": "Map session revocation success feedback"
+        },
+        {
+          "sha": "aedd2f94ab4d7a3de030d93081098cf9a4837f62",
+          "subject": "Complete auth form validation states"
+        },
+        {
+          "sha": "dbefd627d63e19edb329d75fe55928a749546439",
+          "subject": "Add revoke-other-sessions security control"
+        },
+        {
+          "sha": "48604d4f34f2c3868ca6f3ad6e6db43870c582ff",
+          "subject": "Add session revocation labels"
+        },
+        {
+          "sha": "637e94b646e113e5a1228d784f0ce29e06d48bf6",
+          "subject": "Add session revocation labels"
+        },
+        {
+          "sha": "bd4f7391f36bb38da11f17be8c62c49cb091023f",
+          "subject": "Validate complete private account export payloads"
+        },
+        {
+          "sha": "d92d95f5f1b418216415bd1b48647b2bc840685c",
+          "subject": "Build explicit privacy-safe account export envelope"
+        },
+        {
+          "sha": "49dea95cc19bfeb75143882dc989661c8d9b31ef",
+          "subject": "Complete privacy-safe deliberate account export flow"
+        },
+        {
+          "sha": "5cb3b9d4e3ed6b81951ed01345b46a54e68ccc6b",
+          "subject": "Add explicit account export privacy states"
+        },
+        {
+          "sha": "fdb08e5e923be4c10d926219fd90fd50ac16a015",
+          "subject": "Add explicit account export privacy states"
+        },
+        {
+          "sha": "2854cc00ee5b92e5732a91ec817aebe4af8e9f7c",
+          "subject": "Make owned book downloads revocable on account deletion"
+        },
+        {
+          "sha": "ed84cb957e4e1b4c2dbadb20abf571ce75c782e7",
+          "subject": "Share owned book reader state namespace"
+        },
+        {
+          "sha": "3255f0135d8cbc3af598c17928918331d8068ba9",
+          "subject": "Add owner-scoped local cleanup after account deletion"
+        },
+        {
+          "sha": "68f9d9bf6d0bea3bfea7a80e18c4da7bd450c75b",
+          "subject": "Run owner-scoped local cleanup after account deletion"
+        },
+        {
+          "sha": "88011b49974758b1d7b36caaab677691c7f4c114",
+          "subject": "Add backwards-compatible saved collection paging"
+        },
+        {
+          "sha": "0816524efb031e4bf14c307f2fc0dd846af7cb7b",
+          "subject": "Pass paging query to saved collections"
+        },
+        {
+          "sha": "da349d32b8dde975a44c40a179e9140802da0e37",
+          "subject": "Add exact saved-bookmark ayah destination"
+        },
+        {
+          "sha": "d7c7270632cdac7177ff6d69ac80804ff8ea459d",
+          "subject": "Validate paged saved collections"
+        },
+        {
+          "sha": "1b3174ad0245101f3b0b0137d3b48437bf0a5b2e",
+          "subject": "Complete validated profile editing and conflict recovery"
+        },
+        {
+          "sha": "8e8f16441ab7084e60f95b5f5f8082329a99e115",
+          "subject": "Add localized username conflict guidance"
+        },
+        {
+          "sha": "a32d1f41205c7f51536ecefeccc43428c3c76a0d",
+          "subject": "Add localized username conflict guidance"
+        },
+        {
+          "sha": "d7ab041855b580a4ee738278bad62d391169ad65",
+          "subject": "Normalize OTP at account security boundary"
+        },
+        {
+          "sha": "f2ff5e4da2bf3c5ab4aa60e4dc3b9c37b53de5f5",
+          "subject": "Align password change UI with security validation"
+        },
+        {
+          "sha": "6604722016eb62caccdd2b33a2c8a27dca7634be",
+          "subject": "Make private account export deliberate and failure-safe"
+        },
+        {
+          "sha": "44a3e06518ca58fde502a24c04560e6020875ff2",
+          "subject": "Add private export confirmation guidance"
+        },
+        {
+          "sha": "308891e973959741f1a2906dd2234dbaf68b6642",
+          "subject": "Add private export confirmation guidance"
+        },
+        {
+          "sha": "8b5725e85432fa50f887fca71a2577cccba6120c",
+          "subject": "Close deleted-account book worker races"
+        },
+        {
+          "sha": "607f6d0f08583a54d581d49a54212dbc87b3b905",
+          "subject": "Fix paged saved collections with rollback-safe removal"
+        },
+        {
+          "sha": "e3764de1688065c08dfb9ee8c4f33318c36f3063",
+          "subject": "Add saved collection paging guidance"
+        },
+        {
+          "sha": "fe7fd31b6eac6a7746fc3609f52463a0c5bb29ef",
+          "subject": "Add saved collection paging guidance"
+        },
+        {
+          "sha": "fc09138e0bc1c43467dea32d937f9468993e0a4e",
+          "subject": "Expose genuine personal activity summary"
+        },
+        {
+          "sha": "fa0e3d3727a0aaf0db55f1b183f06ea340cc582b",
+          "subject": "Route personal activity summary"
+        },
+        {
+          "sha": "13afe658d5768be843dbf4378f11759582fa0de4",
+          "subject": "Validate personal activity summary payload"
+        },
+        {
+          "sha": "d1dbdf914de0415ab7e190acd591e6a965efac38",
+          "subject": "Expose personal activity tab in account"
+        },
+        {
+          "sha": "c8827e38486e3912b5370d04497d18fd1c32b26b",
+          "subject": "Add genuine personal activity dashboard"
+        },
+        {
+          "sha": "1e5dab0c5d9c37f770abea46d13505d313ee9c05",
+          "subject": "Add localized personal activity labels"
+        },
+        {
+          "sha": "8f19929561e51fbdf8cc347049c0035676cc1b4c",
+          "subject": "Add localized personal activity labels"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AppViewModel.kt",
+        "android/app/src/main/java/org/athar/app/auth/AccountInput.kt",
+        "android/app/src/main/java/org/athar/app/auth/AuthFeedback.kt",
+        "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+        "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountDeletionCleanup.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountPayloads.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/quran/BookmarkedAyahScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Identity/AuthService.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "dependencies": [
+        "06",
+        "protected export",
+        "owned identity"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Identity/AuthService.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AppViewModel.kt",
+        "android/app/src/main/java/org/athar/app/auth/AccountInput.kt",
+        "android/app/src/main/java/org/athar/app/auth/AuthFeedback.kt",
+        "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+        "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
+        "android/app/src/main/java/org/athar/app/books/BookDownloads.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountDeletionCleanup.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AccountPayloads.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/quran/BookmarkedAyahScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+        "android/app/src/main/java/org/athar/app/books/BookReaderScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/BookmarkedAyahScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "07.7-07.9",
+      "source_commits": [
+        {
+          "sha": "c211bfd291a3ebf0835e8a4fe08fdc77d97c87a1",
+          "subject": "Add revisioned Khatmah plan concurrency"
+        },
+        {
+          "sha": "648b016b67183bfca244c9227860b94a52a79807",
+          "subject": "Implement revisioned canonical Khatmah workload contract"
+        },
+        {
+          "sha": "6b6bef31f87fe10b5ca3e32d828f56c7eb10138d",
+          "subject": "Add explicit Khatmah lifecycle actions"
+        },
+        {
+          "sha": "51f4d1cdb061e7e7c726ea5298b5651c981109e2",
+          "subject": "Route explicit Khatmah lifecycle actions"
+        },
+        {
+          "sha": "3a6f83b892c7ccb7947bac89645daeecfbb2247f",
+          "subject": "Add encrypted revisioned Khatmah local repository"
+        },
+        {
+          "sha": "60984c16ad5af0de6481de1135408f7c086350a1",
+          "subject": "Require explicit Khatmah restart and separate edit validation"
+        },
+        {
+          "sha": "b2b64fc1408aa4c9feb4acf4bf8e04f55c617f03",
+          "subject": "Implement native offline-first Khatmah plan screen"
+        },
+        {
+          "sha": "c6f2edd2be6b9da3a013090af02317e5f7cc90ec",
+          "subject": "Replace legacy Khatmah form with offline-first screen"
+        },
+        {
+          "sha": "b6a2fe43e148ca82d4f1e6d1290455b21b743ca9",
+          "subject": "Add localized Khatmah lifecycle and conflict states"
+        },
+        {
+          "sha": "f54e2e4db9be487ba31065db173b549ee001aea3",
+          "subject": "Add localized Khatmah lifecycle and conflict states"
+        },
+        {
+          "sha": "1f75b517b72193d51c98e29dd54377c52535fd44",
+          "subject": "Make Khatmah form numeric validation explicit"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php",
+        "database/migrations/020_khatmah_revision.sql"
+      ],
+      "dependencies": [
+        "migration020",
+        "account export compatibility"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/Http/ApiKernel.php",
+        "backend/src/Progress/ProgressService.php",
+        "database/migrations/020_khatmah_revision.sql"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "08.1-08.11",
+      "source_commits": [
+        {
+          "sha": "1ab2956a2f784dba788d76bc9fa4e54185c6adb4",
+          "subject": "Anchor Night Prayer identity to local Maghrib date"
+        },
+        {
+          "sha": "b5bc0d6f560eae4b98690e9127e6ae93be450ddf",
+          "subject": "Implement truthful local-Maghrib Tonight dashboard"
+        },
+        {
+          "sha": "ea13b992e3dbadde15298dec8f977387fccd8735",
+          "subject": "Make Tonight the primary Night Prayer dashboard"
+        },
+        {
+          "sha": "4ff18a44750a415fd673771e43887fb2197299e4",
+          "subject": "Add localized Tonight night-identity copy"
+        },
+        {
+          "sha": "c1573912b4f424786938341d1ed48b84123894c2",
+          "subject": "Add localized Tonight night-identity copy"
+        },
+        {
+          "sha": "3c6849709eb425658556a59c6803e8826675c747",
+          "subject": "Add encrypted canonical Night Prayer verse planner"
+        },
+        {
+          "sha": "1d564d00f0e63883e3807cd63d78bf991ff4391a",
+          "subject": "Implement encrypted Night Prayer verse planning workflow"
+        },
+        {
+          "sha": "14d8f1483f79f1b51e49fd7392473e9e0a2c2be1",
+          "subject": "Expose Night Prayer verse planner tab"
+        },
+        {
+          "sha": "caf3c42422992bebe0152f3f92b0d687a6900bde",
+          "subject": "Add localized Night Prayer planning states"
+        },
+        {
+          "sha": "d4230dfa5bb1c1f7f82342667c946da35e8331fd",
+          "subject": "Add localized Night Prayer planning states"
+        },
+        {
+          "sha": "4d2b70a770fbd97f71245fec3f8c18679925e195",
+          "subject": "Add gap-safe Night Prayer plan continuation"
+        },
+        {
+          "sha": "abd93914032d6f3b3a7af808fbfc921ba8abba77",
+          "subject": "Provide explicit Night sessions to verse planner"
+        },
+        {
+          "sha": "e54713045ef1ddeafdef52520d6e9086c582a1e8",
+          "subject": "Show gap-safe Night Prayer continuation without altering Quran state"
+        },
+        {
+          "sha": "70ebcfa4b320bb08b6c06de21436cfc7a374d1a9",
+          "subject": "Add Night Prayer continuation copy"
+        },
+        {
+          "sha": "2988a06804e3accef9cce3fe1831ddb9ab4d06b0",
+          "subject": "Add Night Prayer continuation copy"
+        },
+        {
+          "sha": "8cf085884d2e0693410a526b23b041a76d61ffd4",
+          "subject": "Allow honest progress updates on overdue Khatmah plans"
+        },
+        {
+          "sha": "9a120b1820294723d080ddd5663d9fe4a7296d6a",
+          "subject": "Keep Khatmah UI account-scoped and overdue-safe"
+        },
+        {
+          "sha": "a09031d5497a3ec65164069a05e0d6e33e953595",
+          "subject": "Permit overdue Khatmah progress without backdating edits"
+        },
+        {
+          "sha": "e3f397ca10ff98a5a11e8b211bd201ef490503e4",
+          "subject": "Preserve Khatmah conflicts when account plan is absent"
+        },
+        {
+          "sha": "b4bb09f6f48d3c9be7fe53036f668e0a3ae2144b",
+          "subject": "Include retained Khatmah draft in private export"
+        },
+        {
+          "sha": "8c266822bb650cd3ada3d453bd72ab9c0a05914a",
+          "subject": "Wire retained Khatmah state into account export"
+        },
+        {
+          "sha": "4e7dd2da4d2c335f7c0d68930e1745f5a835f62a",
+          "subject": "Document retained Khatmah in account export"
+        },
+        {
+          "sha": "ad7ebe101b3ed0d42df718659de31624e76008dd",
+          "subject": "Document retained Khatmah in account export"
+        },
+        {
+          "sha": "78917fc297156a3837539aa788c49bf2fd4422a0",
+          "subject": "Document implemented Khatmah lifecycle and offline contract"
+        },
+        {
+          "sha": "6a8426625dd9f6020a27fe4d9122f1b26aca72a6",
+          "subject": "Implement durable monotonic Night Prayer session timer"
+        },
+        {
+          "sha": "4febd2a214ce2f9553467dc3e933197a8c8e5ff4",
+          "subject": "Stop measured Night Prayer time at the Fajr boundary"
+        },
+        {
+          "sha": "89b616ebbf471487140ad817f6042415398ae79e",
+          "subject": "Preserve measured Night Prayer context when recording sessions"
+        },
+        {
+          "sha": "ea50d58e74b4cd40fbc9f515f11641f632803660",
+          "subject": "Add premium measured Night Prayer timer journey"
+        },
+        {
+          "sha": "b8027d7321c52d7cb2e84a229959b829ec2a3dfc",
+          "subject": "Keep Night Prayer timer lifecycle scoped across sections"
+        },
+        {
+          "sha": "8ba6563e95a57f8ce1b1fa598ebbb8fbab8c29ba",
+          "subject": "Expose measured session timer on Tonight dashboard"
+        },
+        {
+          "sha": "d8be2c13ce2d74b7925e7cd9cfa0d3f85a1c722b",
+          "subject": "Use screen-scoped Night Prayer timer controller"
+        },
+        {
+          "sha": "68d5550b188eedfc42f6cedfd0065252d12cf10e",
+          "subject": "Add measured Night Prayer timer localization"
+        },
+        {
+          "sha": "7076fc5bb8bb5b95707f383d511db1ad09f58b31",
+          "subject": "Add measured Night Prayer timer localization"
+        },
+        {
+          "sha": "cd00bd171838a5bd68d2f5c7191f2f276ca83656",
+          "subject": "Make measured Night Prayer pace robust and non-competitive"
+        },
+        {
+          "sha": "f23c34cd2feb60f62001deb4c19903f67e156762",
+          "subject": "Explain measured pace sample sufficiency"
+        },
+        {
+          "sha": "980e41a4cde5cce7ebcdaafeed0f1404f4a3a2b6",
+          "subject": "Align backend measured pace with robust sample insight"
+        },
+        {
+          "sha": "c11aa0780b856988d2a760d6cdf99ae81e6e1df6",
+          "subject": "Explain measured pace data quality"
+        },
+        {
+          "sha": "d56eb39e06e3c0049dc2b8ace097f1ff431f016d",
+          "subject": "Explain measured pace data quality"
+        },
+        {
+          "sha": "990ff9db06c76f008be23bd438a710d327bf1787",
+          "subject": "Add revisioned Night Prayer preference contract"
+        },
+        {
+          "sha": "685086654369855a9e9f975dea775361bdcdd1f7",
+          "subject": "Persist revisioned Night Prayer city and calculation settings"
+        },
+        {
+          "sha": "d0eef51044efc2e9371ddd09d1b63e0a1737e0e6",
+          "subject": "Add Night Prayer saved-location localization"
+        },
+        {
+          "sha": "62634a161aa55ffc839461288536495600da318d",
+          "subject": "Add Night Prayer saved-location localization"
+        },
+        {
+          "sha": "a770f65fc76547bbf7d6f3b23ebe2505c5d81e89",
+          "subject": "Add accessible yearly Night Prayer calendar model"
+        },
+        {
+          "sha": "3efe5593f5a2fc79577c99713e1f0f24aeca4991",
+          "subject": "Add accessible yearly Night Prayer activity view"
+        },
+        {
+          "sha": "dd62b6aeca8335ceec62731d2ca726818c7bf84a",
+          "subject": "Wire monthly and yearly Night Prayer calendar views"
+        },
+        {
+          "sha": "8c365d8ed51f5ba8acf119c415b42d2bacfbd0d0",
+          "subject": "Add yearly Night Prayer calendar localization"
+        },
+        {
+          "sha": "45a7554a20ec641a88ee292cb72e21360bb8cdab",
+          "subject": "Add yearly Night Prayer calendar localization"
+        },
+        {
+          "sha": "ca5bcd0f3b6424769a53d536c9c4b1025c3e4d08",
+          "subject": "Expose explicit Night Prayer streak insights"
+        },
+        {
+          "sha": "f2fffa2a22b71767a6fc72fdae0b99a2708a4bd9",
+          "subject": "Keep current streak neutral before an unfinished night"
+        },
+        {
+          "sha": "085a629238c045661b6d106f557c09be5ad2ea30",
+          "subject": "Add private Night Prayer consistency and record insights"
+        },
+        {
+          "sha": "79ff5c4b32b78e8b48dd32b00ca28ce526207ebc",
+          "subject": "Expose private Night Prayer insights section"
+        },
+        {
+          "sha": "437086b390e07e1d14811c58f6307c1594e0e7f3",
+          "subject": "Add Night Prayer insights localization"
+        },
+        {
+          "sha": "7aa582c4011d65b82cd290d6c6c4126e90b17cfd",
+          "subject": "Add Night Prayer insights localization"
+        },
+        {
+          "sha": "164afd246e20baf5f229d351fb33329c5841563a",
+          "subject": "Add paged detailed Night Prayer history journey"
+        },
+        {
+          "sha": "8da452b02daa7cf4911d88dfeae3e009c51a8d59",
+          "subject": "Localize Night Prayer history calculation context"
+        },
+        {
+          "sha": "2dbc3f08592fbb630ffb60193ed9e96f64c25995",
+          "subject": "Add detailed Night Prayer history localization"
+        },
+        {
+          "sha": "798dc98eeb54b0cecaa4ba089bfa6e9f6ac8e6f4",
+          "subject": "Add detailed Night Prayer history localization"
+        },
+        {
+          "sha": "e675fdf8e710162420dcabc3fb65d35083513e98",
+          "subject": "Complete local-only Night Prayer exemption management"
+        },
+        {
+          "sha": "88ad4e67f093009d41334089d818202d9b72dc81",
+          "subject": "Fix Night Prayer exemption manager structure"
+        },
+        {
+          "sha": "ede56079f027ba108d99c770df6e60e86682b599",
+          "subject": "Add local exemption management localization"
+        },
+        {
+          "sha": "8b76ff9a803036698d15b3855c8dee1546e29752",
+          "subject": "Add local exemption management localization"
+        },
+        {
+          "sha": "29028f5d7cde176b92f23f0aee27153628942d23",
+          "subject": "Document Night Prayer parallel implementation and pending acceptance"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightCalendar.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightCalendarScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightInsightsScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimer.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimerCard.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightYearOverview.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/NightPrayer/NightPrayerService.php",
+        "backend/src/Progress/ProgressService.php",
+        "docs/features/KHATMAH.md",
+        "docs/features/NIGHT_PRAYER.md"
+      ],
+      "dependencies": [
+        "02.7.2",
+        "21.19"
+      ],
+      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "database_api_impact": [
+        "backend/src/NightPrayer/NightPrayerService.php",
+        "backend/src/Progress/ProgressService.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightCalendar.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightCalendarScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightInsightsScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimer.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimerCard.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightYearOverview.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightCalendarScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightInsightsScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt"
+      ],
+      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "integration_decision": "REIMPLEMENT ON TOP OF NEWER CODEX LOGIC",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": [
+        {
+          "sha": "8cf085884d2e0693410a526b23b041a76d61ffd4",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "9a120b1820294723d080ddd5663d9fe4a7296d6a",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "a09031d5497a3ec65164069a05e0d6e33e953595",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "e3f397ca10ff98a5a11e8b211bd201ef490503e4",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "b4bb09f6f48d3c9be7fe53036f668e0a3ae2144b",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "8c266822bb650cd3ada3d453bd72ab9c0a05914a",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "4e7dd2da4d2c335f7c0d68930e1745f5a835f62a",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "ad7ebe101b3ed0d42df718659de31624e76008dd",
+          "task": "07.7-07.9"
+        },
+        {
+          "sha": "78917fc297156a3837539aa788c49bf2fd4422a0",
+          "task": "07.7-07.9"
+        }
+      ]
+    }
+  ],
+  "known_blockers": [
+    "parallel public/index.php PHP syntax error line63 (later WP20 unsubscribe change)",
+    "OTP bodies stored plaintext in email outbox",
+    "Book files/work/reader state omit API environment partition",
+    "retainedAccountData new required Khatmah parameter breaks four current instrumentation call sites"
+  ],
+  "deferred_task": "02.8: preserve local implementation/evidence; reconcile and close only after available parallel batches stabilize",
+  "integration_base_checkpoint": "224a18652ff5cc5abfdbbd25d9f1da657479de8b",
+  "explicit_classifications": [
+    {
+      "sha": "eb24c1f63d058ae6c26b0b37b8fda010c8125531",
+      "decision": "SUPERSEDED",
+      "reason": "Stale parallel-only handoff replaced by this canonical integration ledger; no functional code."
+    },
+    {
+      "sha": "7f23e72f15c152f6c8b6beff1c6253f1cb00eff7",
+      "decision": "PARTIAL INTEGRATION",
+      "reason": "Only owner download route/session refresh compatibility adopted for17.1. Full owner recovery task17.6 remains pending; do not skip this source commit."
+    }
+  ]
+}

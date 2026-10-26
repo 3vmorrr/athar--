@@ -1,3 +1,7 @@
+## Task17.1 — independent Admin authentication integration
+
+49 actual HTTP checks and20,000 isolated backend assertions PASS. PHP/Python/JS syntax, Arabic/English browser sign-in/logout/password visibility and clean login captures reviewed. Source authentication required owner-session compatibility, test SQL quoting and static asset router fixes. No schema/Android change; no destructive recovery action. See [detailed acceptance and limits](ADMIN_AUTHENTICATION.md). Exact source cursor7fd87ade0a9fb5101962e360fee7d48f3fdb871a; task17.2 follows. WP02.8 remains PARTIAL/deferred and retains its checkpoint224a18652ff5cc5abfdbbd25d9f1da657479de8b.
+
 ## Task02.8 — strict connected OS-scheduler subgate (PARTIAL)
 
 `os-connected-scheduler-build.log` PASS (1m40s):56 unchanged JVM cases, production/test APK/lint and316 resources. Strict requireValidatedScheduler=true API27 Arabic1/1 (5.171s), English1/1 (5.172s) PASS. Active INTERNET/VALIDATED connectivity and the installed WorkManager terminal SUCCEEDED path were mandatory; direct-doWork offline fallback could not satisfy these runs. Wrong owner/environment/unreadable-byte and exemption-retention checks remain. Scoped secret/diff review PASS. This does not certify network transition, process death or reboot. Existing instrumentation-only fixture origin differs from ordinary startup origin, so the remaining harness must keep the actual compiled origin stable; see OS_SYNC_LIFECYCLE.md. No global network/font/animation setting, key or application data was reset.

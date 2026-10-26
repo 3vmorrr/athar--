@@ -1,5 +1,11 @@
 # Implementation plan
 
+## Parallel integration checkpoint — task17.1
+
+Independent Admin authentication is integrated with corrections and applicable acceptance. Source cursor is `7fd87ade0a9fb5101962e360fee7d48f3fdb871a`; the full pre-integration map and pending groups live in [PARALLEL_INTEGRATION.json](PARALLEL_INTEGRATION.json). Main base checkpoint was `224a18652ff5cc5abfdbbd25d9f1da657479de8b`. Next task17.2 is the independent bilingual shell. WP02.8 remains PARTIAL and deferred under the user's integration-first instruction. No bulk branch merge has occurred; source implementation is not completion evidence.
+
+Task17.1:49 real HTTP assertions and20,000 disposable backend assertions PASS; PHP/Python/JS syntax and Arabic/English browser authentication/logout/password visibility reviewed. No migration or Android change. Scope/fixes/limitations: [authentication acceptance](../testing/ADMIN_AUTHENTICATION.md). WP17 closure1/6 (17% rounded); overall46% (46.38 weighted, uncertainty±10pp);137 tasks open. Only the accepted authentication slice earns credit.
+
 ## Strict executable queue —26 October2026
 
 The [ordered task queue](TASK_QUEUE.md) and editable [task records](TASK_QUEUE.json) refine the existing24-package roadmap. Exactly one implementation task is active on this track; parallel/admin-foundation independently reserves17.1–17.3 (issues1–3, Draft PR4). Preserve that ownership; no duplicate implementation or source-only completion credit, and no Draft PR merge before actual acceptance and reconciliation. each record defines scope/state/dependencies/modules/tests/device gates/Definition of Done/contribution. Completed02.1–02.7.1 and the accepted21.1 shared premium slice are preserved. Detailed milestones live in [completion receipts](TASK_COMPLETIONS.md) and [the test report](../testing/TEST_REPORT.md). Latest native baseline:56 JVM/build/test APK/lint/316 resources and Arabic19/English19 hardware recovery/native regression PASS for02.7 (previous main API1 and02.7.2 rejection acceptance remain recorded).
