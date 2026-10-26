@@ -224,8 +224,38 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         item(key = "summary", contentType = "summary") { Surface(Modifier.fillMaxWidth(),shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.surfaceContainerLow,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.night_totals, totals.size, totals.values.sum()), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.night_self_report), style = MaterialTheme.typography.bodySmall)
-            val pace = NightRules.pace(state.rows.mapNotNull { row -> row.first.measuredSeconds?.let { row.first.verseCount to it } })
-            if (pace != null) Text(stringResource(R.string.night_measured_pace, pace))
+            val pace = NightRules.paceInsight(
+                state.rows.mapNotNull { row ->
+                    row.first.measuredSeconds?.let {
+                        row.first.verseCount to it
+                    }
+                },
+            )
+            if (pace != null) {
+                Text(
+                    stringResource(
+                        R.string.night_measured_pace_samples,
+                        pace.secondsPerVerse,
+                        pace.usedSampleCount,
+                    ),
+                )
+                if (pace.usedSampleCount < pace.sampleCount) {
+                    Text(
+                        stringResource(
+                            R.string.night_measured_pace_outliers,
+                            pace.sampleCount - pace.usedSampleCount,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                Text(
+                    stringResource(R.string.night_measured_pace_insufficient),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = { editing = null; form = true }, enabled = !state.busy) { Text(stringResource(R.string.night_add)) }
                 OutlinedButton(onClick = vm::sync, enabled = !state.busy) { Text(stringResource(R.string.sync)) }
