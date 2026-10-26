@@ -985,12 +985,24 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
-    $auditCount = (int) db()->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn();
+    $auditSearch = trim(mb_substr((string) ($_GET['audit_q'] ?? ''), 0, 80, 'UTF-8'));
+    $auditWhere = '';
+    $auditParams = [];
+    if ($auditSearch !== '') {
+        $auditWhere = ' WHERE (a.action LIKE ? OR a.target_type LIKE ? OR COALESCE(a.target_id,\'\') LIKE ?)';
+        $auditLike = '%' . $auditSearch . '%';
+        $auditParams = [$auditLike, $auditLike, $auditLike];
+    }
+    $auditCountQuery = db()->prepare('SELECT COUNT(*) FROM audit_logs a' . $auditWhere);
+    $auditCountQuery->execute($auditParams);
+    $auditCount = (int) $auditCountQuery->fetchColumn();
     $auditPageSize = 100;
     $auditPageCount = max(1, (int) ceil($auditCount / $auditPageSize));
     $auditPage = max(1, min($auditPageCount, (int) (filter_var($_GET['audit_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $auditOffset = ($auditPage - 1) * $auditPageSize;
-    $auditRows = db()->query("SELECT a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email,t.email AS target_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id LEFT JOIN users t ON a.target_type='user' AND t.id=CAST(a.target_id AS UNSIGNED) ORDER BY a.id DESC LIMIT {$auditPageSize} OFFSET {$auditOffset}")->fetchAll();
+    $auditRowsQuery = db()->prepare("SELECT a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email,t.email AS target_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id LEFT JOIN users t ON a.target_type='user' AND t.id=CAST(a.target_id AS UNSIGNED)" . $auditWhere . " ORDER BY a.id DESC LIMIT {$auditPageSize} OFFSET {$auditOffset}");
+    $auditRowsQuery->execute($auditParams);
+    $auditRows = $auditRowsQuery->fetchAll();
     $commentCount = (int) db()->query('SELECT COUNT(*) FROM lesson_comments')->fetchColumn();
     $commentPageSize = 50;
     $commentPageCount = max(1, (int) ceil($commentCount / $commentPageSize));
@@ -1006,8 +1018,8 @@ if ($path === '/admin') {
         'pending_comments' => (int) db()->query("SELECT COUNT(*) FROM lesson_comments WHERE status='pending'")->fetchColumn(),
         'active_users_30d' => (int) db()->query('SELECT COUNT(DISTINCT user_id) FROM account_daily_stats WHERE activity_date>=DATE_SUB(CURRENT_DATE,INTERVAL 29 DAY)')->fetchColumn(),
     ];
-    $activityTotals = db()->query('SELECT COALESCE(SUM(quran_sessions),0) AS quran_sessions,COALESCE(SUM(lesson_completions),0) AS lesson_completions,COALESCE(SUM(adhkar_completions),0) AS adhkar_completions,COALESCE(SUM(book_downloads),0) AS book_downloads FROM account_daily_stats')->fetch();
-    foreach (['quran_sessions','lesson_completions','adhkar_completions','book_downloads'] as $activityMetric) $dashboardMetrics[$activityMetric] = (int) $activityTotals[$activityMetric];
+    // Deliberately exclude worship-specific aggregate counters from Admin analytics.
+    // Operational adoption is represented only by privacy-safe active-user counts.
     $managedUserSearch = trim(mb_substr((string) ($_GET['users_q'] ?? ''), 0, 80, 'UTF-8'));
     $managedUserWhere = '';
     $managedUserParams = [];
@@ -1025,17 +1037,7 @@ if ($path === '/admin') {
     $managedUserPage = max(1, min($managedUserPageCount, (int) (filter_var($_GET['users_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $managedUserOffset = ($managedUserPage - 1) * $managedUserPageSize;
     $managedUsersQuery = db()->prepare("SELECT u.id,u.email,u.display_name,u.username,u.role,u.email_verified_at,u.email_marketing_opt_in,u.suspended_at,u.session_version,u.created_at,u.updated_at,
-        (SELECT COUNT(*) FROM quran_bookmarks b WHERE b.user_id=u.id) AS bookmark_count,
-        (SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=u.id) AS favorite_count,
-        (SELECT COUNT(*) FROM video_progress v WHERE v.user_id=u.id) AS lesson_progress_count,
-        (SELECT COALESCE(SUM(s.quran_sessions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS quran_sessions,
-        (SELECT COALESCE(SUM(s.lesson_completions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS lesson_completions,
-        (SELECT COALESCE(SUM(s.adhkar_completions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS adhkar_completions,
-        (SELECT COALESCE(SUM(s.book_downloads),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS book_downloads,
-        (SELECT MAX(s.activity_date) FROM account_daily_stats s WHERE s.user_id=u.id) AS last_active,
-        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action IN ('account-login-succeeded','admin-login-succeeded')) AS last_login,
-        (SELECT p.status FROM khatmah_plans p WHERE p.user_id=u.id LIMIT 1) AS khatmah_status,
-        (SELECT CONCAT(q.surah,':',q.ayah) FROM quran_positions q WHERE q.user_id=u.id LIMIT 1) AS quran_position
+        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action IN ('account-login-succeeded','admin-login-succeeded')) AS last_login
         FROM users u" . $managedUserWhere . " ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}");
     $managedUsersQuery->execute($managedUserParams);
     $managedUsers = $managedUsersQuery->fetchAll();
