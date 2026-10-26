@@ -106,6 +106,14 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         stored?.let { save(it.copy(user = user), epoch) }
     }
     suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); accept(request("PUT", "me/password", mapOf("current_password" to current, "password" to password, "password_confirmation" to confirmation),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun revokeOtherSessions(expectedUser:Long?=userId) {
+        requireVerifiedOwner(expectedUser)
+        request(
+            "POST",
+            "me/sessions/revoke-others",
+            expectedUser=requireNotNull(expectedUser),
+        )
+    }
     suspend fun delete(password: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password),expectedUser=requireNotNull(expectedUser)); clear(epoch) }
     suspend fun logout(expectedUser:Long?=userId) {
         if(expectedUser!=userId)throw ApiException(401,"session_changed","")

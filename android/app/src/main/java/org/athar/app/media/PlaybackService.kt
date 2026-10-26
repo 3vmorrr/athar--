@@ -1,5 +1,7 @@
 package org.athar.app.media
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.net.Uri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -11,6 +13,7 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.*
 import org.athar.app.AtharApplication
+import org.athar.app.MainActivity
 import org.athar.app.auth.AuthState
 
 /** The public service never accepts arbitrary URLs or private API bearer tokens. */
@@ -23,7 +26,17 @@ class PlaybackService : MediaSessionService() {
             setAudioAttributes(AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_SPEECH).build(), true)
             setHandleAudioBecomingNoisy(true)
         }
-        session = MediaSession.Builder(this, player).setCallback(object : MediaSession.Callback {
+        val sessionActivity = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        session = MediaSession.Builder(this, player)
+            .setSessionActivity(sessionActivity)
+            .setCallback(object : MediaSession.Callback {
             @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
             override fun onConnect(session: MediaSession, controller: MediaSession.ControllerInfo): MediaSession.ConnectionResult {
                 if (controller.packageName != packageName && !controller.isTrusted) return MediaSession.ConnectionResult.reject()
@@ -33,8 +46,15 @@ class PlaybackService : MediaSessionService() {
                 val safe = mediaItems.filter { item -> item.localConfiguration?.uri?.let(::approvedMedia) == true }.toMutableList()
                 return Futures.immediateFuture(safe)
             }
-        }).build()
-        scope.launch { (application as AtharApplication).graph.session.state.collect { state -> if (state !is AuthState.SignedIn) { player.stop(); player.clearMediaItems() } } }
+            }).build()
+        scope.launch {
+            (application as AtharApplication).graph.session.state.collect { state ->
+                if (state is AuthState.SignedOut || state is AuthState.Pending) {
+                    player.stop()
+                    player.clearMediaItems()
+                }
+            }
+        }
     }
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = if ((application as AtharApplication).graph.session.state.value is AuthState.SignedIn) session else null
     override fun onDestroy() { scope.cancel(); session?.run { player.release(); release() }; session = null; super.onDestroy() }

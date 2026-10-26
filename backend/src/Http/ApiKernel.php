@@ -84,6 +84,10 @@ final class ApiKernel
         }
         if($path==='/admin/comments'){$this->method($r,'GET');return [(new \Athar\Learning\DiscussionService($this->db))->moderation($actor,$r->query),200];}
         if(preg_match('#^/admin/comments/([1-9][0-9]*)$#',$path,$m)){$this->method($r,'PUT');return [(new \Athar\Learning\DiscussionService($this->db))->moderate($actor,(int)$m[1],$r->body),200];}
+        if($path==='/me/sessions/revoke-others'){
+            $this->method($r,'POST');
+            return [['revoked_count'=>$this->auth->revokeOtherSessions($actor)],200];
+        }
         if($path==='/me'){
             if($r->method==='GET')return [$this->auth->profile((int)$actor['id']),200];
             if($r->method==='PATCH')return [$this->auth->updateProfile((int)$actor['id'],$r->string('display_name',80),$r->string('username',24)),200];
@@ -109,16 +113,24 @@ final class ApiKernel
             $this->method($r,'PUT');return [$this->progress->savePosition($user,$r->body),200];
         }
         if($path==='/quran/bookmarks'){
-            if($r->method==='GET')return [$this->progress->bookmarks($user),200];
+            if($r->method==='GET')return [$this->progress->bookmarks($user,$r->query),200];
             if($r->method==='DELETE'){$this->progress->deleteBookmarkAt($user,$r->body);return [['status'=>'deleted'],200];}
             $this->method($r,'POST');return [$this->progress->addBookmark($user,$r->body),201];
         }
         if(preg_match('#^/quran/bookmarks/([1-9][0-9]*)$#',$path,$m)){$this->method($r,'DELETE');$this->progress->deleteBookmark($user,(int)$m[1]);return [['status'=>'deleted'],200];}
         if($path==='/me/favorites'){
-            if($r->method==='GET')return [$this->progress->favorites($user),200];
+            if($r->method==='GET')return [$this->progress->favorites($user,$r->query),200];
             if(!in_array($r->method,['PUT','DELETE'],true))throw new ApiError('method_not_allowed',405);
             $id=$r->body['target_id']??null;if(!is_int($id)||$id<1)throw new ApiError('invalid_fields',422,['target_id'=>'invalid']);
             $this->progress->favorite($user,$r->string('target_type',12),$id,$r->method!=='DELETE');return [['saved'=>$r->method!=='DELETE'],200];
+        }
+        if($path==='/me/activity-summary'){
+            $this->method($r,'GET');
+            return [$this->progress->activitySummary($user),200];
+        }
+        if($path==='/me/adhkar-stats'){
+            $this->method($r,'GET');
+            return [$this->progress->adhkarStats($user),200];
         }
         if($path==='/me/adhkar-progress'){
             if($r->method==='GET')return [$this->progress->adhkar($user,$r->query),200];
@@ -128,6 +140,15 @@ final class ApiKernel
             if($r->method==='GET')return [$this->progress->preferences($user),200];
             $this->method($r,'PATCH');return [$this->progress->preferences($user,$r->body),200];
         }
+        if($path==='/me/engagement-preferences'){
+            $engagementPreferences=new \Athar\Engagement\PreferenceService($this->db);
+            if($r->method==='GET')return [$engagementPreferences->get($user),200];
+            $this->method($r,'PATCH');return [$engagementPreferences->update($user,$r->body),200];
+        }
+        if($path==='/me/khatmah/action'){
+            $this->method($r,'POST');
+            return [$this->progress->khatmahAction($user,$r->body),200];
+        }
         if($path==='/me/khatmah'){
             if($r->method==='GET')return [$this->progress->khatmah($user),200];
             $this->method($r,'PUT');return [$this->progress->saveKhatmah($user,$r->body),200];
@@ -136,7 +157,18 @@ final class ApiKernel
             if($r->method==='GET')return [$this->progress->lessonProgress($user,(int)($r->query['lesson_id']??0)),200];
             $this->method($r,'PUT');return [$this->progress->saveLessonProgress($user,$r->body),200];
         }
-        if($path==='/me/activity'){$this->method($r,'POST');$this->progress->activity($user,$r->string('event_id',36),$r->string('activity_type',32));return [['recorded'=>true],200];}
+        if($path==='/me/activity'){
+            $this->method($r,'POST');
+            $activityDate=$r->body['activity_date']??null;
+            if($activityDate!==null&&!is_string($activityDate))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+            $this->progress->activity(
+                $user,
+                $r->string('event_id',36),
+                $r->string('activity_type',32),
+                $activityDate,
+            );
+            return [['recorded'=>true],200];
+        }
         if(preg_match('#^/lessons/([1-9][0-9]*)/comments$#',$path,$m)){
             if($r->method==='GET')return [$this->progress->comments($user,(int)$m[1]),200];
             $this->method($r,'POST');if(!$this->rates->consume('comments',(string)$user,3,3600))throw new ApiError('rate_limited',429);return [$this->progress->addComment($user,(int)$m[1],$r->string('body',2000)),201];
@@ -154,6 +186,7 @@ final class ApiKernel
         }
         if(str_starts_with($path,'/night-prayer/')){
             if(!$this->nightPrayer)throw new ApiError('service_unavailable',503);
+            if($path==='/night-prayer/config'){$this->method($r,'GET');return [$this->nightPrayer->publicConfig(),200];}
             if($path==='/night-prayer/sessions'){
                 if($r->method==='GET')return [$this->nightPrayer->sessions($user,$r->query),200];
                 $this->method($r,'POST');return [$this->nightPrayer->write($user,$r->string('id',36),$r->body),201];

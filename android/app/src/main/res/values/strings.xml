@@ -11,17 +11,128 @@
     <string name="welcome_back">أهلًا بعودتك</string><string name="create_account">إنشاء حساب</string><string name="login">تسجيل الدخول</string><string name="logout">تسجيل الخروج</string>
     <string name="auth_description">سجّل الدخول لمتابعة رحلتك في أثر.</string><string name="display_name">الاسم الظاهر</string><string name="username">اسم المستخدم</string><string name="email">البريد الإلكتروني</string><string name="password">كلمة المرور</string><string name="confirm_password">تأكيد كلمة المرور</string><string name="current_password">كلمة المرور الحالية</string><string name="new_password">كلمة المرور الجديدة</string>
     <string name="show_password">إظهار كلمة المرور</string><string name="hide_password">إخفاء كلمة المرور</string>
-    <string name="username_hint">3–24 حرفًا إنجليزيًا صغيرًا أو رقمًا أو شرطة سفلية.</string><string name="password_hint">10 أحرف على الأقل.</string>
+    <string name="display_name_hint">من حرفين إلى 80 حرفًا.</string><string name="username_hint">3–24 حرفًا إنجليزيًا صغيرًا أو رقمًا أو شرطة سفلية.</string>
+<string name="username_unavailable">اسم المستخدم مستخدم بالفعل أو غير متاح. جرّب اسمًا آخر.</string><string name="password_hint">10 أحرف على الأقل.</string>
     <string name="forgot_password">نسيت كلمة المرور؟</string><string name="recover_password">استعادة كلمة المرور</string><string name="send_reset">إرسال رمز الاستعادة</string><string name="enter_reset_code">أدخل رمز الاستعادة</string><string name="reset_password">تعيين كلمة المرور</string>
     <string name="verify_title">أكد بريدك لتفعيل الحساب</string><string name="verify_body">أدخل الرمز المكوّن من 6 أرقام لبريدك: %1$s</string><string name="verification_code">رمز التحقق</string><string name="verify_action">تأكيد البريد</string><string name="resend_code">طلب رمز جديد</string>
     <string name="mail_accepted">قبل مزوّد البريد رسالة الرمز. قد يستغرق وصولها قليلًا؛ راجع البريد غير الهام أيضًا.</string><string name="mail_unavailable">تعذر إرسال الرمز. الحساب ما زال غير مفعّل؛ يمكنك طلب رمز جديد لاحقًا.</string><string name="reset_sent">إذا كان البريد مسجلًا، ستصلك رسالة برمز الاستعادة.</string><string name="password_updated">تم تحديث كلمة المرور. يمكنك تسجيل الدخول الآن.</string>
     <string name="password_mismatch">كلمتا المرور غير متطابقتين.</string><string name="invalid_input">راجع الحقول المطلوبة.</string><string name="network_error">تعذر الاتصال الآن. تحقق من الشبكة وحاول مجددًا.</string><string name="loading">جارٍ التحميل…</string><string name="retry">إعادة المحاولة</string><string name="offline_notice">تُعرض بيانات محفوظة على جهازك. ستُحدّث عند عودة الاتصال.</string><string name="empty_state">لا توجد عناصر متاحة حتى الآن.</string><string name="save">حفظ</string><string name="saved">تم الحفظ</string><string name="cancel">إلغاء</string><string name="delete_action">حذف</string><string name="back">رجوع</string><string name="close">إغلاق</string><string name="search">بحث</string><string name="search_hint">اكتب كلمة للبحث</string><string name="more">عرض المزيد</string>
-    <string name="home">الرئيسية</string><string name="quran">القرآن</string><string name="knowledge">المعرفة</string><string name="adhkar">الأذكار</string><string name="account">حسابي</string><string name="night_prayer">قيام الليل</string><string name="books">الكتب</string><string name="scholars">العلماء</string><string name="series">السلاسل</string><string name="lessons">الدروس</string><string name="dorar_search">البحث في الدرر</string><string name="latest_lessons">أحدث الدروس</string><string name="view_all">عرض الكل</string><string name="hello_name">مرحبًا، %1$s</string><string name="home_invitation">اختر ما تقرؤه، تتعلمه، أو تسجّله في رحلتك اليوم.</string>
-    <string name="read">قراءة</string><string name="listen">استماع</string><string name="tafsir">تفسير</string><string name="recitation_review">مراجعة التلاوة</string><string name="surah">السورة</string><string name="ayah">الآية</string><string name="juz">الجزء</string><string name="hizb">الحزب</string><string name="page">الصفحة</string><string name="open_reader">افتح في المصحف</string><string name="bookmark">حفظ علامة</string><string name="bookmarks">علاماتي</string><string name="resume_reading">متابعة القراءة</string><string name="font_size">حجم خط القرآن</string><string name="quran_source">النص: مشروع تنزيل، نسخة 1.1. النص محفوظ كما ورد في المصدر.</string><string name="source">المصدر</string><string name="reference">المرجع</string>
+    <string name="home">الرئيسية</string><string name="quran">القرآن</string><string name="knowledge">المعرفة</string><string name="adhkar">الأذكار</string>
+<string name="all_categories">كل التصنيفات</string><string name="account">حسابي</string><string name="night_prayer">قيام الليل</string>
+<string name="night_tonight">الليلة</string>
+<string name="night_plan_title">خطة القراءة</string>
+<string name="night_plan_notice">الخطة أداة خاصة للتخطيط فقط. حفظها لا يعني أنك قرأت الآيات ولا يغيّر موضع القرآن أو الختمة.</string>
+<string name="night_plan_preview">%1$s · %2$d آية</string>
+<string name="night_save_plan">حفظ الخطة على الجهاز</string>
+<string name="night_saved_plan">الخطة المحفوظة</string>
+<string name="night_plan_empty">لا توجد خطة قراءة محفوظة لقيام الليل.</string>
+<string name="night_plan_reference">مرجع خطة قيام الليل</string>
+<string name="night_plan_verse_count">%1$d آية مخططة</string>
+<string name="night_plan_separate_progress">هذه الخطة مستقلة عن موضع قراءة القرآن وخطة الختمة، ولا تُسجل كتقدم إلا عند اختيار «تسجيل كمكتمل» صراحةً.</string>
+<string name="night_plan_continue_at">الموضع التالي في الخطة: سورة %1$d · آية %2$d</string>
+<string name="night_plan_continue_separate">هذا الموضع خاص بخطة قيام الليل فقط، ولم نغيّر موضع قراءة القرآن أو الختمة.</string>
+<string name="night_plan_recorded_complete">كل نطاق الخطة مغطى بجلسات صريحة مسجلة</string>
+<string name="night_record_completed">تسجيل كمكتمل</string>
+<string name="night_copy_reference">نسخ المرجع</string>
+<string name="night_clear_plan">مسح الخطة المحفوظة</string>
+<string name="night_record_date_notice">اختر تاريخ المغرب الذي تنتمي إليه الجلسة صراحةً. بعد منتصف الليل قد يكون تاريخ الليلة هو اليوم السابق.</string>
+<string name="night_maghrib_date">تاريخ المغرب للجلسة</string>
+<string name="night_identity_unavailable">تعذر تحديد هوية الليلة بأمان. احفظ المدينة والمنطقة الزمنية وطريقة الحساب أولًا؛ لن نخمن وقت المغرب أو الفجر.</string>
+<string name="night_identity_active">ليلة %1$s جارية الآن</string>
+<string name="night_identity_upcoming">الليلة القادمة مرتبطة بمغرب %1$s</string>
+<string name="night_identity_boundaries">المغرب %1$s · الفجر %2$s</string>
+<string name="night_identity_last_third">يبدأ الثلث الأخير المحسوب عند %1$s</string>
+<string name="night_tonight_verses">آيات مسجلة الليلة</string>
+<string name="night_tonight_sessions">جلسات مسجلة الليلة</string>
+<string name="night_reached_milestone">وصل السجل الصريح إلى مرجع %1$d آية</string>
+<string name="night_next_reference">المرجع التالي في العرض: %1$d آية. ليس هدفًا إلزاميًا ولا سلسلة ضغط.</string>
+<string name="night_recent_log">آخر الليالي المسجلة</string>
+<string name="night_recent_summary">%1$d آية · %2$d جلسة</string>
+<string name="night_milestone_short">مرجع %1$d</string>
+<string name="night_identity_notice">تاريخ الليلة يتبع تاريخ المغرب المحلي عند توفر إعدادات صلاة محفوظة. بعد منتصف الليل يظل السجل تابعًا لنفس تاريخ المغرب حتى الفجر.</string><string name="books">الكتب</string><string name="scholars">العلماء</string><string name="series">السلاسل</string><string name="lessons">الدروس</string><string name="dorar_search">البحث في الدرر</string><string name="latest_lessons">أحدث الدروس</string><string name="view_all">عرض الكل</string><string name="hello_name">مرحبًا، %1$s</string><string name="home_invitation">اختر ما تقرؤه، تتعلمه، أو تسجّله في رحلتك اليوم.</string>
+    <string name="read">قراءة</string><string name="listen">استماع</string>
+<string name="audio_current_playback">التشغيل الحالي</string>
+<string name="audio_interrupted">متوقف مؤقتًا بسبب صوت أو مكالمة أخرى</string><string name="tafsir">تفسير</string><string name="recitation_review">مراجعة التلاوة</string><string name="surah">السورة</string><string name="ayah">الآية</string><string name="juz">الجزء</string><string name="hizb">الحزب</string><string name="page">الصفحة</string><string name="open_reader">افتح في المصحف</string><string name="bookmark">حفظ علامة</string><string name="bookmarks">علاماتي</string><string name="resume_reading">متابعة القراءة</string><string name="font_size">حجم خط القرآن</string><string name="quran_source">النص: مشروع تنزيل، نسخة 1.1. النص محفوظ كما ورد في المصدر.</string><string name="source">المصدر</string><string name="reference">المرجع</string>
     <string name="choose_reciter">اختر القارئ</string><string name="play">تشغيل</string><string name="pause">إيقاف مؤقت</string><string name="stop">إيقاف</string><string name="full_surah">السورة كاملة</string><string name="one_ayah">آية محددة</string><string name="radio">الإذاعة</string><string name="no_timing">تتبّع الآيات غير متاح لهذه الرواية؛ يستمر الصوت بصورة طبيعية.</string><string name="unavailable_review">المراجعة الصوتية المحلية على Android غير متاحة بعد التحقق من توافق هذا الجهاز والنموذج. يظل صوتك على جهازك.</string>
-    <string name="favorites">المفضلة</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
+    <string name="favorites">المفضلة</string>
+<string name="saved_items_total">الإجمالي: %1$d</string>
+<string name="saved_quran_reference">سورة %1$s · آية %2$s</string>
+<string name="bookmark_exact_open_pending">سيتم ربط الفتح المباشر على الآية مع مسار قارئ القرآن بعد دمج مرحلة التنقل الحالية.</string>
+<string name="page_number">صفحة %1$d</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string>
+<string name="book_download_allowed">متاح للتحميل وفق الحقوق المسجلة</string>
+<string name="book_download_unavailable">التحميل غير متاح لهذا الكتاب</string>
+<string name="book_metadata">بيانات الكتاب</string>
+<string name="book_publication_year">سنة النشر: %1$s</string>
+<string name="book_language">اللغة: %1$s</string>
+<string name="book_rights">الحقوق والمصدر</string>
+<string name="book_rights_holder">صاحب الحق</string>
+<string name="book_rights_basis">أساس الإتاحة</string>
+<string name="book_download_permission">إذن التحميل</string>
+<string name="book_open_source">فتح المصدر</string>
+<string name="book_open">فتح الكتاب</string>
+<string name="book_download_progress">جارٍ التحميل · %1$d%%</string>
+<string name="book_download_waiting">التحميل في الانتظار حتى يتوفر الاتصال</string>
+<string name="book_download_failed">تعذر تحميل الكتاب. يمكنك المحاولة مرة أخرى.</string>
+<string name="book_cancel_download">إلغاء التحميل</string>
+<string name="book_remove_download">حذف النسخة المحمّلة</string>
+<string name="book_remove_download_confirm">سيتم حذف النسخة المحلية فقط، ولن يتأثر الكتاب أو المفضلة على حسابك.</string>
+<string name="book_not_downloaded">لا توجد نسخة محمّلة من هذا الكتاب على الجهاز.</string>
+<string name="book_integrity_failed">تعذر التحقق من سلامة النسخة المحمّلة. لن يتم فتح الملف حتى لا نعرض محتوى ناقصًا أو تالفًا.</string>
+<string name="book_remove_corrupt">حذف النسخة التالفة</string>
+<string name="book_page_description">صفحة %1$d من %2$d</string>
+<string name="book_page_count">%1$d / %2$d</string>
+<string name="book_next_page">الصفحة التالية</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
     <string name="reset_counter">تصفير العدّاد</string><string name="next_dhikr">الذكر التالي</string><string name="count_action">سبّح وعدّ</string><string name="completed">اكتمل</string><string name="category">القسم</string><string name="progress_count">%1$d من %2$d</string>
-    <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
+    <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string>
+<string name="activity">نشاطي</string>
+<string name="activity_genuine_only">نعرض فقط ما تم تسجيله صراحةً كتقدّم أو إكمال. لا نعتبر فتح الشاشة قراءة أو استماعًا.</string>
+<string name="activity_lessons_started">دروس بدأتها</string>
+<string name="activity_watch_minutes">دقائق مشاهدة محفوظة</string>
+<string name="activity_tracking">توفر القياس</string>
+<string name="activity_reading_sessions">جلسات القراءة</string>
+<string name="activity_listening_history">سجل الاستماع</string>
+<string name="activity_tracking_available">متاح</string>
+<string name="activity_tracking_unavailable">غير متاح حاليًا</string>
+<string name="activity_recent">آخر 14 يومًا</string>
+<string name="activity_day_summary">%1$d درس مكتمل · %2$d ذكر مكتمل · %3$d تنزيل كتاب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string>
+<string name="khatmah_empty_intro">أنشئ خطة ختمة واقعية بالتاريخ والصفحات، ويمكن حفظ تعديلك على الجهاز حتى تعود الشبكة.</string>
+<string name="khatmah_finished_summary">اكتملت هذه الخطة. ابدأ خطة جديدة فقط عبر إعادة البدء الصريحة.</string>
+<string name="khatmah_paused_summary">الخطة متوقفة مؤقتًا، وبياناتها محفوظة دون احتساب تقدم تلقائي.</string>
+<string name="khatmah_active_summary">تابع تقدمك الحقيقي؛ يعاد حساب الورد اليومي حسب ما أنجزته والوقت المتبقي.</string>
+<string name="khatmah_pending">محفوظة على الجهاز · بانتظار المزامنة</string>
+<string name="khatmah_conflict">توجد نسخة مختلفة على الحساب</string>
+<string name="khatmah_create">إنشاء خطة ختمة</string>
+<string name="khatmah_edit">تعديل خطة الختمة</string>
+<string name="khatmah_completed_hint">من 0 إلى 604 صفحة. لا نضيف صفحات تلقائيًا من قيام الليل.</string>
+<string name="khatmah_no_night_transfer">تقدم قيام الليل لا يُنقل تلقائيًا إلى الختمة. عدّل الصفحات فقط عندما تريد تسجيلها ضمن الخطة.</string>
+<string name="khatmah_progress">تقدم الختمة</string>
+<string name="khatmah_pages_progress">%1$d من %2$d صفحة</string>
+<string name="khatmah_daily_pages">ورد اليوم</string>
+<string name="khatmah_remaining_pages">صفحات متبقية</string>
+<string name="khatmah_days_remaining">أيام متبقية</string>
+<string name="khatmah_starts_in">تبدأ الخطة بعد %1$d يوم</string>
+<string name="khatmah_overdue">انتهى التاريخ المستهدف وما زالت صفحات متبقية. عدّل الموعد أو أعد بدء الخطة.</string>
+<string name="khatmah_behind">متأخر عن المسار المحسوب بـ %1$d صفحة</string>
+<string name="khatmah_ahead">متقدم عن المسار المحسوب بـ %1$d صفحة</string>
+<string name="khatmah_dates">من %1$s إلى %2$s</string>
+<string name="khatmah_pause">إيقاف الخطة مؤقتًا</string>
+<string name="khatmah_resume">استئناف الخطة</string>
+<string name="khatmah_restart">إعادة بدء الخطة</string>
+<string name="khatmah_restart_confirm">ستبدأ خطة جديدة من اليوم ويعود التقدم إلى 0 صفحة. اختر التاريخ المستهدف الجديد.</string>
+<string name="khatmah_finish">إنهاء الخطة</string>
+<string name="khatmah_finish_confirm">تأكيد أن الخطة مكتملة؟ لا يمكن إنهاؤها إلا بعد تسجيل 604 صفحة.</string>
+<string name="khatmah_invalid">راجع تاريخ البداية والنهاية والصفحات. التاريخ المستهدف لا يكون في الماضي، والعدد بين 0 و604.</string>
+<string name="khatmah_conflict_title">راجع نسختي الختمة</string>
+<string name="khatmah_conflict_body">لم نستبدل أي نسخة تلقائيًا. قارن نسخة الجهاز بنسخة الحساب ثم اختر النسخة التي تريد الاحتفاظ بها.</string>
+<string name="khatmah_device_version">نسخة الجهاز</string>
+<string name="khatmah_account_version">نسخة الحساب</string>
+<string name="khatmah_account_missing">لا توجد خطة على الحساب حاليًا.</string>
+<string name="khatmah_use_account">استخدام نسخة الحساب</string>
+<string name="khatmah_keep_device">الاحتفاظ بنسخة الجهاز</string>
+<string name="khatmah_version_details">%1$d صفحة · من %2$s إلى %3$s · %4$s · مراجعة %5$d</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
+<string name="revoke_other_sessions">تسجيل الخروج من الجلسات الأخرى</string>
+<string name="revoke_other_sessions_body">سيتم إلغاء جلسات الأجهزة والمتصفحات الأخرى فقط. ستظل هذه الجلسة الحالية مسجلة الدخول.</string>
+<string name="sessions_revoked">تم تسجيل الخروج من الجلسات الأخرى.</string>
 <string name="sync">مزامنة</string>
 <string name="edit">تعديل</string>
 <string name="use_server">الاحتفاظ بنسخة الخادم</string>
@@ -29,7 +140,35 @@
 <string name="night_totals">%1$d ليلة · %2$d آية</string>
 <string name="night_self_report">هذه سجلاتك الشخصية؛ لا نحكم على قبول عبادتك أو إتقان تلاوتك.</string>
 <string name="night_measured_pace">سرعتك المقاسة: %1$.1f ثانية لكل آية</string>
+<string name="night_measured_pace_samples">متوسط القياس: %1$.1f ثانية لكل آية · من %2$d جلسات مقاسة</string>
+<string name="night_measured_pace_insufficient">نحتاج جلستين مقاستين على الأقل قبل عرض متوسط للسرعة؛ لا نستنتجها من جلسة واحدة.</string>
+<string name="night_measured_pace_outliers">استُبعدت %1$d جلسة شاذة من المتوسط فقط؛ بقيت الجلسات محفوظة في سجلك.</string>
 <string name="night_add">تسجيل جلسة</string>
+<string name="night_timer_title">جلسة مقاسة</string>
+<string name="night_timer_intro">ابدأ القياس فقط عند بدء القراءة فعليًا. يتوقف القياس عند خروج التطبيق للخلفية ولا يحسب وقت الغياب.</string>
+<string name="night_timer_start">ابدأ جلسة مقاسة</string>
+<string name="night_timer_running">القياس جارٍ</string>
+<string name="night_timer_paused">القياس متوقف مؤقتًا</string>
+<string name="night_timer_finished">القياس انتهى · لم تُحفظ الجلسة بعد</string>
+<string name="night_timer_pause">إيقاف مؤقت</string>
+<string name="night_timer_resume">استئناف القياس</string>
+<string name="night_timer_finish">إنهاء القياس</string>
+<string name="night_timer_record">تسجيل الآيات وحفظ الجلسة</string>
+<string name="night_timer_paused_background">توقف القياس تلقائيًا عند انتقال التطبيق للخلفية.</string>
+<string name="night_timer_paused_recovered">استُعيدت الجلسة متوقفة من آخر نقطة محفوظة؛ لم نحسب زمن إغلاق التطبيق.</string>
+<string name="night_timer_paused_fajr">توقف القياس عند حد الفجر لهذه الليلة.</string>
+<string name="night_timer_paused_user">أوقفت القياس مؤقتًا.</string>
+<string name="night_timer_outside_night">لا يمكن بدء أو استئناف القياس خارج حدود الليلة المحسوبة الحالية.</string>
+<string name="night_timer_too_short">شغّل القياس لثانية واحدة على الأقل قبل إنهائه.</string>
+<string name="night_timer_storage_error">تعذر حفظ حالة المؤقت على الجهاز. لم نسجل جلسة ناقصة.</string>
+<string name="night_timer_cancel_title">إلغاء الجلسة المقاسة؟</string>
+<string name="night_timer_cancel_body">سيتم حذف قياس المؤقت المحلي فقط. لن تُنشأ جلسة قيام ولن يتغير سجلّك.</string>
+<string name="night_timer_discard">حذف قياس المؤقت</string>
+<string name="night_timer_unreadable">تعذر قراءة حالة المؤقت المحفوظة. أبقيناها دون تغيير ولم ننشئ جلسة منها.</string>
+<string name="night_timer_unreadable_discard_body">سيتم حذف حالة المؤقت المحلية غير المقروءة فقط. استخدم هذا الخيار إذا كنت لا تحتاج استعادتها.</string>
+<string name="night_measured_context">سياق الجلسة المقاسة</string>
+<string name="night_measured_context_details">ليلة %1$s · %2$s</string>
+<string name="night_timer_recorded_duration">المدة المقاسة: %1$d ثانية</string>
 <string name="night_conflict">توجد جلسة معدلة من جهاز آخر. لم نستبدل أي نسخة تلقائيًا. راجعها قبل اختيار نسخة الخادم.</string>
 <string name="night_empty">ابدأ بجلسة واحدة. تحفظ على جهازك ويمكن مزامنتها لاحقًا.</string>
 <string name="night_session_count">%1$d آية</string>
@@ -56,6 +195,12 @@
 <string name="range_error">راجع السورة والآية والعدد. لا يتجاوز النطاق نهاية المصحف ولا يلتف إلى بدايته.</string>
 <string name="last_third">الثلث الأخير من الليل</string>
 <string name="latitude">خط العرض</string>
+<string name="city">المدينة</string>
+<string name="night_preferences_manual_notice">هذه الإعدادات تُدخلها وتحفظها يدويًا. أثر لا يطلب إذن الموقع ولا يقرأ GPS تلقائيًا.</string>
+<string name="night_preferences_save">حفظ المدينة وطريقة الحساب</string>
+<string name="night_preferences_saved">تم حفظ إعدادات المدينة والمنطقة وطريقة الحساب.</string>
+<string name="night_preferences_conflict">تغيّرت إعدادات قيام الليل من جهاز آخر. أعد تحميل النسخة الحالية قبل الحفظ.</string>
+<string name="night_preferences_unavailable">تعذر تحميل أو حفظ إعدادات قيام الليل حاليًا. لم نغيّر النسخة المحفوظة.</string>
 <string name="longitude">خط الطول</string>
 <string name="prayer_calculation_notice">أدخل موقعك وطريقة الحساب. هذه مواقيت محسوبة؛ راجع مواقيت مسجدك عند الاختلاف. لا نستخدم موقعك دون إذنك.</string>
 <string name="hanafi_asr">حساب العصر الحنفي</string>
@@ -80,6 +225,18 @@
 <string name="rule_seventh">حد سُبع الليل</string>
 <string name="rule_angle">نسبة زاوية الشفق</string>
 <string name="export_explanation">اختر مكان حفظ نسخة بياناتك الشخصية. تتضمن جلسات الجهاز غير المتزامنة؛ الفترات المستثناة المحلية لا تُصدّر.</string>
+<string name="export_scope_title">محتوى النسخة</string>
+<string name="export_scope_account">بيانات الحساب المتزامنة: الملف الشخصي، العلامات، المفضلة، الخطط، التقدم والإحصائيات المسجلة.</string>
+<string name="export_scope_device">بيانات محتفظ بها على هذا الجهاز ولم تُفقد: تقدم الدروس وجلسات قيام الليل وخطة الختمة المحلية المعلّقة.</string>
+<string name="export_private_excluded">الفترات الخاصة المحلية مستبعدة من النسخة</string>
+<string name="export_security_excluded">لا تتضمن النسخة كلمات المرور أو رموز الدخول أو refresh tokens أو مفاتيح التشفير المحلية.</string>
+<string name="export_confirm_title">إنشاء نسخة من بياناتك؟</string>
+<string name="export_confirm_body">ستختار بنفسك مكان حفظ ملف JSON يحتوي بيانات حسابك وتقدمك المسموح بتصديره. تعامل معه كملف خاص.</string>
+<string name="export_choose_location">اختيار مكان الحفظ</string>
+<string name="export_requires_current_account">يحتاج إنشاء نسخة كاملة إلى الوصول للحساب الحالي. إذا تعذر جلب بيانات الحساب فلن نكتب ملفًا ناقصًا.</string>
+<string name="export_saved_complete">تم حفظ نسخة الحساب الكاملة في المكان الذي اخترته.</string>
+<string name="export_account_unavailable">تعذر جلب بيانات الحساب الحالية. تأكد من الاتصال وأن الجلسة ما زالت صالحة ثم حاول مرة أخرى. لم تتم كتابة نسخة ناقصة.</string>
+<string name="export_write_failed">تم تجهيز النسخة لكن تعذر الكتابة في المكان المختار. اختر مكانًا آخر وحاول مرة أخرى.</string>
 <string name="daily_pages">الورد اليومي الحالي: %1$s صفحة</string>
 <string name="counter_conflict">العدّاد معدّل من جهاز آخر. راجع نسخة الخادم قبل المتابعة.</string>
 <string name="show_ayah">عرض الآية</string>
@@ -89,11 +246,45 @@
 <string name="syncing">جارٍ الحفظ</string>
 <string name="remove_bookmark">حذف العلامة</string>
 <string name="your_journey">مساحتك في أثر</string>
+<string name="your_activity">نشاطك</string>
+<string name="quick_actions">اختصارات</string>
 <string name="reading_sessions">جلسات قراءة</string>
 <string name="completed_lessons">دروس مكتملة</string>
 <string name="completed_adhkar">أذكار مكتملة</string>
 <string name="adhkar_invitation">ذكرٌ بعد ذكر، والعدّاد يحفظ تقدّمك.</string>
     <string name="night_calendar">التقويم</string>
+<string name="night_insights">الاستمرارية والسجل</string>
+<string name="night_insights_notice">هذه قراءة وصفية لسجلك الشخصي فقط؛ لا نقاط ولا ترتيب ولا حكم على العبادة.</string>
+<string name="night_personal_records">سجلك الوصفي</string>
+<string name="night_record_best_verses">أعلى عدد آيات في ليلة مسجلة</string>
+<string name="night_record_longest_measured">أطول جلسة بمدة مقاسة</string>
+<string name="night_record_reference_level">أعلى مستوى مرجعي مسجل</string>
+<string name="night_record_on_date">بتاريخ %1$s</string>
+<string name="night_record_tied_dates">تساوت %1$d ليالٍ؛ أحدثها %2$s</string>
+<string name="night_record_unavailable">لا توجد بيانات مسجلة كافية.</string>
+<string name="night_record_no_measured">لا توجد جلسة بمدة مقاسة حتى الآن.</string>
+<string name="night_record_next_reference">المرجع التالي: %1$d آية في ليلة واحدة، وليس هدفًا إلزاميًا.</string>
+<string name="night_record_highest_reference">وصل سجلك إلى أعلى مستوى مرجعي معروض؛ لا توجد منافسة أو ترتيب.</string>
+<string name="night_consistency">الاستمرارية حسب الفئة</string>
+<string name="night_streak_notice">تُحسب السلسلة من الليالي التي سجلتها صراحةً. الأيام المستثناة محليًا تربط الفجوة فقط ولا تُضاف إلى عدد الليالي.</string>
+<string name="night_streak_threshold">ليالٍ فيها %1$d آية أو أكثر</string>
+<string name="night_streak_current">الحالية</string>
+<string name="night_streak_longest">الأطول</string>
+<string name="night_streak_qualifying">ليالٍ مطابقة</string>
+<string name="night_current_streak_unavailable">تعذر تحديد هوية الليلة الحالية من إعدادات المدينة والحساب؛ السلاسل التاريخية ما زالت محسوبة من السجل فقط.</string>
+<string name="night_insights_privacy">تُحسب هذه المؤشرات داخل تجربتك الشخصية من الجلسات المسجلة والفترات المستثناة المحلية. لا تُنشئ لوحة ترتيب ولا تكشف تواريخ عبادتك للإدارة.</string>
+<string name="calendar_month_view">الشهر</string>
+<string name="calendar_year_view">السنة</string>
+<string name="previous_year">السنة السابقة</string>
+<string name="next_year">السنة التالية</string>
+<string name="calendar_year_summary">ملخص السنة</string>
+<string name="calendar_year_totals">%1$d ليلة مسجلة · %2$d آية · %3$d يوم مستثنى محليًا</string>
+<string name="calendar_year_private">يُنشأ هذا العرض على جهازك من سجلك الخاص. لا يضيف للإدارة واجهة لعرض تواريخ عبادتك الفردية.</string>
+<string name="calendar_legend">دليل الحالات</string>
+<string name="calendar_future">يوم قادم</string>
+<string name="calendar_month_accessibility">%1$s: %2$d ليلة مسجلة، %3$d آية، %4$d يوم مستثنى محليًا</string>
+<string name="calendar_month_active_nights">%1$d ليلة</string>
+<string name="calendar_month_summary">%1$d آية · %2$d يوم مستثنى</string>
     <string name="previous_month">الشهر السابق</string>
     <string name="next_month">الشهر التالي</string>
     <string name="calendar_private">سجلّك الخاص، بما فيه التعديلات المحفوظة على جهازك. الأيام الفارغة لا تعني حكمًا على عبادتك.</string>
@@ -138,6 +329,13 @@
     <string name="scholar_lesson_count">%1$d درس</string>
     <string name="adhkar_item_position">الذكر %1$d من %2$d</string>
     <string name="adhkar_no_fixed_count">لم يُحدَّد عدد تكرار في المصدر لهذا الذكر.</string>
+<string name="adhkar_previous_day_pending">تغييرات يوم سابق ما زالت محفوظة على الجهاز. زامنها أو حل التعارض أولًا قبل بدء عدّ اليوم؛ لن يتم تصفيرها تلقائيًا.</string>
+<string name="adhkar_statistics">إحصائيات الأذكار</string>
+<string name="adhkar_today_completions">إكمالات اليوم</string>
+<string name="adhkar_total_completions">إجمالي الإكمالات</string>
+<string name="adhkar_active_days">أيام نشطة</string>
+<string name="adhkar_pending_completions">%1$d إكمال محفوظ على الجهاز بانتظار المزامنة</string>
+<string name="adhkar_category_items">%1$d من %2$d مكتملة اليوم</string>
     <string name="adhkar_section_end">وصلت إلى آخر ذكر في القسم.</string>
     <string name="set_reading_position">تابع من هنا</string>
     <string name="reading_position_label">موضع القراءة: %1$s · الآية %2$d</string>

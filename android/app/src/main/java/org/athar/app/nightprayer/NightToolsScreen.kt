@@ -15,6 +15,7 @@ import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.MessagePanel
 import org.athar.app.core.ui.DateField
+import org.athar.app.core.network.ApiException
 import java.time.*
 import java.time.format.DateTimeFormatter
 
@@ -28,11 +29,22 @@ import java.time.format.DateTimeFormatter
     var count by remember { mutableStateOf("100") }; var byTarget by remember { mutableStateOf(true) }
     var result by remember { mutableStateOf<String?>(null) }; var error by remember { mutableStateOf(false) }
     var date by remember { mutableStateOf(LocalDate.now().toString()) }
+    var city by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf("") }; var longitude by remember { mutableStateOf("") }
     var zone by remember { mutableStateOf(NightRules.serverTimezone(ZoneId.systemDefault())) }
     var method by remember { mutableStateOf("EGYPTIAN") }; var hanafi by remember { mutableStateOf(false) }
     var highLatitude by remember { mutableStateOf("MIDDLE_OF_THE_NIGHT") }
     var night by remember { mutableStateOf<NightContext?>(null) }; var timeError by remember { mutableStateOf(false) }
+    val preferences = remember(graph.session) {
+        NightPreferencesRepository(graph.session)
+    }
+    var preferenceRevision by remember { mutableIntStateOf(0) }
+    var preferenceAttempt by remember { mutableIntStateOf(0) }
+    var preferenceReady by remember { mutableStateOf(false) }
+    var preferenceUnavailable by remember { mutableStateOf(false) }
+    var preferenceConflict by remember { mutableStateOf(false) }
+    var preferenceSaved by remember { mutableStateOf(false) }
+    var preferenceFormError by remember { mutableStateOf(false) }
     var exemptStart by remember { mutableStateOf("") }; var exemptEnd by remember { mutableStateOf("") }; var exemptTotal by remember { mutableIntStateOf(0) }
     var exemptAttempt by remember{mutableIntStateOf(0)}
     var exemptReady by remember{mutableStateOf(false)}
@@ -40,6 +52,30 @@ import java.time.format.DateTimeFormatter
     var exemptFormError by remember{mutableStateOf(false)}
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    LaunchedEffect(owner, preferenceAttempt) {
+        preferenceReady = false
+        preferenceUnavailable = false
+        preferenceConflict = false
+        preferenceSaved = false
+        try {
+            val envelope = preferences.get(owner)
+            preferenceRevision = envelope.revision
+            envelope.values?.let { saved ->
+                city = saved.city
+                latitude = saved.latitude.toString()
+                longitude = saved.longitude.toString()
+                zone = saved.timezone
+                method = saved.calculationMethod
+                hanafi = saved.madhab == "HANAFI"
+                highLatitude = saved.highLatitudeRule
+            }
+            preferenceReady = true
+        } catch (failure: CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            preferenceUnavailable = true
+        }
+    }
     LaunchedEffect(graph.session.userId,exemptAttempt) {
         exemptReady=false;exemptUnreadable=false
         try{exemptTotal=graph.nightPrayer.localExemptions(owner).size;exemptReady=true}
@@ -62,20 +98,218 @@ import java.time.format.DateTimeFormatter
         } }
         item(key = "time-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.last_third), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.prayer_calculation_notice)) }
         item(key = "time-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            when {
+                preferenceUnavailable -> MessagePanel(
+                    stringResource(R.string.night_preferences_unavailable),
+                    true,
+                ) {
+                    TextButton(onClick = { preferenceAttempt++ }) {
+                        Text(stringResource(R.string.retry))
+                    }
+                }
+                !preferenceReady -> LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+            if (preferenceConflict) {
+                MessagePanel(
+                    stringResource(R.string.night_preferences_conflict),
+                    true,
+                ) {
+                    TextButton(onClick = { preferenceAttempt++ }) {
+                        Text(stringResource(R.string.retry))
+                    }
+                }
+            }
+            if (preferenceSaved) {
+                MessagePanel(stringResource(R.string.night_preferences_saved))
+            }
+            if (preferenceFormError) {
+                MessagePanel(stringResource(R.string.invalid_input), true)
+            }
+
+            Text(
+                stringResource(R.string.night_preferences_manual_notice),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                city,
+                {
+                    city = it.take(80)
+                    preferenceSaved = false
+                    preferenceFormError = false
+                },
+                Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.city)) },
+                singleLine = true,
+            )
             DateField(date, { date = it; night = null }, stringResource(R.string.night_date))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedTextField(latitude, { latitude = it.take(15); night = null }, Modifier.weight(1f), label = { Text(stringResource(R.string.latitude)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)); OutlinedTextField(longitude, { longitude = it.take(15); night = null }, Modifier.weight(1f), label = { Text(stringResource(R.string.longitude)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)) }
-            OutlinedTextField(zone, { zone = it.take(80); night = null }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.timezone)) }, singleLine = true)
-            MethodSelector(method, { method = it; night = null }, PrayerCalculator.methods)
-            Row { Checkbox(hanafi, { hanafi = it; night = null }); Text(stringResource(R.string.hanafi_asr), Modifier.padding(top = 12.dp)) }
-            MethodSelector(highLatitude, { highLatitude = it; night = null }, listOf("MIDDLE_OF_THE_NIGHT", "SEVENTH_OF_THE_NIGHT", "TWILIGHT_ANGLE"))
-            Button(enabled = !busy, onClick = { busy = true; scope.launch {
-                try { night = withContext(Dispatchers.Default) { PrayerCalculator.calculate(LocalDate.parse(date), latitude.toDouble(), longitude.toDouble(), ZoneId.of(zone), method, hanafi, highLatitude) }; timeError = false }
-                catch (failure: CancellationException) { throw failure } catch (_: Exception) { timeError = true; night = null } finally { busy = false }
-            } }) { Text(stringResource(R.string.calculate)) }
-            if (timeError) MessagePanel(stringResource(R.string.prayer_calculation_failed), true)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    latitude,
+                    {
+                        latitude = it.take(15)
+                        night = null
+                        preferenceSaved = false
+                    },
+                    Modifier.weight(1f),
+                    label = { Text(stringResource(R.string.latitude)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                )
+                OutlinedTextField(
+                    longitude,
+                    {
+                        longitude = it.take(15)
+                        night = null
+                        preferenceSaved = false
+                    },
+                    Modifier.weight(1f),
+                    label = { Text(stringResource(R.string.longitude)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                )
+            }
+            OutlinedTextField(
+                zone,
+                {
+                    zone = it.take(80)
+                    night = null
+                    preferenceSaved = false
+                },
+                Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.timezone)) },
+                singleLine = true,
+            )
+            MethodSelector(
+                method,
+                {
+                    method = it
+                    night = null
+                    preferenceSaved = false
+                },
+                PrayerCalculator.methods,
+            )
+            Row {
+                Checkbox(
+                    hanafi,
+                    {
+                        hanafi = it
+                        night = null
+                        preferenceSaved = false
+                    },
+                )
+                Text(stringResource(R.string.hanafi_asr), Modifier.padding(top = 12.dp))
+            }
+            MethodSelector(
+                highLatitude,
+                {
+                    highLatitude = it
+                    night = null
+                    preferenceSaved = false
+                },
+                listOf(
+                    "MIDDLE_OF_THE_NIGHT",
+                    "SEVENTH_OF_THE_NIGHT",
+                    "TWILIGHT_ANGLE",
+                ),
+            )
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(enabled = !busy, onClick = { busy = true; scope.launch {
+                    try {
+                        night = withContext(Dispatchers.Default) {
+                            PrayerCalculator.calculate(
+                                LocalDate.parse(date),
+                                latitude.toDouble(),
+                                longitude.toDouble(),
+                                ZoneId.of(zone),
+                                method,
+                                hanafi,
+                                highLatitude,
+                            )
+                        }
+                        timeError = false
+                    }
+                    catch (failure: CancellationException) { throw failure }
+                    catch (_: Exception) { timeError = true; night = null }
+                    finally { busy = false }
+                } }) {
+                    Text(stringResource(R.string.calculate))
+                }
+
+                OutlinedButton(
+                    enabled = !busy && preferenceReady,
+                    onClick = {
+                        busy = true
+                        scope.launch {
+                            try {
+                                val normalizedZone = NightRules.serverTimezone(
+                                    ZoneId.of(zone),
+                                )
+                                val values = NightPrayerPreferences(
+                                    city = city.trim(),
+                                    timezone = normalizedZone,
+                                    latitude = latitude.toDouble(),
+                                    longitude = longitude.toDouble(),
+                                    calculationMethod = method,
+                                    madhab = if (hanafi) "HANAFI" else "SHAFI",
+                                    highLatitudeRule = highLatitude,
+                                )
+                                val saved = preferences.save(
+                                    values = values,
+                                    expectedRevision = preferenceRevision,
+                                    expectedOwner = owner,
+                                )
+                                preferenceRevision = saved.revision
+                                preferenceSaved = true
+                                preferenceConflict = false
+                                preferenceFormError = false
+                                preferenceUnavailable = false
+                                zone = normalizedZone
+                                graph.content.invalidate(
+                                    "night-prayer/preferences",
+                                    owner,
+                                )
+                            } catch (failure: CancellationException) {
+                                throw failure
+                            } catch (failure: ApiException) {
+                                if (failure.status == 409) {
+                                    preferenceConflict = true
+                                    preferenceSaved = false
+                                } else {
+                                    preferenceUnavailable = true
+                                }
+                            } catch (_: IllegalArgumentException) {
+                                preferenceFormError = true
+                            } catch (_: Exception) {
+                                preferenceUnavailable = true
+                            } finally {
+                                busy = false
+                            }
+                        }
+                    },
+                ) {
+                    Text(stringResource(R.string.night_preferences_save))
+                }
+            }
+
+            if (timeError) {
+                MessagePanel(stringResource(R.string.prayer_calculation_failed), true)
+            }
             night?.let { context ->
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z").withZone(context.zone)
-                MessagePanel(stringResource(R.string.night_boundaries, formatter.format(context.maghrib), formatter.format(context.lastThird), formatter.format(context.fajr)))
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z")
+                    .withZone(context.zone)
+                MessagePanel(
+                    stringResource(
+                        R.string.night_boundaries,
+                        formatter.format(context.maghrib),
+                        formatter.format(context.lastThird),
+                        formatter.format(context.fajr),
+                    ),
+                )
             }
         } }
         item(key = "exemption-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.local_exemptions), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.exemptions_notice)) }

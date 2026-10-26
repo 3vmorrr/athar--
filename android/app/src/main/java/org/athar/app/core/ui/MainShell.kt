@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,8 +25,12 @@ import org.athar.app.AppGraph
 import org.athar.app.AppViewModel
 import org.athar.app.R
 import org.athar.app.auth.AuthState
+import org.athar.app.auth.AccountInput
+import org.athar.app.core.data.cleanupDeletedAccount
 import org.athar.app.quran.QuranScreen
 import org.athar.app.adhkar.AdhkarScreen
+import org.athar.app.books.BookDetailScreen
+import org.athar.app.books.BookReaderScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
@@ -36,12 +41,40 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.snap
+import androidx.compose.ui.graphics.graphicsLayer
 
 internal fun JsonElement.text(key: String): String = runCatching { asJsonObject[key]?.takeUnless { it.isJsonNull }?.asString.orEmpty() }.getOrDefault("")
 internal fun JsonElement.array(key: String): List<JsonElement> = runCatching { asJsonObject[key]?.asJsonArray?.toList().orEmpty() }.getOrDefault(emptyList())
 
 private data class Destination(val key: String, val title: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 private val destinations = listOf(Destination("home", R.string.home, AtharIcons.Home), Destination("quran", R.string.quran, AtharIcons.MenuBook), Destination("knowledge", R.string.knowledge, AtharIcons.School), Destination("adhkar", R.string.adhkar, AtharIcons.Spa), Destination("account", R.string.account, AtharIcons.Person))
+
+@Composable
+private fun AtharNavIcon(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    selected: Boolean,
+) {
+    val reduced = reducedMotion()
+    val scale by animateFloatAsState(
+        targetValue = if (selected && !reduced) 1.08f else 1f,
+        animationSpec = if (reduced) snap() else spring(
+            stiffness = AtharMotion.SmallSpringStiffness,
+            dampingRatio = AtharMotion.SmallSpringDamping,
+        ),
+        label = "athar-nav-icon",
+    )
+    Icon(
+        icon,
+        contentDescription = null,
+        modifier = Modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        },
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable fun MainShell(vm: AppViewModel, auth: AuthState.SignedIn) {
@@ -58,26 +91,112 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "night-prayer" || path == "upcoming") navigation.navigate(path) { launchSingleTop = true }
-        else if (path == "catalog-books") navigation.navigate("catalog/books") { launchSingleTop = true }
-        else {
+        if (path == "night-prayer" || path == "upcoming") {
+            navigation.navigate(path) { launchSingleTop = true }
+        } else if (path == "catalog-books") {
+            navigation.navigate("catalog/books") { launchSingleTop = true }
+        } else {
             val parts = path.split('/')
-            if(parts.size==2 && parts[0]=="upcoming" && (parts[1].toIntOrNull()?:0)>0) navigation.navigate(path){launchSingleTop=true}
-            else if (parts.size == 2 && parts[0] in listOf("books","scholars","series","lessons") && (parts[1].toIntOrNull() ?: 0) > 0) navigation.navigate("content/${parts[0]}/${parts[1]}") { launchSingleTop = true }
+            when {
+                parts.size == 2 &&
+                    parts[0] == "upcoming" &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate(path) { launchSingleTop = true }
+                }
+                parts.size == 2 &&
+                    parts[0] == "book-reader" &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate(path) { launchSingleTop = true }
+                }
+                parts.size == 2 &&
+                    parts[0] in listOf("books","scholars","series","lessons") &&
+                    (parts[1].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate("content/${parts[0]}/${parts[1]}") {
+                        launchSingleTop = true
+                    }
+                }
+            }
         }
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wide = maxWidth >= 840.dp
         Row(Modifier.fillMaxSize()) {
-            if (wide) NavigationRail(Modifier.fillMaxHeight().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)), header = { Brand(Modifier.size(76.dp)) }) {
+            if (wide) NavigationRail(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                header = { Brand(Modifier.size(76.dp)) },
+            ) {
                 Spacer(Modifier.height(24.dp))
-                destinations.forEach { destination -> NavigationRailItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title)) }) }
+                destinations.forEach { destination ->
+                    val active = selected == destination.key
+                    NavigationRailItem(
+                        selected = active,
+                        onClick = { navigateTab(destination.key) },
+                        icon = { AtharNavIcon(destination.icon, active) },
+                        label = { Text(stringResource(destination.title)) },
+                        colors = NavigationRailItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    )
+                }
             }
             Scaffold(modifier = Modifier.weight(1f), topBar = {
-                CenterAlignedTopAppBar(title = { if (topLevel) Brand(Modifier.height(44.dp).width(64.dp)) else Text(stringResource(when { route == "night-prayer" -> R.string.night_prayer; route.startsWith("upcoming") -> R.string.upcoming_lessons; currentEntry?.arguments?.getString("kind") == "books" -> R.string.books; currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars; currentEntry?.arguments?.getString("kind") == "series" -> R.string.series; else -> R.string.lessons })) }, navigationIcon = { if (!topLevel) IconButton(onClick = { navigation.popBackStack() }) { Icon(AtharIcons.ArrowBack, stringResource(R.string.back)) } })
+                CenterAlignedTopAppBar(
+                    title = {
+                        if (topLevel) {
+                            Brand(Modifier.height(44.dp).width(64.dp))
+                        } else {
+                            Text(
+                                stringResource(
+                                    when {
+                                        route == "night-prayer" -> R.string.night_prayer
+                                        route.startsWith("upcoming") -> R.string.upcoming_lessons
+                                        route.startsWith("book-reader/") -> R.string.books
+                                        currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
+                                        currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars
+                                        currentEntry?.arguments?.getString("kind") == "series" -> R.string.series
+                                        else -> R.string.lessons
+                                    },
+                                ),
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        if (!topLevel) {
+                            IconButton(onClick = { navigation.popBackStack() }) {
+                                Icon(AtharIcons.ArrowBack, stringResource(R.string.back))
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                    ),
+                )
             }, bottomBar = {
-                if (!wide && topLevel) NavigationBar {
-                    destinations.forEach { destination -> NavigationBarItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title), maxLines = 1) }) }
+                if (!wide && topLevel) {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        tonalElevation = 0.dp,
+                    ) {
+                        destinations.forEach { destination ->
+                            val active = selected == destination.key
+                            NavigationBarItem(
+                                selected = active,
+                                onClick = { navigateTab(destination.key) },
+                                icon = { AtharNavIcon(destination.icon, active) },
+                                label = { Text(stringResource(destination.title), maxLines = 1) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                ),
+                            )
+                        }
+                    }
                 }
             }) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) {
@@ -92,6 +211,15 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
                         composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") }
                         composable("content/{kind}/{id}", arguments = listOf(navArgument("kind") { type = NavType.StringType }, navArgument("id") { type = NavType.IntType })) { entry -> CatalogDetail(vm.graph, "${entry.arguments?.getString("kind")}/${entry.arguments?.getInt("id")}", open) }
+                        composable(
+                            "book-reader/{id}",
+                            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+                        ) { entry ->
+                            BookReaderScreen(
+                                owner = requireNotNull(vm.graph.session.userId),
+                                bookId = entry.arguments?.getInt("id") ?: 0,
+                            )
+                        }
                     }
                 }
             }
@@ -141,6 +269,15 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     if(path.startsWith("lessons/")){org.athar.app.learning.WatchScreen(graph,path.substringAfter('/').toInt(),open);return}
     if(path.startsWith("series/")){org.athar.app.learning.SeriesScreen(graph,path.substringAfter('/').toInt(),open);return}
     if(path.startsWith("scholars/")){org.athar.app.learning.ScholarScreen(graph,path.substringAfter('/').toInt(),open);return}
+    if(path.startsWith("books/")){
+        val bookId=path.substringAfter('/').toInt()
+        BookDetailScreen(
+            graph=graph,
+            bookId=bookId,
+            openReader={open("book-reader/$bookId")},
+        )
+        return
+    }
     val uri = LocalUriHandler.current
     val scope = rememberCoroutineScope()
     var feedback by remember(path) { mutableStateOf<String?>(null) }
@@ -180,39 +317,362 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     var tool by rememberSaveable { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
+            listOf(
+                "profile" to R.string.profile,
+                "activity" to R.string.activity,
+                "khatmah" to R.string.khatmah,
+                "bookmarks" to R.string.bookmarks,
+                "favorites" to R.string.favorites,
+                "export" to R.string.export_data,
+            ).forEach { (key,label) ->
+                FilterChip(
+                    tool == key,
+                    { tool = key },
+                    label = { Text(stringResource(label)) },
+                )
+            }
         }
         Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else AccountToolsScreen(vm.graph, tool, open) }
     }
 }
 
-@Composable private fun AccountProfileScreen(vm: AppViewModel, auth: AuthState.SignedIn) {
+@Composable private fun AccountProfileScreen(
+    vm: AppViewModel,
+    auth: AuthState.SignedIn,
+) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    var name by remember(auth.user) { mutableStateOf(auth.user.displayName.orEmpty()) }
-    var username by remember(auth.user) { mutableStateOf(auth.user.username.orEmpty()) }
-    var current by remember { mutableStateOf("") }; var password by remember { mutableStateOf("") }; var confirmation by remember { mutableStateOf("") }
-    var delete by remember { mutableStateOf(false) }; var deletePassword by remember { mutableStateOf("") }
-    LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "profile", contentType = "heading") { Text(stringResource(R.string.profile), style = MaterialTheme.typography.headlineSmall) }
-        item(key = "email", contentType = "text") { Text(auth.user.email) }
-        item(key = "name", contentType = "field") { OutlinedTextField(name, { name = it.take(120) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true) }
-        item(key = "username", contentType = "field") { OutlinedTextField(username, { username = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, singleLine = true) }
-        item(key = "save", contentType = "action") { Button(onClick = { vm.perform { vm.graph.session.updateProfile(name, username,auth.user.id) } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) } }
-        item(key = "settings", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge) }
-        item(key = "language", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("ar" to R.string.arabic, "en" to R.string.english).forEach { (tag, label) -> OutlinedButton(onClick = { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag)) }) { Text(stringResource(label)) } } } }
-        item(key = "theme", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("light" to R.string.light, "dark" to R.string.dark, "system" to R.string.system_theme).forEach { (key, label) -> FilterChip(settings?.theme == key, { scope.launch { vm.graph.settings.theme(key) } }, label = { Text(stringResource(label)) }) } } }
-        item(key = "security", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.change_password), style = MaterialTheme.typography.titleLarge) }
-        item(key = "password-fields", contentType = "fields") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            PasswordField(current, { current = it }, stringResource(R.string.current_password))
-            PasswordField(password, { password = it }, stringResource(R.string.new_password))
-            PasswordField(confirmation, { confirmation = it }, stringResource(R.string.confirm_password))
-            Button(onClick = { if (password != confirmation) vm.invalid("password_mismatch") else vm.perform { vm.graph.session.changePassword(current, password, confirmation,auth.user.id); current = ""; password = ""; confirmation = "" } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) }
-        } }
-        if (operation.error != null || operation.message != null) item(key = "feedback", contentType = "feedback") { org.athar.app.auth.Feedback(operation) }
-        item(key = "signout", contentType = "action") { OutlinedButton(onClick = {vm.logout(auth.user.id)}) { Text(stringResource(R.string.logout)) } }
-        item(key = "delete", contentType = "action") { TextButton(onClick = { delete = true }) { Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error) } }
+    val context = LocalContext.current.applicationContext
+    var name by remember(auth.user) {
+        mutableStateOf(auth.user.displayName.orEmpty())
     }
-    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { vm.perform { val id = auth.user.id; vm.graph.session.delete(deletePassword,id); vm.graph.database.dao().deleteUser(id) }; delete = false; deletePassword = "" }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
+    var username by remember(auth.user) {
+        mutableStateOf(auth.user.username.orEmpty())
+    }
+    var current by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmation by remember { mutableStateOf("") }
+    var delete by remember { mutableStateOf(false) }
+    var deletePassword by remember { mutableStateOf("") }
+
+    val normalizedName = name.trim()
+    val normalizedUsername = AccountInput.normalizeUsernameInput(username).trim()
+    val nameValid = AccountInput.validDisplayName(name)
+    val usernameValid = AccountInput.validUsername(username)
+    val profileValid = AccountInput.validProfile(name, username)
+    val profileChanged =
+        normalizedName != auth.user.displayName.orEmpty() ||
+            normalizedUsername != auth.user.username.orEmpty()
+
+    LazyColumn(
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        item(key = "profile", contentType = "heading") {
+            AtharImmersiveHero(
+                presentation = AtharHeroPresentation(
+                    artwork = AtharHeroArtwork.Generic,
+                    eyebrow = stringResource(R.string.account),
+                    title = auth.user.displayName.orEmpty().ifBlank {
+                        auth.user.username.orEmpty()
+                    },
+                    supportingText = auth.user.email,
+                    statusText = if (auth.offline) {
+                        stringResource(R.string.offline_notice)
+                    } else {
+                        null
+                    },
+                    statusTone = if (auth.offline) {
+                        AtharHeroStatusTone.Offline
+                    } else {
+                        AtharHeroStatusTone.Neutral
+                    },
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        item(key = "name", contentType = "field") {
+            OutlinedTextField(
+                value = name,
+                onValueChange = {
+                    name = it.take(80)
+                    if (operation.error != null || operation.message != null) {
+                        vm.clearFeedback()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.display_name)) },
+                supportingText = {
+                    Text(stringResource(R.string.display_name_hint))
+                },
+                isError = name.isNotBlank() && !nameValid,
+                singleLine = true,
+            )
+        }
+
+        item(key = "username", contentType = "field") {
+            OutlinedTextField(
+                value = username,
+                onValueChange = {
+                    username = AccountInput.normalizeUsernameInput(it)
+                    if (operation.error != null || operation.message != null) {
+                        vm.clearFeedback()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.username)) },
+                supportingText = {
+                    Text(
+                        stringResource(
+                            if (operation.error == "account_conflict") {
+                                R.string.username_unavailable
+                            } else {
+                                R.string.username_hint
+                            },
+                        ),
+                    )
+                },
+                isError = !usernameValid ||
+                    operation.error == "account_conflict",
+                singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Ascii,
+                ),
+            )
+        }
+
+        item(key = "save", contentType = "action") {
+            Button(
+                onClick = {
+                    vm.clearFeedback()
+                    vm.perform(successMessage = "saved") {
+                        vm.graph.session.updateProfile(
+                            normalizedName,
+                            normalizedUsername,
+                            auth.user.id,
+                        )
+                    }
+                },
+                enabled = !operation.busy && profileValid && profileChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 52.dp),
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        }
+
+        item(key = "settings", contentType = "heading") {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.settings),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        item(key = "language", contentType = "controls") {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "ar" to R.string.arabic,
+                    "en" to R.string.english,
+                ).forEach { (tag, label) ->
+                    OutlinedButton(
+                        onClick = {
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags(tag),
+                            )
+                        },
+                    ) {
+                        Text(stringResource(label))
+                    }
+                }
+            }
+        }
+
+        item(key = "theme", contentType = "controls") {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "light" to R.string.light,
+                    "dark" to R.string.dark,
+                    "system" to R.string.system_theme,
+                ).forEach { (key, label) ->
+                    FilterChip(
+                        selected = settings?.theme == key,
+                        onClick = {
+                            scope.launch { vm.graph.settings.theme(key) }
+                        },
+                        label = { Text(stringResource(label)) },
+                    )
+                }
+            }
+        }
+
+        item(key = "security", contentType = "heading") {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.change_password),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        item(key = "password-fields", contentType = "fields") {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                PasswordField(
+                    current,
+                    { current = it.take(200) },
+                    stringResource(R.string.current_password),
+                )
+                PasswordField(
+                    password,
+                    { password = it.take(200) },
+                    stringResource(R.string.new_password),
+                )
+                PasswordField(
+                    confirmation,
+                    { confirmation = it.take(200) },
+                    stringResource(R.string.confirm_password),
+                )
+                Button(
+                    onClick = {
+                        if (password != confirmation) {
+                            vm.invalid("password_mismatch")
+                        } else {
+                            vm.perform(successMessage = "saved") {
+                                vm.graph.session.changePassword(
+                                    current,
+                                    password,
+                                    confirmation,
+                                    auth.user.id,
+                                )
+                                current = ""
+                                password = ""
+                                confirmation = ""
+                            }
+                        }
+                    },
+                    enabled = !operation.busy &&
+                        current.isNotBlank() &&
+                        AccountInput.validPassword(password) &&
+                        confirmation.isNotBlank() &&
+                        password == confirmation,
+                    modifier = Modifier.heightIn(min = 52.dp),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
+
+        item(key = "revoke-other-sessions", contentType = "action") {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column(
+                    Modifier.padding(AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    Text(
+                        stringResource(R.string.revoke_other_sessions),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        stringResource(R.string.revoke_other_sessions_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            vm.perform(successMessage = "sessions_revoked") {
+                                vm.graph.session.revokeOtherSessions(auth.user.id)
+                            }
+                        },
+                        enabled = !operation.busy,
+                        modifier = Modifier.heightIn(min = 52.dp),
+                    ) {
+                        Text(stringResource(R.string.revoke_other_sessions))
+                    }
+                }
+            }
+        }
+
+        if (operation.error != null || operation.message != null) {
+            item(key = "feedback", contentType = "feedback") {
+                org.athar.app.auth.Feedback(operation)
+            }
+        }
+
+        item(key = "signout", contentType = "action") {
+            OutlinedButton(
+                onClick = { vm.logout(auth.user.id) },
+                modifier = Modifier.heightIn(min = 52.dp),
+            ) {
+                Text(stringResource(R.string.logout))
+            }
+        }
+
+        item(key = "delete", contentType = "action") {
+            TextButton(
+                onClick = { delete = true },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(
+                    stringResource(R.string.delete_account),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    }
+
+    if (delete) {
+        AlertDialog(
+            onDismissRequest = {
+                delete = false
+                deletePassword = ""
+            },
+            title = { Text(stringResource(R.string.delete_account)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.delete_account_body))
+                    PasswordField(
+                        deletePassword,
+                        { deletePassword = it.take(200) },
+                        stringResource(R.string.current_password),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        vm.perform {
+                            val id = auth.user.id
+                            vm.graph.session.delete(deletePassword, id)
+                            cleanupDeletedAccount(
+                                context = context,
+                                graph = vm.graph,
+                                owner = id,
+                            )
+                        }
+                        delete = false
+                        deletePassword = ""
+                    },
+                    enabled = deletePassword.isNotBlank() && !operation.busy,
+                ) {
+                    Text(stringResource(R.string.delete_action))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        delete = false
+                        deletePassword = ""
+                    },
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }

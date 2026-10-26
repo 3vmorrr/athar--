@@ -59,10 +59,52 @@ final class DiscussionService
     }
     public function moderate(array $actor,int $id,array $input):array
     {
-        $this->admin($actor);$status=$input['status']??'';$revision=$input['expected_revision']??null;if(!in_array($status,['pending','visible','hidden'],true)||!is_int($revision)||$revision<1)throw new ApiError('invalid_fields',422);
-        $this->db->beginTransaction();try{$q=$this->db->prepare('SELECT revision FROM lesson_comments WHERE id=? FOR UPDATE');$q->execute([$id]);$current=$q->fetchColumn();if($current===false)throw new ApiError('not_found',404);if((int)$current!==$revision)throw new ApiError('conflict',409);
-            $this->db->prepare('UPDATE lesson_comments SET status=?,revision=revision+1,moderated_by=?,moderated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$status,$actor['id'],$id]);
-            $this->db->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$actor['id'],'comment-'.$status,'comment',(string)$id]);$this->db->commit();return ['id'=>$id,'status'=>$status,'revision'=>$revision+1];
+        $this->admin($actor);
+        $status=$input['status']??'';
+        $revision=$input['expected_revision']??null;
+        $reason=is_string($input['reason']??null)?trim((string)$input['reason']):'';
+        if(!in_array($status,['visible','hidden'],true)||!is_int($revision)||$revision<1||mb_strlen($reason,'UTF-8')<2||mb_strlen($reason,'UTF-8')>500)throw new ApiError('invalid_fields',422);
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare('SELECT status,revision FROM lesson_comments WHERE id=? FOR UPDATE');
+            $q->execute([$id]);
+            $current=$q->fetch();
+            if(!$current)throw new ApiError('not_found',404);
+            if((int)$current['revision']!==$revision)throw new ApiError('conflict',409);
+            $nextRevision=$revision+1;
+            $this->db->prepare('UPDATE lesson_comments SET status=?,revision=?,moderated_by=?,moderation_reason=?,moderated_at=UTC_TIMESTAMP() WHERE id=?')
+                ->execute([$status,$nextRevision,$actor['id'],$reason,$id]);
+            $action=$status==='visible'?'published':'hidden';
+            $this->db->prepare('INSERT INTO lesson_comment_moderation_events(comment_id,source_comment_id,revision,action,previous_status,reason,actor_id,created_at) VALUES (?,?,?,?,?,?,?,UTC_TIMESTAMP())')
+                ->execute([$id,$id,$nextRevision,$action,$current['status'],$reason,$actor['id']]);
+            $this->db->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                ->execute([$actor['id'],'comment-'.$action,'comment',(string)$id]);
+            $this->db->commit();
+            return ['id'=>$id,'status'=>$status,'revision'=>$nextRevision];
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
+
+    public function deleteModerated(array $actor,int $id,array $input):array
+    {
+        $this->admin($actor);
+        $revision=$input['expected_revision']??null;
+        $reason=is_string($input['reason']??null)?trim((string)$input['reason']):'';
+        if(!is_int($revision)||$revision<1||mb_strlen($reason,'UTF-8')<2||mb_strlen($reason,'UTF-8')>500)throw new ApiError('invalid_fields',422);
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare('SELECT status,revision FROM lesson_comments WHERE id=? FOR UPDATE');
+            $q->execute([$id]);
+            $current=$q->fetch();
+            if(!$current)throw new ApiError('not_found',404);
+            if((int)$current['revision']!==$revision)throw new ApiError('conflict',409);
+            $nextRevision=$revision+1;
+            $this->db->prepare('INSERT INTO lesson_comment_moderation_events(comment_id,source_comment_id,revision,action,previous_status,reason,actor_id,created_at) VALUES (?,?,?,?,?,?,?,UTC_TIMESTAMP())')
+                ->execute([$id,$id,$nextRevision,'deleted',$current['status'],$reason,$actor['id']]);
+            $this->db->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                ->execute([$actor['id'],'comment-deleted','comment',(string)$id]);
+            $this->db->prepare('DELETE FROM lesson_comments WHERE id=?')->execute([$id]);
+            $this->db->commit();
+            return ['id'=>$id,'deleted'=>true,'revision'=>$nextRevision];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
     private function admin(array $actor):void{if(!in_array($actor['role']??'', ['admin','owner'],true)||empty($actor['email_verified_at'])||!empty($actor['suspended_at']))throw new ApiError('forbidden',403);}

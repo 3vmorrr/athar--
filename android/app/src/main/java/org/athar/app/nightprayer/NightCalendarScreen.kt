@@ -30,6 +30,7 @@ import java.util.Locale
     if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
     var monthKey by rememberSaveable { mutableStateOf(YearMonth.now().toString()) }
     var selectedKey by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    var viewMode by rememberSaveable { mutableStateOf("month") }
     val month = remember(monthKey) { YearMonth.parse(monthKey) }
     val selected = remember(selectedKey) { LocalDate.parse(selectedKey) }
     var exemptions by remember(vm) { mutableStateOf(emptySet<LocalDate>()) }
@@ -44,14 +45,62 @@ import java.util.Locale
     }
     if(exemptionError){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={exemptionAttempt++}){Text(stringResource(R.string.retry))}}};return}
     if(!exemptionReady){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
-    val totals = remember(state.rows) { state.rows.groupBy { LocalDate.parse(it.first.nightDate) }.mapValues { (_, rows) -> rows.sumOf { it.first.verseCount } } }
-    val days = remember(month, totals, exemptions) { NightCalendar.month(month, totals, exemptions) }
-    val selectedRows = remember(state.rows, selectedKey) { state.rows.filter { it.first.nightDate == selectedKey } }
+    val totals = remember(state.rows) {
+        state.rows
+            .groupBy { LocalDate.parse(it.first.nightDate) }
+            .mapValues { (_, rows) -> rows.sumOf { it.first.verseCount } }
+    }
+    val days = remember(month, totals, exemptions) {
+        NightCalendar.month(month, totals, exemptions)
+    }
+    val selectedRows = remember(state.rows, selectedKey) {
+        state.rows.filter { it.first.nightDate == selectedKey }
+    }
+
+    if (viewMode == "year") {
+        NightYearOverview(
+            totals = totals,
+            exemptions = exemptions,
+            initialYear = month.year,
+            onShowMonth = { viewMode = "month" },
+            onOpenMonth = { selectedMonth ->
+                monthKey = selectedMonth.toString()
+                selectedKey = selectedMonth
+                    .atDay(
+                        selected.dayOfMonth
+                            .coerceAtMost(selectedMonth.lengthOfMonth()),
+                    )
+                    .toString()
+                viewMode = "month"
+            },
+        )
+        return
+    }
     val locale = Locale.getDefault()
     val dateFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.LONG).withLocale(locale) }
     val monthFormat = remember(locale) { DateTimeFormatter.ofPattern("LLLL uuuu", locale) }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(Modifier.widthIn(max = 1000.dp).fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item(key = "calendar-mode", contentType = "controls") {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    FilterChip(
+                        selected = true,
+                        onClick = {},
+                        label = {
+                            Text(stringResource(R.string.calendar_month_view))
+                        },
+                    )
+                    FilterChip(
+                        selected = false,
+                        onClick = { viewMode = "year" },
+                        label = {
+                            Text(stringResource(R.string.calendar_year_view))
+                        },
+                    )
+                }
+            }
             item(key = "month-navigation", contentType = "controls") {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { val next = month.minusMonths(1); monthKey = next.toString(); selectedKey = next.atDay(selected.dayOfMonth.coerceAtMost(next.lengthOfMonth())).toString() }, enabled = month.year > 1900 || month.monthValue > 1) { Icon(AtharIcons.ArrowBack, stringResource(R.string.previous_month)) }
@@ -95,14 +144,30 @@ import java.util.Locale
 }
 
 @Composable private fun DayCell(day: CalendarNight, selected: Boolean, format: DateTimeFormatter, modifier: Modifier, agenda: Boolean, select: () -> Unit) {
-    val status = stringResource(if (day.exempt) R.string.calendar_local_exemption else if (day.verseCount > 0) R.string.calendar_recorded else R.string.calendar_no_entry)
+    val status = stringResource(
+        when {
+            day.future -> R.string.calendar_future
+            day.verseCount > 0 -> R.string.calendar_recorded
+            day.exempt -> R.string.calendar_local_exemption
+            else -> R.string.calendar_no_entry
+        },
+    )
     val description = "${day.date.format(format)}، $status، ${stringResource(R.string.night_session_count, day.verseCount)}"
     Surface(onClick = select, modifier = modifier.heightIn(min = 56.dp).semantics { contentDescription = description; this.selected = selected }, shape = MaterialTheme.shapes.small,
         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
         border = if (selected) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null) {
         Column(Modifier.padding(6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(if (agenda) day.date.format(format) else day.date.dayOfMonth.toString(), style = MaterialTheme.typography.labelLarge)
-            Text(if (day.verseCount > 0) day.verseCount.toString() else if (day.exempt) status else "—", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                when {
+                    day.future -> "·"
+                    day.verseCount > 0 -> day.verseCount.toString()
+                    day.exempt -> status
+                    else -> "—"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

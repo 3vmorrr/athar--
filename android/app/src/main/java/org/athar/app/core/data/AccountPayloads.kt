@@ -5,6 +5,91 @@ import java.time.LocalDate
 
 /** Absence is explicit JSON null or an empty array, never an unreadable document. */
 object AccountPayloads {
+    private val forbiddenExportKeys = setOf(
+        "private_exemptions",
+        "local_exemptions",
+        "device_private_exemptions",
+    )
+
+    fun validExport(owner:Long,data:JsonElement):Boolean=runCatching {
+        val root=data.asJsonObject
+        require(root.entrySet().none { it.key in forbiddenExportKeys })
+        val profile=requireNotNull(root["profile"]).asJsonObject
+        require(profile["id"].asLong==owner)
+        listOf(
+            "quran_bookmarks",
+            "quran_positions",
+            "khatmah_plans",
+            "user_favorites",
+            "video_progress",
+            "account_daily_stats",
+            "adhkar_progress",
+        ).forEach { key ->
+            require(root[key]?.isJsonArray==true)
+        }
+        root["night_prayer_sessions"]?.let { require(it.isJsonArray) }
+        root["night_prayer_preferences"]?.let {
+            require(it.isJsonNull||it.isJsonObject||it.isJsonArray)
+        }
+        true
+    }.getOrDefault(false)
+
+    fun validActivitySummary(data:JsonElement):Boolean=runCatching {
+        val root=data.asJsonObject
+        LocalDate.parse(requireNotNull(root["generated_date"]).asString)
+        val availability=requireNotNull(root["availability"]).asJsonObject
+        listOf(
+            "reading_sessions",
+            "listening_history",
+            "adhkar_completions",
+            "lesson_progress",
+            "book_downloads",
+        ).forEach { key ->
+            require(availability[key]?.asJsonPrimitive?.isBoolean==true)
+        }
+        val recorded=requireNotNull(root["recorded"]).asJsonObject
+        listOf(
+            "adhkar_completions",
+            "lesson_completions",
+            "book_downloads",
+            "legacy_quran_sessions",
+            "active_days",
+            "lessons_started",
+            "lessons_complete",
+            "watched_seconds",
+        ).forEach { key ->
+            val value=requireNotNull(recorded[key]).asLong
+            require(value>=0)
+        }
+        require(root["recent"]?.isJsonArray==true)
+        root["recent"].asJsonArray.forEach { element ->
+            val row=element.asJsonObject
+            LocalDate.parse(requireNotNull(row["date"]).asString)
+            listOf("lesson_completions","adhkar_completions","book_downloads").forEach { key ->
+                require(requireNotNull(row[key]).asInt>=0)
+            }
+        }
+        true
+    }.getOrDefault(false)
+
+    fun validCollectionPage(tool:String,data:JsonElement):Boolean=runCatching {
+        require(tool in setOf("bookmarks","favorites"))
+        val root=data.asJsonObject
+        val items=requireNotNull(root["items"]).asJsonArray
+        require(valid(tool,items))
+        val pagination=requireNotNull(root["pagination"]).asJsonObject
+        fun positive(key:String):Int {
+            val value=requireNotNull(pagination[key]).asInt
+            require(value>0)
+            return value
+        }
+        positive("page")
+        positive("per_page")
+        require(requireNotNull(pagination["total"]).asInt>=0)
+        require(requireNotNull(pagination["has_more"]).isJsonPrimitive)
+        true
+    }.getOrDefault(false)
+
     fun valid(tool:String,data:JsonElement):Boolean=runCatching {
         fun number(value:JsonElement?,range:IntRange):Int {
             val text=requireNotNull(value).asString

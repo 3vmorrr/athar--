@@ -78,10 +78,53 @@ import org.athar.app.core.data.ProtectedRead
                     if(commentsOpen&&!fullComments)Box(Modifier.weight(1f)){DiscussionPanel(discussion,false,{fullComments=true},{commentsOpen=false})}
                     else LazyColumn(Modifier.weight(1f).testTag("watch-details"),state=detailsScroll,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
                         item(key="information",contentType="metadata") {
-                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.headlineSmall)
-                            val scholar=lesson.text("scholar_id").toIntOrNull()
-                            if(scholar!=null)TextButton(onClick={vm.flush();open("scholars/$scholar")}){Text(lesson.text("scholar_name").ifBlank{stringResource(R.string.scholars)})}
-                            lesson["series"]?.takeUnless{it.isJsonNull}?.let{series->TextButton(onClick={open("series/${series.text("id")}")}){Text(series.text("title"))}};if(lesson.text("lesson_number").isNotBlank())Text(stringResource(R.string.watch_position,lesson.text("lesson_number"),lesson["series"].text("lesson_count")),style=MaterialTheme.typography.bodySmall)
+                            Surface(
+                                modifier=Modifier.fillMaxWidth(),
+                                shape=MaterialTheme.shapes.large,
+                                color=MaterialTheme.colorScheme.surfaceContainerLow,
+                                border=androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                ),
+                            ) {
+                                Column(
+                                    Modifier.fillMaxWidth().padding(20.dp),
+                                    verticalArrangement=Arrangement.spacedBy(10.dp),
+                                ) {
+                                    Text(
+                                        lesson.text("title"),
+                                        Modifier.testTag("watch-title"),
+                                        style=MaterialTheme.typography.headlineSmall,
+                                    )
+                                    val scholar=lesson.text("scholar_id").toIntOrNull()
+                                    FlowRow(
+                                        horizontalArrangement=Arrangement.spacedBy(8.dp),
+                                        verticalArrangement=Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        if(scholar!=null)AssistChip(
+                                            onClick={vm.flush();open("scholars/$scholar")},
+                                            label={Text(lesson.text("scholar_name").ifBlank{stringResource(R.string.scholars)})},
+                                            leadingIcon={Icon(AtharIcons.Person,null,Modifier.size(18.dp))},
+                                        )
+                                        lesson["series"]?.takeUnless{it.isJsonNull}?.let{series->
+                                            AssistChip(
+                                                onClick={open("series/${series.text("id")}")},
+                                                label={Text(series.text("title"))},
+                                                leadingIcon={Icon(AtharIcons.School,null,Modifier.size(18.dp))},
+                                            )
+                                        }
+                                    }
+                                    if(lesson.text("lesson_number").isNotBlank()) {
+                                        AtharStatusPill(
+                                            stringResource(
+                                                R.string.watch_position,
+                                                lesson.text("lesson_number"),
+                                                lesson["series"].text("lesson_count"),
+                                            ),
+                                        )
+                                    }
+                                }
+                            }
                         }
                         item(key="actions",contentType="actions") {
                             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).testTag("watch-actions"),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically) {
@@ -102,12 +145,42 @@ import org.athar.app.core.data.ProtectedRead
                                 Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                                     Row(verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.ChatBubble,null,Modifier.size(20.dp));Spacer(Modifier.width(8.dp));Text(stringResource(R.string.watch_comments_count,comments.total),Modifier.weight(1f),style=MaterialTheme.typography.titleSmall);Icon(AtharIcons.ArrowForward,null)}
                                     val preview=comments.row
-                                    if(preview!=null){Text(preview.text("display_name").ifBlank{preview.text("username")},style=MaterialTheme.typography.labelMedium);Text(preview.text("body"),maxLines=2,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis);if(preview.text("status")=="pending")Text(stringResource(R.string.watch_moderation_notice),style=MaterialTheme.typography.bodySmall)}else Text(stringResource(R.string.watch_add_comment),style=MaterialTheme.typography.bodyMedium)
+                                    if(preview!=null){
+                                        Text(
+                                            preview.text("display_name").ifBlank{preview.text("username")},
+                                            style=MaterialTheme.typography.labelMedium,
+                                        )
+                                        Text(
+                                            preview.text("body"),
+                                            maxLines=2,
+                                            overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                        )
+                                        if(preview.text("status")=="pending") {
+                                            AtharStatusPill(stringResource(R.string.watch_moderation_notice))
+                                        }
+                                    } else {
+                                        Text(
+                                            stringResource(R.string.watch_add_comment),
+                                            style=MaterialTheme.typography.bodyMedium,
+                                            color=MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
                                 }
                             }
                         }
                         if(!wide&&lesson["series"]?.isJsonObject==true){
-                            item(key="series-title",contentType="heading"){Text(lesson["series"].text("title"),style=MaterialTheme.typography.titleMedium);Text(stringResource(R.string.watch_position,lesson.text("lesson_number"),lesson["series"].text("lesson_count")),style=MaterialTheme.typography.bodySmall)}
+                            item(key="series-title",contentType="heading"){
+                                AtharSectionHeader(lesson["series"].text("title"))
+                                Text(
+                                    stringResource(
+                                        R.string.watch_position,
+                                        lesson.text("lesson_number"),
+                                        lesson["series"].text("lesson_count"),
+                                    ),
+                                    style=MaterialTheme.typography.bodySmall,
+                                    color=MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                             items(lesson.array("playlist_preview"),key={"lesson-${it.text("id")}"},contentType={"playlist"}){row->PlaylistLesson(row,row.text("id")=="$id"){vm.select(row.text("id").toInt())}}
                             item(key="open-playlist",contentType="action"){TextButton(onClick={playlistOpen=true}){Text(stringResource(R.string.watch_all_lessons))}}
                         }

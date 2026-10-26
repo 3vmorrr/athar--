@@ -26,7 +26,12 @@ final class ProgressService
             $this->db->prepare('INSERT INTO quran_positions (user_id,surah,ayah,revision,updated_at) VALUES (?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE surah=VALUES(surah),ayah=VALUES(ayah),revision=revision+1,updated_at=UTC_TIMESTAMP()')->execute([$user,$surah,$ayah]);$this->db->commit();return (array)$this->position($user);
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
-    public function bookmarks(int $user): array{$q=$this->db->prepare('SELECT id,surah,ayah,label,created_at FROM quran_bookmarks WHERE user_id=? ORDER BY created_at DESC LIMIT 500');$q->execute([$user]);return $q->fetchAll();}
+    public function bookmarks(int $user,array $params=[]): array
+    {
+        $q=$this->db->prepare('SELECT id,surah,ayah,label,created_at FROM quran_bookmarks WHERE user_id=? ORDER BY created_at DESC,id DESC LIMIT 500');
+        $q->execute([$user]);
+        return $this->collectionResponse($q->fetchAll(),$params);
+    }
     public function addBookmark(int $user,array $data): array
     {
         $surah=$this->integer($data,'surah',1,114);$ayah=$this->integer($data,'ayah',1,286);QuranIndex::standard()->globalIndex($surah,$ayah);$label=$data['label']??'';if(!is_string($label)||mb_strlen($label,'UTF-8')>120)throw new ApiError('invalid_fields',422,['label'=>'invalid']);
@@ -38,9 +43,11 @@ final class ProgressService
         $surah=$this->integer($data,'surah',1,114);$ayah=$this->integer($data,'ayah',1,286);QuranIndex::standard()->globalIndex($surah,$ayah);
         $this->db->prepare('DELETE FROM quran_bookmarks WHERE user_id=? AND surah=? AND ayah=?')->execute([$user,$surah,$ayah]);
     }
-    public function favorites(int $user): array
+    public function favorites(int $user,array $params=[]): array
     {
-        $q=$this->db->prepare("SELECT f.target_type,f.target_id,COALESCE(b.title,l.title,r.title) title,f.created_at FROM user_favorites f LEFT JOIN books b ON f.target_type='book' AND b.id=f.target_id AND b.is_published=1 LEFT JOIN lessons l ON f.target_type='lesson' AND l.id=f.target_id AND l.is_published=1 LEFT JOIN series r ON f.target_type='series' AND r.id=f.target_id AND r.is_published=1 WHERE f.user_id=? AND (b.id IS NOT NULL OR (l.id IS NOT NULL AND (l.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=l.scholar_id AND s.is_published=1)) AND (l.series_id IS NULL OR EXISTS(SELECT 1 FROM series lr LEFT JOIN scholars rs ON rs.id=lr.scholar_id WHERE lr.id=l.series_id AND lr.is_published=1 AND (lr.scholar_id IS NULL OR rs.is_published=1)))) OR (r.id IS NOT NULL AND (r.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=r.scholar_id AND s.is_published=1)))) ORDER BY f.id DESC LIMIT 500");$q->execute([$user]);return $q->fetchAll();
+        $q=$this->db->prepare("SELECT f.target_type,f.target_id,COALESCE(b.title,l.title,r.title) title,f.created_at FROM user_favorites f LEFT JOIN books b ON f.target_type='book' AND b.id=f.target_id AND b.is_published=1 LEFT JOIN lessons l ON f.target_type='lesson' AND l.id=f.target_id AND l.is_published=1 LEFT JOIN series r ON f.target_type='series' AND r.id=f.target_id AND r.is_published=1 WHERE f.user_id=? AND (b.id IS NOT NULL OR (l.id IS NOT NULL AND (l.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=l.scholar_id AND s.is_published=1)) AND (l.series_id IS NULL OR EXISTS(SELECT 1 FROM series lr LEFT JOIN scholars rs ON rs.id=lr.scholar_id WHERE lr.id=l.series_id AND lr.is_published=1 AND (lr.scholar_id IS NULL OR rs.is_published=1)))) OR (r.id IS NOT NULL AND (r.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=r.scholar_id AND s.is_published=1)))) ORDER BY f.id DESC LIMIT 500");
+        $q->execute([$user]);
+        return $this->collectionResponse($q->fetchAll(),$params);
     }
     public function favorite(int $user,string $type,int $id,bool $saved): void
     {
@@ -48,18 +55,30 @@ final class ProgressService
         if($saved){$this->catalog->detail($types[$type],$id);$this->db->prepare('INSERT IGNORE INTO user_favorites (user_id,target_type,target_id) VALUES (?,?,?)')->execute([$user,$type,$id]);}
         else $this->db->prepare('DELETE FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?')->execute([$user,$type,$id]);
     }
-    public function activity(int $user,string $eventId,string $kind): void
+    public function activity(int $user,string $eventId,string $kind,?string $activityDate=null): void
     {
         $columns=['quran_session'=>'quran_sessions','lesson_completion'=>'lesson_completions','adhkar_completion'=>'adhkar_completions','book_download'=>'book_downloads'];
         if(!preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i',$eventId)||!isset($columns[$kind]))throw new ApiError('invalid_fields',422,['event_id'=>'invalid']);
-        $owns=!$this->db->inTransaction();if($owns)$this->db->beginTransaction();
+        $date=$this->activityDate($activityDate);
+        $owns=!$this->db->inTransaction();
+        if($owns)$this->db->beginTransaction();
         try{
-            $q=$this->db->prepare('SELECT activity_type FROM activity_events WHERE user_id=? AND event_id=? FOR UPDATE');$q->execute([$user,$eventId]);$old=$q->fetchColumn();
-            if($old!==false&&$old!==$kind)throw new ApiError('conflict',409,['event_id'=>'reused']);
-            if($old===false){$this->db->prepare('INSERT INTO activity_events (user_id,event_id,activity_type,activity_date,created_at) VALUES (?,?,?,UTC_DATE(),UTC_TIMESTAMP())')->execute([$user,$eventId,$kind]);$column=$columns[$kind];$this->db->prepare("INSERT INTO account_daily_stats (user_id,activity_date,{$column}) VALUES (?,UTC_DATE(),1) ON DUPLICATE KEY UPDATE {$column}=LEAST(65535,{$column}+1)")->execute([$user]);}
+            $q=$this->db->prepare('SELECT activity_type,activity_date FROM activity_events WHERE user_id=? AND event_id=? FOR UPDATE');
+            $q->execute([$user,$eventId]);
+            $old=$q->fetch();
+            if($old&&((string)$old['activity_type']!==$kind||(string)$old['activity_date']!==$date))throw new ApiError('conflict',409,['event_id'=>'reused']);
+            if(!$old){
+                $this->db->prepare('INSERT INTO activity_events (user_id,event_id,activity_type,activity_date,created_at) VALUES (?,?,?,?,UTC_TIMESTAMP())')->execute([$user,$eventId,$kind,$date]);
+                $column=$columns[$kind];
+                $this->db->prepare("INSERT INTO account_daily_stats (user_id,activity_date,{$column}) VALUES (?,?,1) ON DUPLICATE KEY UPDATE {$column}=LEAST(65535,{$column}+1)")->execute([$user,$date]);
+            }
             if($owns)$this->db->commit();
-        }catch(Throwable $e){if($owns&&$this->db->inTransaction())$this->db->rollBack();throw $e;}
+        }catch(Throwable $e){
+            if($owns&&$this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
     public function lessonProgress(int $user,int $lesson): ?array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare('SELECT lesson_id,position_seconds,duration_seconds,is_complete,updated_at FROM video_progress WHERE user_id=? AND lesson_id=?');$q->execute([$user,$lesson]);$row=$q->fetch();return $row?:null;}
     public function saveLessonProgress(int $user,array $data): array
     {
@@ -69,16 +88,309 @@ final class ProgressService
             if($complete&&!(bool)$was){$this->activity($user,(string)($data['event_id']??''),'lesson_completion');}$this->db->commit();return (array)$this->lessonProgress($user,$id);
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
+    public function activitySummary(int $user):array
+    {
+        $totals=$this->db->prepare(
+            'SELECT
+                COALESCE(SUM(adhkar_completions),0) adhkar_completions,
+                COALESCE(SUM(lesson_completions),0) lesson_completions,
+                COALESCE(SUM(book_downloads),0) book_downloads,
+                COALESCE(SUM(quran_sessions),0) recorded_quran_sessions,
+                COALESCE(SUM(CASE WHEN adhkar_completions>0 OR lesson_completions>0 OR book_downloads>0 OR quran_sessions>0 THEN 1 ELSE 0 END),0) active_days
+             FROM account_daily_stats
+             WHERE user_id=?'
+        );
+        $totals->execute([$user]);
+        $row=$totals->fetch()?:[];
+
+        $lessons=$this->db->prepare(
+            'SELECT
+                COUNT(*) lessons_started,
+                COALESCE(SUM(CASE WHEN is_complete=1 THEN 1 ELSE 0 END),0) lessons_complete,
+                COALESCE(SUM(position_seconds),0) watched_seconds
+             FROM video_progress
+             WHERE user_id=?'
+        );
+        $lessons->execute([$user]);
+        $lesson=$lessons->fetch()?:[];
+
+        $recent=$this->db->prepare(
+            'SELECT activity_date,quran_sessions,lesson_completions,adhkar_completions,book_downloads
+             FROM account_daily_stats
+             WHERE user_id=?
+               AND activity_date>=DATE_SUB(UTC_DATE(),INTERVAL 13 DAY)
+             ORDER BY activity_date'
+        );
+        $recent->execute([$user]);
+
+        return [
+            'generated_date'=>gmdate('Y-m-d'),
+            'availability'=>[
+                'reading_sessions'=>false,
+                'listening_history'=>false,
+                'adhkar_completions'=>true,
+                'lesson_progress'=>true,
+                'book_downloads'=>true,
+            ],
+            'recorded'=>[
+                'adhkar_completions'=>(int)($row['adhkar_completions']??0),
+                'lesson_completions'=>(int)($row['lesson_completions']??0),
+                'book_downloads'=>(int)($row['book_downloads']??0),
+                'legacy_quran_sessions'=>(int)($row['recorded_quran_sessions']??0),
+                'active_days'=>(int)($row['active_days']??0),
+                'lessons_started'=>(int)($lesson['lessons_started']??0),
+                'lessons_complete'=>(int)($lesson['lessons_complete']??0),
+                'watched_seconds'=>(int)($lesson['watched_seconds']??0),
+            ],
+            'recent'=>array_map(
+                static fn(array $day):array=>[
+                    'date'=>(string)$day['activity_date'],
+                    'lesson_completions'=>(int)$day['lesson_completions'],
+                    'adhkar_completions'=>(int)$day['adhkar_completions'],
+                    'book_downloads'=>(int)$day['book_downloads'],
+                ],
+                $recent->fetchAll(),
+            ),
+        ];
+    }
+
     public function khatmah(int $user): ?array
     {
-        $q=$this->db->prepare('SELECT start_date,target_date,total_pages,completed_pages,status,updated_at FROM khatmah_plans WHERE user_id=?');$q->execute([$user]);$plan=$q->fetch();if(!$plan)return null;
-        $remaining=max(0,(int)$plan['total_pages']-(int)$plan['completed_pages']);$days=max(1,(int)(new \DateTimeImmutable(gmdate('Y-m-d')))->diff(new \DateTimeImmutable($plan['target_date']))->format('%r%a')+1);$plan['remaining_pages']=$remaining;$plan['daily_pages']=$plan['status']==='active'?(int)ceil($remaining/$days):0;return $plan;
+        $q=$this->db->prepare(
+            'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+             FROM khatmah_plans
+             WHERE user_id=?'
+        );
+        $q->execute([$user]);
+        $plan=$q->fetch();
+        return $plan?$this->decorateKhatmah($plan):null;
     }
+
     public function saveKhatmah(int $user,array $data): array
     {
-        $date=(string)($data['target_date']??'');if(!NightPrayer::validDate($date)||$date<gmdate('Y-m-d')||$date>gmdate('Y-m-d',time()+5*366*86400))throw new ApiError('invalid_fields',422,['target_date'=>'invalid']);$completed=$this->integer($data,'completed_pages',0,604);$status=(string)($data['status']??'active');if(!in_array($status,['active','paused','finished'],true)||($status==='finished'&&$completed!==604))throw new ApiError('invalid_fields',422,['status'=>'invalid']);
-        $this->db->prepare('INSERT INTO khatmah_plans (user_id,start_date,target_date,completed_pages,status) VALUES (?,UTC_DATE(),?,?,?) ON DUPLICATE KEY UPDATE target_date=VALUES(target_date),completed_pages=VALUES(completed_pages),status=VALUES(status)')->execute([$user,$date,$completed,$status]);return (array)$this->khatmah($user);
+        $start=(string)($data['start_date']??'');
+        $target=(string)($data['target_date']??'');
+        $completed=$this->integer($data,'completed_pages',0,604);
+        $expected=$this->integer($data,'expected_revision',0,2147483647);
+        $status=(string)($data['status']??'active');
+
+        if(!in_array($status,['active','paused','finished'],true)){
+            throw new ApiError('invalid_fields',422,['status'=>'invalid']);
+        }
+        if($status==='finished'&&$completed!==604){
+            throw new ApiError('invalid_fields',422,['status'=>'requires_completion']);
+        }
+
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare(
+                'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+                 FROM khatmah_plans
+                 WHERE user_id=?
+                 FOR UPDATE'
+            );
+            $q->execute([$user]);
+            $current=$q->fetch();
+            $this->validateKhatmahDates(
+                $start,
+                $target,
+                $current!==false && (string)$current['target_date']===$target
+            );
+            $revision=$current?(int)$current['revision']:0;
+            if($revision!==$expected){
+                throw new ApiError(
+                    'conflict',
+                    409,
+                    ['current'=>$current?$this->decorateKhatmah($current):null]
+                );
+            }
+
+            if($current){
+                $this->db->prepare(
+                    'UPDATE khatmah_plans
+                     SET start_date=?,target_date=?,total_pages=604,completed_pages=?,status=?,
+                         revision=revision+1,updated_at=UTC_TIMESTAMP()
+                     WHERE user_id=?'
+                )->execute([$start,$target,$completed,$status,$user]);
+            }else{
+                $this->db->prepare(
+                    'INSERT INTO khatmah_plans
+                     (user_id,start_date,target_date,total_pages,completed_pages,status,revision)
+                     VALUES (?,?,?,604,?,?,1)'
+                )->execute([$user,$start,$target,$completed,$status]);
+            }
+
+            $this->db->commit();
+            return (array)$this->khatmah($user);
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
+    public function khatmahAction(int $user,array $data):array
+    {
+        $action=(string)($data['action']??'');
+        if(!in_array($action,['pause','resume','restart','finish'],true)){
+            throw new ApiError('invalid_fields',422,['action'=>'invalid']);
+        }
+        $expected=$this->integer($data,'expected_revision',1,2147483647);
+
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare(
+                'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+                 FROM khatmah_plans
+                 WHERE user_id=?
+                 FOR UPDATE'
+            );
+            $q->execute([$user]);
+            $current=$q->fetch();
+            if(!$current)throw new ApiError('not_found',404);
+            if((int)$current['revision']!==$expected){
+                throw new ApiError(
+                    'conflict',
+                    409,
+                    ['current'=>$this->decorateKhatmah($current)]
+                );
+            }
+
+            $status=(string)$current['status'];
+            $start=(string)$current['start_date'];
+            $target=(string)$current['target_date'];
+            $completed=(int)$current['completed_pages'];
+
+            if($action==='pause'){
+                if($status==='finished')throw new ApiError('invalid_fields',422,['status'=>'finished']);
+                $status='paused';
+            }elseif($action==='resume'){
+                if($status==='finished')throw new ApiError('invalid_fields',422,['status'=>'finished']);
+                if($target<gmdate('Y-m-d')){
+                    throw new ApiError('invalid_fields',422,['target_date'=>'past']);
+                }
+                $status='active';
+            }elseif($action==='finish'){
+                if($completed!==604){
+                    throw new ApiError('invalid_fields',422,['completed_pages'=>'requires_604']);
+                }
+                $status='finished';
+            }else{
+                $start=isset($data['start_date'])&&is_string($data['start_date'])
+                    ?$data['start_date']
+                    :gmdate('Y-m-d');
+                $target=isset($data['target_date'])&&is_string($data['target_date'])
+                    ?$data['target_date']
+                    :'';
+                $this->validateKhatmahDates($start,$target);
+                $completed=0;
+                $status='active';
+            }
+
+            $this->db->prepare(
+                'UPDATE khatmah_plans
+                 SET start_date=?,target_date=?,completed_pages=?,status=?,
+                     revision=revision+1,updated_at=UTC_TIMESTAMP()
+                 WHERE user_id=?'
+            )->execute([$start,$target,$completed,$status,$user]);
+
+            $this->db->commit();
+            return (array)$this->khatmah($user);
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    private function validateKhatmahDates(
+        string $start,
+        string $target,
+        bool $allowPastTarget=false
+    ):void
+    {
+        if(!NightPrayer::validDate($start)||!NightPrayer::validDate($target)){
+            throw new ApiError('invalid_fields',422,['date'=>'invalid']);
+        }
+        $today=gmdate('Y-m-d');
+        $minimum=gmdate('Y-m-d',time()-5*366*86400);
+        $maximumStart=gmdate('Y-m-d',time()+366*86400);
+        if($start<$minimum||$start>$maximumStart||$target<$start){
+            throw new ApiError('invalid_fields',422,['start_date'=>'invalid']);
+        }
+
+        $startDate=new \DateTimeImmutable($start.'T00:00:00Z');
+        $targetDate=new \DateTimeImmutable($target.'T00:00:00Z');
+        $maximumTarget=$startDate->modify('+5 years');
+        if($targetDate>$maximumTarget){
+            throw new ApiError('invalid_fields',422,['target_date'=>'too_far']);
+        }
+
+        // A new or edited active schedule cannot intentionally target a date already gone.
+        if(!$allowPastTarget&&$target<$today){
+            throw new ApiError('invalid_fields',422,['target_date'=>'past']);
+        }
+    }
+
+    private function decorateKhatmah(array $plan):array
+    {
+        $total=(int)$plan['total_pages'];
+        $completed=(int)$plan['completed_pages'];
+        $remaining=max(0,$total-$completed);
+        $status=(string)$plan['status'];
+
+        $start=new \DateTimeImmutable((string)$plan['start_date'].'T00:00:00Z');
+        $target=new \DateTimeImmutable((string)$plan['target_date'].'T00:00:00Z');
+        $today=new \DateTimeImmutable(gmdate('Y-m-d').'T00:00:00Z');
+
+        $totalDays=(int)$start->diff($target)->format('%a')+1;
+        $startsIn=0;
+        $elapsed=0;
+        $daysRemaining=0;
+
+        if($today<$start){
+            $startsIn=(int)$today->diff($start)->format('%a');
+            $elapsed=0;
+            $daysRemaining=$totalDays;
+        }elseif($today>$target){
+            $elapsed=$totalDays;
+            $daysRemaining=0;
+        }else{
+            $elapsed=(int)$start->diff($today)->format('%a')+1;
+            $daysRemaining=(int)$today->diff($target)->format('%a')+1;
+        }
+
+        $expected=$elapsed<=0
+            ?0
+            :min($total,(int)floor(($total*$elapsed)/max(1,$totalDays)));
+        $daily=$status==='active'&&$remaining>0&&$daysRemaining>0
+            ?(int)ceil($remaining/$daysRemaining)
+            :0;
+        $plannedDaily=(int)ceil($total/max(1,$totalDays));
+
+        return [
+            'start_date'=>(string)$plan['start_date'],
+            'target_date'=>(string)$plan['target_date'],
+            'total_pages'=>$total,
+            'completed_pages'=>$completed,
+            'status'=>$status,
+            'revision'=>(int)$plan['revision'],
+            'updated_at'=>(string)$plan['updated_at'],
+            'remaining_pages'=>$remaining,
+            'total_days'=>$totalDays,
+            'elapsed_days'=>$elapsed,
+            'days_remaining'=>$daysRemaining,
+            'starts_in_days'=>$startsIn,
+            'daily_pages'=>$daily,
+            'planned_daily_pages'=>$plannedDaily,
+            'expected_pages_today'=>$expected,
+            'pages_behind'=>max(0,$expected-$completed),
+            'pages_ahead'=>max(0,$completed-$expected),
+            'overdue'=>$today>$target&&$remaining>0&&$status!=='finished',
+            'progress_percent'=>$total>0
+                ?(int)round(($completed*100)/$total)
+                :0,
+        ];
+    }
+
     public function comments(int $user,int $lesson): array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare("SELECT c.id,c.body,c.status,c.created_at,u.display_name,u.username FROM lesson_comments c JOIN users u ON u.id=c.user_id WHERE c.lesson_id=? AND c.parent_id IS NULL AND (c.status='visible' OR (c.user_id=? AND c.status='pending')) ORDER BY c.id DESC LIMIT 50");$q->execute([$lesson,$user]);return $q->fetchAll();}
     public function addComment(int $user,int $lesson,string $body): array
     {
@@ -90,28 +402,180 @@ final class ProgressService
         if($update!==null){$allowed=['language','theme','quran_font_size'];foreach($update as $key=>$value){if(!in_array($key,$allowed,true))throw new ApiError('invalid_fields',422,[$key=>'unsupported']);if(($key==='language'&&!in_array($value,['ar','en'],true))||($key==='theme'&&!in_array($value,['light','dark','system'],true))||($key==='quran_font_size'&&(!is_int($value)||$value<18||$value>48)))throw new ApiError('invalid_fields',422,[$key=>'invalid']);$current[$key]=$value;}$this->db->prepare('UPDATE users SET preferences_json=? WHERE id=?')->execute([json_encode($current,JSON_THROW_ON_ERROR),$user]);}
         return $current;
     }
+    public function adhkarStats(int $user):array
+    {
+        $summary=$this->db->prepare(
+            'SELECT COALESCE(SUM(adhkar_completions),0) total_completions,
+                    COALESCE(SUM(CASE WHEN activity_date=UTC_DATE() THEN adhkar_completions ELSE 0 END),0) today_completions,
+                    COALESCE(SUM(CASE WHEN adhkar_completions>0 THEN 1 ELSE 0 END),0) active_days
+             FROM account_daily_stats
+             WHERE user_id=?'
+        );
+        $summary->execute([$user]);
+        $totals=$summary->fetch()?:[
+            'total_completions'=>0,
+            'today_completions'=>0,
+            'active_days'=>0,
+        ];
+
+        $categories=$this->db->prepare(
+            'SELECT a.category,
+                    COUNT(*) item_count,
+                    SUM(CASE
+                        WHEN p.user_id IS NOT NULL
+                         AND DATE(p.updated_at)=UTC_DATE()
+                         AND p.current_count>=p.repeat_count
+                        THEN 1 ELSE 0 END) completed_items,
+                    SUM(CASE
+                        WHEN p.user_id IS NOT NULL
+                         AND DATE(p.updated_at)=UTC_DATE()
+                        THEN LEAST(p.current_count,p.repeat_count)
+                        ELSE 0 END) current_count,
+                    SUM(CASE
+                        WHEN a.repeat_count IS NOT NULL AND a.repeat_count>0
+                        THEN a.repeat_count ELSE 0 END) target_count
+             FROM adhkar_items a
+             LEFT JOIN adhkar_progress p
+               ON p.user_id=?
+              AND p.item_key=CONCAT("curated:",a.id)
+             WHERE a.is_published=1
+               AND a.is_reviewed=1
+               AND a.repeat_count IS NOT NULL
+               AND a.repeat_count>0
+             GROUP BY a.category
+             ORDER BY a.category'
+        );
+        $categories->execute([$user]);
+
+        $recent=$this->db->prepare(
+            'SELECT activity_date,adhkar_completions
+             FROM account_daily_stats
+             WHERE user_id=?
+               AND activity_date>=DATE_SUB(UTC_DATE(),INTERVAL 6 DAY)
+             ORDER BY activity_date'
+        );
+        $recent->execute([$user]);
+
+        return [
+            'date'=>gmdate('Y-m-d'),
+            'today_completions'=>(int)$totals['today_completions'],
+            'total_completions'=>(int)$totals['total_completions'],
+            'active_days'=>(int)$totals['active_days'],
+            'categories'=>array_map(
+                static fn(array $row):array=>[
+                    'category'=>(string)$row['category'],
+                    'item_count'=>(int)$row['item_count'],
+                    'completed_items'=>(int)$row['completed_items'],
+                    'current_count'=>(int)$row['current_count'],
+                    'target_count'=>(int)$row['target_count'],
+                ],
+                $categories->fetchAll(),
+            ),
+            'recent'=>array_map(
+                static fn(array $row):array=>[
+                    'date'=>(string)$row['activity_date'],
+                    'completions'=>(int)$row['adhkar_completions'],
+                ],
+                $recent->fetchAll(),
+            ),
+        ];
+    }
+
     public function adhkar(int $user,array $params=[]):array
     {
+        $projection="item_key,CASE WHEN DATE(updated_at)=UTC_DATE() THEN current_count ELSE 0 END current_count,repeat_count,revision,UTC_DATE() progress_date,updated_at";
         if(array_key_exists('item_id',$params)){
             $item=$params['item_id'];
             if(!is_scalar($item)||!preg_match('/^[1-9][0-9]{0,9}$/D',(string)$item)||(int)$item>2147483647)throw new ApiError('invalid_fields',422,['item_id'=>'invalid']);
-            $q=$this->db->prepare('SELECT item_key,current_count,repeat_count,revision,updated_at FROM adhkar_progress WHERE user_id=? AND item_key=?');$q->execute([$user,'curated:'.(int)$item]);return $q->fetchAll();
+            $q=$this->db->prepare("SELECT {$projection} FROM adhkar_progress WHERE user_id=? AND item_key=?");
+            $q->execute([$user,'curated:'.(int)$item]);
+            return $q->fetchAll();
         }
-        $q=$this->db->prepare('SELECT item_key,current_count,repeat_count,revision,updated_at FROM adhkar_progress WHERE user_id=? ORDER BY updated_at DESC LIMIT 500');$q->execute([$user]);return $q->fetchAll();
+        $q=$this->db->prepare("SELECT {$projection} FROM adhkar_progress WHERE user_id=? ORDER BY updated_at DESC LIMIT 500");
+        $q->execute([$user]);
+        return $q->fetchAll();
     }
+
     public function saveAdhkar(int $user,array $data):array
     {
-        $id=$this->integer($data,'item_id',1,2147483647);$item=$this->catalog->detail('adhkar',$id);$repeat=max(1,(int)$item['repeat_count']);
-        if($repeat>65535)throw new ApiError('invalid_fields',422,['repeat_count'=>'unsupported']);
-        $count=$this->integer($data,'current_count',0,$repeat);$expected=$this->integer($data,'expected_revision',0,2147483647);$key='curated:'.$id;
+        $id=$this->integer($data,'item_id',1,2147483647);
+        $item=$this->catalog->detail('adhkar',$id);
+        if($item['repeat_count']===null)throw new ApiError('invalid_fields',422,['repeat_count'=>'not_fixed']);
+        $repeat=(int)$item['repeat_count'];
+        if($repeat<1||$repeat>65535)throw new ApiError('invalid_fields',422,['repeat_count'=>'unsupported']);
+
+        $count=$this->integer($data,'current_count',0,$repeat);
+        $expected=$this->integer($data,'expected_revision',0,2147483647);
+        $progressDate=$this->activityDate(isset($data['progress_date'])&&is_string($data['progress_date'])?$data['progress_date']:null);
+        $today=gmdate('Y-m-d');
+        $storedCount=$progressDate===$today?$count:0;
+        $key='curated:'.$id;
+
         $this->db->beginTransaction();
         try{
-            $q=$this->db->prepare('SELECT current_count,repeat_count,revision FROM adhkar_progress WHERE user_id=? AND item_key=? FOR UPDATE');$q->execute([$user,$key]);$current=$q->fetch();
+            $q=$this->db->prepare('SELECT current_count,repeat_count,revision,DATE(updated_at) progress_date FROM adhkar_progress WHERE user_id=? AND item_key=? FOR UPDATE');
+            $q->execute([$user,$key]);
+            $current=$q->fetch();
             if(($current?(int)$current['revision']:0)!==$expected)throw new ApiError('conflict',409,['current'=>$current?:null]);
-            $this->db->prepare('INSERT INTO adhkar_progress (user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES (?,?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE current_count=VALUES(current_count),repeat_count=VALUES(repeat_count),revision=revision+1,updated_at=UTC_TIMESTAMP()')->execute([$user,$key,$count,$repeat]);
-            if($count===$repeat&&(!$current||(int)$current['current_count']<(int)$current['repeat_count']))$this->activity($user,(string)($data['event_id']??''),'adhkar_completion');
-            $this->db->commit();return ['item_key'=>$key,'current_count'=>$count,'repeat_count'=>$repeat,'revision'=>$expected+1];
-        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+
+            $previousToday=$current&&(string)$current['progress_date']===$today
+                ?(int)$current['current_count']
+                :0;
+
+            $this->db->prepare('INSERT INTO adhkar_progress (user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES (?,?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE current_count=VALUES(current_count),repeat_count=VALUES(repeat_count),revision=revision+1,updated_at=UTC_TIMESTAMP()')
+                ->execute([$user,$key,$storedCount,$repeat]);
+
+            if($count===$repeat&&($progressDate!==$today||$previousToday<$repeat)){
+                $this->activity(
+                    $user,
+                    (string)($data['event_id']??''),
+                    'adhkar_completion',
+                    $progressDate,
+                );
+            }
+
+            $this->db->commit();
+            return [
+                'item_key'=>$key,
+                'current_count'=>$storedCount,
+                'repeat_count'=>$repeat,
+                'revision'=>$expected+1,
+                'progress_date'=>$today,
+            ];
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
+    private function activityDate(?string $date):string
+    {
+        $today=gmdate('Y-m-d');
+        if($date===null||$date==='')return $today;
+        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/D',$date))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+        [$year,$month,$day]=array_map('intval',explode('-',$date));
+        if(!checkdate($month,$day,$year))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+        $minimum=gmdate('Y-m-d',time()-366*86400);
+        if($date<$minimum||$date>$today)throw new ApiError('invalid_fields',422,['activity_date'=>'out_of_range']);
+        return $date;
+    }
+
+    private function collectionResponse(array $rows,array $params):array
+    {
+        if(($params['paged']??'')!=='1')return $rows;
+        $page=max(1,min(10000,(int)($params['page']??1)));
+        $size=max(1,min(50,(int)($params['per_page']??20)));
+        $total=count($rows);
+        return [
+            'items'=>array_slice($rows,($page-1)*$size,$size),
+            'pagination'=>[
+                'page'=>$page,
+                'per_page'=>$size,
+                'total'=>$total,
+                'has_more'=>$page*$size<$total,
+            ],
+        ];
+    }
+
     private function integer(array $data,string $key,int $min,int $max): int { $value=$data[$key]??null;if(!is_int($value)||$value<$min||$value>$max)throw new ApiError('invalid_fields',422,[$key=>'invalid']);return $value; }
 }

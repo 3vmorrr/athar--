@@ -26,6 +26,7 @@ import org.athar.app.R
 import org.athar.app.core.ui.*
 import org.athar.app.quran.AyahText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable fun AudioScreen(graph: AppGraph, radio: Boolean = false) {
     val app = LocalContext.current.applicationContext as android.app.Application
     val vm: AudioViewModel = viewModel(key = "audio:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = AudioViewModel(graph, app) as T })
@@ -44,9 +45,95 @@ import org.athar.app.quran.AyahText
       val controlsHeight = maxHeight * if (radio) 0.4f else if (follow && selectedIsLoaded) 0.6f else 1f
       Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().heightIn(max = controlsHeight).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(if (radio) R.string.radio else R.string.listen), style = MaterialTheme.typography.headlineSmall)
+            AtharImmersiveHero(
+                presentation = AtharHeroPresentation(
+                    artwork = AtharHeroArtwork.Audio,
+                    eyebrow = stringResource(if (radio) R.string.radio else R.string.listen),
+                    title = if (radio) {
+                        state.recording?.text("name").orEmpty().ifBlank {
+                            stringResource(R.string.radio)
+                        }
+                    } else {
+                        names.getOrNull(surah - 1)?.name ?: stringResource(R.string.listen)
+                    },
+                    supportingText = if (radio) {
+                        null
+                    } else {
+                        selected?.text("name")?.takeIf { it.isNotBlank() }
+                            ?: stringResource(R.string.choose_reciter)
+                    },
+                    statusText = when {
+                        state.error -> stringResource(R.string.audio_failed)
+                        state.interrupted -> stringResource(R.string.audio_interrupted)
+                        state.buffer -> stringResource(R.string.watch_buffering)
+                        state.playing -> stringResource(R.string.watch_playing)
+                        selectedIsLoaded && state.recording != null -> stringResource(R.string.watch_ready)
+                        else -> null
+                    },
+                    statusTone = if (state.error) AtharHeroStatusTone.Warning
+                    else AtharHeroStatusTone.Neutral,
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (
+                state.recording != null &&
+                (state.radio != radio || (!radio && !selectedIsLoaded))
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    ),
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth().padding(AtharSpacing.Lg),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.audio_current_playback),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                            Text(
+                                state.recording?.text("name")
+                                    .orEmpty()
+                                    .ifBlank { state.recording?.text("reciter_name").orEmpty() },
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                stringResource(
+                                    when {
+                                        state.interrupted -> R.string.audio_interrupted
+                                        state.playing -> R.string.watch_playing
+                                        else -> R.string.watch_paused
+                                    },
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        TextButton(onClick = vm::toggle) {
+                            Text(
+                                stringResource(
+                                    if (state.playing) R.string.pause
+                                    else R.string.play,
+                                ),
+                            )
+                        }
+                        TextButton(onClick = vm::stop) {
+                            Text(stringResource(R.string.stop))
+                        }
+                    }
+                }
+            }
+
             if (radio) {
-                if (state.radio) Text(state.recording?.text("name").orEmpty(), style = MaterialTheme.typography.titleMedium)
+                // Station selection remains below the hero; playback state is owned by AudioViewModel.
             } else {
                 OutlinedButton(onClick = { surahSelector = true }, modifier = Modifier.testTag("audio-surah")) { Text(names.getOrNull(surah - 1)?.name ?: stringResource(R.string.surah)) }
                 OutlinedButton(onClick = { selector = true }, modifier = Modifier.testTag("audio-reciter")) { Text(selected?.text("name") ?: stringResource(R.string.choose_reciter)) }
@@ -72,15 +159,212 @@ import org.athar.app.quran.AyahText
             }
             if (radio && state.radio && state.recording != null) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = vm::toggle) { Text(stringResource(if (state.playing) R.string.pause else R.string.play)) }; OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) } }
             if (state.loading || state.buffer) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (state.error) MessagePanel(stringResource(R.string.audio_failed), true)
+            if (state.error) {
+                MessagePanel(stringResource(R.string.audio_failed), true) {
+                    TextButton(
+                        onClick = vm::retry,
+                        enabled = !state.loading,
+                    ) {
+                        Text(stringResource(R.string.retry))
+                    }
+                }
+            }
             if (!radio && selectedIsLoaded && state.recording != null && state.timings.isEmpty() && !state.loading) Text(stringResource(R.string.no_timing), style = MaterialTheme.typography.bodySmall)
         }
-        if (radio) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
-        else if (follow && selectedIsLoaded) Box(Modifier.weight(1f)) { FollowAlong(vm, state, verses) }
+        if (radio) {
+            Box(Modifier.weight(1f)) {
+                RadioCatalog(graph, vm, state)
+            }
+        } else if (follow && selectedIsLoaded) {
+            Box(Modifier.weight(1f)) {
+                FollowAlong(vm, state, verses)
+            }
+        }
       }
     }
     if (selector) ReaderDialog(graph, surah, { selector = false }) { reader -> update(selection.withReader(reader)); selector = false }
-    if (surahSelector) AlertDialog(onDismissRequest = { surahSelector = false }, title = { Text(stringResource(R.string.surah)) }, text = { LazyColumn(Modifier.heightIn(max = 420.dp)) { items(names, key = { it.number }, contentType = { "surah" }) { row -> TextButton(onClick = { update(selection.withSurah(row.number)); surahSelector = false }, Modifier.fillMaxWidth()) { Text("${row.number}. ${row.name}") } } } }, confirmButton = { TextButton(onClick = { surahSelector = false }) { Text(stringResource(R.string.close)) } })
+    if (surahSelector) {
+        ModalBottomSheet(onDismissRequest = { surahSelector = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+            ) {
+                Text(stringResource(R.string.surah), style = MaterialTheme.typography.titleLarge)
+                LazyColumn(Modifier.heightIn(max = 420.dp)) {
+                    items(names, key = { it.number }, contentType = { "surah" }) { row ->
+                        TextButton(
+                            onClick = {
+                                update(selection.withSurah(row.number))
+                                surahSelector = false
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("${row.number}. ${row.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RadioCatalog(
+    graph: AppGraph,
+    vm: AudioViewModel,
+    state: AudioUiState,
+) {
+    var input by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
+    var page by rememberSaveable(query) { mutableIntStateOf(1) }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = AtharSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+        ) {
+            OutlinedTextField(
+                value = input,
+                onValueChange = { input = it.take(80) },
+                modifier = Modifier.weight(1f),
+                singleLine = true,
+                label = { Text(stringResource(R.string.search)) },
+            )
+            TextButton(
+                onClick = {
+                    query = input.trim()
+                    page = 1
+                },
+            ) {
+                Text(stringResource(R.string.search))
+            }
+        }
+
+        Box(Modifier.weight(1f)) {
+            DataScreen(
+                graph,
+                "quran/radios",
+                mapOf(
+                    "q" to query,
+                    "page" to "$page",
+                    "per_page" to "25",
+                ),
+            ) { data, _ ->
+                val stations = data.array("items")
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = AtharSpacing.Xl),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    item(key = "radio-source", contentType = "source") {
+                        val source = data.text("source")
+                        if (source.isNotBlank()) {
+                            Text(
+                                "${stringResource(R.string.source)} · $source",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+
+                    if (stations.isEmpty()) {
+                        item(key = "radio-empty", contentType = "state") {
+                            QuietEmptyState(stringResource(R.string.empty_state))
+                        }
+                    }
+
+                    items(
+                        stations,
+                        key = { it.text("id") },
+                        contentType = { "station" },
+                    ) { station ->
+                        val mediaId = "radio:${station.text("id")}"
+                        val selected = state.radio && state.mediaKey == mediaId
+                        Surface(
+                            onClick = { vm.radio(station) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("radio-station-${station.text("id")}"),
+                            shape = MaterialTheme.shapes.large,
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainerLow
+                            },
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (selected) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant
+                                },
+                            ),
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(AtharSpacing.Lg),
+                                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                            ) {
+                                Icon(
+                                    AtharIcons.PlayArrow,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        station.text("name"),
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    if (selected) {
+                                        Text(
+                                            stringResource(
+                                                if (state.playing) R.string.watch_playing
+                                                else R.string.watch_paused,
+                                            ),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    item(key = "radio-pages", contentType = "controls") {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            TextButton(
+                                onClick = { page-- },
+                                enabled = page > 1,
+                            ) {
+                                Text(stringResource(R.string.back))
+                            }
+                            TextButton(
+                                onClick = { page++ },
+                                enabled = data.asJsonObject["pagination"]
+                                    .text("has_more") == "true",
+                            ) {
+                                Text(stringResource(R.string.more))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable private fun FollowAlong(vm: AudioViewModel, state: AudioUiState, verses: List<AyahText>) {
@@ -93,19 +377,125 @@ import org.athar.app.quran.AyahText
     }
     val scroll = androidx.compose.foundation.lazy.rememberLazyListState()
     LaunchedEffect(current) { if (current > 0) scroll.animateScrollToItem((current - 1).coerceIn(0, (verses.size - 1).coerceAtLeast(0))) }
-    LazyColumn(state = scroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { items(verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { verse -> Surface(color = if (verse.position.ayah == current) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) { Text(verse.text, Modifier.fillMaxWidth().padding(12.dp), fontFamily = QuranFont, style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp)) } } }
+    LazyColumn(
+        state = scroll,
+        contentPadding = PaddingValues(AtharSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+    ) {
+        items(
+            verses,
+            key = { it.position.globalIndex },
+            contentType = { "ayah" },
+        ) { verse ->
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                color = if (verse.position.ayah == current) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                },
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if (verse.position.ayah == current) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    },
+                ),
+            ) {
+                Text(
+                    verse.text,
+                    Modifier.fillMaxWidth().padding(AtharSpacing.Lg),
+                    fontFamily = QuranFont,
+                    style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp),
+                )
+            }
+        }
+    }
 }
 
-@Composable private fun ReaderDialog(graph: AppGraph, surah: Int, dismiss: () -> Unit, select: (JsonElement) -> Unit) {
-    var input by remember { mutableStateOf("") }; var query by remember { mutableStateOf("") }; var page by remember { mutableIntStateOf(1) }
-    AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(R.string.choose_reciter)) }, text = {
-        Column(Modifier.height(440.dp)) {
-            Row { OutlinedTextField(input, { input = it.take(80) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) }); TextButton(onClick = { query = input; page = 1 }) { Text(stringResource(R.string.search)) } }
-            DataScreen(graph, "quran/reciters", mapOf("surah" to "$surah", "q" to query, "page" to "$page", "per_page" to "25")) { data, _ ->
-                LazyColumn { items(data.array("items"), key = { it.text("id") }, contentType = { "reader" }) { reader -> TextButton(onClick = { select(reader) }, Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(reader.text("name")) } }
-                    item { Row { TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }; TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) } } }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun ReaderDialog(
+    graph: AppGraph,
+    surah: Int,
+    dismiss: () -> Unit,
+    select: (JsonElement) -> Unit,
+) {
+    var input by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
+    var page by remember { mutableIntStateOf(1) }
+
+    ModalBottomSheet(onDismissRequest = dismiss) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AtharSpacing.Xl)
+                .padding(bottom = AtharSpacing.Xl),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            Text(
+                stringResource(R.string.choose_reciter),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                OutlinedTextField(
+                    input,
+                    { input = it.take(80) },
+                    Modifier.weight(1f),
+                    singleLine = true,
+                    label = { Text(stringResource(R.string.search)) },
+                )
+                TextButton(onClick = {
+                    query = input
+                    page = 1
+                }) {
+                    Text(stringResource(R.string.search))
+                }
+            }
+            DataScreen(
+                graph,
+                "quran/reciters",
+                mapOf(
+                    "surah" to "$surah",
+                    "q" to query,
+                    "page" to "$page",
+                    "per_page" to "25",
+                ),
+            ) { data, _ ->
+                LazyColumn(Modifier.heightIn(max = 440.dp)) {
+                    items(
+                        data.array("items"),
+                        key = { it.text("id") },
+                        contentType = { "reader" },
+                    ) { reader ->
+                        TextButton(
+                            onClick = { select(reader) },
+                            Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                        ) {
+                            Text(reader.text("name"))
+                        }
+                    }
+                    item {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            TextButton(
+                                onClick = { page-- },
+                                enabled = page > 1,
+                            ) {
+                                Text(stringResource(R.string.back))
+                            }
+                            TextButton(
+                                onClick = { page++ },
+                                enabled = data.asJsonObject["pagination"].text("has_more") == "true",
+                            ) {
+                                Text(stringResource(R.string.more))
+                            }
+                        }
+                    }
                 }
             }
         }
-    }, confirmButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.close)) } })
+    }
 }

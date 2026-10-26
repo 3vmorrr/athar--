@@ -2,18 +2,16 @@ package org.athar.app.quran
 
 import org.athar.app.core.ui.AtharIcons
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -79,33 +77,165 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
 }
 
 @Composable fun QuranScreen(graph: AppGraph, fontSize: Int) {
+    val vm: QuranViewModel = viewModel(
+        key = "reader:${graph.session.userId}",
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                QuranViewModel(graph) as T
+        },
+    )
+    val state by vm.state.collectAsStateWithLifecycle()
+    val storedReading by vm.reading.collectAsStateWithLifecycle()
+    val reading = (storedReading as? ProtectedRead.Ready)?.value
     var mode by rememberSaveable { mutableStateOf<String?>(null) }
+
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
+
     Column(Modifier.fillMaxSize()) {
         if (mode == null) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.quran), style = MaterialTheme.typography.headlineMedium)
-                listOf("read" to R.string.read, "listen" to R.string.listen, "tafsir" to R.string.tafsir, "radio" to R.string.radio).forEach { (key, label) ->
-                    OutlinedButton(onClick = { mode = key }, Modifier.fillMaxWidth().heightIn(min = 64.dp)) { Text(stringResource(label)) }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                item(key = "quran-hero", contentType = "hero") {
+                    val positionText = reading?.let { position ->
+                        stringResource(
+                            R.string.reading_position_label,
+                            state.index?.surahs?.getOrNull(position.surah - 1)?.name
+                                ?: position.surah.toString(),
+                            position.ayah,
+                        )
+                    }
+                    AtharImmersiveHero(
+                        presentation = AtharHeroPresentation(
+                            artwork = AtharHeroArtwork.Quran,
+                            eyebrow = stringResource(R.string.quran),
+                            title = stringResource(R.string.quran),
+                            supportingText = when {
+                                storedReading == ProtectedRead.Unreadable ->
+                                    stringResource(R.string.local_data_unreadable)
+                                positionText != null -> positionText
+                                else -> stringResource(R.string.quran_source)
+                            },
+                            statusText = when {
+                                storedReading == ProtectedRead.Unreadable ->
+                                    stringResource(R.string.local_data_unreadable)
+                                reading?.conflict == true ->
+                                    stringResource(R.string.reading_conflict)
+                                reading?.pending == true ->
+                                    stringResource(R.string.reading_pending)
+                                else -> null
+                            },
+                            statusTone = if (
+                                storedReading == ProtectedRead.Unreadable ||
+                                    reading?.conflict == true
+                            ) {
+                                AtharHeroStatusTone.Warning
+                            } else {
+                                AtharHeroStatusTone.Neutral
+                            },
+                            primaryActionLabel = if (
+                                reading != null &&
+                                    !reading.conflict &&
+                                    storedReading is ProtectedRead.Ready
+                            ) {
+                                stringResource(R.string.resume_reading)
+                            } else {
+                                stringResource(R.string.read)
+                            },
+                        ),
+                        onPrimaryAction = {
+                            if (reading != null && !reading.conflict) {
+                                vm.select(reading.surah, reading.ayah)
+                            }
+                            mode = "read"
+                        },
+                    )
+                }
+
+                item(key = "quran-tools", contentType = "tools") {
+                    Column(
+                        Modifier.padding(horizontal = AtharSpacing.Lg),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        AtharSectionHeader(stringResource(R.string.quran_tools))
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.MenuBook,
+                                stringResource(R.string.read),
+                                { mode = "read" },
+                                Modifier.weight(1f),
+                                emphasized = true,
+                            )
+                            AtharQuickAction(
+                                AtharIcons.PlayArrow,
+                                stringResource(R.string.listen),
+                                { mode = "listen" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.School,
+                                stringResource(R.string.tafsir),
+                                { mode = "tafsir" },
+                                Modifier.weight(1f),
+                            )
+                            AtharQuickAction(
+                                AtharIcons.NightsStay,
+                                stringResource(R.string.radio),
+                                { mode = "radio" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                    }
                 }
             }
         } else {
-            TextButton(onClick = { mode = null }, Modifier.padding(horizontal = 12.dp)) { Text(stringResource(R.string.quran_tools)) }
-            Box(Modifier.weight(1f)) { when(mode) { "read" -> QuranReaderScreen(graph, fontSize); "tafsir" -> TafsirScreen(graph, fontSize); else -> org.athar.app.media.AudioScreen(graph, mode == "radio") } }
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                tonalElevation = 0.dp,
+            ) {
+                TextButton(
+                    onClick = { mode = null },
+                    modifier = Modifier.padding(horizontal = AtharSpacing.Md),
+                ) {
+                    Icon(AtharIcons.ArrowBack, null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(AtharSpacing.Sm))
+                    Text(stringResource(R.string.quran_tools))
+                }
+            }
+            Box(Modifier.weight(1f)) {
+                when (mode) {
+                    "read" -> QuranReaderScreen(graph, fontSize, vm)
+                    "tafsir" -> TafsirScreen(graph, fontSize)
+                    else -> org.athar.app.media.AudioScreen(graph, mode == "radio")
+                }
+            }
         }
     }
 }
 
-@Composable private fun QuranReaderScreen(graph: AppGraph, fontSize: Int) {
-    val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun QuranReaderScreen(
+    graph: AppGraph,
+    fontSize: Int,
+    vm: QuranViewModel,
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
-    val listState = rememberLazyListState()
-    LaunchedEffect(state.scrollRequest) {
-        if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0))
-    }
+    val mushafScrollState = rememberScrollState()
+    var selectedAyah by remember { mutableStateOf<AyahText?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
     var selector by remember { mutableStateOf(false) }
     var searchMode by rememberSaveable { mutableStateOf(false) }
@@ -117,24 +247,66 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            reading?.let { position ->
-                Surface(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
-                    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f)) {
-                                Text(stringResource(R.string.reading_position_label, state.index?.surahs?.getOrNull(position.surah - 1)?.name ?: "${position.surah}", position.ayah), style = MaterialTheme.typography.bodySmall)
-                                if (position.pending && !position.conflict) Text(stringResource(R.string.reading_pending), style = MaterialTheme.typography.labelSmall)
-                            }
-                            IconButton(onClick = { searchMode = false; vm.select(position.surah, position.ayah) }) { Icon(AtharIcons.ArrowForward, stringResource(R.string.resume_reading)) }
-                            if (position.pending && !position.conflict) TextButton(onClick = { scope.launch { try { vm.syncReading() } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.retry)) }
+            when {
+                storedReading == ProtectedRead.Unreadable -> {
+                    MessagePanel(stringResource(R.string.local_data_unreadable), true) {
+                        TextButton(onClick = vm::retryReading) {
+                            Text(stringResource(R.string.retry))
                         }
-                        if (position.conflict) {
-                            Text(stringResource(R.string.reading_conflict), style = MaterialTheme.typography.bodySmall)
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                listOf(true to R.string.reading_use_account, false to R.string.reading_keep_device).forEach { (remote, label) ->
-                                    TextButton(onClick = { scope.launch { try { vm.resolvePosition(remote) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(label)) }
+                    }
+                }
+                reading?.conflict == true -> {
+                    MessagePanel(stringResource(R.string.reading_conflict), true) {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                            listOf(
+                                true to R.string.reading_use_account,
+                                false to R.string.reading_keep_device,
+                            ).forEach { (remote, label) ->
+                                TextButton(
+                                    onClick = {
+                                        scope.launch {
+                                            try {
+                                                vm.resolvePosition(remote)
+                                            } catch (failure: CancellationException) {
+                                                throw failure
+                                            } catch (_: Exception) {
+                                                snackbar.showSnackbar(failed)
+                                            }
+                                        }
+                                    },
+                                ) {
+                                    Text(stringResource(label))
                                 }
                             }
+                        }
+                    }
+                }
+                reading?.pending == true -> {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Xs),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                    ) {
+                        AtharStatusPill(
+                            stringResource(R.string.reading_pending),
+                            Modifier.weight(1f),
+                        )
+                        TextButton(
+                            onClick = {
+                                scope.launch {
+                                    try {
+                                        vm.syncReading()
+                                    } catch (failure: CancellationException) {
+                                        throw failure
+                                    } catch (_: Exception) {
+                                        snackbar.showSnackbar(failed)
+                                    }
+                                }
+                            },
+                        ) {
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -161,36 +333,193 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             when {
                 state.loading -> LoadingScreen()
                 state.error -> FailurePanel(null) { vm.select(1) }
-                state.verses.isEmpty() -> Text(stringResource(R.string.empty_state), Modifier.padding(24.dp))
-                else -> LazyColumn(Modifier.fillMaxSize().testTag("quran-reader-list"), state = listState, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if(storedReading==ProtectedRead.Unreadable)item(key="unreadable-position",contentType="state"){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryReading){Text(stringResource(R.string.retry))}}}
-                    items(state.verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { ayah ->
-                        Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
-                            if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
-                                MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
-                            }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                        }
-                    }
-                    item(key = "source", contentType = "source") { Text(stringResource(R.string.quran_source), style = MaterialTheme.typography.bodySmall) }
+                state.verses.isEmpty() -> Text(
+                    stringResource(R.string.empty_state),
+                    Modifier.padding(AtharSpacing.Xxl),
+                )
+                searchMode -> QuranSearchResults(
+                    verses = state.verses,
+                    fontSize = fontSize,
+                    modifier = Modifier.fillMaxSize(),
+                    onLongPressAyah = { selectedAyah = it },
+                )
+                else -> Column(
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(mushafScrollState)
+                        .padding(horizontal = AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    QuranMushafPage(
+                        verses = state.verses,
+                        fontSize = fontSize,
+                        scrollState = mushafScrollState,
+                        scrollTargetGlobalIndex = state.scrollTarget,
+                        scrollRequest = state.scrollRequest,
+                        onLongPressAyah = { selectedAyah = it },
+                    )
+                    Text(
+                        stringResource(R.string.quran_source),
+                        modifier = Modifier.padding(
+                            horizontal = AtharSpacing.Sm,
+                            vertical = AtharSpacing.Lg,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
     }
-    if (selector) AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.surah)) }, text = {
-        LazyColumn(Modifier.heightIn(max = 460.dp)) { items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah -> TextButton(onClick = { vm.select(surah.number); selector = false }, Modifier.fillMaxWidth()) { Text("${surah.number}. ${surah.name}") } } }
-    }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
+    selectedAyah?.let { ayah ->
+        QuranAyahActionSheet(
+            ayah = ayah,
+            bookmarked = ayah.position.globalIndex in bookmarks,
+            canSavePosition = storedReading is ProtectedRead.Ready &&
+                reading?.conflict != true,
+            onDismiss = { selectedAyah = null },
+            onSavePosition = {
+                scope.launch {
+                    try {
+                        vm.savePosition(ayah)
+                        snackbar.showSnackbar(saved)
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        snackbar.showSnackbar(failed)
+                    }
+                }
+            },
+            onToggleBookmark = {
+                scope.launch {
+                    try {
+                        vm.bookmark(
+                            ayah,
+                            ayah.position.globalIndex !in bookmarks,
+                        )
+                        snackbar.showSnackbar(saved)
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        snackbar.showSnackbar(failed)
+                    }
+                }
+            },
+        )
+    }
+
+    if (selector) {
+        ModalBottomSheet(onDismissRequest = { selector = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+            ) {
+                Text(
+                    stringResource(R.string.surah),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                LazyColumn(Modifier.heightIn(max = 460.dp)) {
+                    items(
+                        state.index?.surahs.orEmpty(),
+                        key = { it.number },
+                        contentType = { "surah" },
+                    ) { surah ->
+                        TextButton(
+                            onClick = {
+                                vm.select(surah.number)
+                                selector = false
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("${surah.number}. ${surah.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (fontDialog) {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
-        AlertDialog(onDismissRequest = { fontDialog = false }, title = { Text(stringResource(R.string.font_size)) }, text = { Slider(size, { size = it }, valueRange = 18f..48f) }, confirmButton = { TextButton(onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false }) { Text(stringResource(R.string.save)) } })
+        ModalBottomSheet(onDismissRequest = { fontDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                Text(
+                    stringResource(R.string.font_size),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Slider(
+                    value = size,
+                    onValueChange = { size = it },
+                    valueRange = 18f..48f,
+                )
+                Button(
+                    onClick = {
+                        scope.launch { graph.settings.quranFontSize(size.toInt()) }
+                        fontDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
     }
+
     if (numberDialog) {
         var number by remember { mutableStateOf("${state.sectionNumber}") }
-        val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; else -> 60 }
-        AlertDialog(onDismissRequest = { numberDialog = false }, title = { Text(stringResource(when(state.sectionKind) { "page" -> R.string.page; "juz" -> R.string.juz; else -> R.string.hizb })) }, text = { OutlinedTextField(number, { number = it.filter(Char::isDigit).take(3) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }, confirmButton = { TextButton(enabled = (number.toIntOrNull() ?: 0) in 1..maximum, onClick = { vm.section(state.sectionKind, number.toInt()); numberDialog = false }) { Text(stringResource(R.string.read)) } })
+        val maximum = when (state.sectionKind) {
+            "page" -> 604
+            "juz" -> 30
+            else -> 60
+        }
+        ModalBottomSheet(onDismissRequest = { numberDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                Text(
+                    stringResource(
+                        when (state.sectionKind) {
+                            "page" -> R.string.page
+                            "juz" -> R.string.juz
+                            else -> R.string.hizb
+                        },
+                    ),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                OutlinedTextField(
+                    value = number,
+                    onValueChange = { number = it.filter(Char::isDigit).take(3) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                    ),
+                )
+                Button(
+                    enabled = (number.toIntOrNull() ?: 0) in 1..maximum,
+                    onClick = {
+                        vm.section(state.sectionKind, number.toInt())
+                        numberDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.read))
+                }
+            }
+        }
     }
+
 }

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
+require_once dirname(__DIR__) . '/admin/auth.php';
+require_once dirname(__DIR__) . '/admin/authorization.php';
+require_once dirname(__DIR__) . '/admin/editorial.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -13,11 +16,14 @@ set_exception_handler(static function (Throwable $exception): void {
 });
 
 ini_set('session.use_strict_mode', '1');
+$sessionRequestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$adminSessionRequest = admin_is_request_path($sessionRequestPath);
+if ($adminSessionRequest) session_name('ATHARADMIN');
 session_set_cookie_params([
     'httponly' => true,
     'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-    'samesite' => 'Lax',
-    'path' => '/',
+    'samesite' => $adminSessionRequest ? 'Strict' : 'Lax',
+    'path' => $adminSessionRequest ? '/admin' : '/',
 ]);
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
@@ -36,20 +42,30 @@ if ($path === '/email-unsubscribe') {
     $unsubscribeInput = $method === 'POST' ? $_POST : $_GET;
     $userId = filter_var($unsubscribeInput['u'] ?? null, FILTER_VALIDATE_INT);
     $token = (string) ($unsubscribeInput['t'] ?? '');
-    $valid = $userId && $userId > 0 && preg_match('/^[a-f0-9]{64}$/i', $token) && hash_equals(email_campaign_unsubscribe_url((int) $userId), platform_email_base_url() . '/email-unsubscribe?u=' . (int) $userId . '&t=' . $token);
+    $version = filter_var($unsubscribeInput['v'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
+    $expires = isset($unsubscribeInput['e']) ? filter_var($unsubscribeInput['e'], FILTER_VALIDATE_INT) : null;
+    $valid = $userId && $userId > 0 && email_campaign_unsubscribe_valid((int)$userId,$token,$expires === false ? null : $expires,(int)$version);
     if (!$valid) { http_response_code(400); exit('رابط إلغاء الاشتراك غير صالح.'); }
     if ($method === 'POST') {
         require_csrf();
+        db()->beginTransaction();
         db()->prepare('UPDATE users SET email_marketing_opt_in=0 WHERE id=?')->execute([(int) $userId]);
+        db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,0,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=0,updated_at=UTC_TIMESTAMP()")->execute([(int)$userId]);
+        db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_unsubscribed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([(int)$userId]);
+        db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_unsubscribed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([(int)$userId]);
         db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='إلغاء الاشتراك.' WHERE user_id=?")->execute([(int) $userId]);
         db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([null,'email-campaign-unsubscribed','user',(string)$userId]);
+        db()->commit();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><h1 style="color:#174f40">تم إلغاء الاشتراك</h1><p>لن تصلك رسائل تحديثات أثر بعد الآن. رسائل الحساب الضرورية ستظل مستمرة.</p><a href="/" style="color:#1e6753">العودة إلى أثر</a></main></body></html>'; exit;
     }
     header('Content-Type: text/html; charset=utf-8');
-    echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
+    echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><input type="hidden" name="v" value="' . (int) $version . '">' . ($expires ? '<input type="hidden" name="e" value="' . (int) $expires . '">' : '')<button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
 }
-if (in_array($path, ['/login','/register','/account','/admin','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)) header('Cache-Control: no-store, private');
+if (
+    in_array($path, ['/login','/register','/account','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)
+    || admin_is_request_path($path)
+) header('Cache-Control: no-store, private');
 
 if (in_array($path, ['/api/hadith/search', '/api/dorar/search'], true) && $method === 'GET') {
     if (!allow_session_rate('dorar_search', 30, 60) || !allow_shared_dorar_rate(55, 60)) { http_response_code(429); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['error'=>'rate_limited'],JSON_UNESCAPED_UNICODE); exit; }
@@ -270,8 +286,10 @@ if ($path === '/book-download' && $method === 'GET') {
     header('Cache-Control: no-store, private'); header('Location: ' . (string) $book['download_url'], true, 302); exit;
 }
 
-if ($path === '/backup-download' && $method === 'POST') {
-    $owner = require_owner(); require_csrf();
+if ($path === '/admin/backup-download' && $method === 'POST') {
+    $owner = admin_require_auth();
+    if (!admin_can($owner, 'recovery')) { http_response_code(403); exit('هذه العملية متاحة لمالك المنصة فقط.'); }
+    require_csrf();
     $grantId = (int) ($_SESSION['backup_grant_id'] ?? 0);
     $rawToken = (string) ($_SESSION['backup_grant_token'] ?? '');
     unset($_SESSION['backup_grant_id'], $_SESSION['backup_grant_token']);
@@ -432,8 +450,19 @@ if ($path === '/account') {
                 $passwordQuery = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordQuery->execute([$user['id']]); $passwordHash = (string) $passwordQuery->fetchColumn();
                 if (!password_verify($password, $passwordHash)) $accountError = 'كلمة المرور الحالية غير صحيحة.';
                 else {
-                    try { db()->prepare('UPDATE users SET display_name=?,username=?,email_marketing_opt_in=? WHERE id=?')->execute([$displayName,$username,isset($_POST['email_marketing_opt_in']) ? 1 : 0,$user['id']]); flash('تم تحديث بيانات الحساب.'); redirect('/account'); }
-                    catch (PDOException $exception) { if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
+                    try {
+                        $marketingOptIn=isset($_POST['email_marketing_opt_in']) ? 1 : 0;
+                        db()->beginTransaction();
+                        db()->prepare('UPDATE users SET display_name=?,username=?,email_marketing_opt_in=? WHERE id=?')->execute([$displayName,$username,$marketingOptIn,$user['id']]);
+                        db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,?,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=VALUES(email_campaign_opt_in),updated_at=UTC_TIMESTAMP()")->execute([$user['id'],$marketingOptIn]);
+                        if(!$marketingOptIn){
+                            db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_opt_out',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([$user['id']]);
+                            db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_opt_out',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([$user['id']]);
+                        }
+                        db()->commit();
+                        flash('تم تحديث بيانات الحساب.'); redirect('/account');
+                    }
+                    catch (PDOException $exception) { if (db()->inTransaction()) db()->rollBack(); if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
                 }
             }
         } elseif ($action === 'plan-status') {
@@ -536,8 +565,83 @@ if ($path === '/account') {
     ob_start(); require $viewPath; $content = (string) ob_get_clean(); require dirname(__DIR__) . '/app/Views/layout.php'; exit;
 }
 
+if ($path === '/admin/login') {
+    if (admin_current_user() !== null) {
+        try {
+            admin_require_auth();
+            redirect('/admin');
+        } catch (Throwable $ignored) {
+            // Invalid retained Admin state falls through to the isolated login form.
+        }
+    }
+
+    $adminAuthError = '';
+    $locale = admin_locale();
+
+    if ($method === 'POST') {
+        require_csrf();
+        $email = strtolower(trim((string) ($_POST['email'] ?? '')));
+        $password = (string) ($_POST['password'] ?? '');
+        $attempts = $_SESSION['admin_auth_attempts'] ?? ['started' => time(), 'count' => 0];
+        if (!is_array($attempts) || time() - (int) ($attempts['started'] ?? 0) > 900) {
+            $attempts = ['started' => time(), 'count' => 0];
+        }
+        $attempts['count'] = (int) ($attempts['count'] ?? 0) + 1;
+        $_SESSION['admin_auth_attempts'] = $attempts;
+
+        if (
+            $attempts['count'] > 8
+            || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || strlen($email) > 190
+            || strlen($password) < 10
+            || strlen($password) > 200
+            || !web_identity_rate('admin-login', $email, 8, 900)
+        ) {
+            $adminAuthError = $locale === 'en'
+                ? 'Unable to sign in with these credentials.'
+                : 'تعذر تسجيل الدخول بهذه البيانات.';
+        } else {
+            try {
+                $result = web_identity_auth()->login($email, $password, false);
+                $candidate = is_array($result['user'] ?? null) ? $result['user'] : [];
+                if (!in_array((string) ($candidate['role'] ?? ''), ['admin', 'owner'], true)) {
+                    if (!empty($candidate['id'])) {
+                        db()->prepare(
+                            "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-login-denied-role','user',?)"
+                        )->execute([(int) $candidate['id'], (string) (int) $candidate['id']]);
+                    }
+                    throw new RuntimeException('Admin role required.');
+                }
+
+                $adminActor = admin_start_authenticated_session((int) $candidate['id']);
+                db()->prepare(
+                    "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-login-succeeded','user',?)"
+                )->execute([(int) $adminActor['id'], (string) (int) $adminActor['id']]);
+                redirect('/admin');
+            } catch (Throwable $exception) {
+                $adminAuthError = $locale === 'en'
+                    ? 'Unable to sign in with these credentials.'
+                    : 'تعذر تسجيل الدخول بهذه البيانات.';
+            }
+        }
+    }
+
+    require dirname(__DIR__) . '/admin/Views/login.php';
+    exit;
+}
+
+if ($path === '/admin/logout' && $method === 'POST') {
+    $adminActor = admin_require_auth();
+    require_csrf();
+    db()->prepare(
+        "INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,'admin-logout','user',?)"
+    )->execute([(int) $adminActor['id'], (string) (int) $adminActor['id']]);
+    admin_destroy_session();
+    redirect('/admin/login');
+}
+
 if ($path === '/admin') {
-    $admin = require_admin();
+    $admin = admin_require_auth();
     $adminError = '';
     $backupArtifacts = [];
     if (($admin['role'] ?? '') === 'owner') {
@@ -548,36 +652,113 @@ if ($path === '/admin') {
         require_csrf();
         $kind = (string) ($_POST['kind'] ?? '');
         try {
+            admin_authorize_kind($admin, $kind);
             if ($kind === 'comment-review') {
-                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
-                if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
-                db()->prepare('UPDATE lesson_comments SET status=?,revision=revision+1,moderated_at=UTC_TIMESTAMP(),moderated_by=? WHERE id=?')->execute([$status,$admin['id'],$commentId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-'.$status,'lesson-comment',(string)$commentId]);
-                flash($status==='visible'?'تم نشر التعليق بعد مراجعته.':'تم إخفاء التعليق.'); redirect('/admin');
+                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT);
+                $revision = filter_var($_POST['expected_revision'] ?? null,FILTER_VALIDATE_INT);
+                $status = (string)($_POST['status'] ?? '');
+                $reason = trim((string)($_POST['reason'] ?? ''));
+                if (!$commentId || $commentId < 1 || $revision === false || $revision < 1 || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('بيانات مراجعة التعليق غير صالحة.');
+                try {
+                    (new \Athar\Learning\DiscussionService(db()))->moderate($admin,(int)$commentId,[
+                        'status'=>$status,
+                        'expected_revision'=>(int)$revision,
+                        'reason'=>$reason,
+                    ]);
+                } catch (\Athar\Http\ApiError $moderationError) {
+                    if ($moderationError->getMessage()==='conflict') throw new RuntimeException('تم تعديل التعليق من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر مراجعة التعليق: '.$moderationError->getMessage());
+                }
+                flash($status==='visible'?'تم نشر التعليق بعد مراجعته.':'تم إخفاء التعليق مع تسجيل السبب.'); redirect('/admin#admin-comments');
             } elseif ($kind === 'comment-delete') {
-                $commentId = filter_var($_POST['comment_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$commentId || $commentId < 1) throw new RuntimeException('التعليق المحدد غير صالح.');
-                $commentCheck = db()->prepare('SELECT id FROM lesson_comments WHERE id=?'); $commentCheck->execute([$commentId]);
-                if (!$commentCheck->fetchColumn()) throw new RuntimeException('التعليق غير موجود أو حُذف من قبل.');
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-deleted','lesson-comment',(string)$commentId]);
-                db()->prepare('DELETE FROM lesson_comments WHERE id=?')->execute([$commentId]);
-                flash('تم حذف التعليق.'); redirect('/admin#admin-comments');
-            } elseif ($kind === 'gmail-settings') {
+                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT);
+                $revision = filter_var($_POST['expected_revision'] ?? null,FILTER_VALIDATE_INT);
+                $reason = trim((string)($_POST['reason'] ?? ''));
+                if (!$commentId || $commentId < 1 || $revision === false || $revision < 1) throw new RuntimeException('بيانات حذف التعليق غير صالحة.');
+                try {
+                    (new \Athar\Learning\DiscussionService(db()))->deleteModerated($admin,(int)$commentId,[
+                        'expected_revision'=>(int)$revision,
+                        'reason'=>$reason,
+                    ]);
+                } catch (\Athar\Http\ApiError $moderationError) {
+                    if ($moderationError->getMessage()==='conflict') throw new RuntimeException('تم تعديل التعليق من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر حذف التعليق: '.$moderationError->getMessage());
+                }
+                flash('تم حذف التعليق مع الاحتفاظ بسجل قرار المراجعة.'); redirect('/admin#admin-comments');
+            } elseif ($kind === 'night-prayer-defaults') {
+                $method = trim((string) ($_POST['calculation_method'] ?? ''));
+                $madhab = (string) ($_POST['madhab'] ?? 'standard');
+                $highLatitude = (string) ($_POST['high_latitude_rule'] ?? 'middle_of_night');
+                $targetRaw = trim((string) ($_POST['target_verses'] ?? '100'));
+                $target = filter_var($targetRaw, FILTER_VALIDATE_INT);
+                $sourceAr = trim((string) ($_POST['source_name_ar'] ?? ''));
+                $sourceEn = trim((string) ($_POST['source_name_en'] ?? ''));
+                $sourceUrl = trim((string) ($_POST['source_url'] ?? ''));
+                $introAr = trim((string) ($_POST['intro_ar'] ?? ''));
+                $introEn = trim((string) ($_POST['intro_en'] ?? ''));
+                if (!preg_match('/^[A-Za-z0-9 _-]{2,40}$/', $method)) throw new RuntimeException('اسم طريقة حساب المواقيت غير صالح.');
+                if (!in_array($madhab,['standard','hanafi'],true)) throw new RuntimeException('المذهب الافتراضي غير صالح.');
+                if (!in_array($highLatitude,['middle_of_night','seventh_of_night','angle_based'],true)) throw new RuntimeException('قاعدة خطوط العرض العليا غير صالحة.');
+                if ($target === false || $target < 1 || $target > 6236) throw new RuntimeException('الهدف الافتراضي للآيات يجب أن يكون من 1 إلى 6236.');
+                if (mb_strlen($sourceAr,'UTF-8') < 2 || mb_strlen($sourceAr,'UTF-8') > 120 || mb_strlen($sourceEn,'UTF-8') < 2 || mb_strlen($sourceEn,'UTF-8') > 120) throw new RuntimeException('اسم مصدر المواقيت غير صالح.');
+                if (!is_https_url($sourceUrl)) throw new RuntimeException('رابط مصدر المواقيت يجب أن يكون HTTPS.');
+                if (mb_strlen($introAr,'UTF-8') > 1200 || mb_strlen($introEn,'UTF-8') > 1200) throw new RuntimeException('النص التعريفي أطول من الحد المسموح.');
+                $nextRevision = max(1,(int)platform_setting('night_prayer_public_revision','1')) + 1;
                 db()->beginTransaction();
+                foreach ([
+                    'night_prayer_enabled'=>isset($_POST['enabled'])?'1':'0',
+                    'night_prayer_public_revision'=>(string)$nextRevision,
+                    'night_prayer_default_calculation_method'=>$method,
+                    'night_prayer_default_madhab'=>$madhab,
+                    'night_prayer_default_high_latitude_rule'=>$highLatitude,
+                    'night_prayer_default_target_verses'=>(string)$target,
+                    'night_prayer_source_name_ar'=>$sourceAr,
+                    'night_prayer_source_name_en'=>$sourceEn,
+                    'night_prayer_source_url'=>$sourceUrl,
+                    'night_prayer_intro_ar'=>$introAr,
+                    'night_prayer_intro_en'=>$introEn,
+                ] as $settingKey=>$settingValue) save_platform_setting($settingKey,$settingValue,(int)$admin['id']);
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                    ->execute([$admin['id'],'night-prayer-public-defaults-updated','platform',(string)$nextRevision]);
+                db()->commit();
+                flash('تم حفظ الإعدادات العامة لقيام الليل. لم يتم الوصول إلى أي سجل عبادة خاص.');
+                redirect('/admin#admin-night-prayer');
+            } elseif ($kind === 'gmail-settings') {
                 $gmailEmail = strtolower(trim((string) ($_POST['gmail_email'] ?? '')));
                 $smtpPassword = preg_replace('/\s+/', '', (string) ($_POST['smtp_password'] ?? '')) ?? (string) ($_POST['smtp_password'] ?? '');
+                $testRecipient = strtolower(trim((string) ($_POST['test_recipient'] ?? '')));
+                $clearTestRecipient = isset($_POST['clear_test_recipient']);
                 if (!filter_var($gmailEmail, FILTER_VALIDATE_EMAIL) || strlen($gmailEmail) > 190) throw new RuntimeException('أدخل بريد Gmail صالحًا.');
                 if ($smtpPassword === '' && platform_setting('smtp_password_cipher') === '') throw new RuntimeException('أدخل App Password الخاصة بالتطبيق.');
+                if ($testRecipient !== '' && (!filter_var($testRecipient, FILTER_VALIDATE_EMAIL) || strlen($testRecipient) > 190)) throw new RuntimeException('بريد الاختبار غير صالح.');
+                if ($testRecipient !== '' && !isset($_POST['test_recipient_authorized'])) throw new RuntimeException('أكد أن صاحب بريد الاختبار مصرح له باستلام رسائل التطوير.');
+                if ($testRecipient !== '' || $clearTestRecipient) {
+                    $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?');
+                    $passwordCheck->execute([$admin['id']]);
+                    if (!password_verify((string) ($_POST['owner_password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
+                }
+
+                db()->beginTransaction();
                 foreach (['smtp_host'=>'smtp.gmail.com','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>$gmailEmail,'smtp_from_email'=>$gmailEmail,'smtp_from_name'=>'أثر'] as $settingKey=>$settingValue) save_platform_setting($settingKey,$settingValue,(int)$admin['id']);
                 if ($smtpPassword !== '') save_platform_setting('smtp_password_cipher',seal_platform_secret($smtpPassword),(int)$admin['id']);
+                if ($clearTestRecipient) {
+                    save_platform_setting('smtp_test_recipient_cipher','',(int)$admin['id']);
+                    save_platform_setting('smtp_test_recipient_authorized_at','',(int)$admin['id']);
+                } elseif ($testRecipient !== '') {
+                    save_platform_setting('smtp_test_recipient_cipher',seal_platform_secret($testRecipient),(int)$admin['id']);
+                    save_platform_setting('smtp_test_recipient_authorized_at',gmdate('Y-m-d H:i:s'),(int)$admin['id']);
+                }
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'gmail-smtp-settings-updated','platform',null]);
                 db()->commit();
+
                 if (isset($_POST['send_test_email'])) {
                     if (!allow_session_rate('smtp_test_email',1,3600)) throw new RuntimeException('أُرسل اختبار بريد خلال الساعة الماضية. حاول لاحقًا.');
+                    $authorizedRecipient = platform_secret('smtp_test_recipient');
+                    if ($authorizedRecipient === '' || platform_setting('smtp_test_recipient_authorized_at') === '') throw new RuntimeException('حدد بريد اختبار مصرحًا به واحفظه قبل إرسال اختبار.');
                     $smtpFailure = '';
-                    if (!send_platform_email((string)$admin['email'],'اختبار إعدادات Gmail في أثر','تم إرسال رسالة الاختبار بنجاح.',$smtpFailure)) throw new RuntimeException('حُفظت الإعدادات، لكن تعذّر إرسال رسالة الاختبار: ' . ($smtpFailure !== '' ? $smtpFailure : 'تحقق من بريد Gmail وApp Password.'));
-                    flash('تم حفظ إعدادات Gmail ووصلت رسالة الاختبار إلى بريد المدير.');
-                } else flash('تم حفظ إعدادات Gmail.');
+                    if (!send_platform_email($authorizedRecipient,'اختبار إعدادات Gmail في أثر','هذه رسالة اختبار واحدة من لوحة إدارة أثر للتحقق من إعداد البريد.',$smtpFailure)) throw new RuntimeException('حُفظت الإعدادات، لكن تعذّر إرسال رسالة الاختبار: ' . ($smtpFailure !== '' ? $smtpFailure : 'تحقق من Gmail وApp Password.'));
+                    flash('تم إرسال رسالة اختبار واحدة إلى المستلم المصرح به: ' . admin_redact_email($authorizedRecipient));
+                } else flash('تم حفظ إعدادات Gmail بأمان.');
                 redirect('/admin#admin-services');
             } elseif ($kind === 'dorar-settings') {
                 db()->beginTransaction();
@@ -587,74 +768,152 @@ if ($path === '/admin') {
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'dorar-api-settings-updated','platform',null]);
                 db()->commit();
                 flash('تم حفظ إعدادات بحث الدرر السنية.'); redirect('/admin#admin-services');
-            } elseif ($kind === 'campaign-create') {
-                $subject = trim((string) ($_POST['subject'] ?? ''));
-                $body = trim((string) ($_POST['body'] ?? ''));
-                if (mb_strlen($subject, 'UTF-8') < 3 || mb_strlen($subject, 'UTF-8') > 180 || mb_strlen($body, 'UTF-8') < 10 || mb_strlen($body, 'UTF-8') > 4000) throw new RuntimeException('اكتب عنوانًا من 3–180 حرفًا ورسالة من 10–4000 حرف.');
-                if (platform_setting('smtp_username') === '' || platform_setting('smtp_password_cipher') === '') throw new RuntimeException('اضبط بريد Gmail وApp Password أولًا من إعدادات الخدمات.');
-                $eligible = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
-                if ($eligible < 1) throw new RuntimeException('لا يوجد مستخدمون أكدوا بريدهم واشتركوا في رسائل التحديثات بعد.');
-                db()->beginTransaction();
-                db()->prepare("INSERT INTO email_campaigns (subject,body,status,created_by) VALUES (?,?,'draft',?)")->execute([$subject,$body,$admin['id']]);
-                $campaignId = (int) db()->lastInsertId();
-                db()->prepare("INSERT INTO email_campaign_recipients (campaign_id,user_id,email) SELECT ?,id,email FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->execute([$campaignId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-created','email-campaign',(string)$campaignId]);
-                db()->commit();
-                flash('تم تجهيز الحملة لـ' . $eligible . ' مشترك. اضغط «بدء الإرسال» مرة واحدة لإكمال الدفعات تلقائيًا.'); redirect('/admin#admin-campaigns');
-            } elseif ($kind === 'campaign-batch') {
-                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$campaignId || $campaignId < 1) throw new RuntimeException('الحملة المحددة غير صالحة.');
-                $pdo = db(); $pdo->beginTransaction();
-                $campaignQuery = $pdo->prepare('SELECT subject,body,status FROM email_campaigns WHERE id=? FOR UPDATE'); $campaignQuery->execute([$campaignId]); $campaign = $campaignQuery->fetch();
-                if (!$campaign || !in_array($campaign['status'], ['draft','sending','paused'], true)) throw new RuntimeException('الحملة غير متاحة للإرسال أو اكتملت بالفعل.');
-                $pdo->prepare("UPDATE email_campaigns SET status='sending' WHERE id=?")->execute([$campaignId]);
-                $pdo->prepare("UPDATE email_campaign_recipients SET status='pending' WHERE campaign_id=? AND status='processing' AND updated_at < DATE_SUB(UTC_TIMESTAMP(), INTERVAL 15 MINUTE)")->execute([$campaignId]);
-                $recipientsQuery = $pdo->prepare("SELECT id,user_id,email FROM email_campaign_recipients WHERE campaign_id=? AND status='pending' ORDER BY id LIMIT 3 FOR UPDATE");
-                $recipientsQuery->execute([$campaignId]); $recipients = $recipientsQuery->fetchAll();
-                foreach ($recipients as $reservedRecipient) $pdo->prepare("UPDATE email_campaign_recipients SET status='processing' WHERE id=?")->execute([$reservedRecipient['id']]);
-                $pdo->commit(); $sentNow = 0; $failedNow = 0; $skippedNow = 0; $quotaPaused = false;
-                foreach ($recipients as $recipient) {
-                    $recipientUser = null;
-                    if ($recipient['user_id'] !== null) { $userQuery = $pdo->prepare('SELECT email,display_name,email_marketing_opt_in,email_verified_at FROM users WHERE id=?'); $userQuery->execute([$recipient['user_id']]); $recipientUser = $userQuery->fetch(); }
-                    if (!$recipientUser || !$recipientUser['email_marketing_opt_in'] || !$recipientUser['email_verified_at']) {
-                        $pdo->prepare("UPDATE email_campaign_recipients SET status='skipped',failure_note='لم يعد المستخدم مشتركًا أو أن بريده غير مؤكد.' WHERE id=? AND status='processing'")->execute([$recipient['id']]); $skippedNow++; continue;
+            } elseif ($kind === 'engagement-campaign-save') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                $campaignIdRaw = trim((string) ($_POST['campaign_id'] ?? ''));
+                $campaignId = $campaignIdRaw === '' ? null : filter_var($campaignIdRaw, FILTER_VALIDATE_INT);
+                if ($campaignIdRaw !== '' && (!$campaignId || $campaignId < 1)) throw new RuntimeException('رقم الحملة غير صالح.');
+                $refRaw = trim((string) ($_POST['audience_ref_id'] ?? ''));
+                $audienceRef = $refRaw === '' ? null : filter_var($refRaw, FILTER_VALIDATE_INT);
+                if ($refRaw !== '' && (!$audienceRef || $audienceRef < 1)) throw new RuntimeException('مرجع الجمهور غير صالح.');
+                $ttlHours = filter_var($_POST['ttl_hours'] ?? 24, FILTER_VALIDATE_INT);
+                $frequencyHours = filter_var($_POST['min_frequency_hours'] ?? 6, FILTER_VALIDATE_INT);
+                if ($ttlHours === false || $ttlHours < 1 || $ttlHours > 168) throw new RuntimeException('مدة صلاحية الحملة يجب أن تكون من ساعة إلى 168 ساعة.');
+                if ($frequencyHours === false || $frequencyHours < 1 || $frequencyHours > 168) throw new RuntimeException('فاصل التكرار يجب أن يكون من ساعة إلى 168 ساعة.');
+                $audienceLocale = trim((string) ($_POST['audience_locale'] ?? ''));
+                $input = [
+                    'name'=>trim((string) ($_POST['name'] ?? '')),
+                    'channel'=>(string) ($_POST['channel'] ?? 'push'),
+                    'audience_type'=>(string) ($_POST['audience_type'] ?? 'all_eligible'),
+                    'audience_ref_id'=>$audienceRef ? (int)$audienceRef : null,
+                    'audience_locale'=>$audienceLocale === '' ? null : $audienceLocale,
+                    'title_ar'=>trim((string) ($_POST['title_ar'] ?? '')),
+                    'body_ar'=>trim((string) ($_POST['body_ar'] ?? '')),
+                    'title_en'=>trim((string) ($_POST['title_en'] ?? '')),
+                    'body_en'=>trim((string) ($_POST['body_en'] ?? '')),
+                    'deep_link'=>trim((string) ($_POST['deep_link'] ?? '')) ?: null,
+                    'image_url'=>trim((string) ($_POST['image_url'] ?? '')) ?: null,
+                    'scheduled_at'=>trim((string) ($_POST['scheduled_local'] ?? '')) ?: null,
+                    'schedule_timezone'=>trim((string) ($_POST['schedule_timezone'] ?? 'UTC')),
+                    'ttl_seconds'=>(int)$ttlHours * 3600,
+                    'min_frequency_hours'=>(int)$frequencyHours,
+                    'respect_quiet_hours'=>isset($_POST['respect_quiet_hours']),
+                ];
+                try {
+                    if ($campaignId === null) {
+                        $savedCampaign = $campaignService->createDraft($admin,$input);
+                    } else {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الحملة غير صالحة.');
+                        $input['expected_revision']=(int)$expectedRevision;
+                        $savedCampaign = $campaignService->updateDraft($admin,(int)$campaignId,$input);
                     }
-                    $sentLastDay = (int) $pdo->query("SELECT COUNT(*) FROM email_send_events WHERE sent_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 24 HOUR)")->fetchColumn();
-                    if ($sentLastDay >= 450) { $quotaPaused = true; $pdo->prepare("UPDATE email_campaign_recipients SET status='pending' WHERE id=? AND status='processing'")->execute([$recipient['id']]); continue; }
-                    $unsubscribeUrl = email_campaign_unsubscribe_url((int) $recipient['user_id']);
-                    $displayName = trim((string) ($recipientUser['display_name'] ?? ''));
-                    $greeting = $displayName !== '' ? "أهلًا {$displayName}،\n\n" : '';
-                    $footerText = "\n\nوصلتك هذه الرسالة لأنك اشتركت في تحديثات أثر. لإلغاء الاشتراك: {$unsubscribeUrl}";
-                    $htmlBody = ($displayName !== '' ? '<p style="margin:0 0 12px">أهلًا ' . e($displayName) . '،</p>' : '') . nl2br(e((string) $campaign['body']), false);
-                    $htmlFooter = 'وصلتك هذه الرسالة لأنك اشتركت في تحديثات أثر. <a href="' . e($unsubscribeUrl) . '" style="color:#1e6753;font-weight:bold">إلغاء الاشتراك</a>';
-                    $failure = '';
-                    try { $delivered = send_platform_email((string) $recipientUser['email'], (string) $campaign['subject'], $greeting . (string) $campaign['body'] . $footerText, $failure, $htmlBody, $htmlFooter, 'campaign'); }
-                    catch (Throwable $mailError) { $failure = 'تعذر تجهيز رسالة البريد. راجع إعدادات Gmail.'; $delivered = false; }
-                    if ($delivered) { $pdo->prepare("UPDATE email_campaign_recipients SET status='sent',sent_at=UTC_TIMESTAMP(),failure_note=NULL WHERE id=? AND status='processing'")->execute([$recipient['id']]); $sentNow++; }
-                    else { $pdo->prepare("UPDATE email_campaign_recipients SET status='failed',failure_note=? WHERE id=? AND status='processing'")->execute([mb_substr($failure ?: 'فشل إرسال البريد.',0,255,'UTF-8'),$recipient['id']]); $failedNow++; }
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') throw new RuntimeException('تم تعديل الحملة أو تغيير حالتها من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('لا تملك صلاحية تعديل هذه الحملة.');
+                    throw new RuntimeException('تعذر حفظ الحملة: '.$campaignError->getMessage());
                 }
-                $remainingQuery = $pdo->prepare("SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id=? AND status='pending'"); $remainingQuery->execute([$campaignId]); $remaining = (int) $remainingQuery->fetchColumn();
-                $processingQuery = $pdo->prepare("SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id=? AND status='processing'"); $processingQuery->execute([$campaignId]); $processing = (int) $processingQuery->fetchColumn();
-                if ($remaining === 0 && $processing === 0) $pdo->prepare("UPDATE email_campaigns SET status='completed' WHERE id=?")->execute([$campaignId]);
-                elseif ($quotaPaused) $pdo->prepare("UPDATE email_campaigns SET status='paused' WHERE id=?")->execute([$campaignId]);
-                $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-batch-sent','email-campaign',(string)$campaignId]);
-                if (isset($_POST['ajax_campaign_batch'])) {
-                    $campaignStats = $pdo->prepare("SELECT COUNT(*) AS total, SUM(status='sent') AS sent, SUM(status IN ('pending','processing')) AS pending, SUM(status='failed') AS failed, SUM(status='skipped') AS skipped FROM email_campaign_recipients WHERE campaign_id=?");
-                    $campaignStats->execute([$campaignId]);
-                    header('Content-Type: application/json; charset=utf-8');
-                    echo json_encode(['ok'=>true,'campaign_id'=>(int)$campaignId,'sent_now'=>$sentNow,'failed_now'=>$failedNow,'skipped_now'=>$skippedNow,'paused'=>$quotaPaused,'stats'=>$campaignStats->fetch()], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR); exit;
-                }
-                flash("نتيجة الدفعة: {$sentNow} أُرسلت، {$failedNow} فشلت، {$skippedNow} تم تخطيها، و{$remaining} متبقية." . ($quotaPaused ? ' توقفت الحملة عند حد الإرسال اليومي.' : '')); redirect('/admin#admin-campaigns');
-            } elseif ($kind === 'campaign-retry-failed') {
+                flash('تم حفظ الحملة كمسودة فقط. لم تُرسل أي رسالة.');
+                redirect('/admin?campaign_preview='.(int)$savedCampaign['id'].'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-test-email') {
+                $campaignId = filter_var($_POST['campaign_id'] ?? null,FILTER_VALIDATE_INT);
+                $locale = (string)($_POST['test_locale'] ?? 'ar');
+                if(!$campaignId||$campaignId<1||!in_array($locale,['ar','en'],true)) throw new RuntimeException('بيانات اختبار الحملة غير صالحة.');
+                $testRecipientCipher=platform_setting('smtp_test_recipient_cipher');
+                $testRecipientAuthorizedAt=platform_setting('smtp_test_recipient_authorized_at');
+                if($testRecipientCipher===''||$testRecipientAuthorizedAt==='') throw new RuntimeException('حدد مستلم اختبار مصرحًا به من إعدادات الخدمات أولًا.');
+                try{$testRecipientMasked=admin_redact_email(open_platform_secret($testRecipientCipher));}
+                catch(Throwable $testRecipientError){throw new RuntimeException('تعذر قراءة مستلم الاختبار المشفر. راجع إعدادات الخدمات.');}
+                if(!allow_session_rate('campaign_test_email',3,3600)) throw new RuntimeException('تمت جدولة عدة اختبارات مؤخرًا. حاول لاحقًا.');
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                try {$preview=$campaignService->preview($admin,(int)$campaignId);}
+                catch(\Athar\Http\ApiError $campaignError){throw new RuntimeException('تعذر تجهيز معاينة الحملة للاختبار.');}
+                $campaign=$preview['campaign'];
+                if(($campaign['status']??'')!=='draft') throw new RuntimeException('يمكن إرسال اختبار للحملات المسودة فقط.');
+                if(!in_array((string)$campaign['channel'],['email','push_email'],true)) throw new RuntimeException('اختبار البريد متاح للحملات التي تتضمن Email فقط.');
+                $message=$preview['preview'][$locale];
+                $htmlBody='<p style="margin:0;white-space:pre-line">'.nl2br(e((string)$message['body']),false).'</p>';
+                $queued=(new \Athar\Engagement\EmailOutboxService(db()))->enqueueAuthorizedTest(
+                    $testRecipientCipher,
+                    (string)$message['title'],
+                    (string)$message['body'],
+                    $locale,
+                    'campaign:'.(int)$campaignId.':revision:'.(int)$campaign['revision'].':'.$locale.':'.bin2hex(random_bytes(8)),
+                    $htmlBody
+                );
+                if(!$queued) throw new RuntimeException('تعذر وضع رسالة الاختبار في الطابور.');
+                db()->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                    ->execute([$admin['id'],'engagement-campaign-test-email-queued','engagement-campaign',(string)$campaignId]);
+                flash('تم وضع معاينة البريد في طابور الاختبار للمستلم المصرح فقط: '.$testRecipientMasked);
+                redirect('/admin?campaign_preview='.(int)$campaignId.'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-confirm') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
                 $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$campaignId || $campaignId < 1) throw new RuntimeException('الحملة المحددة غير صالحة.');
-                db()->beginTransaction();
-                $campaignCheck = db()->prepare('SELECT id FROM email_campaigns WHERE id=? FOR UPDATE'); $campaignCheck->execute([$campaignId]);
-                if (!$campaignCheck->fetchColumn()) throw new RuntimeException('الحملة غير موجودة.');
-                db()->prepare("UPDATE email_campaign_recipients SET status='pending',failure_note=NULL WHERE campaign_id=? AND status='failed'")->execute([$campaignId]);
-                db()->prepare("UPDATE email_campaigns SET status='sending' WHERE id=?")->execute([$campaignId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-failures-requeued','email-campaign',(string)$campaignId]);
-                db()->commit(); flash('أُعيدت الرسائل الفاشلة إلى قائمة الإرسال.'); redirect('/admin#admin-campaigns');
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$campaignId || $campaignId < 1 || $expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('بيانات تأكيد الحملة غير صالحة.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?');
+                $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['owner_password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
+                try {
+                    $campaignService->confirmAndSchedule($admin,(int)$campaignId,(int)$expectedRevision,trim((string)($_POST['confirmation'] ?? '')));
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') {
+                        $fields=$campaignError->fields;
+                        if (isset($fields['dependencies'])) {
+                            $dependencyNames=is_array($fields['dependencies'])?implode('، ',array_values($fields['dependencies'])):'dependency unavailable';
+                            throw new RuntimeException('لا يمكن إطلاق الحملة حتى تكتمل تبعيات القناة: '.$dependencyNames);
+                        }
+                        throw new RuntimeException('تغيرت حالة الحملة أو بياناتها. راجع المعاينة ثم أعد التأكيد.');
+                    }
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('الإطلاق النهائي للحملات متاح لمالك المنصة فقط.');
+                    throw new RuntimeException('تعذر جدولة الحملة: '.$campaignError->getMessage());
+                }
+                flash('تم تأكيد الحملة وجدولتها. لم يتم تنفيذ إرسال داخل طلب الإدارة نفسه.');
+                redirect('/admin?campaign_preview='.(int)$campaignId.'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-cancel') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$campaignId || $campaignId < 1 || $expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('بيانات إلغاء الحملة غير صالحة.');
+                try {
+                    $campaignService->cancel($admin,(int)$campaignId,(int)$expectedRevision);
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') throw new RuntimeException('لا يمكن إلغاء الحملة بعد بدء المعالجة أو بعد تغير نسختها.');
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('لا تملك صلاحية إلغاء هذه الحملة.');
+                    throw new RuntimeException('تعذر إلغاء الحملة.');
+                }
+                flash('تم إلغاء الحملة وإلغاء كل عناصر الطابور التي لم تُرسل.');
+                redirect('/admin#admin-campaigns');
+            } elseif ($kind === 'user-suspension') {
+                $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
+                $nextState = (string) ($_POST['state'] ?? '');
+                if (!$targetId || $targetId < 1 || !in_array($nextState, ['suspend','restore'], true)) throw new RuntimeException('اختيار الحساب أو الحالة غير صالح.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
+                $pdo = db();
+                $pdo->beginTransaction();
+                $targetQuery = $pdo->prepare('SELECT id,role,suspended_at FROM users WHERE id=? FOR UPDATE');
+                $targetQuery->execute([$targetId]);
+                $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'suspension');
+                if ($nextState === 'suspend') {
+                    if ($target['suspended_at'] !== null) { $pdo->rollBack(); flash('الحساب موقوف بالفعل.'); redirect('/admin#admin-users'); }
+                    $pdo->prepare('UPDATE users SET suspended_at=UTC_TIMESTAMP(),session_version=session_version+1 WHERE id=?')->execute([$targetId]);
+                    $pdo->prepare("UPDATE api_sessions SET revoked_at=COALESCE(revoked_at,UTC_TIMESTAMP()),revoked_reason=COALESCE(revoked_reason,'admin-suspended') WHERE user_id=?")->execute([$targetId]);
+                    $action = 'admin-user-suspended';
+                    $message = 'تم إيقاف الحساب وإبطال جلساته الحالية.';
+                } else {
+                    if ($target['suspended_at'] === null) { $pdo->rollBack(); flash('الحساب نشط بالفعل.'); redirect('/admin#admin-users'); }
+                    $pdo->prepare('UPDATE users SET suspended_at=NULL,session_version=session_version+1 WHERE id=?')->execute([$targetId]);
+                    $pdo->prepare("UPDATE api_sessions SET revoked_at=COALESCE(revoked_at,UTC_TIMESTAMP()),revoked_reason=COALESCE(revoked_reason,'admin-restored') WHERE user_id=?")->execute([$targetId]);
+                    $action = 'admin-user-restored';
+                    $message = 'تمت إعادة تفعيل الحساب. يجب تسجيل الدخول من جديد.';
+                }
+                $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],$action,'user',(string)$targetId]);
+                $pdo->commit();
+                flash($message);
+                redirect('/admin#admin-users');
             } elseif ($kind === 'user-profile-update') {
                 $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
                 $email = strtolower(trim((string) ($_POST['email'] ?? '')));
@@ -663,9 +922,9 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190 || mb_strlen($displayName, 'UTF-8') < 2 || mb_strlen($displayName, 'UTF-8') > 80 || !preg_match('/^[a-z0-9_]{3,24}$/', $username) || in_array($username, ['admin','administrator','root','support','athar','api','www','owner'], true)) throw new RuntimeException('راجع البريد والاسم واسم المستخدم (3–24 حرفًا إنجليزيًا أو رقمًا أو _).');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
-                $targetQuery = db()->prepare('SELECT role,email FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || $targetId === (int) $admin['id']) throw new RuntimeException('لا يمكن تعديل هذا الحساب من لوحة المستخدمين.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير تعديل حساب مدير آخر.');
+                $targetQuery = db()->prepare('SELECT id,role,email FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'profile');
                 $duplicateEmail = db()->prepare('SELECT 1 FROM users WHERE email=? AND id<>? LIMIT 1'); $duplicateEmail->execute([$email, $targetId]);
                 if ($duplicateEmail->fetchColumn()) throw new RuntimeException('البريد الإلكتروني مستخدم بالفعل.');
                 $duplicate = db()->prepare('SELECT 1 FROM users WHERE username=? AND id<>? LIMIT 1'); $duplicate->execute([$username, $targetId]);
@@ -673,6 +932,9 @@ if ($path === '/admin') {
                 $emailChanged = !hash_equals((string) $target['email'], $email);
                 if ($emailChanged) {
                     db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='تم تغيير البريد.' WHERE user_id=?")->execute([$targetId]);
+                    db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_changed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([$targetId]);
+                    db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_changed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([$targetId]);
+                    db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,0,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=0,updated_at=UTC_TIMESTAMP()")->execute([$targetId]);
                     db()->prepare('UPDATE users SET email=?,display_name=?,username=?,email_marketing_opt_in=0,email_verified_at=NULL,session_version=session_version+1 WHERE id=?')->execute([$email,$displayName,$username,$targetId]);
                 }
                 else db()->prepare('UPDATE users SET display_name=?,username=? WHERE id=?')->execute([$displayName,$username,$targetId]);
@@ -684,9 +946,10 @@ if ($path === '/admin') {
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
                 $pdo = db(); $pdo->beginTransaction();
-                $targetQuery = $pdo->prepare('SELECT email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || !hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('الحساب غير موجود، أو محمي، أو أن تأكيد البريد لا يطابق.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير حذف حساب مدير آخر.');
+                $targetQuery = $pdo->prepare('SELECT id,email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'delete');
+                if (!hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('تأكيد البريد لا يطابق الحساب المحدد.');
                 $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'admin-user-deleted', 'user', (string) $targetId]);
                 $pdo->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='الحساب حُذف.' WHERE user_id=?")->execute([$targetId]);
                 $pdo->prepare('DELETE FROM users WHERE id=?')->execute([$targetId]);
@@ -698,8 +961,10 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !in_array($nextRole, ['user','admin'], true)) throw new RuntimeException('اختيار المستخدم أو الصلاحية غير صالح.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
-                $target = db()->prepare('SELECT role FROM users WHERE id=?'); $target->execute([$targetId]); $currentRole = $target->fetchColumn();
-                if (!is_string($currentRole) || $currentRole === 'owner') throw new RuntimeException('الحساب غير موجود أو أن دور المالك لا يتغير من هذه الشاشة.');
+                $targetQuery = db()->prepare('SELECT id,role FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'role');
+                $currentRole = (string) $target['role'];
                 if ($currentRole === $nextRole) { flash('الصلاحية المحددة مطبقة بالفعل.'); redirect('/admin'); }
                 db()->prepare("UPDATE users SET role=?,session_version=session_version+1 WHERE id=? AND role<>'owner'")->execute([$nextRole, $targetId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'user-role-changed-to-' . $nextRole, 'user', (string) $targetId]);
@@ -720,7 +985,12 @@ if ($path === '/admin') {
                 append_owner_audit(['action' => 'backup-restore-started', 'actor_id' => (int) $admin['id'], 'backup_id' => $backupId]);
                 acquire_maintenance_lock();
                 try { restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
-                session_regenerate_id(true); $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                session_regenerate_id(true);
+                $fresh = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,suspended_at FROM users WHERE id=?');
+                $fresh->execute([$admin['id']]);
+                $_SESSION['admin_user'] = $fresh->fetch();
+                $_SESSION['admin_authenticated_at'] = time();
+                $_SESSION['admin_last_activity'] = time();
                 flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin');
             } elseif ($kind === 'local-reset') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إعادة الضبط متاحة لمالك المنصة فقط.');
@@ -747,7 +1017,11 @@ if ($path === '/admin') {
                     foreach (glob($assets . DIRECTORY_SEPARATOR . '*.pdf') ?: [] as $pdf) if (preg_match('/^[a-f0-9]{40}\.pdf$/', basename($pdf))) @unlink($pdf);
                     append_owner_audit(['action' => 'local-reset-completed', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
                 } finally { release_maintenance_lock(); }
-                $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                $fresh = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,suspended_at FROM users WHERE id=?');
+                $fresh->execute([$admin['id']]);
+                $_SESSION['admin_user'] = $fresh->fetch();
+                $_SESSION['admin_authenticated_at'] = time();
+                $_SESSION['admin_last_activity'] = time();
                 flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin');
             } elseif ($kind === 'backup-grant') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إذن التنزيل متاح لمالك المنصة فقط.');
@@ -762,6 +1036,72 @@ if ($path === '/admin') {
                 $_SESSION['backup_grant_id'] = (int) db()->lastInsertId(); $_SESSION['backup_grant_token'] = $token;
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'backup-download-grant-issued', 'backup', (string) $backupId]);
                 flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin');
+            } elseif ($kind === 'lesson-event') {
+                $lessonId = filter_var($_POST['lesson_id'] ?? null, FILTER_VALIDATE_INT);
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$lessonId || $lessonId < 1 || $expectedRevision === false || $expectedRevision < 0) throw new RuntimeException('الدرس أو نسخة الحدث غير صالحة.');
+                $timezone = trim((string) ($_POST['schedule_timezone'] ?? 'UTC'));
+                $scheduledLocal = trim((string) ($_POST['scheduled_local'] ?? ''));
+                $scheduledAt = null;
+                if ($scheduledLocal !== '') {
+                    try {
+                        $localTime = new DateTimeImmutable($scheduledLocal, new DateTimeZone($timezone));
+                        $scheduledAt = $localTime->format('Y-m-d\TH:i:sP');
+                    } catch (Throwable $dateError) {
+                        throw new RuntimeException('موعد الدرس أو المنطقة الزمنية غير صالح.');
+                    }
+                }
+                $durationRaw = trim((string) ($_POST['estimated_duration_minutes'] ?? ''));
+                $duration = $durationRaw === '' ? null : filter_var($durationRaw, FILTER_VALIDATE_INT);
+                if ($durationRaw !== '' && ($duration === false || $duration < 1 || $duration > 1440)) throw new RuntimeException('مدة الدرس غير صالحة.');
+                $bookRaw = trim((string) ($_POST['related_book_id'] ?? ''));
+                $bookId = $bookRaw === '' ? null : filter_var($bookRaw, FILTER_VALIDATE_INT);
+                $pageStartRaw = trim((string) ($_POST['related_page_start'] ?? ''));
+                $pageEndRaw = trim((string) ($_POST['related_page_end'] ?? ''));
+                $pageStart = $pageStartRaw === '' ? null : filter_var($pageStartRaw, FILTER_VALIDATE_INT);
+                $pageEnd = $pageEndRaw === '' ? null : filter_var($pageEndRaw, FILTER_VALIDATE_INT);
+                if (($bookRaw !== '' && (!$bookId || $bookId < 1)) || ($pageStartRaw !== '' && (!$pageStart || $pageStart < 1)) || ($pageEndRaw !== '' && (!$pageEnd || $pageEnd < 1))) throw new RuntimeException('مرجع الكتاب أو الصفحات غير صالح.');
+                $topics = static function (string $value): array {
+                    $items = preg_split('/[\r\n,]+/u', $value) ?: [];
+                    $items = array_values(array_filter(array_map('trim', $items), static fn(string $item): bool => $item !== ''));
+                    return array_slice($items, 0, 12);
+                };
+                $input = [
+                    'expected_revision' => (int) $expectedRevision,
+                    'status' => (string) ($_POST['status'] ?? 'draft'),
+                    'scheduled_at' => $scheduledAt,
+                    'schedule_timezone' => $timezone,
+                    'estimated_duration_minutes' => $duration,
+                    'is_live_event' => isset($_POST['is_live_event']),
+                    'reminders_enabled' => isset($_POST['reminders_enabled']),
+                    'replay_available' => isset($_POST['replay_available']),
+                    'visibility' => (string) ($_POST['visibility'] ?? 'public'),
+                    'title_ar' => trim((string) ($_POST['title_ar'] ?? '')),
+                    'description_ar' => trim((string) ($_POST['description_ar'] ?? '')) ?: null,
+                    'course_title_ar' => trim((string) ($_POST['course_title_ar'] ?? '')) ?: null,
+                    'course_title_en' => trim((string) ($_POST['course_title_en'] ?? '')) ?: null,
+                    'topics_ar' => $topics((string) ($_POST['topics_ar'] ?? '')),
+                    'topics_en' => $topics((string) ($_POST['topics_en'] ?? '')),
+                    'related_book_id' => $bookId ?: null,
+                    'related_page_start' => $pageStart ?: null,
+                    'related_page_end' => $pageEnd ?: null,
+                ];
+                $englishTitle = trim((string) ($_POST['title_en'] ?? ''));
+                $englishDescription = trim((string) ($_POST['description_en'] ?? ''));
+                if ($englishTitle !== '') {
+                    $input['title_en'] = $englishTitle;
+                    $input['description_en'] = $englishDescription !== '' ? $englishDescription : null;
+                } elseif (isset($_POST['clear_english_translation'])) {
+                    $input['title_en'] = null;
+                }
+                try {
+                    (new \Athar\Learning\UpcomingLessonService(db()))->save($admin, (int) $lessonId, $input);
+                } catch (\Athar\Http\ApiError $eventError) {
+                    if ($eventError->getMessage() === 'conflict') throw new RuntimeException('تم تعديل الحدث من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر حفظ الحدث: ' . $eventError->getMessage());
+                }
+                flash('تم حفظ حالة الدرس القادم/المباشر وتسجيل التغيير.');
+                redirect('/admin#admin-events');
             } elseif ($kind === 'content') {
                 $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
@@ -770,12 +1110,21 @@ if ($path === '/admin') {
                 if (($_POST['content_action'] ?? '') === 'update') {
                     $published = isset($_POST['publish']) ? 1 : 0;
                     if ($type === 'scholar') {
+                        $name = trim((string) ($_POST['name'] ?? ''));
+                        $biography = trim((string) ($_POST['biography'] ?? ''));
+                        $language = (string) ($_POST['language'] ?? 'ar');
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                        $sortOrder = max(-100000, min(100000, (int) ($_POST['sort_order'] ?? 0)));
+                        if (mb_strlen($name,'UTF-8') < 2 || mb_strlen($name,'UTF-8') > 180) throw new RuntimeException('اسم العالم يجب أن يكون من 2 إلى 180 حرفًا.');
+                        if (mb_strlen($biography,'UTF-8') > 6000 || mb_strlen($rights,'UTF-8') > 500) throw new RuntimeException('السيرة أو بيانات الحقوق أطول من الحد المسموح.');
+                        if (!in_array($language,['ar','en','other'],true) || ($source !== '' && !is_https_url($source))) throw new RuntimeException('لغة العالم أو رابط المصدر غير صالح.');
                         $current = db()->prepare('SELECT image_key FROM scholars WHERE id=?'); $current->execute([$id]); $previousImage = $current->fetchColumn();
                         if ($previousImage === false) throw new RuntimeException('العالم غير موجود.');
                         $nextImage = $previousImage ?: null; $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
                         if (isset($_FILES['scholar_image']) && ($_FILES['scholar_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $nextImage = store_scholar_image($_FILES['scholar_image'], $imageStorage);
                         try {
-                            db()->prepare('UPDATE scholars SET name=?,image_key=? WHERE id=?')->execute([trim((string) $_POST['name']), $nextImage, $id]);
+                            db()->prepare('UPDATE scholars SET name=?,biography=NULLIF(?,\'\'),language=?,source_url=NULLIF(?,\'\'),rights_basis=NULLIF(?,\'\'),image_key=?,is_published=?,sort_order=? WHERE id=?')->execute([$name,$biography,$language,$source,$rights,$nextImage,$published,$sortOrder,$id]);
                         } catch (Throwable $saveFailure) {
                             if ($nextImage !== $previousImage) delete_scholar_image(is_string($nextImage) ? $nextImage : null, $imageStorage);
                             throw $saveFailure;
@@ -788,28 +1137,109 @@ if ($path === '/admin') {
                         db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'series') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
-                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 220 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا صالحًا ورابط مصدر HTTPS عند الحاجة.');
+                        [$seriesScholarId] = validated_lesson_scope((int) ($_POST['scholar_id'] ?? 0), 0);
+                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$seriesScholarId, $title, trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'book') {
-                        $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? '')); $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        $author = trim((string) ($_POST['author'] ?? ''));
+                        $description = trim((string) ($_POST['description'] ?? ''));
+                        $keywords = trim((string) ($_POST['keywords'] ?? ''));
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                        $rightsHolder = trim((string) ($_POST['rights_holder'] ?? ''));
+                        $downloadUrl = trim((string) ($_POST['download_url'] ?? ''));
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 240 || mb_strlen($author,'UTF-8') < 2 || mb_strlen($author,'UTF-8') > 180) throw new RuntimeException('عنوان الكتاب أو اسم المؤلف غير صالح.');
+                        if (mb_strlen($description,'UTF-8') > 12000 || mb_strlen($keywords,'UTF-8') > 1000 || mb_strlen($rights,'UTF-8') > 500 || mb_strlen($rightsHolder,'UTF-8') > 180) throw new RuntimeException('بيانات الكتاب أطول من الحد المسموح.');
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
-                        if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
+                        if ($downloadUrl !== '' && !is_https_url($downloadUrl)) throw new RuntimeException('رابط التنزيل المباشر يجب أن يبدأ بـ HTTPS عند توفيره.');
                         $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
                         if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
                         $legacyFileQuery = db()->prepare('SELECT file_key FROM books WHERE id=?'); $legacyFileQuery->execute([$id]); $legacyFileKey = $legacyFileQuery->fetchColumn();
-                        db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,download_url=?,rights_basis=?,file_key=NULL,file_size=NULL,can_download=1,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')), $source, $downloadUrl, $rights, $published, $id]);
+                        db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,download_url=NULLIF(?,\'\'),rights_basis=?,file_key=NULL,file_size=NULL,can_download=?,is_published=? WHERE id=?')->execute([$title,$author,$description,$keywords ?: null,$language,$year,$rightsHolder,$source,$downloadUrl,$rights,$downloadUrl !== '' ? 1 : 0,$published,$id]);
                         if (is_string($legacyFileKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $legacyFileKey)) { $legacyPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $legacyFileKey; if (is_file($legacyPath)) unlink($legacyPath); }
                     } elseif ($type === 'adhkar') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if (!is_https_url($source) || trim((string) ($_POST['source_reference'] ?? '')) === '' || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا ومرجعًا وأكد المراجعة.');
-                        $count = ($_POST['repeat_count'] ?? '') === '' ? null : max(1, min(1000, (int) $_POST['repeat_count']));
-                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, (int) ($_POST['sort_order'] ?? 0), $id]);
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        $formula = trim((string) ($_POST['formula'] ?? ''));
+                        $reference = trim((string) ($_POST['source_reference'] ?? ''));
+                        $category = trim((string) ($_POST['category'] ?? ''));
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 200 || mb_strlen($formula,'UTF-8') < 2 || mb_strlen($formula,'UTF-8') > 5000 || mb_strlen($reference,'UTF-8') < 2 || mb_strlen($reference,'UTF-8') > 300 || mb_strlen($category,'UTF-8') < 2 || mb_strlen($category,'UTF-8') > 80) throw new RuntimeException('راجع عنوان الذكر ونصه ومرجعه وتصنيفه.');
+                        if (!is_https_url($source) || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا وأكد المراجعة.');
+                        $countRaw = trim((string) ($_POST['repeat_count'] ?? ''));
+                        $count = $countRaw === '' ? null : filter_var($countRaw, FILTER_VALIDATE_INT);
+                        if ($countRaw !== '' && ($count === false || $count < 1 || $count > 1000)) throw new RuntimeException('عدد التكرار يجب أن يكون من 1 إلى 1000 أو يترك فارغًا.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $nextRevision = (int) $current['revision'] + 1;
+                        $pdo->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=?,revision=? WHERE id=?')
+                            ->execute([$title,$formula,$reference,$source,$count,$category,$published,(int) ($_POST['sort_order'] ?? 0),$nextRevision,$id]);
+                        $freshQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                        $freshQuery->execute([$id]);
+                        admin_record_adhkar_revision($pdo, $freshQuery->fetch(), 'updated', (int) $admin['id']);
+                        $pdo->commit();
                     }
                     $auditAction = 'update';
                 } elseif (($_POST['content_action'] ?? '') === 'toggle') {
-                    db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
+                    if ($type === 'adhkar') {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $nextRevision = (int) $current['revision'] + 1;
+                        $pdo->prepare('UPDATE adhkar_items SET is_published=1-is_published,revision=? WHERE id=?')->execute([$nextRevision,$id]);
+                        $freshQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                        $freshQuery->execute([$id]);
+                        admin_record_adhkar_revision($pdo, $freshQuery->fetch(), 'publication_changed', (int) $admin['id']);
+                        $pdo->commit();
+                    } else {
+                        db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
+                    }
                     $auditAction = 'toggle-publication';
                 } elseif (($_POST['content_action'] ?? '') === 'delete') {
+                    if ($type === 'series') {
+                        $dependency = db()->prepare('SELECT COUNT(*) FROM lessons WHERE series_id=?');
+                        $dependency->execute([$id]);
+                        if ((int) $dependency->fetchColumn() > 0) throw new RuntimeException('لا يمكن حذف السلسلة قبل نقل أو حذف دروسها المرتبطة.');
+                    }
+                    if ($type === 'scholar') {
+                        $seriesDependency = db()->prepare('SELECT COUNT(*) FROM series WHERE scholar_id=?');
+                        $seriesDependency->execute([$id]);
+                        $lessonDependency = db()->prepare('SELECT COUNT(*) FROM lessons WHERE scholar_id=?');
+                        $lessonDependency->execute([$id]);
+                        if ((int) $seriesDependency->fetchColumn() > 0 || (int) $lessonDependency->fetchColumn() > 0) throw new RuntimeException('لا يمكن حذف العالم قبل نقل السلاسل والدروس المرتبطة به.');
+                    }
+                    if ($type === 'adhkar') {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الذكر غير صالحة؛ حدّث الصفحة ثم أعد المحاولة.');
+                        $pdo = db();
+                        $pdo->beginTransaction();
+                        $currentQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=? FOR UPDATE');
+                        $currentQuery->execute([$id]);
+                        $current = $currentQuery->fetch();
+                        if (!$current) throw new RuntimeException('الذكر غير موجود.');
+                        if ((int) $current['revision'] !== (int) $expectedRevision) throw new RuntimeException('تم تعديل الذكر من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                        $current['revision'] = (int) $current['revision'] + 1;
+                        admin_record_adhkar_revision($pdo, $current, 'deleted', (int) $admin['id']);
+                        $pdo->prepare('DELETE FROM adhkar_items WHERE id=?')->execute([$id]);
+                        $pdo->commit();
+                        $auditAction = 'delete';
+                        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
+                        flash('تم تحديث المحتوى.'); redirect('/admin#admin-content');
+                    }
                     $fileKey = null;
                     if (in_array($type, ['book','lesson'], true)) db()->prepare('DELETE FROM user_favorites WHERE target_type=? AND target_id=?')->execute([$type, $id]);
                     if ($table === 'books') {
@@ -829,33 +1259,73 @@ if ($path === '/admin') {
                 flash('تم تحديث المحتوى.'); redirect('/admin');
             } elseif ($kind === 'scholar') {
                 $name = trim((string) ($_POST['name'] ?? ''));
-                if (mb_strlen($name, 'UTF-8') < 2) throw new RuntimeException('اكتب اسم العالم.');
+                $biography = trim((string) ($_POST['biography'] ?? ''));
+                $language = (string) ($_POST['language'] ?? 'ar');
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                $sortOrder = max(-100000, min(100000, (int) ($_POST['sort_order'] ?? 0)));
+                if (mb_strlen($name,'UTF-8') < 2 || mb_strlen($name,'UTF-8') > 180) throw new RuntimeException('اسم العالم يجب أن يكون من 2 إلى 180 حرفًا.');
+                if (mb_strlen($biography,'UTF-8') > 6000 || mb_strlen($rights,'UTF-8') > 500) throw new RuntimeException('السيرة أو بيانات الحقوق أطول من الحد المسموح.');
+                if (!in_array($language,['ar','en','other'],true) || ($source !== '' && !is_https_url($source))) throw new RuntimeException('لغة العالم أو رابط المصدر غير صالح.');
                 $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
-                $imageKey = store_scholar_image($_FILES['scholar_image'] ?? [], $imageStorage);
+                $imageKey = null;
+                if (isset($_FILES['scholar_image']) && ($_FILES['scholar_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $imageKey = store_scholar_image($_FILES['scholar_image'], $imageStorage);
                 try {
-                    db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,image_key,is_published,sort_order) VALUES (?,NULL,\'ar\',NULL,NULL,?,1,0)')->execute([$name, $imageKey]);
-                } catch (Throwable $saveFailure) { delete_scholar_image($imageKey, $imageStorage); throw $saveFailure; }
+                    db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,image_key,is_published,sort_order) VALUES (?,NULLIF(?,\'\'),?,NULLIF(?,\'\'),NULLIF(?,\'\'),?,?,?)')->execute([$name,$biography,$language,$source,$rights,$imageKey,isset($_POST['publish']) ? 1 : 0,$sortOrder]);
+                } catch (Throwable $saveFailure) {
+                    if (is_string($imageKey)) delete_scholar_image($imageKey, $imageStorage);
+                    throw $saveFailure;
+                }
             } elseif ($kind === 'series') {
                 $source = trim((string) ($_POST['source_url'] ?? ''));
-                if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
-                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
+                $title = trim((string) ($_POST['title'] ?? ''));
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 220 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا صالحًا ورابط مصدر HTTPS عند الحاجة.');
+                [$seriesScholarId] = validated_lesson_scope((int) ($_POST['scholar_id'] ?? 0), 0);
+                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([$seriesScholarId, $title, trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
             } elseif ($kind === 'lesson') {
                 $url = trim((string) $_POST['source_url']); $id = youtube_video_id($url);
                 if (!$id || strlen(trim((string) $_POST['title'])) < 2) throw new RuntimeException('رابط الفيديو أو العنوان غير صالح.');
                 [$lessonScholarId,$lessonSeriesId] = validated_lesson_scope((int)($_POST['scholar_id'] ?? 0),(int)($_POST['series_id'] ?? 0));
                 db()->prepare('INSERT INTO lessons (scholar_id,series_id,title,description,youtube_id,source_url,sort_order,is_published) VALUES (NULLIF(?,0),NULLIF(?,0),?,?,?,?,?,?)')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $id, $url, (int) ($_POST['sort_order'] ?? 0), isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'book') {
-                if (trim((string) $_POST['rights_basis']) === '' || !is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
-                $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
-                if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
+                $title = trim((string) ($_POST['title'] ?? ''));
+                $author = trim((string) ($_POST['author'] ?? ''));
+                $description = trim((string) ($_POST['description'] ?? ''));
+                $keywords = trim((string) ($_POST['keywords'] ?? ''));
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                $rightsHolder = trim((string) ($_POST['rights_holder'] ?? ''));
+                $downloadUrl = trim((string) ($_POST['download_url'] ?? ''));
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 240 || mb_strlen($author,'UTF-8') < 2 || mb_strlen($author,'UTF-8') > 180) throw new RuntimeException('عنوان الكتاب أو اسم المؤلف غير صالح.');
+                if (mb_strlen($description,'UTF-8') > 12000 || mb_strlen($keywords,'UTF-8') > 1000 || mb_strlen($rights,'UTF-8') > 500 || mb_strlen($rightsHolder,'UTF-8') > 180) throw new RuntimeException('بيانات الكتاب أطول من الحد المسموح.');
+                if ($rights === '' || !is_https_url($source)) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
+                if ($downloadUrl !== '' && !is_https_url($downloadUrl)) throw new RuntimeException('رابط التنزيل المباشر يجب أن يبدأ بـ HTTPS عند توفيره.');
                 $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
                 if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
-                db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,NULL,1,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')) ?: null, trim((string) $_POST['source_url']), $downloadUrl, trim((string) $_POST['rights_basis']), isset($_POST['publish']) ? 1 : 0]);
+                db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,NULLIF(?,\'\'),?,NULL,NULL,?,?)')->execute([$title,$author,$description,$keywords ?: null,$language,$year,$rightsHolder ?: null,$source,$downloadUrl,$rights,$downloadUrl !== '' ? 1 : 0,isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'adhkar') {
-                if (trim((string) $_POST['source_reference']) === '' || !is_https_url(trim((string) $_POST['source_url'])) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن نشر الذكر دون مصدر آمن ومراجعة موثقة.');
-                db()->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order) VALUES (?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), trim((string) $_POST['source_url']), ($_POST['repeat_count'] ?? '') === '' ? null : (int) $_POST['repeat_count'], trim((string) $_POST['category']), 1, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
+                $title = trim((string) ($_POST['title'] ?? ''));
+                $formula = trim((string) ($_POST['formula'] ?? ''));
+                $reference = trim((string) ($_POST['source_reference'] ?? ''));
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $category = trim((string) ($_POST['category'] ?? ''));
+                $countRaw = trim((string) ($_POST['repeat_count'] ?? ''));
+                $count = $countRaw === '' ? null : filter_var($countRaw, FILTER_VALIDATE_INT);
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 200 || mb_strlen($formula,'UTF-8') < 2 || mb_strlen($formula,'UTF-8') > 5000 || mb_strlen($reference,'UTF-8') < 2 || mb_strlen($reference,'UTF-8') > 300 || mb_strlen($category,'UTF-8') < 2 || mb_strlen($category,'UTF-8') > 80) throw new RuntimeException('راجع عنوان الذكر ونصه ومرجعه وتصنيفه.');
+                if (!is_https_url($source) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن حفظ الذكر دون مصدر آمن ومراجعة موثقة.');
+                if ($countRaw !== '' && ($count === false || $count < 1 || $count > 1000)) throw new RuntimeException('عدد التكرار يجب أن يكون من 1 إلى 1000 أو يترك فارغًا.');
+                $pdo = db();
+                $pdo->beginTransaction();
+                $pdo->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order,revision) VALUES (?,?,?,?,?,?,?,?,?,1)')
+                    ->execute([$title,$formula,$reference,$source,$count,$category,1,isset($_POST['publish']) ? 1 : 0,(int) ($_POST['sort_order'] ?? 0)]);
+                $createdId = (int) $pdo->lastInsertId();
+                $createdQuery = $pdo->prepare('SELECT * FROM adhkar_items WHERE id=?');
+                $createdQuery->execute([$createdId]);
+                admin_record_adhkar_revision($pdo, $createdQuery->fetch(), 'created', (int) $admin['id']);
+                $pdo->commit();
             } else { throw new RuntimeException('نوع المحتوى غير مدعوم.'); }
-            db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) db()->lastInsertId()]);
+            $createdTargetId = isset($createdId) && $createdId > 0 ? $createdId : (int) db()->lastInsertId();
+            db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) $createdTargetId]);
             flash('تم حفظ المحتوى.'); redirect('/admin');
         } catch (Throwable $exception) {
             if (db()->inTransaction()) db()->rollBack();
@@ -868,18 +1338,37 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
-    $auditCount = (int) db()->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn();
+    $lessonEventService = new \Athar\Learning\UpcomingLessonService(db());
+    $lessonEventPage = $lessonEventService->page(['page'=>1,'per_page'=>50], 'ar', $admin);
+    $lessonEvents = [];
+    foreach ($lessonEventPage['items'] as $eventSummary) {
+        try { $lessonEvents[] = $lessonEventService->detail((int) $eventSummary['id'], 'ar', $admin); }
+        catch (Throwable $ignoredEvent) { }
+    }
+    $auditSearch = trim(mb_substr((string) ($_GET['audit_q'] ?? ''), 0, 80, 'UTF-8'));
+    $auditWhere = '';
+    $auditParams = [];
+    if ($auditSearch !== '') {
+        $auditWhere = ' WHERE (a.action LIKE ? OR a.target_type LIKE ? OR COALESCE(a.target_id,\'\') LIKE ?)';
+        $auditLike = '%' . $auditSearch . '%';
+        $auditParams = [$auditLike, $auditLike, $auditLike];
+    }
+    $auditCountQuery = db()->prepare('SELECT COUNT(*) FROM audit_logs a' . $auditWhere);
+    $auditCountQuery->execute($auditParams);
+    $auditCount = (int) $auditCountQuery->fetchColumn();
     $auditPageSize = 100;
     $auditPageCount = max(1, (int) ceil($auditCount / $auditPageSize));
     $auditPage = max(1, min($auditPageCount, (int) (filter_var($_GET['audit_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $auditOffset = ($auditPage - 1) * $auditPageSize;
-    $auditRows = db()->query("SELECT a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email,t.email AS target_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id LEFT JOIN users t ON a.target_type='user' AND t.id=CAST(a.target_id AS UNSIGNED) ORDER BY a.id DESC LIMIT {$auditPageSize} OFFSET {$auditOffset}")->fetchAll();
+    $auditRowsQuery = db()->prepare("SELECT a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email,t.email AS target_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id LEFT JOIN users t ON a.target_type='user' AND t.id=CAST(a.target_id AS UNSIGNED)" . $auditWhere . " ORDER BY a.id DESC LIMIT {$auditPageSize} OFFSET {$auditOffset}");
+    $auditRowsQuery->execute($auditParams);
+    $auditRows = $auditRowsQuery->fetchAll();
     $commentCount = (int) db()->query('SELECT COUNT(*) FROM lesson_comments')->fetchColumn();
     $commentPageSize = 50;
     $commentPageCount = max(1, (int) ceil($commentCount / $commentPageSize));
     $commentPage = max(1, min($commentPageCount, (int) (filter_var($_GET['comments_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $commentOffset = ($commentPage - 1) * $commentPageSize;
-    $pendingComments = db()->query("SELECT c.id,c.body,c.status,c.created_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id ORDER BY (c.status='pending') DESC,c.created_at DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}")->fetchAll();
+    $pendingComments = db()->query("SELECT c.id,c.parent_id,c.body,c.status,c.revision,c.moderation_reason,c.created_at,c.moderated_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id ORDER BY (c.status='pending') DESC,c.parent_id IS NOT NULL,c.created_at DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}")->fetchAll();
     $dashboardMetrics = [
         'users' => (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn(),
         'scholars' => (int) db()->query('SELECT COUNT(*) FROM scholars WHERE is_published=1')->fetchColumn(),
@@ -889,42 +1378,85 @@ if ($path === '/admin') {
         'pending_comments' => (int) db()->query("SELECT COUNT(*) FROM lesson_comments WHERE status='pending'")->fetchColumn(),
         'active_users_30d' => (int) db()->query('SELECT COUNT(DISTINCT user_id) FROM account_daily_stats WHERE activity_date>=DATE_SUB(CURRENT_DATE,INTERVAL 29 DAY)')->fetchColumn(),
     ];
-    $activityTotals = db()->query('SELECT COALESCE(SUM(quran_sessions),0) AS quran_sessions,COALESCE(SUM(lesson_completions),0) AS lesson_completions,COALESCE(SUM(adhkar_completions),0) AS adhkar_completions,COALESCE(SUM(book_downloads),0) AS book_downloads FROM account_daily_stats')->fetch();
-    foreach (['quran_sessions','lesson_completions','adhkar_completions','book_downloads'] as $activityMetric) $dashboardMetrics[$activityMetric] = (int) $activityTotals[$activityMetric];
-    $managedUserTotal = (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    // Deliberately exclude worship-specific aggregate counters from Admin analytics.
+    // Operational adoption is represented only by privacy-safe active-user counts.
+    $managedUserSearch = trim(mb_substr((string) ($_GET['users_q'] ?? ''), 0, 80, 'UTF-8'));
+    $managedUserWhere = '';
+    $managedUserParams = [];
+    if ($managedUserSearch !== '') {
+        $managedUserWhere = ' WHERE (u.email LIKE ? OR COALESCE(u.display_name,\'\') LIKE ? OR COALESCE(u.username,\'\') LIKE ?' . (ctype_digit($managedUserSearch) ? ' OR u.id=?' : '') . ')';
+        $like = '%' . $managedUserSearch . '%';
+        $managedUserParams = [$like, $like, $like];
+        if (ctype_digit($managedUserSearch)) $managedUserParams[] = (int) $managedUserSearch;
+    }
+    $managedUserCountQuery = db()->prepare('SELECT COUNT(*) FROM users u' . $managedUserWhere);
+    $managedUserCountQuery->execute($managedUserParams);
+    $managedUserTotal = (int) $managedUserCountQuery->fetchColumn();
     $managedUserPageSize = 50;
     $managedUserPageCount = max(1, (int) ceil($managedUserTotal / $managedUserPageSize));
     $managedUserPage = max(1, min($managedUserPageCount, (int) (filter_var($_GET['users_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $managedUserOffset = ($managedUserPage - 1) * $managedUserPageSize;
-    $managedUsers = db()->query("SELECT u.id,u.email,u.display_name,u.username,u.role,u.email_verified_at,u.email_marketing_opt_in,u.created_at,u.updated_at,
-        (SELECT COUNT(*) FROM quran_bookmarks b WHERE b.user_id=u.id) AS bookmark_count,
-        (SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=u.id) AS favorite_count,
-        (SELECT COUNT(*) FROM video_progress v WHERE v.user_id=u.id) AS lesson_progress_count,
-        (SELECT COALESCE(SUM(s.quran_sessions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS quran_sessions,
-        (SELECT COALESCE(SUM(s.lesson_completions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS lesson_completions,
-        (SELECT COALESCE(SUM(s.adhkar_completions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS adhkar_completions,
-        (SELECT COALESCE(SUM(s.book_downloads),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS book_downloads,
-        (SELECT MAX(s.activity_date) FROM account_daily_stats s WHERE s.user_id=u.id) AS last_active,
-        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action='account-login-succeeded') AS last_login,
-        (SELECT p.status FROM khatmah_plans p WHERE p.user_id=u.id LIMIT 1) AS khatmah_status,
-        (SELECT CONCAT(q.surah,':',q.ayah) FROM quran_positions q WHERE q.user_id=u.id LIMIT 1) AS quran_position
-        FROM users u ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}")->fetchAll();
+    $managedUsersQuery = db()->prepare("SELECT u.id,u.email,u.display_name,u.username,u.role,u.email_verified_at,u.email_marketing_opt_in,u.suspended_at,u.session_version,u.created_at,u.updated_at,
+        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action IN ('account-login-succeeded','admin-login-succeeded')) AS last_login
+        FROM users u" . $managedUserWhere . " ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}");
+    $managedUsersQuery->execute($managedUserParams);
+    $managedUsers = $managedUsersQuery->fetchAll();
     $smtpConfig = ['smtp_host'=>'','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>'','smtp_from_email'=>'','smtp_from_name'=>'أثر'];
     foreach ($smtpConfig as $key=>$fallback) $smtpConfig[$key] = platform_setting($key,$fallback);
     $smtpPasswordConfigured = platform_setting('smtp_password_cipher') !== '';
-    $mailingOptInCount = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
-    $emailCampaigns = db()->query("SELECT c.*,u.email AS creator_email,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id) AS recipient_total,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='sent') AS recipient_sent,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status IN ('pending','processing')) AS recipient_pending,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='failed') AS recipient_failed,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='skipped') AS recipient_skipped
-        FROM email_campaigns c LEFT JOIN users u ON u.id=c.created_by ORDER BY c.id DESC LIMIT 30")->fetchAll();
+    $smtpTestRecipientConfigured = platform_setting('smtp_test_recipient_cipher') !== '' && platform_setting('smtp_test_recipient_authorized_at') !== '';
+    $smtpTestRecipientMasked = 'غير محدد';
+    if ($smtpTestRecipientConfigured) {
+        try { $smtpTestRecipientMasked = admin_redact_email(platform_secret('smtp_test_recipient')); }
+        catch (Throwable $testRecipientError) { $smtpTestRecipientMasked = 'تعذر قراءة الإعداد المشفر'; }
+    }
+    $serviceDiagnostics = [
+        'settings_key_source' => trim((string) (getenv('ATHAR_SETTINGS_KEY') ?: '')) !== '' ? 'متغير بيئة الخادم' : 'ملف محلي داخل storage/secrets',
+        'base_url' => platform_email_base_url(),
+        'base_url_https' => str_starts_with(platform_email_base_url(), 'https://'),
+        'smtp_credentials' => $smtpPasswordConfigured,
+        'test_recipient' => $smtpTestRecipientConfigured,
+        'dorar_token' => platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '',
+    ];
+    $engagementCampaigns = [];
+    $engagementCampaignPreview = null;
+    $engagementCampaignSchemaReady = true;
+    try {
+        $engagementCampaignService = new \Athar\Engagement\CampaignService(db());
+        $engagementCampaigns = $engagementCampaignService->page($admin,1,30)['items'];
+        $previewId = filter_var($_GET['campaign_preview'] ?? null, FILTER_VALIDATE_INT);
+        if ($previewId && $previewId > 0) $engagementCampaignPreview = $engagementCampaignService->preview($admin,(int)$previewId);
+    } catch (Throwable $engagementLoadError) {
+        $engagementCampaignSchemaReady = false;
+        if ($adminError === '') $adminError = 'نظام الحملات الجديد ينتظر تطبيق migrations الخاصة به قبل الاستخدام.';
+    }
     $dorarTokenConfigured = platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '';
+    $nightPrayerPublicDefaults = [
+        'enabled'=>platform_setting('night_prayer_enabled','1') !== '0',
+        'revision'=>max(1,(int)platform_setting('night_prayer_public_revision','1')),
+        'calculation_method'=>platform_setting('night_prayer_default_calculation_method','MuslimWorldLeague'),
+        'madhab'=>platform_setting('night_prayer_default_madhab','standard'),
+        'high_latitude_rule'=>platform_setting('night_prayer_default_high_latitude_rule','middle_of_night'),
+        'target_verses'=>max(1,min(6236,(int)platform_setting('night_prayer_default_target_verses','100'))),
+        'source_name_ar'=>platform_setting('night_prayer_source_name_ar','مصدر مواقيت الصلاة'),
+        'source_name_en'=>platform_setting('night_prayer_source_name_en','Prayer times source'),
+        'source_url'=>platform_setting('night_prayer_source_url','https://pray.api.islamic.network'),
+        'intro_ar'=>platform_setting('night_prayer_intro_ar','قيام الليل عبادة تطوعية، وهذه الأدوات للمساعدة في التنظيم دون حكم على العبادة.'),
+        'intro_en'=>platform_setting('night_prayer_intro_en','Night prayer is voluntary worship. These tools support planning without judging worship.'),
+    ];
     if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
     $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);
-    $title='إدارة أثر'; $activePath=$path; $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php'; $flashMessage=take_flash();
-    ob_start(); require $viewPath; $content=(string) ob_get_clean(); require dirname(__DIR__).'/app/Views/layout.php'; exit;
+    $title='إدارة أثر';
+    $activePath=$path;
+    $adminLocale=admin_locale();
+    $adminTheme=admin_theme();
+    $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php';
+    $flashMessage=take_flash();
+    ob_start();
+    require $viewPath;
+    $content=(string) ob_get_clean();
+    require dirname(__DIR__).'/admin/Views/layout.php';
+    exit;
 }
 
 $curatedBooks = $curatedLessons = $curatedSeries = $curatedAdhkar = $curatedScholars = [];

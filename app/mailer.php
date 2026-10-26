@@ -73,27 +73,52 @@ function platform_email_base_url(): string
     return 'http://127.0.0.1:8081';
 }
 
-function email_campaign_unsubscribe_url(int $userId): string
+function email_campaign_unsubscribe_url(int $userId, ?int $expiresAt = null): string
 {
-    $token = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
-    return platform_email_base_url() . '/email-unsubscribe?u=' . $userId . '&t=' . $token;
+    $expiresAt ??= time() + 31536000;
+    $token = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+    return platform_email_base_url() . '/email-unsubscribe?' . http_build_query([
+        'u' => $userId,
+        'e' => $expiresAt,
+        'v' => 2,
+        't' => $token,
+    ]);
 }
 
-function platform_email_html(string $subject, string $body, string $footerHtml = '', ?string $customBodyHtml = null): string
+function email_campaign_unsubscribe_valid(int $userId, string $token, ?int $expiresAt = null, int $version = 1): bool
 {
+    if (!preg_match('/^[a-f0-9]{64}$/i', $token)) return false;
+    if ($version === 2) {
+        if ($expiresAt === null || $expiresAt < time() || $expiresAt > time() + 31622400) return false;
+        $expected = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+        return hash_equals($expected, strtolower($token));
+    }
+    // Compatibility for previously delivered v1 links. All newly generated links use expiring v2 tokens.
+    $legacy = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
+    return hash_equals($legacy, strtolower($token));
+}
+
+function platform_email_html(string $subject, string $body, string $footerHtml = '', ?string $customBodyHtml = null, string $locale = 'ar'): string
+{
+    $locale = $locale === 'en' ? 'en' : 'ar';
+    $direction = $locale === 'en' ? 'ltr' : 'rtl';
+    $brand = $locale === 'en' ? 'Athar' : 'منصة أثر';
+    $tagline = $locale === 'en'
+        ? 'Athar · A calm space for Quran, knowledge, and worship'
+        : 'أثر · مساحة هادئة للقرآن والمعرفة والعبادة';
     $logoUrl = platform_email_base_url() . '/assets/images/athar-logo-cropped.png';
     $escapedBody = nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), false);
-    return '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
-        . '<body style="margin:0;padding:24px 12px;background:#f4f3ed;color:#22332c;font-family:Arial,Tahoma,sans-serif;direction:rtl">'
+    return '<!doctype html><html lang="' . $locale . '" dir="' . $direction . '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+        . '<body style="margin:0;padding:24px 12px;background:#f4f3ed;color:#22332c;font-family:Arial,Tahoma,sans-serif;direction:' . $direction . '">'
         . '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;border-collapse:collapse"><tr><td style="padding:8px 0 18px;text-align:center">'
-        . '<img src="' . htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') . '" width="104" height="96" alt="أثر" style="display:block;width:104px;height:auto;max-height:96px;object-fit:contain;margin:0 auto">'
+        . '<img src="' . htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') . '" width="104" height="96" alt="Athar" style="display:block;width:104px;height:auto;max-height:96px;object-fit:contain;margin:0 auto">'
         . '</td></tr><tr><td style="overflow:hidden;border:1px solid #d8e2da;border-radius:18px;background:#fff">'
-        . '<div style="height:7px;background:#1e6753"></div><div style="padding:30px 28px 26px">'
-        . '<div style="margin:0 0 10px;color:#a66b31;font-size:12px;font-weight:bold;letter-spacing:.08em">منصة أثر</div>'
+        . '<div style="height:7px;background:#1e6753"></div><div style="padding:30px 28px 26px;text-align:' . ($locale === 'en' ? 'left' : 'right') . '">'
+        . '<div style="margin:0 0 10px;color:#a66b31;font-size:12px;font-weight:bold;letter-spacing:.08em">' . htmlspecialchars($brand, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
         . '<h1 style="margin:0 0 20px;color:#174f40;font-size:23px;line-height:1.6">' . htmlspecialchars($subject, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h1>'
         . '<div style="color:#34443d;font-size:16px;line-height:2">' . ($customBodyHtml ?? $escapedBody) . '</div>'
         . ($footerHtml !== '' ? '<div style="margin-top:24px;padding-top:18px;border-top:1px solid #e3e9e4;color:#65756c;font-size:13px;line-height:1.9">' . $footerHtml . '</div>' : '')
-        . '</div></td></tr><tr><td style="padding:18px 8px;text-align:center;color:#68756e;font-size:12px;line-height:1.8">أثر · مساحة هادئة للقرآن والمعرفة والعبادة</td></tr></table></body></html>';
+        . '</div></td></tr><tr><td style="padding:18px 8px;text-align:center;color:#68756e;font-size:12px;line-height:1.8">' . htmlspecialchars($tagline, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</td></tr></table></body></html>';
 }
 
 function platform_secret(string $key, string $environmentName = ''): string
@@ -126,7 +151,7 @@ function smtp_command($socket, string $command, array $expected): string
     return $reply;
 }
 
-function send_platform_email(string $recipient, string $subject, string $body, ?string &$failureReason = null, ?string $htmlBody = null, string $htmlFooter = '', string $category = 'transactional'): bool
+function send_platform_email(string $recipient, string $subject, string $body, ?string &$failureReason = null, ?string $htmlBody = null, string $htmlFooter = '', string $category = 'transactional', string $locale = 'ar'): bool
 {
     $failureReason = null;
     $host = trim(platform_setting('smtp_host'));
@@ -167,7 +192,7 @@ function send_platform_email(string $recipient, string $subject, string $body, ?
         $body = preg_replace('/^\./m', '..', $body) ?? $body;
         $boundary = 'athar_' . bin2hex(random_bytes(16));
         $plainPart = rtrim(chunk_split(base64_encode($body), 76, "\r\n"), "\r\n");
-        $html = platform_email_html($subject, $body, $htmlFooter, $htmlBody);
+        $html = platform_email_html($subject, $body, $htmlFooter, $htmlBody, $locale);
         $htmlPart = rtrim(chunk_split(base64_encode($html), 76, "\r\n"), "\r\n");
         $message = "Date: " . date(DATE_RFC2822) . "\r\nFrom: {$encodedName} <{$from}>\r\nTo: <{$recipient}>\r\nSubject: {$encodedSubject}\r\nMessage-ID: {$messageId}\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n\r\n"
             . "--{$boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n{$plainPart}\r\n"

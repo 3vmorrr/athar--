@@ -43,17 +43,62 @@ import org.athar.app.core.ui.*
             Text(stringResource(R.string.auth_description), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Feedback(state)
             if (mode == "register") {
-                OutlinedTextField(name, { name = it }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true)
-                OutlinedTextField(username, { username = it.lowercase().take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, supportingText = { Text(stringResource(R.string.username_hint)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii))
+                OutlinedTextField(
+                    name,
+                    { name = it.take(80) },
+                    Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.display_name)) },
+                    supportingText = { Text(stringResource(R.string.display_name_hint)) },
+                    isError = name.isNotBlank() && !AccountInput.validDisplayName(name),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    username,
+                    { username = AccountInput.normalizeUsernameInput(it) },
+                    Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.username)) },
+                    supportingText = { Text(stringResource(R.string.username_hint)) },
+                    isError = username.isNotBlank() && !AccountInput.validUsername(username),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+                )
             }
             OutlinedTextField(email, { email = it.take(190) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.email)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
             if (mode == "reset") OutlinedTextField(code, { code = OtpInput.normalize(it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.verification_code)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword))
             if (mode != "forgot") PasswordField(password, { password = it.take(200) }, stringResource(if (mode == "reset") R.string.new_password else R.string.password))
             if (mode == "register" || mode == "reset") PasswordField(confirmation, { confirmation = it.take(200) }, stringResource(R.string.confirm_password))
+            val submitEnabled = when (mode) {
+                "register" -> AccountInput.validProfile(name, username) &&
+                    AccountInput.validEmail(email) &&
+                    AccountInput.validPassword(password) &&
+                    password == confirmation
+                "forgot" -> AccountInput.validEmail(email)
+                "reset" -> AccountInput.validEmail(email) &&
+                    code.length == 6 &&
+                    AccountInput.validPassword(password) &&
+                    password == confirmation
+                else -> email.isNotBlank() && password.isNotBlank()
+            }
             Button(onClick = {
                 focus.clearFocus()
-                when (mode) { "register" -> vm.register(name, username, email, password, confirmation); "forgot" -> vm.forgot(email); "reset" -> vm.reset(email, code, password, confirmation); else -> vm.login(email, password) }
-            }, enabled = !state.busy && email.isNotBlank(), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                when (mode) {
+                    "register" -> vm.register(
+                        name,
+                        username,
+                        email,
+                        password,
+                        confirmation,
+                    )
+                    "forgot" -> vm.forgot(email)
+                    "reset" -> vm.reset(
+                        email,
+                        code,
+                        password,
+                        confirmation,
+                    )
+                    else -> vm.login(email, password)
+                }
+            }, enabled = !state.busy && submitEnabled, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
                 if (state.busy) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
                 else Text(stringResource(when (mode) { "register" -> R.string.create_account; "forgot" -> R.string.send_reset; "reset" -> R.string.reset_password; else -> R.string.login }))
             }
