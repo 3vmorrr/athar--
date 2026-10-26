@@ -116,6 +116,7 @@ final class NotificationPreferenceService
                     (int)$categories['khatmah'],(int)$categories['night_prayer'],
                 ]);
 
+            (new LessonReminderService($this->db))->reconcileUser($userId);
             $this->db->prepare("INSERT INTO audit_logs(actor_id,action,target_type,target_id)
                 VALUES (?,'notification-preferences-updated','user',?)")->execute([$userId,(string)$userId]);
             $this->db->commit();

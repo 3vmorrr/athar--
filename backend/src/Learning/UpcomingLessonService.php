@@ -220,6 +220,7 @@ final class UpcomingLessonService
             $change=$old===null?'created':($previous!==$status?'status_changed':($old['scheduled_at']!==$start?'rescheduled':'metadata_changed'));
             $payload=['lesson_id'=>$lesson,'status'=>$status,'scheduled_at'=>$this->instant($start),'previous_status'=>$old['status']??null,'previous_scheduled_at'=>$this->instant($old['scheduled_at']??null),'visibility'=>$visibility,'reminders_enabled'=>$flags['reminders_enabled']];
             $this->db->prepare('INSERT INTO lesson_event_changes(event_id,revision,change_type,payload_json,created_at) VALUES (?,?,?,?,UTC_TIMESTAMP())')->execute([$event,$revision,$change,json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);
+            (new \Athar\Engagement\LessonReminderService($this->db))->reconcileLesson($lesson);
             $this->db->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$actor['id'],'lesson-event-'.$status,'lesson_event',(string)$event]);
             $this->db->commit();
             return $this->detail($lesson,'ar',$actor);

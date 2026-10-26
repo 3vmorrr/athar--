@@ -150,6 +150,12 @@ final class ApiKernel
             if($r->method==='GET')return [$notificationPreferences->get($user),200];
             $this->method($r,'PATCH');return [$notificationPreferences->update($user,$r->body),200];
         }
+        if($path==='/me/lesson-reminders'){
+            $this->method($r,'GET');return [(new \Athar\Engagement\LessonReminderService($this->db))->list($user),200];
+        }
+        if(preg_match('#^/me/lesson-reminders/([1-9][0-9]*)$#',$path,$m)){
+            $this->method($r,'PUT');return [(new \Athar\Engagement\LessonReminderService($this->db))->set($user,(int)$m[1],$r->body),200];
+        }
         if($path==='/me/khatmah/action'){
             $this->method($r,'POST');
             return [$this->progress->khatmahAction($user,$r->body),200];
