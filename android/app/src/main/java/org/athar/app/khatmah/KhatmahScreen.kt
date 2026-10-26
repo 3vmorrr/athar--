@@ -228,7 +228,8 @@ private fun KhatmahContent(
     val formValid = runCatching {
         val start = LocalDate.parse(startDate)
         val target = LocalDate.parse(targetDate)
-        completed in 0..604 &&
+        completed != null &&
+            completed in 0..604 &&
             !target.isBefore(start) &&
             !target.isBefore(today) &&
             !start.isBefore(today.minusYears(5)) &&
@@ -438,7 +439,7 @@ private fun KhatmahContent(
                             },
                             singleLine = true,
                             isError = completedText.isNotBlank() &&
-                                completed !in 0..604,
+                                (completed == null || completed !in 0..604),
                             keyboardOptions =
                                 androidx.compose.foundation.text.KeyboardOptions(
                                     keyboardType =
