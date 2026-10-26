@@ -2,6 +2,7 @@ package org.athar.app.notifications
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.athar.app.auth.SessionRepository
@@ -38,6 +39,8 @@ class NotificationPolicyLedgerRepository(
             val parsed = parse(cipher.open(stored.payloadCipher))
             session.requireVerifiedOwner(owner)
             ProtectedRead.Ready(parsed)
+        } catch (failure: CancellationException) {
+            throw failure
         } catch (_: Exception) {
             ProtectedRead.Unreadable
         }

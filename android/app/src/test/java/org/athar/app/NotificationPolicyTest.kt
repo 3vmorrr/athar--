@@ -13,9 +13,9 @@ class NotificationPolicyTest {
 
     @Test fun crossingMidnightQuietHoursDefersInUserTimezone() {
         val quiet = NotificationQuietHours(LocalTime.of(22, 0), LocalTime.of(7, 0), zone)
-        val now = Instant.parse("2026-10-26T21:30:00Z") // 23:30 Cairo
+        val now = Instant.parse("2026-01-26T21:30:00Z") // 23:30 Cairo outside DST
         val end = NotificationPolicy.quietEndIfInside(now, quiet)
-        assertEquals(Instant.parse("2026-10-27T05:00:00Z"), end)
+        assertEquals(Instant.parse("2026-01-27T05:00:00Z"), end)
     }
 
     @Test fun duplicateAndExpiredCandidatesFailClosed() {
