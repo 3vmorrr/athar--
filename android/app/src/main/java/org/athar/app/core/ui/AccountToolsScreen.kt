@@ -247,6 +247,138 @@ import java.time.LocalDate
             }
             if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
+        "activity" -> DataScreen(graph, "me/activity-summary") { data, reload ->
+            if (!AccountPayloads.validActivitySummary(data)) {
+                AccountDataFailure(reload)
+                return@DataScreen
+            }
+            val availability = data.asJsonObject["availability"].asJsonObject
+            val recorded = data.asJsonObject["recorded"].asJsonObject
+            val watchedMinutes = ((recorded["watched_seconds"]?.asLong ?: 0L) / 60L)
+                .coerceAtLeast(0L)
+
+            LazyColumn(
+                contentPadding = PaddingValues(AtharSpacing.Xl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                item(key = "activity-hero", contentType = "hero") {
+                    AtharHeroSurface(Modifier.fillMaxWidth()) {
+                        Text(
+                            stringResource(R.string.activity),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.activity_genuine_only),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                item(key = "activity-metrics", contentType = "metrics") {
+                    FlowRow(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        AtharMetric(
+                            value = recorded["adhkar_completions"]?.asString ?: "0",
+                            label = stringResource(R.string.completed_adhkar),
+                            modifier = Modifier.weight(1f).widthIn(min = 110.dp),
+                        )
+                        AtharMetric(
+                            value = recorded["lesson_completions"]?.asString ?: "0",
+                            label = stringResource(R.string.completed_lessons),
+                            modifier = Modifier.weight(1f).widthIn(min = 110.dp),
+                        )
+                        AtharMetric(
+                            value = recorded["lessons_started"]?.asString ?: "0",
+                            label = stringResource(R.string.activity_lessons_started),
+                            modifier = Modifier.weight(1f).widthIn(min = 110.dp),
+                        )
+                        AtharMetric(
+                            value = watchedMinutes.toString(),
+                            label = stringResource(R.string.activity_watch_minutes),
+                            modifier = Modifier.weight(1f).widthIn(min = 110.dp),
+                        )
+                    }
+                }
+
+                item(key = "activity-availability", contentType = "availability") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                        ),
+                    ) {
+                        Column(
+                            Modifier.padding(AtharSpacing.Lg),
+                            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            AtharSectionHeader(stringResource(R.string.activity_tracking))
+                            ActivityAvailabilityRow(
+                                title = stringResource(R.string.activity_reading_sessions),
+                                available = availability["reading_sessions"]?.asBoolean == true,
+                            )
+                            ActivityAvailabilityRow(
+                                title = stringResource(R.string.activity_listening_history),
+                                available = availability["listening_history"]?.asBoolean == true,
+                            )
+                            ActivityAvailabilityRow(
+                                title = stringResource(R.string.adhkar),
+                                available = availability["adhkar_completions"]?.asBoolean == true,
+                            )
+                            ActivityAvailabilityRow(
+                                title = stringResource(R.string.lessons),
+                                available = availability["lesson_progress"]?.asBoolean == true,
+                            )
+                        }
+                    }
+                }
+
+                val recent = data.array("recent")
+                if (recent.isNotEmpty()) {
+                    item(key = "activity-recent-title", contentType = "heading") {
+                        AtharSectionHeader(stringResource(R.string.activity_recent))
+                    }
+                    items(
+                        recent.reversed(),
+                        key = { it.text("date") },
+                        contentType = { "activity-day" },
+                    ) { day ->
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        ) {
+                            Column(
+                                Modifier.padding(AtharSpacing.Lg),
+                                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                            ) {
+                                Text(
+                                    day.text("date"),
+                                    style = MaterialTheme.typography.titleSmall,
+                                )
+                                Text(
+                                    stringResource(
+                                        R.string.activity_day_summary,
+                                        day.text("lesson_completions").toIntOrNull() ?: 0,
+                                        day.text("adhkar_completions").toIntOrNull() ?: 0,
+                                        day.text("book_downloads").toIntOrNull() ?: 0,
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         "khatmah" -> DataScreen(graph, "me/khatmah") { data, reload ->
             if(!AccountPayloads.valid("khatmah",data)){AccountDataFailure(reload);return@DataScreen}
             var target by remember(data) { mutableStateOf(data.text("target_date").ifBlank { LocalDate.now().plusDays(30).toString() }) }
@@ -487,5 +619,31 @@ import java.time.LocalDate
 @Composable internal fun AccountDataFailure(retry:()->Unit){
     Box(Modifier.padding(20.dp)){
         MessagePanel(stringResource(R.string.account_data_unavailable),true){TextButton(onClick=retry){Text(stringResource(R.string.retry))}}
+    }
+}
+@Composable
+private fun ActivityAvailabilityRow(
+    title: String,
+    available: Boolean,
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            title,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        AtharStatusPill(
+            stringResource(
+                if (available) {
+                    R.string.activity_tracking_available
+                } else {
+                    R.string.activity_tracking_unavailable
+                },
+            ),
+            emphasized = !available,
+        )
     }
 }
