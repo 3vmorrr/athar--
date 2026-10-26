@@ -153,7 +153,6 @@ final class EmailOutboxService
             if($row['category']==='campaign'&&$row['campaign_delivery_id']!==null){
                 $delivery=(int)$row['campaign_delivery_id'];
                 $this->db->prepare("UPDATE engagement_campaign_recipients SET status='sent',sent_at=UTC_TIMESTAMP(),locked_at=NULL,last_error_code=NULL,updated_at=UTC_TIMESTAMP() WHERE id=?")->execute([$delivery]);
-                $this->db->prepare("INSERT INTO email_send_events(category,sent_at) VALUES ('campaign',UTC_TIMESTAMP())")->execute();
                 $q=$this->db->prepare('SELECT campaign_id FROM engagement_campaign_recipients WHERE id=?');$q->execute([$delivery]);$campaign=(int)$q->fetchColumn();
             }else{$campaign=0;}
             $this->db->commit();if($campaign>0)$this->reconcileCampaign($campaign);
