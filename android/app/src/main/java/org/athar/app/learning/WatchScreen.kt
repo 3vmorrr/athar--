@@ -69,7 +69,7 @@ import org.athar.app.core.ui.*
                     if(commentsOpen&&!fullComments)Box(Modifier.weight(1f)){DiscussionPanel(discussion,false,{fullComments=true},{commentsOpen=false})}
                     else LazyColumn(Modifier.weight(1f).testTag("watch-details"),state=detailsScroll,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
                         item(key="information",contentType="metadata") {
-                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.titleLarge)
+                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.headlineSmall)
                             val scholar=lesson.text("scholar_id").toIntOrNull()
                             if(scholar!=null)TextButton(onClick={vm.flush();open("scholars/$scholar")}){Text(lesson.text("scholar_name").ifBlank{stringResource(R.string.scholars)})}
                             lesson["series"]?.takeUnless{it.isJsonNull}?.let{series->TextButton(onClick={open("series/${series.text("id")}")}){Text(series.text("title"))}};if(lesson.text("lesson_number").isNotBlank())Text(stringResource(R.string.watch_position,lesson.text("lesson_number"),lesson["series"].text("lesson_count")),style=MaterialTheme.typography.bodySmall)
@@ -89,7 +89,13 @@ import org.athar.app.core.ui.*
                         }
                         item(key="description",contentType="description"){ExpandableDescription(lesson.text("description"))}
                         item(key="comments",contentType="comments-preview") {
-                            Surface(onClick={inlineComments=inlineFits;commentsOpen=true;fullComments=!inlineFits},modifier=Modifier.testTag("watch-comments"),shape=MaterialTheme.shapes.medium,color=MaterialTheme.colorScheme.surfaceContainer) {
+                            Surface(
+                                onClick={inlineComments=inlineFits;commentsOpen=true;fullComments=!inlineFits},
+                                modifier=Modifier.testTag("watch-comments"),
+                                shape=MaterialTheme.shapes.large,
+                                color=MaterialTheme.colorScheme.surfaceContainerLow,
+                                border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant),
+                            ) {
                                 Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                                     Row(verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.ChatBubble,null,Modifier.size(20.dp));Spacer(Modifier.width(8.dp));Text(stringResource(R.string.watch_comments_count,comments.total),Modifier.weight(1f),style=MaterialTheme.typography.titleSmall);Icon(AtharIcons.ArrowForward,null)}
                                     val preview=comments.row
