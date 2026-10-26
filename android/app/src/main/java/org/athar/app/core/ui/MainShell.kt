@@ -140,6 +140,7 @@ private fun AtharNavIcon(
         when (val target = launch.destination) {
             is NotificationDestination.Lesson -> open("lessons/" + target.id)
             is NotificationDestination.Series -> open("series/" + target.id)
+            NotificationDestination.Home -> navigateTab("home")
             NotificationDestination.Quran -> navigateTab("quran")
             NotificationDestination.Adhkar -> navigateTab("adhkar")
             NotificationDestination.NightPrayer -> open("night-prayer")
@@ -367,6 +368,7 @@ private fun AtharNavIcon(
                 "profile" to R.string.profile,
                 "activity" to R.string.activity,
                 "khatmah" to R.string.khatmah,
+                "reminders" to R.string.reminder_settings,
                 "bookmarks" to R.string.bookmarks,
                 "favorites" to R.string.favorites,
                 "export" to R.string.export_data,
