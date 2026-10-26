@@ -128,6 +128,20 @@ class NotificationPreferenceRepository(
 ) {
     private val cacheKey = "private:notification-preferences:v1"
 
+    suspend fun read(owner: Long): ProtectedRead<NotificationPreferences> {
+        session.requireVerifiedOwner(owner)
+        val stored = dao.cache(owner, cacheKey) ?: return ProtectedRead.Ready(NotificationPreferences.safeDefault())
+        return try {
+            val value = notificationPreferencesFromJson(JsonParser.parseString(cipher.open(stored.payloadCipher)))
+            session.requireVerifiedOwner(owner)
+            ProtectedRead.Ready(value)
+        } catch (failure: kotlinx.coroutines.CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            ProtectedRead.Unreadable
+        }
+    }
+
     fun observe(owner: Long): Flow<ProtectedRead<NotificationPreferences>> = flow {
         session.requireVerifiedOwner(owner)
         emitAll(

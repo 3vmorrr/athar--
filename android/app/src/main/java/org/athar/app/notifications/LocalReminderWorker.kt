@@ -57,6 +57,8 @@ class LocalReminderWorker(
             ReminderExecutionOutcome.MISSING -> Result.success()
             ReminderExecutionOutcome.PERMISSION_REQUIRED ->
                 Result.success(workDataOf("reason" to "permission_required"))
+            ReminderExecutionOutcome.CONSENT_REQUIRED ->
+                Result.success(workDataOf("reason" to "consent_required"))
             ReminderExecutionOutcome.AUTH_REQUIRED -> {
                 LocalReminderWorkSchedule(applicationContext, graph.partition).cancelOwner(owner)
                 Result.failure(workDataOf("reason" to "auth_required"))

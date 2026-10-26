@@ -32,6 +32,7 @@ enum class ReminderExecutionOutcome {
     MISSING,
     AUTH_REQUIRED,
     ACTION_REQUIRED,
+    CONSENT_REQUIRED,
 }
 
 class LocalReminderCoordinator(
@@ -40,6 +41,7 @@ class LocalReminderCoordinator(
     private val session: SessionRepository,
     private val store: LocalReminderStore,
     private val ledger: NotificationPolicyLedgerRepository,
+    private val preferences: NotificationPreferenceRepository,
 ) {
     private val app = context.applicationContext
     private val schedule = LocalReminderWorkSchedule(app, partition)
@@ -109,6 +111,12 @@ class LocalReminderCoordinator(
             is ProtectedRead.Ready -> read.value ?: return ReminderExecutionOutcome.MISSING
             ProtectedRead.Loading, ProtectedRead.Unreadable -> return ReminderExecutionOutcome.ACTION_REQUIRED
         }
+        val preferenceState = when (val read = preferences.read(owner)) {
+            is ProtectedRead.Ready -> read.value
+            ProtectedRead.Loading, ProtectedRead.Unreadable -> return ReminderExecutionOutcome.ACTION_REQUIRED
+        }
+        if (!preferenceState.allows(spec.category)) return ReminderExecutionOutcome.CONSENT_REQUIRED
+
         val policyLedger = when (val read = ledger.read(owner)) {
             is ProtectedRead.Ready -> read.value
             ProtectedRead.Loading, ProtectedRead.Unreadable -> return ReminderExecutionOutcome.ACTION_REQUIRED
