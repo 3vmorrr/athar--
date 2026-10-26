@@ -26,6 +26,7 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val settings = SettingsStore(application)
     val session = SessionRepository(RetrofitTransport(apiBaseUrl), KeystoreTokenStore(application, cipher, namespace = partition), language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
     val content = ContentRepository(session, database.dao(), cipher, language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
+    val notificationPreferences = org.athar.app.notifications.NotificationPreferenceRepository(database.dao(), session, cipher)
     private var persistentSync:org.athar.app.core.sync.PersistentSyncCoordinator?=null
     private fun requestSync(owner:Long,module:org.athar.app.core.sync.SyncModule){persistentSync?.request(owner,module)}
     val quran = QuranRepository(application)

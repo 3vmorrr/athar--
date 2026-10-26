@@ -145,6 +145,11 @@ final class ApiKernel
             if($r->method==='GET')return [$engagementPreferences->get($user),200];
             $this->method($r,'PATCH');return [$engagementPreferences->update($user,$r->body),200];
         }
+        if($path==='/me/notification-preferences'){
+            $notificationPreferences=new \Athar\Engagement\NotificationPreferenceService($this->db);
+            if($r->method==='GET')return [$notificationPreferences->get($user),200];
+            $this->method($r,'PATCH');return [$notificationPreferences->update($user,$r->body),200];
+        }
         if($path==='/me/khatmah/action'){
             $this->method($r,'POST');
             return [$this->progress->khatmahAction($user,$r->body),200];
