@@ -9,6 +9,23 @@ Task02.5 provides durable explicit device/account review, safe stale/deletion/co
 
 The native calendar derives its daily and monthly totals from the signed-in user's locally stored sessions, including pending edits, without creating synthetic sessions or estimating missing worship. Users can move by month, select a day and inspect its recorded sessions. A seven-column calendar is used only when48dp day targets fit; narrow or large-text layouts use a dated agenda. Empty dates are described neutrally. Local-only exemptions may be shown on-device and must never enter synchronization bodies. Calendar display is distinct from astronomical night-boundary calculation and must not claim that a blank date is a missed obligation. Leap-year month length and neutral daily aggregation are covered by JVM tests. Focused real-HTTP UI cases cover opening/returning from the calendar in Arabic/English and large-font agenda layout. Complete historical/yearly analytics, reminders and physical-device acceptance remain open.
 
+## Parallel implementation increment: measured sessions, settings, yearly view and insights
+
+The `parallel/admin-foundation` branch now contains implementation for the remaining native Night Prayer journeys through task 08.11, with acceptance intentionally pending:
+
+- a durable encrypted measured-session timer using monotonic elapsed time, automatic background pause, process-recovery pause, and Fajr-boundary stop;
+- measured-session recording that preserves timezone, calculated boundaries, start/end instants and measured seconds while still requiring an explicit verse count/range before a worship session is saved;
+- conservative measured-pace insight requiring at least two valid measured sessions, with IQR outlier handling for larger samples and no competitive speed target;
+- revisioned saved city/timezone/calculation-method preferences with explicit conflict/reload behavior and no silent GPS permission or automatic location reading;
+- accessible monthly/yearly private calendar views, including future-day distinction and local exemption semantics;
+- consistency categories derived only from explicitly logged nights; local exemption dates bridge gaps but never count as worship nights;
+- descriptive personal records (best recorded verse total, longest measured session, reference milestone) without points, ranking or leaderboard semantics;
+- paged local history with expandable timing/boundary details; note-only edits preserve measured duration and prayer context;
+- local exemption period management with individual range removal and destructive clear confirmation;
+- account export continues to exclude local private exemption dates and does not export transient unfinished timer state.
+
+No Gradle/backend automated suite or physical-device acceptance was run for this parallel increment because the current execution pass was explicitly requested without tests. Task 08.12 remains an acceptance/hardware closure item, not a claimed completion.
+
 ## Purpose
 Record explicit self-reported Night Prayer sessions and private continuity.
 ## Existing implementation and known defects
