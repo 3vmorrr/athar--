@@ -317,6 +317,10 @@ class BookDownloadWorker(
                     temporary.delete()
                     return@withContext Result.failure()
                 }
+                if (BookStorage.ownerRevoked(applicationContext, owner)) {
+                    temporary.delete()
+                    return@withContext Result.failure()
+                }
 
                 val hash = digest.digest().joinToString("") { "%02x".format(it) }
                 target.delete()
@@ -373,6 +377,7 @@ private object BookDownloads {
         url: String,
     ) {
         require(BookDownloadPolicy.safeHttps(url))
+        require(!BookStorage.ownerRevoked(context, owner))
         val request = OneTimeWorkRequestBuilder<BookDownloadWorker>()
             .setInputData(
                 workDataOf(
