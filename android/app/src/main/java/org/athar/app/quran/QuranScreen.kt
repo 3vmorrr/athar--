@@ -11,10 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -411,16 +408,118 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
         )
     }
 
-    if (selector) AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.surah)) }, text = {
-        LazyColumn(Modifier.heightIn(max = 460.dp)) { items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah -> TextButton(onClick = { vm.select(surah.number); selector = false }, Modifier.fillMaxWidth()) { Text("${surah.number}. ${surah.name}") } } }
-    }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
+    if (selector) {
+        ModalBottomSheet(onDismissRequest = { selector = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+            ) {
+                Text(
+                    stringResource(R.string.surah),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                LazyColumn(Modifier.heightIn(max = 460.dp)) {
+                    items(
+                        state.index?.surahs.orEmpty(),
+                        key = { it.number },
+                        contentType = { "surah" },
+                    ) { surah ->
+                        TextButton(
+                            onClick = {
+                                vm.select(surah.number)
+                                selector = false
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("${surah.number}. ${surah.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (fontDialog) {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
-        AlertDialog(onDismissRequest = { fontDialog = false }, title = { Text(stringResource(R.string.font_size)) }, text = { Slider(size, { size = it }, valueRange = 18f..48f) }, confirmButton = { TextButton(onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false }) { Text(stringResource(R.string.save)) } })
+        ModalBottomSheet(onDismissRequest = { fontDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                Text(
+                    stringResource(R.string.font_size),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Slider(
+                    value = size,
+                    onValueChange = { size = it },
+                    valueRange = 18f..48f,
+                )
+                Button(
+                    onClick = {
+                        scope.launch { graph.settings.quranFontSize(size.toInt()) }
+                        fontDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
     }
+
     if (numberDialog) {
         var number by remember { mutableStateOf("${state.sectionNumber}") }
-        val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; else -> 60 }
-        AlertDialog(onDismissRequest = { numberDialog = false }, title = { Text(stringResource(when(state.sectionKind) { "page" -> R.string.page; "juz" -> R.string.juz; else -> R.string.hizb })) }, text = { OutlinedTextField(number, { number = it.filter(Char::isDigit).take(3) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }, confirmButton = { TextButton(enabled = (number.toIntOrNull() ?: 0) in 1..maximum, onClick = { vm.section(state.sectionKind, number.toInt()); numberDialog = false }) { Text(stringResource(R.string.read)) } })
+        val maximum = when (state.sectionKind) {
+            "page" -> 604
+            "juz" -> 30
+            else -> 60
+        }
+        ModalBottomSheet(onDismissRequest = { numberDialog = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Xl)
+                    .padding(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                Text(
+                    stringResource(
+                        when (state.sectionKind) {
+                            "page" -> R.string.page
+                            "juz" -> R.string.juz
+                            else -> R.string.hizb
+                        },
+                    ),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                OutlinedTextField(
+                    value = number,
+                    onValueChange = { number = it.filter(Char::isDigit).take(3) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                    ),
+                )
+                Button(
+                    enabled = (number.toIntOrNull() ?: 0) in 1..maximum,
+                    onClick = {
+                        vm.section(state.sectionKind, number.toInt())
+                        numberDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.read))
+                }
+            }
+        }
     }
+
 }
