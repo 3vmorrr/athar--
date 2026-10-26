@@ -116,10 +116,17 @@ final class CampaignService
             $scheduled=$campaign['scheduled_at']?:gmdate('Y-m-d H:i:s');
             if(strtotime($scheduled.' UTC')<time()-60||strtotime($scheduled.' UTC')>time()+366*86400)throw new ApiError('invalid_fields',422,['scheduled_at'=>'invalid']);
             $channels=$this->channels((string)$campaign['channel']);
-            $inserted=0;$skipped=0;$dependencyProblems=[];
+            $resolvedChannels=[];$dependencyProblems=[];$eligibleTotal=0;
             foreach($channels as $channel){
-                $resolved=$this->resolveAudience($campaign,$channel,(int)$actor['id'],false);
-                if(!$resolved['available']){$dependencyProblems[$channel]=$resolved['reason'];continue;}
+                $resolvedChannels[$channel]=$this->resolveAudience($campaign,$channel,(int)$actor['id'],false);
+                if(!$resolvedChannels[$channel]['available'])$dependencyProblems[$channel]=$resolvedChannels[$channel]['reason'];
+                else $eligibleTotal+=count($resolvedChannels[$channel]['users']);
+            }
+            if($dependencyProblems)throw new ApiError('conflict',409,['dependencies'=>$dependencyProblems]);
+            if($eligibleTotal<1)throw new ApiError('invalid_fields',422,['audience'=>'no_eligible_recipients']);
+            $inserted=0;$skipped=0;
+            foreach($channels as $channel){
+                $resolved=$resolvedChannels[$channel];
                 foreach($resolved['users'] as $user){
                     $locale=$user['locale']==='en'?'en':'ar';
                     $payload=$this->payload($campaign,$locale);
@@ -134,11 +141,10 @@ final class CampaignService
                     if($st->rowCount()===1){if($status==='queued')$inserted++;else $skipped++;}
                 }
             }
-            if($dependencyProblems&&$inserted===0)throw new ApiError('conflict',409,['dependencies'=>$dependencyProblems]);
             $nextRevision=(int)$campaign['revision']+1;
             $this->db->prepare("UPDATE engagement_campaigns SET status='scheduled',scheduled_at=?,confirmed_by=?,confirmed_at=UTC_TIMESTAMP(),revision=?,updated_at=UTC_TIMESTAMP() WHERE id=?")
                 ->execute([$scheduled,$actor['id'],$nextRevision,$id]);
-            $this->event($id,'campaign_confirmed',(int)$actor['id'],['queued'=>$inserted,'skipped'=>$skipped,'dependencies'=>$dependencyProblems]);
+            $this->event($id,'campaign_confirmed',(int)$actor['id'],['queued'=>$inserted,'skipped'=>$skipped]);
             $this->audit($actor,'engagement-campaign-confirmed',$id);
             $this->db->commit();
             return $this->detail($actor,$id);
@@ -181,6 +187,12 @@ final class CampaignService
                 $u=$this->db->prepare("UPDATE engagement_campaign_recipients SET status='processing',attempt_count=attempt_count+1,locked_at=UTC_TIMESTAMP() WHERE id IN ($in) AND status='queued'");
                 $u->execute($ids);
                 $q=$this->db->prepare("SELECT * FROM engagement_campaign_recipients WHERE id IN ($in) ORDER BY id");$q->execute($ids);$rows=$q->fetchAll();
+                $campaignIds=array_values(array_unique(array_map(static fn(array $row):int=>(int)$row['campaign_id'],$rows)));
+                if($campaignIds){
+                    $campaignIn=implode(',',array_fill(0,count($campaignIds),'?'));
+                    $mark=$this->db->prepare("UPDATE engagement_campaigns SET status='processing',updated_at=UTC_TIMESTAMP() WHERE id IN ($campaignIn) AND status='scheduled'");
+                    $mark->execute($campaignIds);
+                }
             }else $rows=[];
             $this->db->commit();return $rows;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
@@ -269,8 +281,9 @@ final class CampaignService
 
     private function recentlySent(int $user,string $channel,int $hours): bool
     {
-        $q=$this->db->prepare("SELECT 1 FROM engagement_campaign_recipients WHERE user_id=? AND channel=? AND status='sent' AND sent_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL ? HOUR) LIMIT 1");
-        $q->execute([$user,$channel,$hours]);return (bool)$q->fetchColumn();
+        $cutoff=gmdate('Y-m-d H:i:s',time()-($hours*3600));
+        $q=$this->db->prepare("SELECT 1 FROM engagement_campaign_recipients WHERE user_id=? AND channel=? AND status='sent' AND sent_at>=? LIMIT 1");
+        $q->execute([$user,$channel,$cutoff]);return (bool)$q->fetchColumn();
     }
 
     private function reconcileCampaignForDelivery(int $deliveryId): void
