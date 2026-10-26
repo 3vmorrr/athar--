@@ -32,13 +32,29 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
         perform { graph.session.reset(email, code, password, confirmation); mutableOperation.value = OperationState(message = "password_updated") }
     }
     fun logout(expectedUser:Long?=graph.session.userId) = perform { graph.session.logout(expectedUser) }
-    fun perform(block: suspend () -> Unit) {
+    fun perform(
+        successMessage: String? = null,
+        block: suspend () -> Unit,
+    ) {
         if (mutableOperation.value.busy) return
         viewModelScope.launch {
             mutableOperation.value = OperationState(busy = true)
-            try { block(); if (mutableOperation.value.busy) mutableOperation.value = OperationState() }
-            catch (failure: CancellationException) { throw failure }
-            catch (failure: Exception) { mutableOperation.value = OperationState(error = if (failure is ApiException) failure.code.ifBlank { "network_error" } else "network_error") }
+            try {
+                block()
+                if (mutableOperation.value.busy) {
+                    mutableOperation.value = OperationState(message = successMessage)
+                }
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (failure: Exception) {
+                mutableOperation.value = OperationState(
+                    error = if (failure is ApiException) {
+                        failure.code.ifBlank { "network_error" }
+                    } else {
+                        "network_error"
+                    },
+                )
+            }
         }
     }
 }
