@@ -23,10 +23,11 @@ final class EmailOutboxService
     ): bool {
         if($userId<1||!in_array($locale,['ar','en'],true)||mb_strlen($subject,'UTF-8')<2||mb_strlen($subject,'UTF-8')>180||$plainBody===''||$ttlSeconds<60||$ttlSeconds>86400)throw new ApiError('invalid_fields',422);
         $dedupe=hash('sha256','transactional:'.$idempotencyKey);
+        $expiresAt=gmdate('Y-m-d H:i:s',time()+$ttlSeconds);
         $q=$this->db->prepare("INSERT IGNORE INTO email_outbox
             (category,priority,user_id,locale,subject,plain_body,html_body,html_footer,status,idempotency_key,attempt_count,max_attempts,available_at,expires_at,created_at,updated_at)
-            VALUES ('transactional',10,?,?,?,?,?,?, 'pending',?,0,5,UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL ? SECOND),UTC_TIMESTAMP(),UTC_TIMESTAMP())");
-        $q->execute([$userId,$locale,$subject,$plainBody,$htmlBody,$htmlFooter,$dedupe,$ttlSeconds]);
+            VALUES ('transactional',10,?,?,?,?,?,?, 'pending',?,0,5,UTC_TIMESTAMP(),?,UTC_TIMESTAMP(),UTC_TIMESTAMP())");
+        $q->execute([$userId,$locale,$subject,$plainBody,$htmlBody,$htmlFooter,$dedupe,$expiresAt]);
         return $q->rowCount()===1 || $this->outboxExists($dedupe);
     }
 
@@ -151,10 +152,20 @@ final class EmailOutboxService
 
     public function recover(): array
     {
+        $affectedCampaigns=[];
+        $q=$this->db->query("SELECT DISTINCT r.campaign_id
+            FROM email_outbox o
+            JOIN engagement_campaign_recipients r ON r.id=o.campaign_delivery_id
+            WHERE o.category='campaign' AND o.status IN ('pending','processing')
+              AND o.expires_at<=UTC_TIMESTAMP()");
+        foreach($q->fetchAll(PDO::FETCH_COLUMN) as $campaignId)$affectedCampaigns[]=(int)$campaignId;
+
         $expired=$this->db->exec("UPDATE email_outbox SET status='failed',last_error_code='expired',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE status IN ('pending','processing') AND expires_at<=UTC_TIMESTAMP()");
         $stale=$this->db->exec("UPDATE email_outbox SET status='pending',last_error_code='stale_lock_recovered',locked_at=NULL,available_at=UTC_TIMESTAMP(),updated_at=UTC_TIMESTAMP() WHERE status='processing' AND locked_at<DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) AND expires_at>UTC_TIMESTAMP()");
-        $this->db->exec("UPDATE engagement_campaign_recipients r JOIN email_outbox o ON o.campaign_delivery_id=r.id SET r.status='failed',r.last_error_code='email_outbox_expired',r.updated_at=UTC_TIMESTAMP() WHERE o.category='campaign' AND o.status='failed' AND o.last_error_code='expired' AND r.status='processing'");
-        return ['expired'=>(int)$expired,'recovered'=>(int)$stale];
+        $this->db->exec("UPDATE engagement_campaign_recipients r JOIN email_outbox o ON o.campaign_delivery_id=r.id SET r.status='failed',r.last_error_code='email_outbox_expired',r.locked_at=NULL,r.updated_at=UTC_TIMESTAMP() WHERE o.category='campaign' AND o.status='failed' AND o.last_error_code='expired' AND r.status='processing'");
+
+        foreach(array_values(array_unique($affectedCampaigns)) as $campaignId)if($campaignId>0)$this->reconcileCampaign($campaignId);
+        return ['expired'=>(int)$expired,'recovered'=>(int)$stale,'campaigns_reconciled'=>count(array_unique($affectedCampaigns))];
     }
 
     public function cancelCampaignOutbox(int $campaignId): int
