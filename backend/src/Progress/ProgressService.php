@@ -174,7 +174,6 @@ final class ProgressService
         $expected=$this->integer($data,'expected_revision',0,2147483647);
         $status=(string)($data['status']??'active');
 
-        $this->validateKhatmahDates($start,$target);
         if(!in_array($status,['active','paused','finished'],true)){
             throw new ApiError('invalid_fields',422,['status'=>'invalid']);
         }
@@ -192,6 +191,11 @@ final class ProgressService
             );
             $q->execute([$user]);
             $current=$q->fetch();
+            $this->validateKhatmahDates(
+                $start,
+                $target,
+                $current!==false && (string)$current['target_date']===$target
+            );
             $revision=$current?(int)$current['revision']:0;
             if($revision!==$expected){
                 throw new ApiError(
@@ -297,7 +301,11 @@ final class ProgressService
         }
     }
 
-    private function validateKhatmahDates(string $start,string $target):void
+    private function validateKhatmahDates(
+        string $start,
+        string $target,
+        bool $allowPastTarget=false
+    ):void
     {
         if(!NightPrayer::validDate($start)||!NightPrayer::validDate($target)){
             throw new ApiError('invalid_fields',422,['date'=>'invalid']);
@@ -317,7 +325,7 @@ final class ProgressService
         }
 
         // A new or edited active schedule cannot intentionally target a date already gone.
-        if($target<$today){
+        if(!$allowPastTarget&&$target<$today){
             throw new ApiError('invalid_fields',422,['target_date'=>'past']);
         }
     }
