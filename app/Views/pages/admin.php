@@ -1,29 +1,61 @@
+<?php
+$adminLocale = $adminLocale ?? 'ar';
+$adminShellCopy = $adminLocale === 'en' ? [
+    'eyebrow' => 'Platform administration',
+    'title' => 'Athar Dashboard',
+    'lede' => 'Operate content and services from an isolated administration workspace.',
+    'sidebar' => 'Platform',
+    'nav_label' => 'Administration sections',
+    'overview' => 'Overview & analytics',
+    'create' => 'Create content',
+    'content' => 'Saved content',
+    'comments' => 'Comment moderation',
+    'campaigns' => 'Email campaigns',
+    'services' => 'Service settings',
+    'users' => 'User management',
+    'backups' => 'Backup & recovery',
+    'audit' => 'Audit log',
+    'note' => 'Choose a section to display its tools and data.',
+] : [
+    'eyebrow' => 'إدارة المنصة',
+    'title' => 'لوحة أثر',
+    'lede' => 'أدِر المحتوى والخدمات من مساحة إدارة مستقلة عن واجهة التصفح العامة.',
+    'sidebar' => 'إدارة المنصة',
+    'nav_label' => 'أقسام لوحة الإدارة',
+    'overview' => 'نظرة عامة وتحليلات',
+    'create' => 'إضافة محتوى',
+    'content' => 'المحتوى المحفوظ',
+    'comments' => 'مراجعة التعليقات',
+    'campaigns' => 'حملات البريد',
+    'services' => 'إعدادات الخدمات',
+    'users' => 'إدارة المستخدمين',
+    'backups' => 'النسخ والاستعادة',
+    'audit' => 'سجل العمليات',
+    'note' => 'اختر قسمًا لعرض أدواته وبياناته.',
+];
+?>
 <section class="knowledge-page section-wrap admin-page">
     <header class="knowledge-heading">
-        <span class="eyebrow">إدارة المحتوى</span>
-        <h1>لوحة أثر</h1>
-        <p>تظهر المواد المنشورة للزوار. راجع حقوق النشر والمصدر قبل الإتاحة.</p>
-        <form method="post" action="/admin/logout" class="logout-form">
-            <?= csrf_field() ?>
-            <button class="button button-secondary" type="submit">خروج من الإدارة</button>
-        </form>
+        <span class="eyebrow"><?= e($adminShellCopy['eyebrow']) ?></span>
+        <h1><?= e($adminShellCopy['title']) ?></h1>
+        <p><?= e($adminShellCopy['lede']) ?></p>
     </header>
     <?php if ($adminError !== ''): ?><div class="notice notice-error" role="alert"><?= e($adminError) ?></div><?php endif; ?>
     <div class="admin-layout">
-        <aside class="admin-sidebar">
-            <strong class="admin-sidebar-title">إدارة المنصة</strong>
-            <nav class="admin-sidebar-nav" aria-label="أقسام لوحة الإدارة" data-admin-nav>
-                <a href="#admin-overview" aria-current="location" aria-controls="admin-overview">نظرة عامة وتحليلات</a>
-                <a href="#admin-create" aria-controls="admin-create">إضافة محتوى</a>
-                <a href="#admin-content" aria-controls="admin-content">المحتوى المحفوظ</a>
-                <a href="#admin-comments" aria-controls="admin-comments">مراجعة التعليقات <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
-                <a href="#admin-campaigns" aria-controls="admin-campaigns">حملات البريد</a>
-                <a href="#admin-services" aria-controls="admin-services">إعدادات الخدمات</a>
-                <a href="#admin-users" aria-controls="admin-users">إدارة المستخدمين <span><?= $managedUserTotal ?></span></a>
-                <?php if (($admin['role'] ?? '') === 'owner'): ?><a href="#admin-backups" aria-controls="admin-backups">النسخ والاستعادة</a><?php endif; ?>
-                <a href="#admin-audit" aria-controls="admin-audit">سجل العمليات</a>
+        <aside class="admin-sidebar" id="admin-primary-nav">
+            <strong class="admin-sidebar-title"><?= e($adminShellCopy['sidebar']) ?></strong>
+            <nav class="admin-sidebar-nav" aria-label="<?= e($adminShellCopy['nav_label']) ?>" data-admin-nav>
+                <a href="#admin-overview" aria-current="location" aria-controls="admin-overview"><?= e($adminShellCopy['overview']) ?></a>
+                <a href="#admin-create" aria-controls="admin-create"><?= e($adminShellCopy['create']) ?></a>
+                <a href="#admin-content" aria-controls="admin-content"><?= e($adminShellCopy['content']) ?></a>
+                <a href="#admin-comments" aria-controls="admin-comments"><?= e($adminShellCopy['comments']) ?> <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
+                <a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a>
+                <a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a>
+                <a href="#admin-users" aria-controls="admin-users"><?= e($adminShellCopy['users']) ?> <span><?= $managedUserTotal ?></span></a>
+                <?php if (($admin['role'] ?? '') === 'owner'): ?><a href="#admin-backups" aria-controls="admin-backups"><?= e($adminShellCopy['backups']) ?></a><?php endif; ?>
+                <a href="#admin-audit" aria-controls="admin-audit"><?= e($adminShellCopy['audit']) ?></a>
             </nav>
-            <p class="admin-sidebar-note">اختر قسمًا لعرض أدواته وبياناته.</p>
+            <p class="admin-sidebar-note"><?= e($adminShellCopy['note']) ?></p>
         </aside>
         <div class="admin-content">
     <section class="admin-inventory admin-panel" id="admin-services" data-admin-panel hidden>

@@ -1,5 +1,9 @@
 # Engineering change log
 
+## Parallel integration checkpoint — task17.2
+
+Independent bilingual Admin shell integrated with corrections;60 HTTP and20,000 disposable backend assertions PASS. Actual1440/1024 desktop,768 tablet,360/320 phone,AR/EN light/dark,keyboard/modal/breakpoint/panel persistence accepted; details in [Admin shell acceptance](../testing/ADMIN_SHELL.md). No migration/API/native change. Source cursor6d74f375ab6634de38f83e78cb081d81d9269e8f; next17.3 action matrix. New source delta through ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee mapped separately and retained locally, not accepted. WP17 closure2/6 (33%); overall47% (46.98 weighted,±10pp);136 open. WP02.8 stays PARTIAL/deferred. Legacy editor localization/privacy/campaign replacement remains with its own later task; shell acceptance does not close those gates.
+
 ## Parallel integration checkpoint — task17.1
 
 Independent Admin authentication is integrated with corrections and applicable acceptance. Source cursor is `7fd87ade0a9fb5101962e360fee7d48f3fdb871a`; the full pre-integration map and pending groups live in [PARALLEL_INTEGRATION.json](PARALLEL_INTEGRATION.json). Main base checkpoint was `224a18652ff5cc5abfdbbd25d9f1da657479de8b`. Next task17.2 is the independent bilingual shell. WP02.8 remains PARTIAL and deferred under the user's integration-first instruction. No bulk branch merge has occurred; source implementation is not completion evidence.

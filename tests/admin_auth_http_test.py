@@ -142,9 +142,28 @@ url, page = request("/admin/login?lang=en", {
     "password": environment["ATHAR_ADMIN_PASSWORD"],
 })
 check(url.endswith("/admin"), "Admin credentials reach /admin")
-check("لوحة أثر" in page, "Admin body renders after isolated authentication")
+check("Athar Dashboard" in page or "لوحة أثر" in page, "Admin body renders after isolated authentication")
 post_login_cookie = cookie("ATHARADMIN")
 check(post_login_cookie is not None and post_login_cookie.value != pre_login_cookie, "Admin login rotates session ID")
+
+# The shell must keep its own assets, navigation, language and theme state.
+check('/assets/css/admin.css?v=1' in page and '/assets/js/admin.js?v=1' in page, "Independent shell assets are loaded")
+check('/assets/js/app.js' not in page and 'class="site-header"' not in page, "Public chrome/scripts are absent from Admin")
+check('aria-controls="admin-primary-nav"' in page and 'id="admin-main"' in page, "Drawer and skip-link targets exist")
+check('href="#admin-backups"' not in page, "Non-owner shell omits recovery navigation")
+url, page = request('/admin?lang=en&theme=dark')
+check('lang="en" dir="ltr" data-theme="dark"' in page, "English dark shell renders")
+check('Overview &amp; analytics' in page and 'Open administration menu' in page, "English navigation is localized")
+url, page = request('/admin?theme=invalid&lang=invalid')
+check('lang="en" dir="ltr" data-theme="dark"' in page, "Invalid preference cannot replace saved theme/locale")
+url, page = request('/admin?lang=ar&theme=light')
+check('lang="ar" dir="rtl" data-theme="light"' in page, "Arabic light shell renders")
+url, css = request('/assets/css/admin.css')
+check('[dir=rtl] .admin-sidebar' in css and '--on-primary:#10271c' in css, "RTL drawer and dark button contrast styles are served")
+url, script = request('/assets/js/admin.js')
+check("event.key === 'Escape'" in script and 'sidebar.inert = mobile.matches' in script, "Modal drawer interaction script is served")
+url, script = request('/assets/js/admin-campaign-legacy.js')
+check("ajax_campaign_batch" in script, "Existing campaign adapter survives independent shell")
 
 # The /admin cookie path means the public site does not receive Admin auth state.
 url, public_page = request("/")
@@ -189,7 +208,7 @@ def sign_in():
         "_csrf": before, "email": environment["ATHAR_ADMIN_EMAIL"],
         "password": environment["ATHAR_ADMIN_PASSWORD"],
     })
-    check("لوحة أثر" in html, "Fresh isolated Admin login succeeds")
+    check("Athar Dashboard" in html or "لوحة أثر" in html, "Fresh isolated Admin login succeeds")
     return before, csrf(html)
 
 

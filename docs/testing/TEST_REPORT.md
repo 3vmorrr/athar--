@@ -1,3 +1,7 @@
+## Task17.2 — independent bilingual Admin shell
+
+60 HTTP and20,000 isolated backend assertions PASS; actual1440/1024/768/360/320 browser acceptance, RTL/LTR, light/dark, focus trap/Escape/breakpoint and selected-panel retention. Corrected source RTL, accessibility, dark contrast, lost legacy batch adapter and320px overflow. No migration/native change. See [full evidence and boundaries](ADMIN_SHELL.md). Next17.3;02.8 remains deferred.
+
 ## Task17.1 — independent Admin authentication integration
 
 49 actual HTTP checks and20,000 isolated backend assertions PASS. PHP/Python/JS syntax, Arabic/English browser sign-in/logout/password visibility and clean login captures reviewed. Source authentication required owner-session compatibility, test SQL quoting and static asset router fixes. No schema/Android change; no destructive recovery action. See [detailed acceptance and limits](ADMIN_AUTHENTICATION.md). Exact source cursor7fd87ade0a9fb5101962e360fee7d48f3fdb871a; task17.2 follows. WP02.8 remains PARTIAL/deferred and retains its checkpoint224a18652ff5cc5abfdbbd25d9f1da657479de8b.

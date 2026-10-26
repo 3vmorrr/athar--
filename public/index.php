@@ -1007,8 +1007,17 @@ if ($path === '/admin') {
     $dorarTokenConfigured = platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '';
     if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
     $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);
-    $title='إدارة أثر'; $activePath=$path; $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php'; $flashMessage=take_flash();
-    ob_start(); require $viewPath; $content=(string) ob_get_clean(); require dirname(__DIR__).'/app/Views/layout.php'; exit;
+    $title='إدارة أثر';
+    $activePath=$path;
+    $adminLocale=admin_locale();
+    $adminTheme=admin_theme();
+    $viewPath=dirname(__DIR__).'/app/Views/pages/admin.php';
+    $flashMessage=take_flash();
+    ob_start();
+    require $viewPath;
+    $content=(string) ob_get_clean();
+    require dirname(__DIR__).'/admin/Views/layout.php';
+    exit;
 }
 
 $curatedBooks = $curatedLessons = $curatedSeries = $curatedAdhkar = $curatedScholars = [];

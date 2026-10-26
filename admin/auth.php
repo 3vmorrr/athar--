@@ -32,6 +32,16 @@ function admin_locale(): string
     return in_array($saved, ['ar', 'en'], true) ? $saved : 'ar';
 }
 
+function admin_theme(): string
+{
+    $requested = strtolower((string) ($_GET['theme'] ?? ''));
+    if (in_array($requested, ['light', 'dark'], true)) {
+        $_SESSION['admin_theme'] = $requested;
+    }
+    $saved = strtolower((string) ($_SESSION['admin_theme'] ?? 'light'));
+    return in_array($saved, ['light', 'dark'], true) ? $saved : 'light';
+}
+
 function admin_forget_authenticated_state(): void
 {
     unset(

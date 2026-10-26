@@ -1,9 +1,9 @@
 {
   "codex_head": "ddec0d350776dba293bbc60a5e8e61424f4434a9",
-  "parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
+  "parallel_head": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "7fd87ade0a9fb5101962e360fee7d48f3fdb871a",
+  "LAST_PARALLEL_INTEGRATED_SHA": "6d74f375ab6634de38f83e78cb081d81d9269e8f",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -94,7 +94,7 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "SUPERSEDED",
-      "state": "REVIEW PENDING",
+      "state": "SUPERSEDED",
       "secondary_task_attribution": []
     },
     {
@@ -150,8 +150,10 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "acceptance": "docs/testing/ADMIN_SHELL.md;60 HTTP/20,000 backend and actual desktop/tablet/phone,AR/EN,light/dark,keyboard/breakpoint acceptance.",
+      "integration_base": "37a24cd6b3b0078e1aa2d2952ef02e73ec056e13"
     },
     {
       "task_or_group": "17.3",
@@ -2410,6 +2412,672 @@
           "task": "07.7-07.9"
         }
       ]
+    },
+    {
+      "task_or_group": "Later delta: feat(night): retain and recover permanent sync rejections",
+      "source_commits": [
+        {
+          "sha": "1f4e04f60b4587c3d36c88494f9b42baa70268c7",
+          "subject": "feat(night): retain and recover permanent sync rejections"
+        }
+      ],
+      "files": [
+        "android/app/src/androidTest/java/org/athar/app/NightRejectionDialogTest.kt",
+        "android/app/src/androidTest/java/org/athar/app/NightRejectionStorageTest.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AppDatabase.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightConflict.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRejectionDialog.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "docs/features/NIGHT_PRAYER_REJECTIONS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/androidTest/java/org/athar/app/NightRejectionDialogTest.kt",
+        "android/app/src/androidTest/java/org/athar/app/NightRejectionStorageTest.kt",
+        "android/app/src/main/java/org/athar/app/core/data/AppDatabase.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightConflict.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerRepository.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRejectionDialog.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: fix(night): harden rejection review handoff",
+      "source_commits": [
+        {
+          "sha": "c6a170102cff894d8f66d92aa1194ae78d790133",
+          "subject": "fix(night): harden rejection review handoff"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRejectionDialog.kt",
+        "docs/progress/PARALLEL_ADMIN_TRACK.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/nightprayer/NightRejectionDialog.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): add versioned preference foundation",
+      "source_commits": [
+        {
+          "sha": "d6c06662d82a4a37dfa1ac80ec7b8da720f4a9e2",
+          "subject": "feat(notifications): add versioned preference foundation"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPreferences.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPreferencesTest.kt",
+        "backend/src/Engagement/NotificationPreferenceService.php",
+        "backend/src/Http/ApiKernel.php",
+        "database/migrations/021_notification_preferences.sql",
+        "docs/features/NOTIFICATION_FOUNDATION.md",
+        "tests/notification_preferences_test.php"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [
+        "backend/src/Engagement/NotificationPreferenceService.php",
+        "backend/src/Http/ApiKernel.php",
+        "database/migrations/021_notification_preferences.sql"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPreferences.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPreferencesTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): add channels and contextual permission state",
+      "source_commits": [
+        {
+          "sha": "461fbd869983eeb3aaba0579228470e5a4ee2d21",
+          "subject": "feat(notifications): add channels and contextual permission state"
+        }
+      ],
+      "files": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationChannels.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPermission.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/NotificationChannelsTest.kt",
+        "docs/features/NOTIFICATION_ANDROID_CHANNELS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationChannels.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPermission.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/NotificationChannelsTest.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): add owner-bound deep link restoration",
+      "source_commits": [
+        {
+          "sha": "0062901f33d2845244d8ee1c5a2e56bd2141e990",
+          "subject": "feat(notifications): add owner-bound deep link restoration"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/MainActivity.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationDeepLinks.kt",
+        "android/app/src/test/java/org/athar/app/NotificationDeepLinksTest.kt",
+        "docs/features/NOTIFICATION_DEEP_LINKS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/MainActivity.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationDeepLinks.kt",
+        "android/app/src/test/java/org/athar/app/NotificationDeepLinksTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): add local delivery policy and dedupe ledger",
+      "source_commits": [
+        {
+          "sha": "eb6d4ddd4f45b8ee7844e4fb0827458ffcf5043b",
+          "subject": "feat(notifications): add local delivery policy and dedupe ledger"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicy.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicyLedger.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPolicyTest.kt",
+        "docs/features/NOTIFICATION_POLICY.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicy.kt",
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicyLedger.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPolicyTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: fix(notifications): preserve policy cancellation and stable timezone fixture",
+      "source_commits": [
+        {
+          "sha": "c9e991c047ef28aeb1f801f0819bf3196f712f66",
+          "subject": "fix(notifications): preserve policy cancellation and stable timezone fixture"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicyLedger.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPolicyTest.kt"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/notifications/NotificationPolicyLedger.kt",
+        "android/app/src/test/java/org/athar/app/NotificationPolicyTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): add owned persistent reminder scheduler",
+      "source_commits": [
+        {
+          "sha": "c57c7f4e4660bc77460a97476238fd2d37115aec",
+          "subject": "feat(notifications): add owned persistent reminder scheduler"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderCoordinator.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderStore.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorkSchedule.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorker.kt",
+        "android/app/src/main/res/drawable/ic_notification_athar.xml",
+        "android/app/src/test/java/org/athar/app/LocalReminderSpecTest.kt",
+        "docs/features/NOTIFICATION_SCHEDULER.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderCoordinator.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderStore.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorkSchedule.kt",
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorker.kt",
+        "android/app/src/main/res/drawable/ic_notification_athar.xml",
+        "android/app/src/test/java/org/athar/app/LocalReminderSpecTest.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/res/drawable/ic_notification_athar.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: fix(notifications): isolate reminder unique work names",
+      "source_commits": [
+        {
+          "sha": "b26ea9e8b76722ff474d464652d5e2ddfdd62371",
+          "subject": "fix(notifications): isolate reminder unique work names"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorkSchedule.kt"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/notifications/LocalReminderWorkSchedule.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(quran): complete canonical range and section navigation",
+      "source_commits": [
+        {
+          "sha": "58d561c5d485aed40d53fd01421cb24d5129f468",
+          "subject": "feat(quran): complete canonical range and section navigation"
+        }
+      ],
+      "files": [
+        "android/app/src/androidTest/java/org/athar/app/QuranNavigationTest.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranIndex.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranNavigation.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranNavigationSheet.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranRepository.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "docs/features/QURAN_NAVIGATION.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/androidTest/java/org/athar/app/QuranNavigationTest.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranIndex.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranNavigation.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranNavigationSheet.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranRepository.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(notifications): reconcile reminders across system lifecycle",
+      "source_commits": [
+        {
+          "sha": "2f7c68e98f6a4262f154e735ea75ac4f56fc796f",
+          "subject": "feat(notifications): reconcile reminders across system lifecycle"
+        }
+      ],
+      "files": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/notifications/ReminderReconcile.kt",
+        "android/app/src/test/java/org/athar/app/ReminderReconcileReceiverTest.kt",
+        "docs/features/NOTIFICATION_RECONCILIATION.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/org/athar/app/notifications/ReminderReconcile.kt",
+        "android/app/src/test/java/org/athar/app/ReminderReconcileReceiverTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(quran): complete paged highlighted search journey",
+      "source_commits": [
+        {
+          "sha": "0b579abb8566a1778dde88217923b7e4e6ee7782",
+          "subject": "feat(quran): complete paged highlighted search journey"
+        }
+      ],
+      "files": [
+        "android/app/src/androidTest/java/org/athar/app/QuranSearchTest.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranMushafPage.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranRepository.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranSearch.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "docs/features/QURAN_SEARCH.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/androidTest/java/org/athar/app/QuranSearchTest.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranMushafPage.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranRepository.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranSearch.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: fix(quran): stabilize nullable search page rendering",
+      "source_commits": [
+        {
+          "sha": "b171260c09fa7e941f2687d992d57ded6143cfb6",
+          "subject": "fix(quran): stabilize nullable search page rendering"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(learning): add explicit lesson reminder consent and choice",
+      "source_commits": [
+        {
+          "sha": "747951e7005cf9f16b350e2a2b32d91494459360",
+          "subject": "feat(learning): add explicit lesson reminder consent and choice"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderControl.kt",
+        "android/app/src/main/java/org/athar/app/learning/UpcomingLesson.kt",
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/LessonReminderContractTest.kt",
+        "docs/features/LESSON_REMINDERS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderControl.kt",
+        "android/app/src/main/java/org/athar/app/learning/UpcomingLesson.kt",
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/LessonReminderContractTest.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(learning): schedule canonical local lesson reminders",
+      "source_commits": [
+        {
+          "sha": "876365777b35f01f065a34f1a83ffa761b581d02",
+          "subject": "feat(learning): schedule canonical local lesson reminders"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderControl.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderManager.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/LessonReminderPlannerTest.kt",
+        "docs/features/LESSON_REMINDERS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderControl.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderManager.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "android/app/src/test/java/org/athar/app/LessonReminderPlannerTest.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(quran): complete tafsir source and paging journey",
+      "source_commits": [
+        {
+          "sha": "257385abf50af25b866bcda98567f56d37ed6981",
+          "subject": "feat(quran): complete tafsir source and paging journey"
+        }
+      ],
+      "files": [
+        "android/app/src/androidTest/java/org/athar/app/TafsirContractTest.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/TafsirModels.kt",
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml",
+        "backend/src/Providers/Quranpedia.php",
+        "docs/features/TAFSIR_READING.md",
+        "tests/tafsir_provider_test.php"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [
+        "backend/src/Providers/Quranpedia.php"
+      ],
+      "android_impact": [
+        "android/app/src/androidTest/java/org/athar/app/TafsirContractTest.kt",
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/TafsirModels.kt",
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+        "android/app/src/main/res/values-en/strings.xml",
+        "android/app/src/main/res/values/strings.xml"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: feat(learning): reconcile lesson reminders with event changes",
+      "source_commits": [
+        {
+          "sha": "510a9d4e7b2e406b65a745906e889c85c63b5b31",
+          "subject": "feat(learning): reconcile lesson reminders with event changes"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderManager.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderReconciliation.kt",
+        "android/app/src/test/java/org/athar/app/LessonReminderReconcilePolicyTest.kt",
+        "docs/features/LESSON_REMINDERS.md"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderChoice.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderManager.kt",
+        "android/app/src/main/java/org/athar/app/learning/LessonReminderReconciliation.kt",
+        "android/app/src/test/java/org/athar/app/LessonReminderReconcilePolicyTest.kt"
+      ],
+      "ui_impact": [],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
+    },
+    {
+      "task_or_group": "Later delta: fix(quran): harden tafsir unavailable states",
+      "source_commits": [
+        {
+          "sha": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
+          "subject": "fix(quran): harden tafsir unavailable states"
+        }
+      ],
+      "files": [
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+        "backend/src/Providers/Quranpedia.php",
+        "tests/tafsir_provider_test.php"
+      ],
+      "dependencies": [
+        "Previously mapped domain foundation; reconcile against current main before import"
+      ],
+      "overlap": "Night rejection overlaps accepted main02.7.2/Room v2; Quran overlaps mapped premium reader. Review semantically, no file replacement.",
+      "database_api_impact": [
+        "backend/src/Providers/Quranpedia.php"
+      ],
+      "android_impact": [
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt"
+      ],
+      "ui_impact": [
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt"
+      ],
+      "security_privacy": "Retain main protected reads, actor/environment ownership, rejection bytes and Room migration. Verify notification consent, time/date privacy and exact source contracts.",
+      "tests_required": "Applicable disposable migration/API, Android compile/JVM/lint/instrumentation, real device/privacy/lifecycle and AR/EN premium UI acceptance.",
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "REVIEW PENDING",
+      "secondary_task_attribution": []
     }
   ],
   "known_blockers": [
@@ -2430,6 +3098,17 @@
       "sha": "7f23e72f15c152f6c8b6beff1c6253f1cb00eff7",
       "decision": "PARTIAL INTEGRATION",
       "reason": "Only owner download route/session refresh compatibility adopted for17.1. Full owner recovery task17.6 remains pending; do not skip this source commit."
+    },
+    {
+      "sha": "1238dc4e43f75f6f7f15ae00e979ec63e59753c4",
+      "decision": "SUPERSEDED",
+      "reason": "Branch-only CI experiment added then removed; net empty diff. Current local acceptance replaces this probe; no code imported."
+    },
+    {
+      "sha": "29ee276903446de8016cece25683e61d07a549ac",
+      "decision": "SUPERSEDED",
+      "reason": "Branch-only CI experiment added then removed; net empty diff. Current local acceptance replaces this probe; no code imported."
     }
-  ]
+  ],
+  "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23"
 }
