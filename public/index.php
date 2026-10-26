@@ -278,8 +278,10 @@ if ($path === '/book-download' && $method === 'GET') {
     header('Cache-Control: no-store, private'); header('Location: ' . (string) $book['download_url'], true, 302); exit;
 }
 
-if ($path === '/backup-download' && $method === 'POST') {
-    $owner = require_owner(); require_csrf();
+if ($path === '/admin/backup-download' && $method === 'POST') {
+    $owner = admin_require_auth();
+    if (!admin_can($owner, 'recovery')) { http_response_code(403); exit('هذه العملية متاحة لمالك المنصة فقط.'); }
+    require_csrf();
     $grantId = (int) ($_SESSION['backup_grant_id'] ?? 0);
     $rawToken = (string) ($_SESSION['backup_grant_token'] ?? '');
     unset($_SESSION['backup_grant_id'], $_SESSION['backup_grant_token']);
@@ -837,7 +839,12 @@ if ($path === '/admin') {
                 append_owner_audit(['action' => 'backup-restore-started', 'actor_id' => (int) $admin['id'], 'backup_id' => $backupId]);
                 acquire_maintenance_lock();
                 try { restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
-                session_regenerate_id(true); $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                session_regenerate_id(true);
+                $fresh = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,suspended_at FROM users WHERE id=?');
+                $fresh->execute([$admin['id']]);
+                $_SESSION['admin_user'] = $fresh->fetch();
+                $_SESSION['admin_authenticated_at'] = time();
+                $_SESSION['admin_last_activity'] = time();
                 flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin');
             } elseif ($kind === 'local-reset') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إعادة الضبط متاحة لمالك المنصة فقط.');
@@ -864,7 +871,11 @@ if ($path === '/admin') {
                     foreach (glob($assets . DIRECTORY_SEPARATOR . '*.pdf') ?: [] as $pdf) if (preg_match('/^[a-f0-9]{40}\.pdf$/', basename($pdf))) @unlink($pdf);
                     append_owner_audit(['action' => 'local-reset-completed', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
                 } finally { release_maintenance_lock(); }
-                $fresh = db()->prepare('SELECT id,email,role,session_version FROM users WHERE id=?'); $fresh->execute([$admin['id']]); $_SESSION['user'] = $fresh->fetch();
+                $fresh = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,suspended_at FROM users WHERE id=?');
+                $fresh->execute([$admin['id']]);
+                $_SESSION['admin_user'] = $fresh->fetch();
+                $_SESSION['admin_authenticated_at'] = time();
+                $_SESSION['admin_last_activity'] = time();
                 flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin');
             } elseif ($kind === 'backup-grant') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إذن التنزيل متاح لمالك المنصة فقط.');
