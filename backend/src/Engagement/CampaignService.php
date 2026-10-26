@@ -69,7 +69,11 @@ final class CampaignService
         $this->admin($actor);
         $q=$this->db->prepare('SELECT c.*,u.email creator_email,cf.email confirmer_email FROM engagement_campaigns c LEFT JOIN users u ON u.id=c.created_by LEFT JOIN users cf ON cf.id=c.confirmed_by WHERE c.id=?');
         $q->execute([$id]);$row=$q->fetch();if(!$row)throw new ApiError('not_found',404);
-        return $this->decorate($row)+['delivery_counts'=>$this->deliveryCounts($id)];
+        return $this->decorate($row)+[
+            'delivery_counts'=>$this->deliveryCounts($id),
+            'delivery_analytics'=>$this->deliveryAnalytics($id),
+            'history'=>$this->history($id),
+        ];
     }
 
     public function page(array $actor,int $page=1,int $size=30): array
@@ -293,6 +297,32 @@ final class CampaignService
         $counts=$this->deliveryCounts($id);$remaining=$counts['queued']+$counts['processing'];
         if($remaining>0)$status='processing';elseif($counts['failed']>0)$status='partially_failed';else $status='completed';
         $this->db->prepare("UPDATE engagement_campaigns SET status=IF(status='cancelled','cancelled',?),updated_at=UTC_TIMESTAMP() WHERE id=?")->execute([$status,$id]);
+    }
+
+    private function deliveryAnalytics(int $id): array
+    {
+        $channels=[];
+        $q=$this->db->prepare('SELECT channel,status,COUNT(*) count FROM engagement_campaign_recipients WHERE campaign_id=? GROUP BY channel,status ORDER BY channel,status');
+        $q->execute([$id]);
+        foreach($q->fetchAll() as $row)$channels[(string)$row['channel']][(string)$row['status']]=(int)$row['count'];
+        $reasons=[];
+        $q=$this->db->prepare("SELECT last_error_code,COUNT(*) count FROM engagement_campaign_recipients WHERE campaign_id=? AND last_error_code IS NOT NULL AND last_error_code<>'' GROUP BY last_error_code ORDER BY count DESC,last_error_code LIMIT 20");
+        $q->execute([$id]);
+        foreach($q->fetchAll() as $row)$reasons[]=['code'=>(string)$row['last_error_code'],'count'=>(int)$row['count']];
+        return ['channels'=>$channels,'reasons'=>$reasons];
+    }
+
+    private function history(int $id): array
+    {
+        $q=$this->db->prepare('SELECT event_type,summary_json,created_at FROM engagement_campaign_events WHERE campaign_id=? ORDER BY id DESC LIMIT 20');
+        $q->execute([$id]);$events=[];
+        foreach($q->fetchAll() as $row){
+            $summary=[];
+            if(!empty($row['summary_json'])){try{$decoded=json_decode((string)$row['summary_json'],true,16,JSON_THROW_ON_ERROR);if(is_array($decoded))$summary=$decoded;}catch(Throwable $e){}}
+            // Event summaries are aggregate operational facts only; never recipient payloads.
+            $events[]=['event_type'=>(string)$row['event_type'],'summary'=>$summary,'created_at'=>(string)$row['created_at']];
+        }
+        return $events;
     }
 
     private function deliveryCounts(int $id): array
