@@ -27,7 +27,14 @@ import org.athar.app.core.ui.*
     val scope = rememberCoroutineScope()
     LaunchedEffect(reference) { val data = graph.quran.data(); verse = data.verses[data.index.global(reference.first, reference.second) - 1] }
     Column(Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            shape = MaterialTheme.shapes.large,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            AtharSectionHeader(stringResource(R.string.tafsir))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(surahInput, { surahInput = it.filter(Char::isDigit).take(3) }, Modifier.weight(1f), label = { Text(stringResource(R.string.surah)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                 OutlinedTextField(ayahInput, { ayahInput = it.filter(Char::isDigit).take(3) }, Modifier.weight(1f), label = { Text(stringResource(R.string.ayah)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
@@ -41,12 +48,22 @@ import org.athar.app.core.ui.*
             }
             if (invalid) Text(stringResource(R.string.invalid_input), color = MaterialTheme.colorScheme.error)
         }
+        }
         if (book == null) Box(Modifier.padding(20.dp)) { Text(stringResource(R.string.choose_tafsir)) }
         else DataScreen(graph, "quran/tafsir", mapOf("surah" to "${reference.first}", "ayah" to "${reference.second}", "book" to book!!.text("id"))) { data, _ ->
             val uri = LocalUriHandler.current
             LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 item(key = "verse", contentType = "ayah") { verse?.let { Text(it.text, fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp) } }
-                item(key = "book", contentType = "metadata") { Text(data.asJsonObject["book"].text("name"), style = MaterialTheme.typography.titleLarge); Text(data.asJsonObject["book"].text("author"), style = MaterialTheme.typography.bodySmall) }
+                item(key = "book", contentType = "metadata") {
+                    AtharHeroSurface(Modifier.fillMaxWidth()) {
+                        Text(data.asJsonObject["book"].text("name"), style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            data.asJsonObject["book"].text("author"),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
                 items(data.array("items").withIndex().toList(), key = { it.index }, contentType = { "tafsir" }) { (_, block) ->
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(block.text("text"), style = MaterialTheme.typography.bodyLarge)
