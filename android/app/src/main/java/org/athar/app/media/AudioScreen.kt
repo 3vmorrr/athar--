@@ -44,10 +44,36 @@ import org.athar.app.quran.AyahText
       val controlsHeight = maxHeight * if (radio) 0.4f else if (follow && selectedIsLoaded) 0.6f else 1f
       Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().heightIn(max = controlsHeight).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(if (radio) R.string.radio else R.string.listen), style = MaterialTheme.typography.headlineSmall)
-            if (radio) {
-                if (state.radio) Text(state.recording?.text("name").orEmpty(), style = MaterialTheme.typography.titleMedium)
-            } else {
+            AtharHeroSurface(Modifier.fillMaxWidth()) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.primary) {
+                        Icon(
+                            AtharIcons.PlayArrow,
+                            null,
+                            Modifier.padding(10.dp).size(24.dp),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            stringResource(if (radio) R.string.radio else R.string.listen),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        if (radio && state.radio) {
+                            Text(
+                                state.recording?.text("name").orEmpty(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
+            if (!radio) {
                 OutlinedButton(onClick = { surahSelector = true }, modifier = Modifier.testTag("audio-surah")) { Text(names.getOrNull(surah - 1)?.name ?: stringResource(R.string.surah)) }
                 OutlinedButton(onClick = { selector = true }, modifier = Modifier.testTag("audio-reciter")) { Text(selected?.text("name") ?: stringResource(R.string.choose_reciter)) }
                 if (selected != null) LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -93,7 +119,11 @@ import org.athar.app.quran.AyahText
     }
     val scroll = androidx.compose.foundation.lazy.rememberLazyListState()
     LaunchedEffect(current) { if (current > 0) scroll.animateScrollToItem((current - 1).coerceIn(0, (verses.size - 1).coerceAtLeast(0))) }
-    LazyColumn(state = scroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { items(verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { verse -> Surface(color = if (verse.position.ayah == current) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) { Text(verse.text, Modifier.fillMaxWidth().padding(12.dp), fontFamily = QuranFont, style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp)) } } }
+    LazyColumn(state = scroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { items(verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { verse -> Surface(
+        shape = MaterialTheme.shapes.large,
+        color = if (verse.position.ayah == current) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (verse.position.ayah == current) MaterialTheme.colorScheme.primary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.outlineVariant),
+    ) { Text(verse.text, Modifier.fillMaxWidth().padding(16.dp), fontFamily = QuranFont, style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp)) } } }
 }
 
 @Composable private fun ReaderDialog(graph: AppGraph, surah: Int, dismiss: () -> Unit, select: (JsonElement) -> Unit) {
