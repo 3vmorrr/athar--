@@ -38,8 +38,16 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val lessonReminderReconciliation = org.athar.app.learning.LessonReminderLifecycleCoordinator(application, partition, session, lessonReminderChoices, lessonReminders)
     private var persistentSync:org.athar.app.core.sync.PersistentSyncCoordinator?=null
     private fun requestSync(owner:Long,module:org.athar.app.core.sync.SyncModule){persistentSync?.request(owner,module)}
+    val quranWird = org.athar.app.quran.QuranWirdManager(application, partition, database.dao(), session, cipher, reminderStore, reminders)
     val quran = QuranRepository(application)
-    val reading = org.athar.app.quran.ReadingRepository(database.dao(), cipher, session, index = { quran.data().index },requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.READING)})
+    val reading = org.athar.app.quran.ReadingRepository(
+        database.dao(),
+        cipher,
+        session,
+        index = { quran.data().index },
+        requestSync = { requestSync(it,org.athar.app.core.sync.SyncModule.READING) },
+        onSavedProgress = { owner, previous, current -> quranWird.recordProgress(owner, previous, current) },
+    )
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     val counters = CounterRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.COUNTERS)})
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})

@@ -33,7 +33,8 @@ class ReadingRepository(
     private val session: SessionRepository,
     private val index: suspend () -> QuranIndex,
     automaticSync: Boolean = true,
-    private val requestSync:(Long)->Unit={}
+    private val requestSync:(Long)->Unit={},
+    private val onSavedProgress:(Long,Int?,Int)->Unit={_,_,_->},
 ) : AutoCloseable {
     private val gson = Gson()
     private val local = Mutex()
@@ -64,15 +65,19 @@ class ReadingRepository(
     suspend fun save(surah: Int, ayah: Int,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
         session.requireVerifiedOwner(expectedOwner)
-        index().global(surah, ayah)
+        val quranIndex=index()
+        val newGlobal=quranIndex.global(surah, ayah)
+        var previousGlobal:Int?=null
         local.withLock {
             val old = saved(user)
+            previousGlobal=old?.let{quranIndex.global(it.surah,it.ayah)}
             session.requireVerifiedOwner(user)
             check(old?.conflict != true)
             write(user, SavedReadingPosition(surah, ayah, old?.revision ?: 0, (old?.version ?: 0) + 1, pending = true))
         }
         changes.tryEmit(Unit)
         requestSync(user)
+        onSavedProgress(user,previousGlobal,newGlobal)
     }
 
     private suspend fun fetch(user: Long): SavedReadingPosition? {

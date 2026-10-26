@@ -503,4 +503,26 @@
     <string name="follow_series">متابعة السلسلة</string>
     <string name="following_series">تتابع السلسلة — إلغاء المتابعة</string>
     <string name="series_save_label">الحفظ في المفضلة</string>
+    <string name="quran_wird_title">ورد القرآن</string>
+    <string name="quran_wird_explainer">تذكير اختياري يعتمد فقط على موضع القراءة الذي تحفظه بنفسك. مجرد فتح القرآن لا يُحسب إنجازًا.</string>
+    <string name="quran_wird_target">الهدف اليومي: %1$d آيات من التقدم المحفوظ</string>
+    <string name="quran_wird_time">وقت التذكير: %1$s</string>
+    <string name="quran_wird_days">أيام التذكير</string>
+    <string name="quran_wird_timezone">المنطقة الزمنية: %1$s</string>
+    <string name="quran_wird_today_progress">تقدم اليوم المحفوظ: %1$d من %2$d آيات</string>
+    <string name="quran_wird_enable">تفعيل تذكير الورد</string>
+    <string name="quran_wird_disable">إيقاف تذكير الورد</string>
+    <string name="quran_wird_saved">تم حفظ تذكير الورد وجدولته محليًا.</string>
+    <string name="quran_wird_disabled">تم إيقاف تذكير الورد.</string>
+    <string name="quran_wird_save_failed">تعذر حفظ إعدادات الورد. حاول مرة أخرى.</string>
+    <string name="quran_wird_days_required">اختر يومًا واحدًا على الأقل.</string>
+    <string name="quran_wird_permission_denied">لم يُمنح إذن الإشعارات، لذلك لم نفعّل التذكير.</string>
+    <string name="quran_wird_preferences_unavailable">تعذر قراءة إعدادات الإشعارات الآن.</string>
+    <string name="quran_wird_consent_title">تفعيل تذكيرات ورد القرآن؟</string>
+    <string name="quran_wird_consent_body">سيُفعَّل نوع تذكيرات ورد القرآن فقط. لا يتم إرسال موضع قراءتك أو هدفك أو أيامك إلى الخادم، ويمكنك إيقاف التذكير في أي وقت.</string>
+    <string name="quran_wird_consent_confirm">تفعيل تذكيرات الورد</string>
+    <string name="quran_wird_permission_title">إذن الإشعارات مطلوب</string>
+    <string name="quran_wird_permission_settings_body">الإشعارات موقوفة للتطبيق من إعدادات النظام. يمكنك فتح الإعدادات للسماح بتذكير الورد.</string>
+    <string name="quran_wird_notification_title">ورد القرآن</string>
+    <string name="quran_wird_notification_body">تذكيرك الاختياري بهدف %1$d آيات من التقدم المحفوظ اليوم.</string>
 </resources>

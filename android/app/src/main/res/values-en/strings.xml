@@ -475,4 +475,26 @@
     <string name="follow_series">Follow series</string>
     <string name="following_series">Following — unfollow series</string>
     <string name="series_save_label">Save to favorites</string>
+    <string name="quran_wird_title">Quran wird</string>
+    <string name="quran_wird_explainer">An optional reminder based only on the reading position you explicitly save. Simply opening the Quran never counts as progress.</string>
+    <string name="quran_wird_target">Daily target: %1$d ayahs of saved progress</string>
+    <string name="quran_wird_time">Reminder time: %1$s</string>
+    <string name="quran_wird_days">Reminder days</string>
+    <string name="quran_wird_timezone">Time zone: %1$s</string>
+    <string name="quran_wird_today_progress">Saved progress today: %1$d of %2$d ayahs</string>
+    <string name="quran_wird_enable">Enable wird reminder</string>
+    <string name="quran_wird_disable">Turn off wird reminder</string>
+    <string name="quran_wird_saved">Your wird reminder was saved and scheduled locally.</string>
+    <string name="quran_wird_disabled">Your wird reminder was turned off.</string>
+    <string name="quran_wird_save_failed">Wird settings could not be saved. Try again.</string>
+    <string name="quran_wird_days_required">Choose at least one day.</string>
+    <string name="quran_wird_permission_denied">Notification permission was not granted, so the reminder was not enabled.</string>
+    <string name="quran_wird_preferences_unavailable">Notification settings could not be read right now.</string>
+    <string name="quran_wird_consent_title">Enable Quran wird reminders?</string>
+    <string name="quran_wird_consent_body">Only the Quran-routine reminder category will be enabled. Your reading position, target and selected days stay on this device, and you can turn the reminder off at any time.</string>
+    <string name="quran_wird_consent_confirm">Enable wird reminders</string>
+    <string name="quran_wird_permission_title">Notification permission required</string>
+    <string name="quran_wird_permission_settings_body">Notifications are disabled for this app in system settings. You can open settings to allow the wird reminder.</string>
+    <string name="quran_wird_notification_title">Quran wird</string>
+    <string name="quran_wird_notification_body">Your optional reminder for today’s %1$d-ayah saved-progress target.</string>
 </resources>

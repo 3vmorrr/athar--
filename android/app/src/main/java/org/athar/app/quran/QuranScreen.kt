@@ -306,6 +306,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         }
                     }
                 }
+                item(key = "quran-wird", contentType = "routine") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        QuranWirdCard(graph)
+                    }
+                }
             }
         } else {
             Surface(
