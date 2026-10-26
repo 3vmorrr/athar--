@@ -245,9 +245,10 @@ final class CampaignService
         if($channel==='push'&&!$this->tableExists('notification_devices'))return ['available'=>false,'reason'=>'push_device_delivery_not_ready','users'=>[]];
         if($campaign['audience_type']==='test_recipient'&&$channel==='email')return ['available'=>false,'reason'=>'email_test_uses_authorized_smtp_recipient','users'=>[]];
         $where=["u.suspended_at IS NULL","u.email_verified_at IS NOT NULL"];$args=[];
-        if($channel==='push')$where[]='p.push_campaign_opt_in=1';
-        else{$where[]='p.email_campaign_opt_in=1';$where[]='u.email_marketing_opt_in=1';}
-        if($campaign['audience_locale']!==null){$where[]='p.locale=?';$args[]=$campaign['audience_locale'];}
+        if($channel==='push')$where[]='COALESCE(p.push_campaign_opt_in,0)=1';
+        else{$where[]='u.email_marketing_opt_in=1';$where[]='COALESCE(p.email_campaign_opt_in,u.email_marketing_opt_in)=1';}
+        $localeExpression="CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='en' THEN 'en' WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='ar' THEN 'ar' ELSE COALESCE(p.locale,'ar') END";
+        if($campaign['audience_locale']!==null){$where[]=$localeExpression.'=?';$args[]=$campaign['audience_locale'];}
         if($campaign['audience_type']==='test_recipient'){$where[]='u.id=?';$args[]=$actorId;}
         $join='';
         if($campaign['audience_type']==='scholar_followers'){
@@ -260,7 +261,7 @@ final class CampaignService
             if(!$this->tableExists('lesson_reminders'))return ['available'=>false,'reason'=>'lesson_reminders_not_ready','users'=>[]];
             $join=' JOIN lesson_reminders f ON f.user_id=u.id AND f.lesson_id=?';array_unshift($args,(int)$campaign['audience_ref_id']);
         }
-        $sql='SELECT DISTINCT u.id,p.locale,p.quiet_start,p.quiet_end,p.timezone FROM users u JOIN engagement_channel_preferences p ON p.user_id=u.id'.$join.' WHERE '.implode(' AND ',$where).' ORDER BY u.id';
+        $sql='SELECT DISTINCT u.id,'.$localeExpression.' locale,p.quiet_start,p.quiet_end,p.timezone FROM users u LEFT JOIN engagement_channel_preferences p ON p.user_id=u.id'.$join.' WHERE '.implode(' AND ',$where).' ORDER BY u.id';
         if($preview)$sql.=' LIMIT 100000';
         $q=$this->db->prepare($sql);$q->execute($args);return ['available'=>true,'reason'=>null,'users'=>$q->fetchAll()];
     }
