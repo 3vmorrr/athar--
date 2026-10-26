@@ -2,11 +2,9 @@ package org.athar.app.quran
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -16,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.ScrollState
 import org.athar.app.R
 import org.athar.app.core.ui.AtharSpacing
 import org.athar.app.core.ui.QuranFont
@@ -39,11 +39,25 @@ internal fun QuranMushafPage(
     verses: List<AyahText>,
     fontSize: Int,
     modifier: Modifier = Modifier,
+    scrollState: ScrollState? = null,
+    scrollTargetGlobalIndex: Int? = null,
+    scrollRequest: Long = 0L,
     onLongPressAyah: (AyahText) -> Unit,
 ) {
     val indexed = remember(verses) { verses.associateBy { it.position.globalIndex } }
     val text = remember(verses) { mushafAnnotatedText(verses) }
     var layout by remember(text) { mutableStateOf<TextLayoutResult?>(null) }
+
+    LaunchedEffect(layout, scrollTargetGlobalIndex, scrollRequest) {
+        val target = scrollTargetGlobalIndex ?: return@LaunchedEffect
+        val result = layout ?: return@LaunchedEffect
+        val range = text
+            .getStringAnnotations(tag = "ayah", start = 0, end = text.length)
+            .firstOrNull { it.item == target.toString() }
+            ?: return@LaunchedEffect
+        val y = result.getBoundingBox(range.start).top.toInt().coerceAtLeast(0)
+        scrollState?.scrollTo(y)
+    }
 
     Surface(
         modifier = modifier
