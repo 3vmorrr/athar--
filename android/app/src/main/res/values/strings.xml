@@ -592,4 +592,26 @@
     <string name="custom_routine_consent_body">سيُفعّل نوع التذكيرات المخصصة فقط. أسماء تذكيراتك وأيامها وأوقاتها لا تُرفع إلى الخادم.</string>
     <string name="custom_routine_consent_confirm">تفعيل التذكيرات المخصصة</string>
     <string name="custom_routine_notification_title">تذكير مخصص</string>
+    <string name="reminder_center_overview">ملخص التذكيرات</string>
+    <string name="reminder_center_counts">%1$d تذكيرًا نشطًا عبر %2$d أنواع</string>
+    <string name="reminder_master_active">الإشعارات مفعلة</string>
+    <string name="reminder_master_paused_status">الإشعارات متوقفة</string>
+    <string name="reminder_pause_all">إيقاف كل التذكيرات مؤقتًا</string>
+    <string name="reminder_resume_all">استئناف التذكيرات</string>
+    <string name="reminder_master_paused">تم إيقاف إرسال كل التذكيرات مؤقتًا مع الاحتفاظ بالقواعد.</string>
+    <string name="reminder_master_resumed">تم استئناف التذكيرات المسموح بها.</string>
+    <string name="reminder_permission_ready">إذن إشعارات النظام جاهز</string>
+    <string name="reminder_permission_needs_action">إذن إشعارات النظام يحتاج موافقتك</string>
+    <string name="reminder_permission_settings">إشعارات التطبيق موقوفة من إعدادات النظام</string>
+    <string name="reminder_permission_unknown">تعذر فحص إذن الإشعارات الآن</string>
+    <string name="reminder_permission_enable">السماح بإشعارات النظام</string>
+    <string name="reminder_center_partial_unreadable">بعض بيانات التذكيرات المحلية غير قابلة للقراءة، لذلك لا نعرضها أو نكتب فوقها.</string>
+    <string name="reminder_center_empty">لا توجد تذكيرات نشطة. يمكنك إعداد أي نوع من الأقسام أدناه.</string>
+    <string name="salawat_friday_summary">الصلاة على النبي/الجمعة</string>
+    <string name="reminder_lesson_item">تذكير الدرس رقم %1$d</string>
+    <string name="reminder_quran_active_detail">ورد القرآن: هدف %1$d آيات عند %2$s</string>
+    <string name="reminder_adhkar_active_detail">%1$s: عند %2$s</string>
+    <string name="reminder_center_update_failed">تعذر تحديث إعداد التذكيرات. حاول مرة أخرى.</string>
+    <string name="manage">إدارة</string>
+    <string name="open">فتح</string>
 </resources>

@@ -30,7 +30,7 @@ import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.ui.*
 
 @Composable
-fun RoutineReminderSettingsScreen(graph: AppGraph) {
+fun RoutineReminderSettingsScreen(graph: AppGraph, open: (String) -> Unit) {
     val owner = graph.session.userId ?: return
     val routines by remember(owner) { graph.builtinRoutines.observe(owner) }
         .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
@@ -57,6 +57,9 @@ fun RoutineReminderSettingsScreen(graph: AppGraph) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+        item(key = "reminder-overview") {
+            ReminderCenterOverview(graph, owner, open, preferenceRead)
         }
         when (val current = routines) {
             ProtectedRead.Loading -> item(key = "loading") { LinearProgressIndicator(Modifier.fillMaxWidth()) }

@@ -564,4 +564,26 @@
     <string name="custom_routine_consent_body">Only the custom-reminder category will be enabled. Your reminder names, days and times are not uploaded to the server.</string>
     <string name="custom_routine_consent_confirm">Enable custom reminders</string>
     <string name="custom_routine_notification_title">Custom reminder</string>
+    <string name="reminder_center_overview">Reminder overview</string>
+    <string name="reminder_center_counts">%1$d active reminders across %2$d types</string>
+    <string name="reminder_master_active">Notifications active</string>
+    <string name="reminder_master_paused_status">Notifications paused</string>
+    <string name="reminder_pause_all">Pause all reminders</string>
+    <string name="reminder_resume_all">Resume reminders</string>
+    <string name="reminder_master_paused">All reminder delivery is paused while your rules stay saved.</string>
+    <string name="reminder_master_resumed">Allowed reminders were resumed.</string>
+    <string name="reminder_permission_ready">System notification permission is ready</string>
+    <string name="reminder_permission_needs_action">System notification permission needs your approval</string>
+    <string name="reminder_permission_settings">App notifications are disabled in system settings</string>
+    <string name="reminder_permission_unknown">Notification permission could not be checked</string>
+    <string name="reminder_permission_enable">Allow system notifications</string>
+    <string name="reminder_center_partial_unreadable">Some local reminder data is unreadable, so Athar will not display or overwrite it.</string>
+    <string name="reminder_center_empty">No active reminders. You can configure any reminder type below.</string>
+    <string name="salawat_friday_summary">Salawat / Friday</string>
+    <string name="reminder_lesson_item">Lesson reminder #%1$d</string>
+    <string name="reminder_quran_active_detail">Quran wird: %1$d-ayah target at %2$s</string>
+    <string name="reminder_adhkar_active_detail">%1$s: at %2$s</string>
+    <string name="reminder_center_update_failed">Reminder settings could not be updated. Try again.</string>
+    <string name="manage">Manage</string>
+    <string name="open">Open</string>
 </resources>

@@ -98,7 +98,9 @@ private fun AtharNavIcon(
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "night-prayer" || path == "upcoming") {
+        if (path == "quran" || path == "adhkar") {
+            navigateTab(path)
+        } else if (path == "night-prayer" || path == "upcoming") {
             navigation.navigate(path) { launchSingleTop = true }
         } else if (path == "catalog-books") {
             navigation.navigate("catalog/books") { launchSingleTop = true }
