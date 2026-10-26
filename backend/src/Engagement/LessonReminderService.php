@@ -163,7 +163,7 @@ final class LessonReminderService
                     $this->reconcileSubscription($subscription,$now);
                     $result['cancelled']++;$this->db->commit();continue;
                 }
-                if($window===null||!$now->lt($this->instant((string)$job['expires_at']))){
+                if($window===null||!$now<$this->instant((string)$job['expires_at'])){
                     $this->disableSubscription((int)$job['user_id'],(int)$job['lesson_id'],'expired');
                     $result['skipped']++;$this->db->commit();continue;
                 }
@@ -267,7 +267,7 @@ final class LessonReminderService
     {
         $this->db->prepare("UPDATE lesson_reminder_jobs SET status='cancelled',locked_at=NULL,
             last_error_code=?,updated_at=UTC_TIMESTAMP()
-            WHERE user_id=? AND lesson_id=? AND status<>'outboxed'")->execute([$reason,$userId,$lessonId]);
+            WHERE user_id=? AND lesson_id=? AND status<>'cancelled'")->execute([$reason,$userId,$lessonId]);
     }
 
     private function cancelOutbox(int $userId,int $lessonId,string $reason): void
@@ -329,7 +329,7 @@ final class LessonReminderService
     {
         $expires=$this->instant((string)$event['scheduled_at']);
         $due=$expires->sub(new DateInterval('PT'.self::LEAD_MINUTES.'M'));
-        if($requireFuture&&!$due->gt($now))return null;
+        if($requireFuture&&!$due>$now)return null;
         return ['due'=>$due,'expires'=>$expires];
     }
 
