@@ -144,6 +144,11 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 label = { Text(stringResource(R.string.night_tonight)) },
             )
             FilterChip(
+                section == "plan",
+                { section = "plan" },
+                label = { Text(stringResource(R.string.night_plan_title)) },
+            )
+            FilterChip(
                 section == "history",
                 { section = "history" },
                 label = { Text(stringResource(R.string.night_history)) },
@@ -163,6 +168,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         AtharPageTransition(section, Modifier.weight(1f)) {
             when (it) {
                 "tonight" -> NightTonightScreen(graph, vm)
+                "plan" -> NightPlanScreen(graph)
                 "tools" -> NightToolsScreen(graph)
                 "calendar" -> NightCalendarScreen(vm)
                 else -> NightHistoryScreen(graph, vm, addRequest)
