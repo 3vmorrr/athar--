@@ -65,11 +65,29 @@ $adminShellCopy = $adminLocale === 'en' ? [
     <section class="admin-inventory admin-panel" id="admin-services" data-admin-panel hidden>
         <div class="section-heading"><div><span class="eyebrow">خدمات المنصة</span><h2>إعدادات الخدمات</h2></div></div>
         <p class="source-note">يُنشئ الموقع مفتاح تشفير محليًا تلقائيًا داخل storage خارج مجلد الويب. في الإنتاج استخدم مخزن أسرار الخادم لمفتاح ATHAR_SETTINGS_KEY، واضبط ATHAR_BASE_URL على رابط الموقع العام حتى يظهر الشعار وتعمل روابط البريد؛ لا تضف المفاتيح إلى Git.</p>
-        <article class="knowledge-card admin-service-card"><h3>بريد Gmail لرموز OTP</h3><p class="source-note">إعداد الاتصال بـGmail ثابت داخل الموقع. أدخل بريد Gmail وApp Password فقط؛ لا تستخدم كلمة مرور الحساب العادية. App Password تتطلب تفعيل التحقق بخطوتين.</p>
-            <form class="form-stack" method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="gmail-settings">
+        <article class="knowledge-card admin-service-card">
+            <h3>بريد Gmail لرموز OTP والحملات</h3>
+            <p class="source-note">يحفظ App Password مشفرًا ولا يعرضه مرة أخرى. إرسال الاختبار متاح فقط إلى مستلم اختبار ثابت تم التصريح به وحفظه من المالك.</p>
+            <div class="admin-service-diagnostics">
+                <span>بيانات SMTP: <strong><?= $serviceDiagnostics['smtp_credentials'] ? 'مضبوطة' : 'غير مكتملة' ?></strong></span>
+                <span>مفتاح التشفير: <strong><?= e($serviceDiagnostics['settings_key_source']) ?></strong></span>
+                <span>Base URL: <strong dir="ltr"><?= e($serviceDiagnostics['base_url']) ?></strong></span>
+                <span>HTTPS للإنتاج: <strong><?= $serviceDiagnostics['base_url_https'] ? 'نعم' : 'لا/محلي' ?></strong></span>
+                <span>مستلم الاختبار: <strong><?= e($smtpTestRecipientMasked) ?></strong></span>
+            </div>
+            <form class="form-stack" method="post">
+                <?= csrf_field() ?><input type="hidden" name="kind" value="gmail-settings">
                 <label>بريد Gmail<input name="gmail_email" type="email" maxlength="190" dir="ltr" value="<?= e($smtpConfig['smtp_username']) ?>" autocomplete="username" required></label>
                 <label>App Password<input name="smtp_password" type="password" maxlength="500" dir="ltr" autocomplete="new-password" placeholder="<?= $smtpPasswordConfigured ? 'محفوظة؛ اتركها فارغة للإبقاء عليها' : 'أدخل App Password' ?>" <?= $smtpPasswordConfigured ? '' : 'required' ?>></label>
-                <div class="hero-actions"><button class="button button-primary" type="submit">حفظ بريد Gmail</button><button class="button button-secondary" type="submit" name="send_test_email" value="1">حفظ واختبار البريد</button></div>
+                <hr>
+                <label>بريد اختبار جديد (اختياري)<input name="test_recipient" type="email" maxlength="190" dir="ltr" autocomplete="off" placeholder="authorized@example.com"></label>
+                <label class="check-label"><input type="checkbox" name="test_recipient_authorized"> أؤكد أن صاحب هذا البريد مصرح له باستلام رسائل اختبار التطوير.</label>
+                <?php if ($smtpTestRecipientConfigured): ?><label class="check-label"><input type="checkbox" name="clear_test_recipient"> حذف مستلم الاختبار المحفوظ</label><?php endif; ?>
+                <label>كلمة مرور المالك عند تغيير مستلم الاختبار<input type="password" name="owner_password" autocomplete="current-password"></label>
+                <div class="hero-actions">
+                    <button class="button button-primary" type="submit">حفظ إعدادات Gmail</button>
+                    <button class="button button-secondary" type="submit" name="send_test_email" value="1"<?= $smtpTestRecipientConfigured ? '' : ' disabled' ?>>حفظ وإرسال اختبار واحد</button>
+                </div>
             </form>
         </article>
         <article class="knowledge-card admin-service-card"><h3>بحث الدرر السنية</h3><p class="source-note">هذا الإعداد خاص بواجهة البحث الحديثي ولا يغيّر بريد Gmail. يلزم رمز API بعد موافقة الدرر.</p>
