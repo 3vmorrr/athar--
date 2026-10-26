@@ -48,18 +48,30 @@ final class ProgressService
         if($saved){$this->catalog->detail($types[$type],$id);$this->db->prepare('INSERT IGNORE INTO user_favorites (user_id,target_type,target_id) VALUES (?,?,?)')->execute([$user,$type,$id]);}
         else $this->db->prepare('DELETE FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?')->execute([$user,$type,$id]);
     }
-    public function activity(int $user,string $eventId,string $kind): void
+    public function activity(int $user,string $eventId,string $kind,?string $activityDate=null): void
     {
         $columns=['quran_session'=>'quran_sessions','lesson_completion'=>'lesson_completions','adhkar_completion'=>'adhkar_completions','book_download'=>'book_downloads'];
         if(!preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i',$eventId)||!isset($columns[$kind]))throw new ApiError('invalid_fields',422,['event_id'=>'invalid']);
-        $owns=!$this->db->inTransaction();if($owns)$this->db->beginTransaction();
+        $date=$this->activityDate($activityDate);
+        $owns=!$this->db->inTransaction();
+        if($owns)$this->db->beginTransaction();
         try{
-            $q=$this->db->prepare('SELECT activity_type FROM activity_events WHERE user_id=? AND event_id=? FOR UPDATE');$q->execute([$user,$eventId]);$old=$q->fetchColumn();
-            if($old!==false&&$old!==$kind)throw new ApiError('conflict',409,['event_id'=>'reused']);
-            if($old===false){$this->db->prepare('INSERT INTO activity_events (user_id,event_id,activity_type,activity_date,created_at) VALUES (?,?,?,UTC_DATE(),UTC_TIMESTAMP())')->execute([$user,$eventId,$kind]);$column=$columns[$kind];$this->db->prepare("INSERT INTO account_daily_stats (user_id,activity_date,{$column}) VALUES (?,UTC_DATE(),1) ON DUPLICATE KEY UPDATE {$column}=LEAST(65535,{$column}+1)")->execute([$user]);}
+            $q=$this->db->prepare('SELECT activity_type,activity_date FROM activity_events WHERE user_id=? AND event_id=? FOR UPDATE');
+            $q->execute([$user,$eventId]);
+            $old=$q->fetch();
+            if($old&&((string)$old['activity_type']!==$kind||(string)$old['activity_date']!==$date))throw new ApiError('conflict',409,['event_id'=>'reused']);
+            if(!$old){
+                $this->db->prepare('INSERT INTO activity_events (user_id,event_id,activity_type,activity_date,created_at) VALUES (?,?,?,?,UTC_TIMESTAMP())')->execute([$user,$eventId,$kind,$date]);
+                $column=$columns[$kind];
+                $this->db->prepare("INSERT INTO account_daily_stats (user_id,activity_date,{$column}) VALUES (?,?,1) ON DUPLICATE KEY UPDATE {$column}=LEAST(65535,{$column}+1)")->execute([$user,$date]);
+            }
             if($owns)$this->db->commit();
-        }catch(Throwable $e){if($owns&&$this->db->inTransaction())$this->db->rollBack();throw $e;}
+        }catch(Throwable $e){
+            if($owns&&$this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
     public function lessonProgress(int $user,int $lesson): ?array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare('SELECT lesson_id,position_seconds,duration_seconds,is_complete,updated_at FROM video_progress WHERE user_id=? AND lesson_id=?');$q->execute([$user,$lesson]);$row=$q->fetch();return $row?:null;}
     public function saveLessonProgress(int $user,array $data): array
     {
@@ -92,26 +104,82 @@ final class ProgressService
     }
     public function adhkar(int $user,array $params=[]):array
     {
+        $projection="item_key,CASE WHEN DATE(updated_at)=UTC_DATE() THEN current_count ELSE 0 END current_count,repeat_count,revision,UTC_DATE() progress_date,updated_at";
         if(array_key_exists('item_id',$params)){
             $item=$params['item_id'];
             if(!is_scalar($item)||!preg_match('/^[1-9][0-9]{0,9}$/D',(string)$item)||(int)$item>2147483647)throw new ApiError('invalid_fields',422,['item_id'=>'invalid']);
-            $q=$this->db->prepare('SELECT item_key,current_count,repeat_count,revision,updated_at FROM adhkar_progress WHERE user_id=? AND item_key=?');$q->execute([$user,'curated:'.(int)$item]);return $q->fetchAll();
+            $q=$this->db->prepare("SELECT {$projection} FROM adhkar_progress WHERE user_id=? AND item_key=?");
+            $q->execute([$user,'curated:'.(int)$item]);
+            return $q->fetchAll();
         }
-        $q=$this->db->prepare('SELECT item_key,current_count,repeat_count,revision,updated_at FROM adhkar_progress WHERE user_id=? ORDER BY updated_at DESC LIMIT 500');$q->execute([$user]);return $q->fetchAll();
+        $q=$this->db->prepare("SELECT {$projection} FROM adhkar_progress WHERE user_id=? ORDER BY updated_at DESC LIMIT 500");
+        $q->execute([$user]);
+        return $q->fetchAll();
     }
+
     public function saveAdhkar(int $user,array $data):array
     {
-        $id=$this->integer($data,'item_id',1,2147483647);$item=$this->catalog->detail('adhkar',$id);$repeat=max(1,(int)$item['repeat_count']);
-        if($repeat>65535)throw new ApiError('invalid_fields',422,['repeat_count'=>'unsupported']);
-        $count=$this->integer($data,'current_count',0,$repeat);$expected=$this->integer($data,'expected_revision',0,2147483647);$key='curated:'.$id;
+        $id=$this->integer($data,'item_id',1,2147483647);
+        $item=$this->catalog->detail('adhkar',$id);
+        if($item['repeat_count']===null)throw new ApiError('invalid_fields',422,['repeat_count'=>'not_fixed']);
+        $repeat=(int)$item['repeat_count'];
+        if($repeat<1||$repeat>65535)throw new ApiError('invalid_fields',422,['repeat_count'=>'unsupported']);
+
+        $count=$this->integer($data,'current_count',0,$repeat);
+        $expected=$this->integer($data,'expected_revision',0,2147483647);
+        $progressDate=$this->activityDate(isset($data['progress_date'])&&is_string($data['progress_date'])?$data['progress_date']:null);
+        $today=gmdate('Y-m-d');
+        $storedCount=$progressDate===$today?$count:0;
+        $key='curated:'.$id;
+
         $this->db->beginTransaction();
         try{
-            $q=$this->db->prepare('SELECT current_count,repeat_count,revision FROM adhkar_progress WHERE user_id=? AND item_key=? FOR UPDATE');$q->execute([$user,$key]);$current=$q->fetch();
+            $q=$this->db->prepare('SELECT current_count,repeat_count,revision,DATE(updated_at) progress_date FROM adhkar_progress WHERE user_id=? AND item_key=? FOR UPDATE');
+            $q->execute([$user,$key]);
+            $current=$q->fetch();
             if(($current?(int)$current['revision']:0)!==$expected)throw new ApiError('conflict',409,['current'=>$current?:null]);
-            $this->db->prepare('INSERT INTO adhkar_progress (user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES (?,?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE current_count=VALUES(current_count),repeat_count=VALUES(repeat_count),revision=revision+1,updated_at=UTC_TIMESTAMP()')->execute([$user,$key,$count,$repeat]);
-            if($count===$repeat&&(!$current||(int)$current['current_count']<(int)$current['repeat_count']))$this->activity($user,(string)($data['event_id']??''),'adhkar_completion');
-            $this->db->commit();return ['item_key'=>$key,'current_count'=>$count,'repeat_count'=>$repeat,'revision'=>$expected+1];
-        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+
+            $previousToday=$current&&(string)$current['progress_date']===$today
+                ?(int)$current['current_count']
+                :0;
+
+            $this->db->prepare('INSERT INTO adhkar_progress (user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES (?,?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE current_count=VALUES(current_count),repeat_count=VALUES(repeat_count),revision=revision+1,updated_at=UTC_TIMESTAMP()')
+                ->execute([$user,$key,$storedCount,$repeat]);
+
+            if($count===$repeat&&($progressDate!==$today||$previousToday<$repeat)){
+                $this->activity(
+                    $user,
+                    (string)($data['event_id']??''),
+                    'adhkar_completion',
+                    $progressDate,
+                );
+            }
+
+            $this->db->commit();
+            return [
+                'item_key'=>$key,
+                'current_count'=>$storedCount,
+                'repeat_count'=>$repeat,
+                'revision'=>$expected+1,
+                'progress_date'=>$today,
+            ];
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
+    private function activityDate(?string $date):string
+    {
+        $today=gmdate('Y-m-d');
+        if($date===null||$date==='')return $today;
+        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/D',$date))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+        [$year,$month,$day]=array_map('intval',explode('-',$date));
+        if(!checkdate($month,$day,$year))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+        $minimum=gmdate('Y-m-d',time()-366*86400);
+        if($date<$minimum||$date>$today)throw new ApiError('invalid_fields',422,['activity_date'=>'out_of_range']);
+        return $date;
+    }
+
     private function integer(array $data,string $key,int $min,int $max): int { $value=$data[$key]??null;if(!is_int($value)||$value<$min||$value>$max)throw new ApiError('invalid_fields',422,[$key=>'invalid']);return $value; }
 }
