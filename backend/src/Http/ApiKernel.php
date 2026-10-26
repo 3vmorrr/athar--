@@ -128,6 +128,11 @@ final class ApiKernel
             if($r->method==='GET')return [$this->progress->preferences($user),200];
             $this->method($r,'PATCH');return [$this->progress->preferences($user,$r->body),200];
         }
+        if($path==='/me/engagement-preferences'){
+            $engagementPreferences=new \Athar\Engagement\PreferenceService($this->db);
+            if($r->method==='GET')return [$engagementPreferences->get($user),200];
+            $this->method($r,'PATCH');return [$engagementPreferences->update($user,$r->body),200];
+        }
         if($path==='/me/khatmah'){
             if($r->method==='GET')return [$this->progress->khatmah($user),200];
             $this->method($r,'PUT');return [$this->progress->saveKhatmah($user,$r->body),200];
