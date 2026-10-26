@@ -3,11 +3,20 @@ declare(strict_types=1);
 function web_identity_otp(): \Athar\Identity\OtpService
 {
     static $service;
-    return $service ??= new \Athar\Identity\OtpService(db(), \Athar\Infrastructure\SecretKey::authentication(), static function(string $email,string $subject,string $body): bool {
-        $failure = null;
-        $sent = send_platform_email($email,$subject,$body,$failure);
-        if (!$sent) error_log('[Athar] Account email delivery unavailable.');
-        return $sent;
+    return $service ??= new \Athar\Identity\OtpService(db(), \Athar\Infrastructure\SecretKey::authentication(), static function(string $email,string $subject,string $body,int $userId,string $purpose,int $tokenId,string $locale): bool {
+        try {
+            return (new \Athar\Engagement\EmailOutboxService(db()))->enqueueTransactional(
+                $userId,
+                $subject,
+                $body,
+                'otp:' . $purpose . ':' . $tokenId,
+                $locale,
+                600
+            );
+        } catch (Throwable $queueError) {
+            error_log('[Athar] Account email queue unavailable.');
+            return false;
+        }
     });
 }
 function web_identity_auth(): \Athar\Identity\AuthService
