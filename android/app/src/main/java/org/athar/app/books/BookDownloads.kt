@@ -352,18 +352,30 @@ internal fun BookDownloadActions(
     }
     var requesting by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf(false) }
+    var confirmRemove by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     when {
         downloaded -> {
-            Button(
-                onClick = onOpenReader,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 56.dp)
-                    .testTag("book-open-reader"),
-            ) {
-                Text(stringResource(R.string.book_open))
+            Column(verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md)) {
+                Button(
+                    onClick = onOpenReader,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp)
+                        .testTag("book-open-reader"),
+                ) {
+                    Text(stringResource(R.string.book_open))
+                }
+                OutlinedButton(
+                    onClick = { confirmRemove = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                        .testTag("book-remove-download"),
+                ) {
+                    Text(stringResource(R.string.book_remove_download))
+                }
             }
         }
 
@@ -384,6 +396,18 @@ internal fun BookDownloadActions(
                         stringResource(R.string.book_download_waiting)
                     },
                 )
+                OutlinedButton(
+                    onClick = {
+                        BookDownloads.cancel(context, owner, bookId)
+                        localRevision++
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                        .testTag("book-cancel-download"),
+                ) {
+                    Text(stringResource(R.string.book_cancel_download))
+                }
             }
         }
 
@@ -450,6 +474,31 @@ internal fun BookDownloadActions(
             stringResource(R.string.book_download_unavailable),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
+    if (confirmRemove) {
+        AlertDialog(
+            onDismissRequest = { confirmRemove = false },
+            title = { Text(stringResource(R.string.book_remove_download)) },
+            text = { Text(stringResource(R.string.book_remove_download_confirm)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        BookDownloads.cancel(context, owner, bookId)
+                        BookStorage.remove(context, owner, bookId)
+                        localRevision++
+                        confirmRemove = false
+                    },
+                ) {
+                    Text(stringResource(R.string.delete_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmRemove = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
         )
     }
 }
