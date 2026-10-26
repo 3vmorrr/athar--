@@ -58,8 +58,20 @@ final class Mp3Quran
     }
     public function radios(array $params):array
     {
-        $raw=$this->get('radios',['language'=>$this->language($params)]);if(!is_array($raw['radios']??null))throw new ApiError('service_unavailable',502);$items=[];
-        foreach($raw['radios'] as $row)if(is_array($row)&&self::mediaUrl((string)($row['url']??''),true))$items[]=['id'=>(int)$row['id'],'name'=>(string)$row['name'],'url'=>$row['url']];
+        $raw=$this->get('radios',['language'=>$this->language($params)]);
+        if(!is_array($raw['radios']??null))throw new ApiError('service_unavailable',502);
+        $items=[];
+        foreach($raw['radios'] as $row){
+            if(!is_array($row)||!is_numeric($row['id']??null)||!is_string($row['name']??null))continue;
+            if(!self::mediaUrl((string)($row['url']??''),true))continue;
+            $items[]=['id'=>(int)$row['id'],'name'=>(string)$row['name'],'url'=>$row['url']];
+        }
+        $q=trim((string)($params['q']??''));
+        if(mb_strlen($q,'UTF-8')>80)throw new ApiError('invalid_fields',422,['q'=>'too_long']);
+        if($q!=='')$items=array_values(array_filter(
+            $items,
+            static fn(array $radio):bool=>mb_stripos($radio['name'],$q,0,'UTF-8')!==false
+        ));
         return $this->page($items,$params)+['source'=>'MP3Quran'];
     }
     private function page(array $items,array $params):array{$page=max(1,min(10000,(int)($params['page']??1)));$size=max(1,min(50,(int)($params['per_page']??20)));return ['items'=>array_slice($items,($page-1)*$size,$size),'pagination'=>['page'=>$page,'per_page'=>$size,'total'=>count($items),'has_more'=>$page*$size<count($items)]];}
