@@ -246,6 +246,10 @@ fun NightTonightScreen(
             }
         }
 
+        item(key = "night-reminder", contentType = "reminder") {
+            NightReminderCard(graph)
+        }
+
         item(key = "measured-timer", contentType = "timer") {
             NightSessionTimerCard(
                 graph = graph,

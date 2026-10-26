@@ -630,4 +630,23 @@
     <string name="khatmah_reminder_consent_confirm">تفعيل تذكيرات الختمة</string>
     <string name="khatmah_reminder_notification_title">ورد الختمة</string>
     <string name="khatmah_reminder_notification_body">عبء خطتك اليوم %1$d صفحة، والمتبقي %2$d صفحة.</string>
+    <string name="night_reminder_title">تذكير قيام الليل</string>
+    <string name="night_reminder_explainer">اختر بداية الثلث الأخير المحسوبة من إعدادات المدينة والطريقة المحفوظة، أو وقتًا ثابتًا داخل الليل. الأيام المعفاة محليًا لا تُجدول لها تذكيرات.</string>
+    <string name="night_reminder_fixed_time">وقت ثابت داخل الليل</string>
+    <string name="night_reminder_time">الوقت: %1$s</string>
+    <string name="night_reminder_source">%1$s · %2$s · %3$s</string>
+    <string name="night_reminder_next">الموعد التالي: %1$s</string>
+    <string name="night_reminder_enable">تفعيل تذكير قيام الليل</string>
+    <string name="night_reminder_disable">إيقاف تذكير قيام الليل</string>
+    <string name="night_reminder_saved">تم حفظ التذكير وجدولة الموعد التالي محليًا.</string>
+    <string name="night_reminder_disabled">تذكير قيام الليل متوقف.</string>
+    <string name="night_reminder_failed">تعذر تحديث تذكير قيام الليل.</string>
+    <string name="night_reminder_preferences_missing">احفظ إعدادات المدينة والمنطقة الزمنية وطريقة الحساب أولًا.</string>
+    <string name="night_reminder_calculation_unavailable">تعذر حساب حدود الليل لهذه الإعدادات/الأيام؛ لن نستخدم وقتًا بديلًا تلقائيًا.</string>
+    <string name="night_reminder_no_eligible_night">لا يوجد موعد صالح قريبًا؛ قد تكون الليالي معفاة أو الوقت الثابت خارج حدود الليل.</string>
+    <string name="night_reminder_consent_title">تفعيل تذكيرات قيام الليل؟</string>
+    <string name="night_reminder_consent_body">سيُفعَّل نوع تذكيرات قيام الليل فقط. الأيام المعفاة تبقى محلية ولا تُرفع إلى الخادم، ولا يُستنتج منها أداء العبادة.</string>
+    <string name="night_reminder_consent_confirm">تفعيل تذكيرات قيام الليل</string>
+    <string name="night_reminder_notification_title">قيام الليل</string>
+    <string name="night_reminder_notification_body">هذا هو التذكير الاختياري الذي اخترته لقيام الليل.</string>
 </resources>

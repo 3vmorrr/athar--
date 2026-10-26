@@ -96,6 +96,17 @@ object NightReminderPlanner {
         title: String,
         body: String,
         horizonNights: Int = 8,
+        calculate: (LocalDate, NightPrayerPreferences) -> NightContext = { date, prefs ->
+            PrayerCalculator.calculate(
+                date = date,
+                latitude = prefs.latitude,
+                longitude = prefs.longitude,
+                zone = ZoneId.of(prefs.timezone),
+                method = prefs.calculationMethod,
+                hanafi = prefs.madhab == "HANAFI",
+                highLatitude = prefs.highLatitudeRule,
+            )
+        },
     ): NightReminderPlanResult {
         rule.validated()
         if (!rule.enabled) return NightReminderPlanResult.Unavailable(NightReminderUnavailable.DISABLED)
@@ -109,15 +120,7 @@ object NightReminderPlanner {
         repeat(horizonNights) { offset ->
             val date = localDate.plusDays(offset.toLong())
             val context = try {
-                PrayerCalculator.calculate(
-                    date = date,
-                    latitude = prefs.latitude,
-                    longitude = prefs.longitude,
-                    zone = zone,
-                    method = prefs.calculationMethod,
-                    hanafi = prefs.madhab == "HANAFI",
-                    highLatitude = prefs.highLatitudeRule,
-                )
+                calculate(date, prefs)
             } catch (_: Exception) {
                 calculationFailed = true
                 return@repeat

@@ -602,4 +602,23 @@
     <string name="khatmah_reminder_consent_confirm">Enable Khatmah reminders</string>
     <string name="khatmah_reminder_notification_title">Khatmah workload</string>
     <string name="khatmah_reminder_notification_body">Today’s plan workload is %1$d pages; %2$d pages remain.</string>
+    <string name="night_reminder_title">Night Prayer reminder</string>
+    <string name="night_reminder_explainer">Choose the calculated start of the last third from your saved city/method settings, or a fixed time inside the night. Locally exempt nights are never scheduled.</string>
+    <string name="night_reminder_fixed_time">Fixed time inside the night</string>
+    <string name="night_reminder_time">Time: %1$s</string>
+    <string name="night_reminder_source">%1$s · %2$s · %3$s</string>
+    <string name="night_reminder_next">Next reminder: %1$s</string>
+    <string name="night_reminder_enable">Enable Night Prayer reminder</string>
+    <string name="night_reminder_disable">Turn off Night Prayer reminder</string>
+    <string name="night_reminder_saved">The reminder was saved and its next occurrence was scheduled locally.</string>
+    <string name="night_reminder_disabled">Night Prayer reminder is off.</string>
+    <string name="night_reminder_failed">The Night Prayer reminder could not be updated.</string>
+    <string name="night_reminder_preferences_missing">Save city, time zone and calculation-method settings first.</string>
+    <string name="night_reminder_calculation_unavailable">Night boundaries are unavailable for these settings/dates; Athar will not silently substitute another time.</string>
+    <string name="night_reminder_no_eligible_night">No eligible reminder is available soon; nights may be exempt or the fixed time may fall outside the night.</string>
+    <string name="night_reminder_consent_title">Enable Night Prayer reminders?</string>
+    <string name="night_reminder_consent_body">Only the Night Prayer reminder category will be enabled. Exempt nights stay local and are not uploaded or treated as inferred worship.</string>
+    <string name="night_reminder_consent_confirm">Enable Night Prayer reminders</string>
+    <string name="night_reminder_notification_title">Night Prayer</string>
+    <string name="night_reminder_notification_body">The optional Night Prayer reminder you chose.</string>
 </resources>
