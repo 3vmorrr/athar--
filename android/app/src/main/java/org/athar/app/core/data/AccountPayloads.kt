@@ -34,6 +34,24 @@ object AccountPayloads {
         true
     }.getOrDefault(false)
 
+    fun validCollectionPage(tool:String,data:JsonElement):Boolean=runCatching {
+        require(tool in setOf("bookmarks","favorites"))
+        val root=data.asJsonObject
+        val items=requireNotNull(root["items"]).asJsonArray
+        require(valid(tool,items))
+        val pagination=requireNotNull(root["pagination"]).asJsonObject
+        fun positive(key:String):Int {
+            val value=requireNotNull(pagination[key]).asInt
+            require(value>0)
+            return value
+        }
+        positive("page")
+        positive("per_page")
+        require(requireNotNull(pagination["total"]).asInt>=0)
+        require(requireNotNull(pagination["has_more"]).isJsonPrimitive)
+        true
+    }.getOrDefault(false)
+
     fun valid(tool:String,data:JsonElement):Boolean=runCatching {
         fun number(value:JsonElement?,range:IntRange):Int {
             val text=requireNotNull(value).asString
