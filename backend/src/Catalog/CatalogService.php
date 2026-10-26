@@ -61,7 +61,36 @@ final class CatalogService
     {
         $row['id']=(int)$row['id'];
         if(array_key_exists('image_key',$row)){$row['image_url']=$row['image_key']?'/scholar-image?key='.rawurlencode($row['image_key']):null;unset($row['image_key']);}
-        if(isset($row['can_download'])){$row['can_download']=(bool)$row['can_download']&&trim($row['rights_basis'])!==''&&is_string($row['download_url'])&&filter_var($row['download_url'],FILTER_VALIDATE_URL)&&strtolower((string)parse_url($row['download_url'],PHP_URL_SCHEME))==='https';$row['download_endpoint']=$row['can_download']?'/api/v1/books/'.$row['id'].'/download':null;unset($row['download_url']);}
+        if(isset($row['can_download'])){
+            $row['can_download']=(bool)$row['can_download']
+                &&trim((string)$row['rights_basis'])!==''
+                &&$this->safeDownloadUrl($row['download_url']??null);
+            $row['download_endpoint']=$row['can_download']
+                ?'/api/v1/books/'.$row['id'].'/download'
+                :null;
+            unset($row['download_url']);
+        }
         return $row;
     }
+    private function safeDownloadUrl(mixed $value):bool
+    {
+        if(!is_string($value)||$value===''||strlen($value)>2048||preg_match('/[\r\n]/',$value))return false;
+        if(!filter_var($value,FILTER_VALIDATE_URL))return false;
+        $parts=parse_url($value);
+        if(!is_array($parts)||strtolower((string)($parts['scheme']??''))!=='https')return false;
+        if(empty($parts['host'])||isset($parts['user'])||isset($parts['pass']))return false;
+        if(isset($parts['port'])&&(int)$parts['port']!==443)return false;
+        $host=strtolower(trim((string)$parts['host'],'[]'));
+        if($host==='localhost'||str_ends_with($host,'.localhost')||str_ends_with($host,'.local'))return false;
+        if(filter_var($host,FILTER_VALIDATE_IP)!==false){
+            $public=filter_var(
+                $host,
+                FILTER_VALIDATE_IP,
+                FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE
+            );
+            if($public===false)return false;
+        }
+        return true;
+    }
+
 }
