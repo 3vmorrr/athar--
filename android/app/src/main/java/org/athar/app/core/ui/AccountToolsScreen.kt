@@ -29,6 +29,7 @@ import java.time.LocalDate
     var failed by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
+    var confirmExport by remember(owner, tool) { mutableStateOf(false) }
     val context = LocalContext.current
     val exporter = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -58,6 +59,9 @@ import java.time.LocalDate
                         throw failure
                     } catch (_: Exception) {
                         localFailure = true
+                        runCatching {
+                            context.contentResolver.delete(uri, null, null)
+                        }
                         return@launch
                     }
 
@@ -71,12 +75,18 @@ import java.time.LocalDate
                         throw failure
                     } catch (_: Exception) {
                         remoteFailure = true
+                        runCatching {
+                            context.contentResolver.delete(uri, null, null)
+                        }
                         return@launch
                     }
 
                     graph.session.requireVerifiedOwner(user)
                     if (!AccountPayloads.validExport(user, account)) {
                         payloadFailure = true
+                        runCatching {
+                            context.contentResolver.delete(uri, null, null)
+                        }
                         return@launch
                     }
 
@@ -106,6 +116,9 @@ import java.time.LocalDate
                         throw failure
                     } catch (_: Exception) {
                         writeFailure = true
+                        runCatching {
+                            context.contentResolver.delete(uri, null, null)
+                        }
                         return@launch
                     }
 
@@ -115,6 +128,9 @@ import java.time.LocalDate
                     throw failure
                 } catch (_: Exception) {
                     failed = true
+                    runCatching {
+                        context.contentResolver.delete(uri, null, null)
+                    }
                 } finally {
                     busy = false
                 }
@@ -157,6 +173,11 @@ import java.time.LocalDate
                         stringResource(R.string.export_private_excluded),
                     )
                     Text(
+                        stringResource(R.string.export_security_excluded),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
                         stringResource(R.string.export_requires_current_account),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -165,15 +186,38 @@ import java.time.LocalDate
             }
 
             Button(
-                onClick = {
-                    exporter.launch("athar-data-${LocalDate.now()}.json")
-                },
+                onClick = { confirmExport = true },
                 enabled = !busy,
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 52.dp),
             ) {
                 Text(stringResource(R.string.export_data))
+            }
+
+            if (confirmExport) {
+                AlertDialog(
+                    onDismissRequest = { confirmExport = false },
+                    title = { Text(stringResource(R.string.export_confirm_title)) },
+                    text = { Text(stringResource(R.string.export_confirm_body)) },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                confirmExport = false
+                                exporter.launch(
+                                    "athar-data-${LocalDate.now()}.json",
+                                )
+                            },
+                        ) {
+                            Text(stringResource(R.string.export_choose_location))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { confirmExport = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    },
+                )
             }
 
             if (saved) {
