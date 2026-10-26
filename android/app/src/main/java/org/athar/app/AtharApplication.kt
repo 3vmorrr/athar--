@@ -31,6 +31,13 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val notificationPreferences = org.athar.app.notifications.NotificationPreferenceRepository(database.dao(), session, cipher)
     val notificationPolicyLedger = org.athar.app.notifications.NotificationPolicyLedgerRepository(database.dao(), session, cipher)
     val reminderStore = org.athar.app.notifications.LocalReminderStore(database.dao(), session, cipher)
+    val pushDeviceTokenStore = org.athar.app.notifications.PushDeviceTokenStore(database.dao(), cipher, session)
+    val pushDevices = org.athar.app.notifications.PushDeviceLifecycleManager(
+        application,
+        partition,
+        session,
+        pushDeviceTokenStore,
+    )
     val reminderGlobalPolicy = org.athar.app.notifications.ReminderGlobalPolicyRepository(database.dao(), session, cipher)
     val reminders = org.athar.app.notifications.LocalReminderCoordinator(
         application,
@@ -81,5 +88,8 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
         onStateChanged = { owner, state -> adhkarReminders.recordCounterState(owner, state) },
     )
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})
-    init{if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)}
+    init {
+        session.installLifecycleHooks(pushDevices)
+        if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)
+    }
 }

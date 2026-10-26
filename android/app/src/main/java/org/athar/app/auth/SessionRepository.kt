@@ -23,6 +23,9 @@ sealed interface AuthState {
 private data class AuthReply(val user: UserProfile?, val session: Credentials, @SerializedName("delivery_status") val deliveryStatus: String?)
 
 class SessionRepository(private val transport: ApiTransport, private val store: TokenStore, private val language: () -> String = { "ar" }, private val now: () -> Long = System::currentTimeMillis) {
+    @Volatile private var lifecycleHooks: SessionLifecycleHooks = NoopSessionLifecycleHooks
+    fun installLifecycleHooks(hooks: SessionLifecycleHooks) { lifecycleHooks = hooks }
+
     private val gson = Gson()
     private val refreshMutex = Mutex()
     private val sessionMutex = Mutex()
@@ -117,6 +120,12 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     suspend fun delete(password: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password),expectedUser=requireNotNull(expectedUser)); clear(epoch) }
     suspend fun logout(expectedUser:Long?=userId) {
         if(expectedUser!=userId)throw ApiException(401,"session_changed","")
+        val owner=expectedUser
+        if(owner!=null){
+            try { lifecycleHooks.beforeLogout(owner) }
+            catch (failure:CancellationException) { throw failure }
+            catch (_:Exception) { /* Local logout must not be blocked by device cleanup. */ }
+        }
         val token = stored?.credentials?.accessToken
         clear(generation.get())
         try { if (token != null) transport.request("POST", "auth/logout", bearer = token, language = language()) }
