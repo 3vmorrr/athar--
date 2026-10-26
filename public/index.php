@@ -898,12 +898,21 @@ if ($path === '/admin') {
                 if (($_POST['content_action'] ?? '') === 'update') {
                     $published = isset($_POST['publish']) ? 1 : 0;
                     if ($type === 'scholar') {
+                        $name = trim((string) ($_POST['name'] ?? ''));
+                        $biography = trim((string) ($_POST['biography'] ?? ''));
+                        $language = (string) ($_POST['language'] ?? 'ar');
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                        $sortOrder = max(-100000, min(100000, (int) ($_POST['sort_order'] ?? 0)));
+                        if (mb_strlen($name,'UTF-8') < 2 || mb_strlen($name,'UTF-8') > 180) throw new RuntimeException('اسم العالم يجب أن يكون من 2 إلى 180 حرفًا.');
+                        if (mb_strlen($biography,'UTF-8') > 6000 || mb_strlen($rights,'UTF-8') > 500) throw new RuntimeException('السيرة أو بيانات الحقوق أطول من الحد المسموح.');
+                        if (!in_array($language,['ar','en','other'],true) || ($source !== '' && !is_https_url($source))) throw new RuntimeException('لغة العالم أو رابط المصدر غير صالح.');
                         $current = db()->prepare('SELECT image_key FROM scholars WHERE id=?'); $current->execute([$id]); $previousImage = $current->fetchColumn();
                         if ($previousImage === false) throw new RuntimeException('العالم غير موجود.');
                         $nextImage = $previousImage ?: null; $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
                         if (isset($_FILES['scholar_image']) && ($_FILES['scholar_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $nextImage = store_scholar_image($_FILES['scholar_image'], $imageStorage);
                         try {
-                            db()->prepare('UPDATE scholars SET name=?,image_key=? WHERE id=?')->execute([trim((string) $_POST['name']), $nextImage, $id]);
+                            db()->prepare('UPDATE scholars SET name=?,biography=NULLIF(?,\'\'),language=?,source_url=NULLIF(?,\'\'),rights_basis=NULLIF(?,\'\'),image_key=?,is_published=?,sort_order=? WHERE id=?')->execute([$name,$biography,$language,$source,$rights,$nextImage,$published,$sortOrder,$id]);
                         } catch (Throwable $saveFailure) {
                             if ($nextImage !== $previousImage) delete_scholar_image(is_string($nextImage) ? $nextImage : null, $imageStorage);
                             throw $saveFailure;
@@ -957,12 +966,23 @@ if ($path === '/admin') {
                 flash('تم تحديث المحتوى.'); redirect('/admin');
             } elseif ($kind === 'scholar') {
                 $name = trim((string) ($_POST['name'] ?? ''));
-                if (mb_strlen($name, 'UTF-8') < 2) throw new RuntimeException('اكتب اسم العالم.');
+                $biography = trim((string) ($_POST['biography'] ?? ''));
+                $language = (string) ($_POST['language'] ?? 'ar');
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                $sortOrder = max(-100000, min(100000, (int) ($_POST['sort_order'] ?? 0)));
+                if (mb_strlen($name,'UTF-8') < 2 || mb_strlen($name,'UTF-8') > 180) throw new RuntimeException('اسم العالم يجب أن يكون من 2 إلى 180 حرفًا.');
+                if (mb_strlen($biography,'UTF-8') > 6000 || mb_strlen($rights,'UTF-8') > 500) throw new RuntimeException('السيرة أو بيانات الحقوق أطول من الحد المسموح.');
+                if (!in_array($language,['ar','en','other'],true) || ($source !== '' && !is_https_url($source))) throw new RuntimeException('لغة العالم أو رابط المصدر غير صالح.');
                 $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
-                $imageKey = store_scholar_image($_FILES['scholar_image'] ?? [], $imageStorage);
+                $imageKey = null;
+                if (isset($_FILES['scholar_image']) && ($_FILES['scholar_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $imageKey = store_scholar_image($_FILES['scholar_image'], $imageStorage);
                 try {
-                    db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,image_key,is_published,sort_order) VALUES (?,NULL,\'ar\',NULL,NULL,?,1,0)')->execute([$name, $imageKey]);
-                } catch (Throwable $saveFailure) { delete_scholar_image($imageKey, $imageStorage); throw $saveFailure; }
+                    db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,image_key,is_published,sort_order) VALUES (?,NULLIF(?,\'\'),?,NULLIF(?,\'\'),NULLIF(?,\'\'),?,?,?)')->execute([$name,$biography,$language,$source,$rights,$imageKey,isset($_POST['publish']) ? 1 : 0,$sortOrder]);
+                } catch (Throwable $saveFailure) {
+                    if (is_string($imageKey)) delete_scholar_image($imageKey, $imageStorage);
+                    throw $saveFailure;
+                }
             } elseif ($kind === 'series') {
                 $source = trim((string) ($_POST['source_url'] ?? ''));
                 if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
