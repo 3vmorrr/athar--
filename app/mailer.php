@@ -73,10 +73,29 @@ function platform_email_base_url(): string
     return 'http://127.0.0.1:8081';
 }
 
-function email_campaign_unsubscribe_url(int $userId): string
+function email_campaign_unsubscribe_url(int $userId, ?int $expiresAt = null): string
 {
-    $token = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
-    return platform_email_base_url() . '/email-unsubscribe?u=' . $userId . '&t=' . $token;
+    $expiresAt ??= time() + 31536000;
+    $token = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+    return platform_email_base_url() . '/email-unsubscribe?' . http_build_query([
+        'u' => $userId,
+        'e' => $expiresAt,
+        'v' => 2,
+        't' => $token,
+    ]);
+}
+
+function email_campaign_unsubscribe_valid(int $userId, string $token, ?int $expiresAt = null, int $version = 1): bool
+{
+    if (!preg_match('/^[a-f0-9]{64}$/i', $token)) return false;
+    if ($version === 2) {
+        if ($expiresAt === null || $expiresAt < time() || $expiresAt > time() + 31622400) return false;
+        $expected = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+        return hash_equals($expected, strtolower($token));
+    }
+    // Compatibility for previously delivered v1 links. All newly generated links use expiring v2 tokens.
+    $legacy = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
+    return hash_equals($legacy, strtolower($token));
 }
 
 function platform_email_html(string $subject, string $body, string $footerHtml = '', ?string $customBodyHtml = null, string $locale = 'ar'): string
