@@ -1,0 +1,6 @@
+# Test strategy
+Run deterministic pure domain tests for Quran position round trips, inclusive target/range boundaries, milestones, zoned night intervals, pace and streaks. Run database/API integration tests against a uniquely named disposable `athar_test_*` schema with explicit guard; never run destructive tests on `athar`. Inject mail/provider fakes so most tests do not send messages or consume third-party quotas. Label real-provider tests separately.
+
+Backend: token scope/expiry/rotation/replay/revocation, OTP keyed hash/attempt limits, rate buckets across sessions, ownership, CSRF/cookie admin, publication visibility, safe upload rejection, migration replay and backup integrity. Native: repository/ViewModel/domain tests, Room/outbox idempotency, Compose authentication/navigation/RTL/font scaling, lifecycle timer/media/permissions. Admin: login/RBAC, CRUD/validation, one feedback message, language/direction and responsive flows.
+
+Use the installed JDK/SDK and pinned Gradle wrapper for `testDebugUnitTest`, `assembleDebug`, lint and connected tests where a device is available. Record exact commands/results in [test reports](../testing/TEST_REPORT.md). The existing backup test requires an empty DB; use isolated configuration. A successful lint/build is not equivalent to an end-to-end device test.

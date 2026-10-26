@@ -1,0 +1,8 @@
+# Security audit
+Static strengths: prepared SQL, escaped PHP output, strict session IDs, HttpOnly/SameSite cookies, session-version revocation, CSRF checks, uploaded scholar-image MIME/dimension checks, same-origin provider-token proxy and AES-GCM settings/backup encryption.
+
+Open risks: session-only authentication throttling; low-entropy OTP hashes; missing per-token failed-attempt increments in verification; no mobile token rotation/reuse policy; model CDN integrity absent; article/provider-link validation uses prefixes in some browser renderers; restored scholar images omitted; database exports and pending verification need consistent enforcement. Owner reset/restore are destructive and must only be tested against a disposable database. Existing SMTP account authentication was checked in the preceding maintenance task; actual recipient delivery was not verified.
+
+Required controls: database rate buckets with keyed identifiers; token and OTP secrets never returned or logged; short-lived hashed bearer tokens; rotated refresh tokens with replay rejection; verified-email authorization; consistent revocation on password changes/suspension; ownership-scoped queries; admin role checks independently of navigation; request-size limits; stable error codes; no external URL proxy accepting arbitrary destinations. Android uses HTTPS by default, Keystore encryption, minimal runtime permissions and no private data in backups/logs.
+
+Night Prayer is private: no admin endpoint returns personal sessions or exempt periods. Exempt data stays local by default. See [privacy](../features/NIGHT_PRAYER_PRIVACY.md) and [security engineering](../engineering/SECURITY.md). Findings are static until the corresponding security tests run.

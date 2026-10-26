@@ -1,0 +1,4 @@
+# Backend architecture
+Retain PHP/PDO/MySQL. Add a small autoloaded `Athar` namespace under `backend/src`, explicit router, typed request/response helpers, services and repositories. Legacy global helpers are adapters during migration. Versioned requests return JSON even for authentication failure; no HTML redirects from mobile endpoints.
+
+Configuration is read from process environment through a single bootstrap. Secrets remain in the existing encrypted platform settings or external secret environment. Domain services accept explicit actors and inputs, never trust a user ID supplied by the client, and enforce ownership in SQL. Transactions protect token rotation, OTP attempts, idempotent sync and multi-table mutations. Limits apply to request bytes, pagination and provider responses. Tests inject PDO/configuration and mail/provider fakes against an isolated database.

@@ -1,0 +1,12 @@
+{
+  "source": "https://tanzil.net/pub/download/index.php?quranType=uthmani&outType=xml&marks=true&sajdah=true&alef=true&tatweel=true&agree=true",
+  "project": "Tanzil Project",
+  "source_url": "https://tanzil.net/",
+  "terms_url": "https://tanzil.net/docs/text_license",
+  "version": "1.1",
+  "downloaded": "2026-10-25",
+  "sha256": "8c5aeae20363a98f6963720d29fce040ca8b56a8e75f8b564c257fce7f6d0417",
+  "surahs": 114,
+  "ayahs": 6236,
+  "text_policy": "Verbatim original XML, including original notice. Normalization is limited to internal search; display always uses original text."
+}

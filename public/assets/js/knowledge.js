@@ -1,7 +1,5 @@
 (() => {
     const quranpedia = 'https://api.quranpedia.net/v1';
-    const prayApi = 'https://pray.api.islamic.network/v1';
-
     const text = (value, fallback = '') => typeof value === 'string' && value.trim() ? value.trim() : fallback;
     const request = async (url) => {
         const controller = new AbortController();
@@ -279,120 +277,189 @@
 
     const adhkarPage = document.querySelector('[data-adhkar-page]');
     if (adhkarPage) {
-        const form = adhkarPage.querySelector('[data-adhkar-form]');
-        const results = adhkarPage.querySelector('[data-adhkar-results]');
+        const categorySelect = adhkarPage.querySelector('[data-adhkar-category]');
+        const section = adhkarPage.querySelector('[data-adhkar-section]');
         const status = adhkarPage.querySelector('[data-adhkar-status]');
-        const renderEntries = async (collection, query = '', page = 1, append = false) => {
-            if (!append) results.replaceChildren();
-            results.querySelector('.pagination-control')?.remove();
-            setStatus(status, 'جارٍ تحميل المحتوى…', 'loading');
+        const heading = adhkarPage.querySelector('[data-adhkar-heading]');
+        const position = adhkarPage.querySelector('[data-adhkar-position]');
+        const categoryProgress = adhkarPage.querySelector('[data-adhkar-category-progress]');
+        const progress = adhkarPage.querySelector('[data-adhkar-progress]');
+        const progressTrack = progress?.closest('[role="progressbar"]');
+        const card = adhkarPage.querySelector('[data-adhkar-card]');
+        const formula = adhkarPage.querySelector('[data-adhkar-text]');
+        const requiredOutput = adhkarPage.querySelector('[data-adhkar-required]');
+        const countButton = adhkarPage.querySelector('[data-adhkar-count]');
+        const countOutput = adhkarPage.querySelector('[data-adhkar-count-display]');
+        const resetButton = adhkarPage.querySelector('[data-adhkar-reset]');
+        const completion = adhkarPage.querySelector('[data-adhkar-completion]');
+        const dataUrl = 'https://raw.githubusercontent.com/rn0x/Adhkar-json/main/adhkar.json';
+        const dataCacheKey = 'athar-adhkar-library-rn0x-v1';
+        const progressKey = 'athar-adhkar-session-progress-v1';
+        const formatNumber = (number) => new Intl.NumberFormat('ar').format(number);
+        let categories = [];
+        let activeCategoryIndex = 0;
+        let activeItemIndex = 0;
+        let currentCount = 0;
+        let currentRequired = 1;
+        let advanceTimer = 0;
+        let sessionProgress = {};
+
+        try {
+            const saved = JSON.parse(localStorage.getItem(progressKey) || '{}');
+            if (saved && typeof saved === 'object' && !Array.isArray(saved)) sessionProgress = saved;
+        } catch (_) { /* The session remains usable without browser storage. */ }
+
+        const categoryKey = (category) => String(category?.id ?? category?.category ?? '');
+        const currentCategory = () => categories[activeCategoryIndex] || null;
+        const currentItems = (category = currentCategory()) => Array.isArray(category?.array)
+            ? category.array.flat(Infinity).filter((entry) => entry && typeof entry.text === 'string' && entry.text.trim())
+            : [];
+        const currentItemKey = (category, entry) => `${categoryKey(category)}:${entry?.id ?? activeItemIndex}`;
+        const saveSessionProgress = () => {
+            try { localStorage.setItem(progressKey, JSON.stringify(sessionProgress)); } catch (_) { /* Counter works for this visit. */ }
+        };
+        const recordCompletion = async () => {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
             try {
-                const params = new URLSearchParams({ page: String(page), limit: '20' });
-                let endpoint = `${prayApi}/${collection}?${params}`;
-                if (query) endpoint = `${prayApi}/search?${new URLSearchParams({ q: query, type: collection, page: String(page), limit: '20' })}`;
-                const payload = await request(endpoint);
-                const items = query ? payload?.data?.results : payload?.data;
-                if (!payload || payload.status !== 'OK' || !Array.isArray(items)) throw new Error('provider-shape');
-                status.hidden = true;
-                if (!items.length) {
-                    setStatus(status, 'لا توجد نتائج مطابقة في الفهرس المتاح.', 'empty');
-                    return;
-                }
-                items.slice(0, 20).forEach((entry) => {
-                    if (typeof entry.slug !== 'string') return;
-                    const detailCollection = entry.type === 'adhkaar' ? 'adhkaars' : entry.type === 'salawaat' ? 'salawaats' : entry.type === 'dua' ? 'duas' : collection;
-                    const card = make('article', 'knowledge-card dhikr-card');
-                    const name = typeof entry.name === 'object' ? entry.name.ar : entry.name;
-                    card.append(make('h2', '', text(name, 'ذكر')));
-                    let formulaNode = null;
-                    if (typeof entry.formula === 'string') {
-                        formulaNode = make('p', 'dhikr-formula', entry.formula);
-                        card.append(formulaNode);
-                    }
-                    const actions = make('div', 'dhikr-actions');
-                    actions.hidden = !formulaNode;
-                    const count = make('output', 'dhikr-count', '0');
-                    count.setAttribute('aria-live', 'polite');
-                    count.setAttribute('aria-label', 'عدد النقرات');
-                    const requiredCount = Math.max(1, Number(entry.repeat_count || entry.repeat || 1));
-                    let completionRecorded = false;
-                    const add = make('button', 'button button-primary', 'سبّح +1');
-                    add.type = 'button';
-                    add.setAttribute('aria-label', 'زيادة العداد واحدًا');
-                    add.addEventListener('click', async () => {
-                        count.value = String(Number(count.value || count.textContent) + 1);
-                        count.textContent = count.value;
-                        if (!completionRecorded && Number(count.value) >= requiredCount) {
-                            completionRecorded = true;
-                            const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
-                            try { await fetch('/api/adhkar/completion', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','X-CSRF-Token':token,Accept:'application/json'}, body:'completed=1', credentials:'same-origin' }); } catch (_) { /* Guest counters remain usable without an account. */ }
-                        }
-                    });
-                    const reset = make('button', 'button button-secondary', 'إعادة');
-                    reset.type = 'button';
-                    reset.setAttribute('aria-label', 'إعادة العداد إلى الصفر');
-                    reset.addEventListener('click', () => { count.value = '0'; count.textContent = '0'; });
-                    const refButton = make('button', 'text-button', formulaNode ? 'المصدر والتفاصيل' : 'عرض النص والمصدر');
-                    refButton.type = 'button';
-                    const attribution = make('p', 'dhikr-source', '');
-                    attribution.hidden = true;
-                    refButton.addEventListener('click', async () => {
-                        refButton.disabled = true;
-                        try {
-                            const detail = await request(`${prayApi}/${detailCollection}/${encodeURIComponent(entry.slug)}`);
-                            const data = detail?.data;
-                            if (!data || detail.status !== 'OK' || typeof data.formula !== 'string') throw new Error('provider-shape');
-                            if (!formulaNode) {
-                                formulaNode = make('p', 'dhikr-formula', data.formula);
-                                card.insertBefore(formulaNode, actions);
-                                actions.hidden = false;
-                                refButton.textContent = 'المصدر والتفاصيل';
-                            }
-                            attribution.textContent = `المصدر: ${text(data.source, 'غير مذكور')}`;
-                            attribution.hidden = false;
-                            refButton.hidden = true;
-                        } catch (_) {
-                            attribution.textContent = 'تعذر تحميل تفاصيل المصدر الآن.';
-                            attribution.hidden = false;
-                            refButton.disabled = false;
-                        }
-                    });
-                    actions.append(add, count, reset);
-                    card.append(actions, refButton, attribution);
-                    results.append(card);
+                await fetch('/api/adhkar/completion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'X-CSRF-Token': token, Accept: 'application/json' },
+                    body: 'completed=1',
+                    credentials: 'same-origin',
                 });
-                if (!results.querySelector('.dhikr-card')) setStatus(status, 'لا توجد نصوص مكتملة قابلة للعرض في هذه النتائج.', 'empty');
-                const lastPage = Number(payload.meta?.pages || 1);
-                if (page < lastPage) {
-                    const more = make('button', 'button button-secondary pagination-control', 'المزيد من النتائج');
-                    more.type = 'button';
-                    more.addEventListener('click', () => renderEntries(collection, query, page + 1, true));
-                    results.append(more);
+            } catch (_) { /* Local progression is independent from account statistics. */ }
+        };
+
+        const renderCurrentItem = () => {
+            const category = currentCategory();
+            if (!category || !section || !card) return;
+            const items = currentItems(category);
+            heading.textContent = text(category.category, 'قسم الأذكار');
+            section.hidden = false;
+            const percent = items.length ? Math.round(activeItemIndex / items.length * 100) : 100;
+            progress.style.width = `${percent}%`;
+            progressTrack?.setAttribute('aria-valuenow', String(percent));
+            categoryProgress.textContent = `مكتمل ${formatNumber(Math.min(activeItemIndex, items.length))} من ${formatNumber(items.length)} ذكر في هذا القسم.`;
+            card.hidden = activeItemIndex >= items.length;
+            if (activeItemIndex >= items.length) {
+                position.textContent = 'اكتمل القسم';
+                completion.textContent = 'أتممت أذكار هذا القسم. اختر قسمًا آخر للمتابعة.';
+                completion.hidden = false;
+                return;
+            }
+
+            const entry = items[activeItemIndex];
+            const key = currentItemKey(category, entry);
+            const saved = sessionProgress[key] && typeof sessionProgress[key] === 'object' ? sessionProgress[key] : {};
+            currentRequired = Math.max(1, Number(entry.count) || 1);
+            currentCount = Math.max(0, Math.min(currentRequired, Number(saved.count) || 0));
+            position.textContent = `الذكر ${formatNumber(activeItemIndex + 1)} من ${formatNumber(items.length)}`;
+            formula.textContent = entry.text.trim();
+            requiredOutput.textContent = formatNumber(currentRequired);
+            countOutput.value = `${formatNumber(currentCount)} / ${formatNumber(currentRequired)}`;
+            countOutput.textContent = countOutput.value;
+            completion.hidden = true;
+            completion.textContent = '';
+            countButton.disabled = currentCount >= currentRequired;
+        };
+
+        const changeCategory = (index) => {
+            window.clearTimeout(advanceTimer);
+            activeCategoryIndex = Math.max(0, Math.min(index, categories.length - 1));
+            const category = currentCategory();
+            const savedIndex = Number(sessionProgress[`category:${categoryKey(category)}`]?.index) || 0;
+            activeItemIndex = Math.max(0, Math.min(savedIndex, currentItems(category).length));
+            categorySelect.value = String(activeCategoryIndex);
+            renderCurrentItem();
+        };
+
+        const loadLibrary = async () => {
+            try {
+                let cached = null;
+                try { cached = JSON.parse(localStorage.getItem(dataCacheKey) || 'null'); } catch (_) { /* Fetch a fresh copy. */ }
+                if (Array.isArray(cached?.items) && cached.items.length && Date.now() - Number(cached.savedAt || 0) < 30 * 86400000) {
+                    categories = cached.items;
+                } else {
+                    setStatus(status, 'جارٍ تحميل مكتبة الأذكار…', 'loading');
+                    try {
+                        const payload = await request(dataUrl);
+                        if (!Array.isArray(payload)) throw new Error('provider-shape');
+                        categories = payload.filter((category) => typeof category?.category === 'string' && Array.isArray(category.array));
+                        if (!categories.length) throw new Error('empty-library');
+                        try { localStorage.setItem(dataCacheKey, JSON.stringify({ items: categories, savedAt: Date.now() })); } catch (_) { /* Continue without a cache. */ }
+                    } catch (error) {
+                        if (!Array.isArray(cached?.items) || !cached.items.length) throw error;
+                        categories = cached.items;
+                    }
                 }
+                categorySelect.replaceChildren(...categories.map((category, index) => {
+                    const option = document.createElement('option');
+                    option.value = String(index);
+                    option.textContent = `${category.category} · ${formatNumber(currentItems(category).length)}`;
+                    return option;
+                }));
+                categorySelect.disabled = false;
+                categorySelect.addEventListener('change', () => changeCategory(Number(categorySelect.value)));
+                const requestedCategory = new URLSearchParams(window.location.search).get('section');
+                const initialIndex = categories.findIndex((category) => categoryKey(category) === requestedCategory || category.category === requestedCategory);
+                changeCategory(initialIndex >= 0 ? initialIndex : 0);
+                status.hidden = true;
             } catch (_) {
-                setStatus(status, 'تعذر الاتصال بمصدر الأذكار. حاول مرة أخرى بعد قليل.', 'error');
+                setStatus(status, 'تعذر تحميل مكتبة الأذكار. تحقق من الاتصال ثم أعد تحميل الصفحة.', 'error');
                 const retry = make('button', 'button button-secondary', 'إعادة المحاولة');
                 retry.type = 'button';
-                retry.addEventListener('click', () => renderEntries(collection, query, page, append));
+                retry.addEventListener('click', loadLibrary, { once: true });
                 status.append(' ', retry);
             }
         };
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const collection = ['adhkaars', 'duas', 'salawaats'].includes(form.elements.collection.value) ? form.elements.collection.value : 'adhkaars';
-            const query = form.elements.q.value.trim();
-            if (query && (query.length < 2 || query.length > 80)) return;
-            const params = new URLSearchParams({ collection });
-            if (query) params.set('q', query);
-            history.replaceState(null, '', `/adhkar?${params}`);
-            renderEntries(collection, query);
+
+        countButton?.addEventListener('click', () => {
+            if (currentCount >= currentRequired) return;
+            currentCount += 1;
+            const category = currentCategory();
+            const entry = currentItems(category)[activeItemIndex];
+            const key = currentItemKey(category, entry);
+            sessionProgress[key] = { count: currentCount };
+            saveSessionProgress();
+            countOutput.value = `${formatNumber(currentCount)} / ${formatNumber(currentRequired)}`;
+            countOutput.textContent = countOutput.value;
+            if (currentCount < currentRequired) return;
+
+            countButton.disabled = true;
+            completion.textContent = 'اكتمل العدد، جارٍ عرض الذكر التالي…';
+            completion.hidden = false;
+            const completedKey = `completed:${key}`;
+            sessionProgress[`category:${categoryKey(category)}`] = { index: activeItemIndex + 1 };
+            saveSessionProgress();
+            if (!sessionProgress[completedKey]) {
+                sessionProgress[completedKey] = true;
+                saveSessionProgress();
+                recordCompletion();
+            }
+            advanceTimer = window.setTimeout(() => {
+                activeItemIndex += 1;
+                sessionProgress[`category:${categoryKey(category)}`] = { index: activeItemIndex };
+                saveSessionProgress();
+                renderCurrentItem();
+            }, 550);
         });
-        const initial = parseSearchParams();
-        const collection = ['adhkaars', 'duas', 'salawaats'].includes(initial.get('collection')) ? initial.get('collection') : 'adhkaars';
-        form.elements.collection.value = collection;
-        if (initial.has('q')) form.elements.q.value = initial.get('q');
-        const initialQuery = initial.get('q')?.trim() || '';
-        renderEntries(collection, initialQuery.length <= 80 ? initialQuery : '');
+
+        resetButton?.addEventListener('click', () => {
+            window.clearTimeout(advanceTimer);
+            const category = currentCategory();
+            const entry = currentItems(category)[activeItemIndex];
+            if (!entry) return;
+            currentCount = 0;
+            const key = currentItemKey(category, entry);
+            sessionProgress[key] = { count: 0 };
+            saveSessionProgress();
+            countOutput.value = `٠ / ${formatNumber(currentRequired)}`;
+            countOutput.textContent = countOutput.value;
+            completion.hidden = true;
+            countButton.disabled = false;
+        });
+
+        loadLibrary();
     }
 
     const lessonsPage = document.querySelector('[data-lessons-page]');

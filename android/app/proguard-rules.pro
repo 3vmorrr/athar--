@@ -1,0 +1,9 @@
+-keepattributes Signature,*Annotation*
+-keepclassmembers class org.athar.app.core.network.** { <fields>; }
+-keep class org.athar.app.core.security.UserProfile { *; }
+-keep class org.athar.app.core.security.Credentials { *; }
+-keep class org.athar.app.core.security.StoredSession { *; }
+-keep class org.athar.app.auth.AuthReply { *; }
+-keep class org.athar.app.quran.SurahReference { *; }
+-keep class org.athar.app.quran.SectionReference { *; }
+-keep class org.athar.app.quran.IndexFile { *; }

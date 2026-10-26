@@ -1,0 +1,4 @@
+# Performance plan
+Measure baseline before claiming improvement: debug build correctness separately from release startup/frame/network/memory measurements. Budget candidates pending device baseline: first usable cached screen <1 s warm; main-thread IO zero; 48 dp targets and smooth scrolling at device refresh; search requests canceled on replacement; bounded page sizes 20–50; provider timeouts 12 s maximum; no unlimited model/audio caching.
+
+Use Compose lazy keys/contentType, lifecycle-aware flows, IO dispatchers, cheap drawing and no continuous decoration. Room indexes account/night/revision and outbox state. Backend SQL uses ownership/publication indexes and bounded response bytes. Media preloads only selected scope. Optional 75 MB inference assets have version, SHA-256, quota/error handling and explicit first-use download. Baseline profiles and release tracing are release gates, not assumed wins.

@@ -1,0 +1,2 @@
+# Motion guidelines
+No artificial splash delay. Use 160–240 ms state/navigation transitions, small fade/slide distances and localized success feedback. Animate opacity/transform rather than expensive full-layout work; avoid endless decorative loops. Loading indicators correspond to real work. Honor platform animation scale and reduced-motion preferences; feedback remains readable when animation is disabled. Profile release builds on representative devices before claiming smoothness.

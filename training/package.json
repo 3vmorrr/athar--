@@ -1,0 +1,9 @@
+{
+  "name": "athar-synthetic-recitation-pilot",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@tilawa/core": "0.4.0",
+    "onnxruntime-node": "1.24.2"
+  }
+}

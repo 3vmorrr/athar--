@@ -19,8 +19,7 @@ $videoParam = $selectedLesson ? (string) $selectedLesson['source_url'] : (is_str
             <div class="section-heading"><div><span class="eyebrow">تصفح حسب الشيخ</span><h2 id="scholars-heading">العلماء</h2></div></div>
             <div class="knowledge-results">
                 <?php foreach ($curatedScholars as $scholar): ?>
-                    <article class="knowledge-card"><h3><a href="/scholar?id=<?= (int) $scholar['id'] ?>"><?= e($scholar['name']) ?></a></h3>
-                        <?php if ($scholar['biography']): ?><p><?= e(mb_strimwidth((string) $scholar['biography'], 0, 220, '…', 'UTF-8')) ?></p><?php endif; ?>
+                    <article class="knowledge-card scholar-card"><?php if (!empty($scholar['image_key'])): ?><img class="scholar-portrait" src="/scholar-image?key=<?= rawurlencode((string) $scholar['image_key']) ?>" alt="<?= e((string) $scholar['name']) ?>" loading="lazy" width="160" height="160"><?php endif; ?><h3><a href="/scholar?id=<?= (int) $scholar['id'] ?>"><?= e($scholar['name']) ?></a></h3>
                         <a class="button button-secondary" href="/scholar?id=<?= (int) $scholar['id'] ?>">السلاسل والدروس</a>
                     </article>
                 <?php endforeach; ?>

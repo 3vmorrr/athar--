@@ -69,9 +69,32 @@ async function initialize(quran) {
         corpus,
         quran,
         executionProviders: ['wasm'],
+        minWordFraction: 0.72,
         structural: { timing: 'pause' },
         tailSeconds: 1.5,
-        onEvent: (message) => tell(message),
+        onEvent: (message) => {
+            // Keep the recognizer's actual acoustic verdict beside the visual
+            // word cursor. `matched_indices` intentionally groups `unsure` with
+            // `ok`, which is useful for tracking but must not be shown as a
+            // confirmed correct recitation.
+            if (message.type === 'word_progress' && session) {
+                const word_verdicts = (typeof session.verdicts === 'function' ? session.verdicts() : [])
+                    .filter((verdict) => verdict.surah === message.surah && verdict.ayah === message.ayah)
+                    .map((verdict) => ({
+                        word: verdict.word,
+                        state: verdict.state,
+                        distance: verdict.distance,
+                        heard_ratio: verdict.heardRatio,
+                        margin: verdict.margin,
+                        vowel_errors: verdict.vowelErrors,
+                        vowel_margin: verdict.vowelMargin,
+                        slip: verdict.slip,
+                    }));
+                tell({ ...message, word_verdicts });
+                return;
+            }
+            tell(message);
+        },
     });
     tell({ type: 'ready' });
 }

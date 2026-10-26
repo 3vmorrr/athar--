@@ -1,1 +1,5 @@
 * text=auto eol=lf
+# Preserve upstream Quran text and license bytes; do not normalize source notices.
+shared/quran/tanzil-uthmani.xml -text whitespace=-trailing-space
+android/app/src/main/assets/quran/tanzil-uthmani.xml -text whitespace=-trailing-space
+android/app/src/main/assets/licenses/NOTO-SANS-ARABIC-OFL.txt whitespace=-trailing-space

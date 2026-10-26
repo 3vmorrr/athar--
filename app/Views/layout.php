@@ -48,6 +48,7 @@
                 <a href="/books"<?= $activePath === '/books' ? ' aria-current="page"' : '' ?>>الكتب</a>
                 <a href="/lessons"<?= $activePath === '/lessons' ? ' aria-current="page"' : '' ?>>الدروس</a>
                 <a href="/adhkar"<?= $activePath === '/adhkar' ? ' aria-current="page"' : '' ?>>الأذكار</a>
+                <button class="language-toggle mobile-language-toggle" type="button" data-language-toggle aria-label="Switch to English" title="Switch to English">EN</button>
             </nav>
 
             <div class="header-actions">
@@ -57,7 +58,7 @@
                     <?php if (in_array(($user['role'] ?? ''), ['admin','owner'], true)): ?><a class="account-link" href="/admin">الإدارة</a><?php endif; ?>
                     <form method="post" action="/logout" class="logout-form"><?= csrf_field() ?><button class="text-button" type="submit">خروج</button></form>
                 <?php else: ?>
-                    <a class="account-link" href="/login">دخول</a>
+                    <a class="account-link account-login" href="/login" aria-label="دخول" title="دخول"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5M10 17l5-5-5-5m5 5H3"/></svg><span>دخول</span></a>
                 <?php endif; ?>
                 <button class="theme-toggle" type="button" data-theme-toggle aria-label="الوضع الداكن" title="الوضع الداكن" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.5 8.5 0 1 0 20.2 15.2Z" /></svg></button>
             </div>
@@ -65,7 +66,7 @@
     </header>
 
     <main id="main-content" class="main-content">
-        <?php if (!empty($flashMessage)): ?><div class="global-flash section-wrap" role="status"><?= e($flashMessage['message']) ?></div><?php endif; ?>
+        <?php if (!empty($flashMessage)): ?><div class="global-flash section-wrap<?= ($flashMessage['type'] ?? 'success') === 'error' ? ' global-flash-error' : '' ?>" role="<?= ($flashMessage['type'] ?? 'success') === 'error' ? 'alert' : 'status' ?>"><?= e($flashMessage['message']) ?></div><?php endif; ?>
         <?= $content ?>
     </main>
 

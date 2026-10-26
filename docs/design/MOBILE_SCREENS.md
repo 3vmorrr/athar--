@@ -1,0 +1,4 @@
+# Mobile information architecture
+Entry graph: splash → first-launch onboarding → auth/verification/recovery → authenticated graph. Main destinations: Home, Quran, Knowledge, Adhkar, Account. Night Prayer has prominent home/Quran links and a nested destination; it does not become a sixth crowded navigation item.
+
+Quran branches into reading, listening, tafsir, search and local review before opening scope-specific screens. Knowledge branches into scholars/series/lessons/books/Dorar. Details provide source, favorites, related content and clear return behavior. Account sections isolate profile/security/preferences/progress/khatmah/privacy. Compact layouts use bottom navigation; wider windows use rail and optional master/detail. Every graph has back handling, deep-link validation, saved state and authentication boundary tests.

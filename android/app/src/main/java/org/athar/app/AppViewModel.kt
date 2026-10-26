@@ -1,0 +1,44 @@
+package org.athar.app
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import org.athar.app.core.data.AppSettings
+import org.athar.app.core.network.ApiException
+
+data class OperationState(val busy: Boolean = false, val error: String? = null, val message: String? = null)
+class AppViewModel(val graph: AppGraph) : ViewModel() {
+    val auth = graph.session.state
+    val settings: StateFlow<AppSettings?> = graph.settings.settings.map<AppSettings, AppSettings?> { it }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    private val mutableOperation = MutableStateFlow(OperationState())
+    val operation = mutableOperation.asStateFlow()
+    init { viewModelScope.launch { graph.session.restore() } }
+    fun completeOnboarding() { viewModelScope.launch { graph.settings.completeOnboarding() } }
+    fun clearFeedback() { mutableOperation.value = OperationState() }
+    fun invalid(code: String) { mutableOperation.value = OperationState(error = code) }
+    fun login(email: String, password: String) = perform { graph.session.login(email, password) }
+    fun register(name: String, username: String, email: String, password: String, confirmation: String) {
+        if (password != confirmation) { invalid("password_mismatch"); return }
+        if (name.isBlank() || username.isBlank() || !email.contains('@') || password.length < 10) { invalid("invalid_input"); return }
+        perform { graph.session.register(name, username, email, password, confirmation) }
+    }
+    fun verify(code: String) = perform { graph.session.verify(code) }
+    fun resend() = perform { mutableOperation.value = OperationState(message = if (graph.session.resend() == "accepted") "mail_accepted" else "mail_unavailable") }
+    fun forgot(email: String) = perform { graph.session.forgot(email); mutableOperation.value = OperationState(message = "reset_sent") }
+    fun reset(email: String, code: String, password: String, confirmation: String) {
+        if (password != confirmation) { invalid("password_mismatch"); return }
+        perform { graph.session.reset(email, code, password, confirmation); mutableOperation.value = OperationState(message = "password_updated") }
+    }
+    fun logout() = perform { graph.session.logout() }
+    fun perform(block: suspend () -> Unit) {
+        if (mutableOperation.value.busy) return
+        viewModelScope.launch {
+            mutableOperation.value = OperationState(busy = true)
+            try { block(); if (mutableOperation.value.busy) mutableOperation.value = OperationState() }
+            catch (failure: CancellationException) { throw failure }
+            catch (failure: Exception) { mutableOperation.value = OperationState(error = if (failure is ApiException) failure.code.ifBlank { "network_error" } else "network_error") }
+        }
+    }
+}

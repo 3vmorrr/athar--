@@ -1,0 +1,4 @@
+# Night Prayer synchronization
+Room session edits and outbox operation commit together. Each operation carries stable UUID, mutation UUID and expected server revision. Server transaction scopes to authenticated user, verifies input/context and compares revision. Identical replay returns the previous result; conflicting content at the same key returns 409. Newer local and remote edits require an explicit merge choice; neither silently overwrites the other.
+
+Pull changes by an opaque per-user cursor/monotonic change sequence, including minimal tombstones. Do not use device wall-clock timestamps as conflict authority. Deletion clears note/range/context while preserving a minimal deletion identity to stop resurrection; retention policy and full account deletion are documented. Sync retries use bounded exponential backoff and do not multiply sessions. Exempt-night preferences/data are excluded from request DTOs, crash reports and ordinary server exports.

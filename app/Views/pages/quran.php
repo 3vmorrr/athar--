@@ -13,7 +13,7 @@ $surahs = [
     'القارعة', 'التكاثر', 'العصر', 'الهمزة', 'الفيل', 'قريش', 'الماعون', 'الكوثر', 'الكافرون', 'النصر',
     'المسد', 'الإخلاص', 'الفلق', 'الناس',
 ];
-$tool = is_string($_GET['tool'] ?? null) && in_array($_GET['tool'], ['read', 'listen', 'tafsir', 'ayah', 'search', 'daily', 'review'], true) ? $_GET['tool'] : '';
+$tool = is_string($_GET['tool'] ?? null) && in_array($_GET['tool'], ['read', 'listen', 'radio', 'tafsir', 'ayah', 'search', 'daily', 'review'], true) ? $_GET['tool'] : '';
 $selectedSurah = filter_input(INPUT_GET, 'surah', FILTER_VALIDATE_INT) ?: 1;
 $selectedSurah = max(1, min(114, $selectedSurah));
 $ayahParam = filter_input(INPUT_GET, 'ayah', FILTER_VALIDATE_INT);
@@ -28,6 +28,7 @@ $reviewMode = ($_GET['review'] ?? '') === '1';
 $toolDetails = [
     'read' => ['القراءة', 'اقرأ بالسورة أو الجزء أو الصفحة، واضبط حجم الخط واحفظ موضعك.'],
     'listen' => ['الاستماع', 'اختر قارئًا، ثم استمع إلى آية واحدة أو إلى السورة كاملة.'],
+    'radio' => ['إذاعة القرآن', 'استمع مباشرة إلى إذاعات القرآن الكريم من مكتبة MP3Quran.'],
     'tafsir' => ['التفسير', 'اختر السورة والآية لعرض تفسيرها من مصدره.'],
     'ayah' => ['آية محددة', 'افتح آية واحدة واقرأ نصها وتفسيرها مباشرة.'],
     'search' => ['البحث في القرآن', 'ابحث بكلمة أو عبارة عربية وافتح الآية المطابقة مباشرة.'],
@@ -42,6 +43,7 @@ $toolDetails = [
         <div class="quran-tool-grid" aria-label="اختر أداة القرآن">
             <a class="quran-tool-card" href="/quran?tool=read"><span class="quran-tool-icon" aria-hidden="true">۞</span><span class="eyebrow">المصحف</span><h2>القراءة</h2><p>تصفح القرآن بالسورة أو الجزء أو الصفحة، مع أدوات مريحة للقراءة.</p><span class="quran-card-action">ابدأ القراءة <span aria-hidden="true">←</span></span></a>
             <a class="quran-tool-card" href="/quran?tool=listen"><span class="quran-tool-icon" aria-hidden="true">♫</span><span class="eyebrow">التلاوة</span><h2>الاستماع</h2><p>اختر قارئًا من مكتبة واسعة، وشغّل آية محددة أو سورة كاملة.</p><span class="quran-card-action">اختر قارئًا <span aria-hidden="true">←</span></span></a>
+            <a class="quran-tool-card" href="/quran?tool=radio"><span class="quran-tool-icon" aria-hidden="true">◖</span><span class="eyebrow">بث مباشر</span><h2>إذاعة القرآن</h2><p>اختر إذاعة مباشرة وابحث في المحطات المتاحة.</p><span class="quran-card-action">افتح الإذاعة <span aria-hidden="true">←</span></span></a>
             <a class="quran-tool-card" href="/quran?tool=tafsir"><span class="quran-tool-icon" aria-hidden="true">۝</span><span class="eyebrow">تدبر</span><h2>التفسير</h2><p>انتقل مباشرة إلى تفسير الآية التي تختارها.</p><span class="quran-card-action">افتح التفسير <span aria-hidden="true">←</span></span></a>
             <a class="quran-tool-card" href="/quran?tool=ayah"><span class="quran-tool-icon" aria-hidden="true">﴿ ﴾</span><span class="eyebrow">موضع بعينه</span><h2>آية محددة</h2><p>افتح آية واحدة واقرأ نصها أو اعرض تفسيرها مباشرة.</p><span class="quran-card-action">اختر آية <span aria-hidden="true">←</span></span></a>
             <a class="quran-tool-card" href="/quran?tool=search"><span class="quran-tool-icon" aria-hidden="true">⌕</span><span class="eyebrow">الوصول السريع</span><h2>البحث في القرآن</h2><p>اكتب كلمة أو عبارة عربية للوصول إلى مواضعها في القرآن.</p><span class="quran-card-action">ابحث الآن <span aria-hidden="true">←</span></span></a>
@@ -53,18 +55,26 @@ $toolDetails = [
         <div class="quran-heading"><div><span class="eyebrow">أدوات القرآن <span aria-hidden="true">/</span> <?= e($toolDetails[$tool][0]) ?></span><h1><?= e($toolDetails[$tool][0]) ?></h1><p><?= e($toolDetails[$tool][1]) ?></p></div><a class="quran-home-link" href="/quran">كل أدوات القرآن</a></div>
         <?php $activeQuranNav = in_array($tool, ['daily', 'ayah'], true) ? 'read' : $tool; ?>
         <nav class="quran-tool-nav" aria-label="التنقل بين أدوات القرآن">
-            <?php foreach (['read' => 'القراءة', 'listen' => 'الاستماع', 'tafsir' => 'التفسير', 'search' => 'البحث في القرآن', 'review' => 'مراجعة التلاوة'] as $navTool => $navLabel): ?>
+            <?php foreach (['read' => 'القراءة', 'listen' => 'الاستماع', 'radio' => 'الإذاعة', 'tafsir' => 'التفسير', 'search' => 'البحث في القرآن', 'review' => 'مراجعة التلاوة'] as $navTool => $navLabel): ?>
                 <a href="/quran?tool=<?= e($navTool) ?>"<?= $activeQuranNav === $navTool ? ' aria-current="page"' : '' ?>><?= e($navLabel) ?></a>
             <?php endforeach; ?>
         </nav>
         <?php if ($tool === 'search'): ?>
             <form class="knowledge-search quran-search" data-quran-search-form role="search"><label for="quran-search-query">كلمة أو عبارة من الآية</label><div class="search-row"><input id="quran-search-query" name="q" type="search" minlength="2" maxlength="60" value="<?= e(is_string($_GET['q'] ?? null) ? $_GET['q'] : '') ?>" placeholder="مثال: إن مع العسر يسرا"><button class="button button-secondary" type="submit">ابحث في القرآن</button></div></form>
             <div class="knowledge-status" data-quran-search-status role="status" aria-live="polite" hidden></div><div class="knowledge-results quran-search-results" data-quran-search-results></div>
+        <?php elseif ($tool === 'radio'): ?>
+            <section class="quran-tool-section radio-directory" data-quran-radio aria-labelledby="radio-heading">
+                <div class="section-heading"><div><span class="eyebrow">MP3Quran · بث مباشر</span><h2 id="radio-heading">اختر إذاعتك</h2></div><label class="radio-search-label" for="quran-radio-search">ابحث عن محطة<input id="quran-radio-search" type="search" data-radio-search placeholder="اكتب اسم القارئ أو الإذاعة" autocomplete="off"></label></div>
+                <div class="radio-player-card"><div><span class="eyebrow">يعمل الآن</span><strong data-radio-current>اختر إذاعة من القائمة</strong></div><audio controls preload="none" data-radio-audio aria-label="مشغل إذاعة القرآن"></audio><p class="audio-status" data-radio-status role="status" aria-live="polite">اختر محطة لبدء البث.</p></div>
+                <div class="radio-station-list" data-radio-list aria-live="polite"></div>
+                <p class="quran-attribution">قائمة الإذاعات وروابط البث من <a href="https://www.mp3quran.net/ar/api" target="_blank" rel="noopener noreferrer">واجهة MP3Quran الرسمية</a>.</p>
+            </section>
         <?php else: ?>
             <?php $fixedMode = in_array($tool, ['ayah', 'tafsir', 'listen', 'daily', 'review'], true); $activeMode = $fixedMode ? 'surah' : $readingMode; ?>
             <form class="quran-controls<?= $tool === 'review' ? ' quran-controls-review' : '' ?>" data-quran-form<?= $tool === 'daily' ? ' hidden' : '' ?>>
                 <label for="quran-mode"<?= $fixedMode ? ' hidden' : '' ?>>طريقة التصفح<select id="quran-mode" name="mode" data-reading-mode><option value="surah"<?= $activeMode === 'surah' ? ' selected' : '' ?>>بالسورة</option><option value="juz"<?= $activeMode === 'juz' ? ' selected' : '' ?>>بالجزء</option><option value="hizb"<?= $activeMode === 'hizb' ? ' selected' : '' ?>>بالحزب</option><option value="page"<?= $activeMode === 'page' ? ' selected' : '' ?>>بالصفحة</option></select></label>
                 <label for="quran-surah" data-mode-control="surah"<?= $activeMode !== 'surah' ? ' hidden' : '' ?>>السورة<select id="quran-surah" name="surah"><?php foreach ($surahs as $index => $surahName): $number = $index + 1; ?><option value="<?= $number ?>"<?= $selectedSurah === $number ? ' selected' : '' ?>><?= $number ?>. <?= e($surahName) ?></option><?php endforeach; ?></select></label>
+                <?php if ($tool === 'listen'): ?><fieldset class="audio-scope-choice" data-audio-scope-choice><legend>نطاق الاستماع</legend><label><input type="radio" name="audio-scope" value="current" data-audio-scope><span><strong>آية محددة</strong><small>استمع للآية التي تختارها</small></span></label><label><input type="radio" name="audio-scope" value="surah" data-audio-scope checked><span><strong>السورة كاملة</strong><small>تشغيل متواصل مع متابعة موضع التلاوة</small></span></label></fieldset><?php endif; ?>
                 <label for="quran-ayah" data-mode-control="surah" data-ayah-control><?= $tool === 'review' ? 'ابدأ من الآية' : (in_array($tool, ['listen', 'ayah', 'tafsir'], true) ? 'رقم الآية' : 'ابدأ من الآية (اختياري)') ?><input id="quran-ayah" name="ayah" type="number" min="1" inputmode="numeric" value="<?= $selectedAyah ?? '' ?>" placeholder="<?= $tool === 'read' ? 'أول السورة' : 'مثال: 1' ?>"<?= in_array($tool, ['ayah', 'tafsir', 'review'], true) ? ' required' : '' ?>></label>
                 <?php if ($tool === 'review'): ?><label for="quran-ayah-end" data-mode-control="surah">انتهِ عند الآية<input id="quran-ayah-end" name="ayah_end" type="number" min="1" inputmode="numeric" value="<?= $selectedEndAyah ?? '' ?>" placeholder="نفس الآية" required></label><?php endif; ?>
                 <label for="quran-juz" data-mode-control="juz"<?= $activeMode !== 'juz' ? ' hidden' : '' ?>>الجزء<select id="quran-juz" name="juz"><?php for ($juz = 1; $juz <= 30; $juz++): ?><option value="<?= $juz ?>"<?= $selectedJuz === $juz ? ' selected' : '' ?>>الجزء <?= $juz ?></option><?php endfor; ?></select></label>
@@ -74,11 +84,11 @@ $toolDetails = [
                 <?php if ($tool === 'read' || $tool === 'ayah'): ?><div class="reading-size" aria-label="حجم خط القراءة"><button class="icon-button" type="button" data-font-step="-1" aria-label="تصغير الخط">−</button><span>حجم الخط</span><button class="icon-button" type="button" data-font-step="1" aria-label="تكبير الخط">+</button></div><?php endif; ?>
             </form>
             <div class="quran-status" data-quran-status role="status" aria-live="polite" aria-atomic="true">جارٍ تحميل الآيات…</div>
-            <article class="quran-reading" data-quran-content aria-label="نص القرآن" hidden></article>
+            <article class="quran-reading" data-quran-content aria-label="نص القرآن"<?= $tool === 'listen' ? ' hidden' : '' ?>></article>
             <?php if ($tool === 'review'): ?>
                 <section class="recitation-review quran-tool-section" data-recitation-review hidden aria-labelledby="recitation-review-heading">
                     <div class="section-heading"><div><span class="eyebrow">مراجعة خاصة على جهازك</span><h2 id="recitation-review-heading">راجع تلاوتك كلمةً كلمة</h2></div><span class="review-local-badge"><span aria-hidden="true"></span> الصوت لا يغادر جهازك</span></div>
-                    <p class="recitation-review-intro">اختر السورة والآيات ثم ابدأ التلاوة. تبقى مساحة المتابعة فارغة حتى تبدأ، ثم تكشف الكلمات بالتدريج مع تقدّمك. يعمل النموذج محليًا؛ يلزم اتصال لتنزيله أول مرة (نحو 75 ميجابايت)، واترك الصفحة مفتوحة أثناء المراجعة.</p>
+                    <p class="recitation-review-intro" data-review-intro>اختر السورة والآيات ثم ابدأ التلاوة. الكلمات المعروضة نص المصحف المرجعي وليست تفريغًا حرفيًا للصوت؛ اللون يوضح حكم النموذج على المطابقة. يعمل النموذج محليًا؛ يلزم اتصال لتنزيله أول مرة، واترك الصفحة مفتوحة أثناء المراجعة.</p>
                     <div class="review-live-readout">
                         <div class="review-readout-heading"><span class="eyebrow">متابعة التلاوة</span><span class="review-listening-indicator" data-review-listening><i></i><i></i><i></i><i></i><i></i><span data-review-listening-label>جاهز للاستماع</span></span></div>
                         <div class="review-mushaf-page" lang="ar" dir="rtl">
@@ -87,23 +97,28 @@ $toolDetails = [
                             <p class="review-empty-state" data-review-empty>مواضع الآيات جاهزة؛ ستظهر الكلمات هنا مع تقدمك في التلاوة.</p>
                             <footer class="review-mushaf-page-footer"><span>صفحة المراجعة</span><span data-review-page-number>١ / ١</span></footer>
                         </div>
+                        <ul class="review-verdict-legend" data-review-verdict-legend aria-label="دلالات ألوان المراجعة"><li class="is-correct" data-review-legend="clear">مطابقة واضحة</li><li class="is-uncertain" data-review-legend="unsure">غير محسومة أو حركة محتملة</li><li class="is-error" data-review-legend="error">اختلاف محتمل</li></ul>
                         <div class="review-progress-meta"><span>تقدم النطاق</span><span data-review-percent>٠٪</span></div><div class="review-live-progress" role="progressbar" aria-label="تقدم مراجعة التلاوة" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-review-progress></span></div>
                     </div>
-                    <div class="recitation-review-controls"><button class="button button-primary" type="button" data-review-start disabled>ابدأ المراجعة</button><button class="button button-secondary" type="button" data-review-stop disabled>إنهاء المراجعة</button><label class="review-beep-option"><input type="checkbox" data-review-beep checked> تنبيه صوتي عند رصد خطأ محتمل</label><label class="review-vibrate-option"><input type="checkbox" data-review-vibrate checked> اهتزاز عند رصد خطأ محتمل</label></div>
+                    <div class="recitation-review-controls"><button class="button button-primary" type="button" data-review-start disabled>ابدأ المراجعة</button><button class="button button-secondary" type="button" data-review-stop disabled>إنهاء المراجعة</button><label class="review-beep-option"><input type="checkbox" data-review-beep checked> تنبيه صوتي عند رصد خطأ محتمل</label><label class="review-vibrate-option"><input type="checkbox" data-review-vibrate checked> اهتزاز عند رصد خطأ محتمل</label></div><p class="review-haptics-note" data-review-haptics-note hidden>Safari على iPhone لا يتيح اهتزاز صفحات الويب؛ سيظل التنبيه الصوتي والتوقف والعلامة الحمراء متاحين.</p>
                     <p class="recitation-review-status" data-review-status role="status" aria-live="polite" aria-atomic="true">حدد السورة ونطاق الآيات أولًا.</p>
-                    <p class="recitation-review-result" data-review-result role="status" aria-live="polite" hidden></p>
-                    <div class="recitation-review-actions" data-review-actions hidden><button class="button button-secondary" type="button" data-review-action="retry">أعد الآية</button><button class="button button-primary" type="button" data-review-action="continue">تابع</button><button class="button button-secondary" type="button" data-review-action="dismiss">تجاهل التنبيه</button></div>
+                    <aside class="review-alert" data-review-alert role="alert" aria-atomic="true" hidden>
+                        <div class="review-alert-heading"><span class="review-alert-symbol" aria-hidden="true">!</span><strong data-review-alert-title>تنبيه مراجعة</strong></div>
+                        <p class="recitation-review-result" data-review-result></p>
+                        <div class="recitation-review-actions" data-review-actions hidden><button class="button button-secondary" type="button" data-review-action="retry">أعد الآية</button><button class="button button-primary" type="button" data-review-action="continue">تابع</button><button class="button button-secondary" type="button" data-review-action="dismiss">تجاهل التنبيه</button></div>
+                    </aside>
+                    <audio data-review-alert-audio src="/assets/audio/review-alert.wav" preload="auto" hidden></audio>
                     <p class="recitation-review-credit">محرك المراجعة من <a href="https://github.com/yazinsai/tilawa" target="_blank" rel="noopener noreferrer">Tilawa</a>، والنموذج وبياناته مرخصة بترخيص <a href="https://github.com/yazinsai/tilawa/blob/main/licenses/NPL-1.2.txt" target="_blank" rel="noopener noreferrer">NPL-1.2 غير التجاري</a>. تظل الميزة مجانية ما دام هذا النموذج مستخدمًا؛ يلزم استبداله أو الحصول على ترخيص قبل أي استخدام تجاري. المراجعة استرشادية ولا تحكم على التجويد.</p>
                 </section>
             <?php endif; ?>
             <?php if ($tool === 'daily'): ?><div class="daily-verse-actions" data-daily-verse-actions></div><?php endif; ?>
-            <p class="quran-attribution" data-quran-attribution><?php if ($tool === 'listen'): ?>السور الكاملة عبر <a href="https://quranicaudio.com/" target="_blank" rel="noopener noreferrer">QuranicAudio</a>، والآيات المنفردة عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>.<?php else: ?>نص القرآن عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>.<?php endif; ?></p>
+            <?php if ($tool !== 'listen'): ?><p class="quran-attribution" data-quran-attribution>نص القرآن عبر <a href="https://alquran.cloud/" target="_blank" rel="noopener noreferrer">Al Quran Cloud</a>.</p><?php endif; ?>
             <?php if ($tool === 'listen'): ?>
                 <section class="quran-tool-section" aria-labelledby="audio-heading"><div class="section-heading"><div><span class="eyebrow">مكتبة القراء</span><h2 id="audio-heading">مشغل التلاوة</h2></div></div>
                     <div class="quran-audio" data-quran-audio hidden>
-                        <div class="audio-scope-choice" role="group" aria-label="اختر نطاق الاستماع"><span>ماذا تريد أن تستمع؟</span><label><input type="radio" name="audio-scope" value="current" data-audio-scope checked><span><strong>آية واحدة</strong><small>ابدأ من رقم الآية المحددة فقط</small></span></label><label><input type="radio" name="audio-scope" value="surah" data-audio-scope><span><strong>السورة كاملة</strong><small>تشغيل كامل السورة من بدايتها</small></span></label></div>
-                        <div class="quran-audio-settings"><label for="quran-reciter">القارئ<select id="quran-reciter" data-quran-reciter><option value="ar.alafasy">مشاري راشد العفاسي</option></select></label><label class="audio-repeat-control"><input type="checkbox" data-audio-repeat> تكرار التلاوة</label></div><p class="audio-provider-note" data-audio-provider-note>اختيار السورة الكاملة يفتح مكتبة QuranicAudio الأوسع؛ والآية المنفردة تستخدم قراء Al Quran Cloud.</p>
-                        <audio controls preload="none" aria-label="مشغل تلاوة القرآن"></audio><div class="quran-audio-actions"><button class="button button-secondary" type="button" data-audio-previous>الآية السابقة</button><button class="button button-secondary" type="button" data-audio-next>الآية التالية</button></div>
+                        <div class="quran-audio-settings"><label for="quran-reciter">القارئ والرواية<select id="quran-reciter" data-quran-reciter><option value="">جارٍ تحميل القراء…</option></select></label><label class="audio-repeat-control"><input type="checkbox" data-audio-repeat> تكرار التلاوة</label></div><p class="audio-provider-note" data-audio-provider-note>المكتبة الرسمية تضم القراء والروايات المتاحة، مع متابعة الآية صوتيًا عند توفر توقيت القراءة.</p>
+                        <div class="audio-now-playing" data-audio-now-playing aria-live="polite"><span class="eyebrow" data-audio-current-surah>جاهز للاستماع</span><p class="audio-current-verse" data-audio-current-verse>اختر السورة ونطاق الاستماع ثم جهّز التشغيل.</p><span class="audio-current-number" data-audio-current-number></span></div>
+                        <audio controls preload="none" aria-label="مشغل تلاوة القرآن"></audio>
                         <p class="audio-status" data-audio-status role="status" aria-live="polite">اختر السورة والقارئ، ثم اضغط تشغيل.</p><p class="audio-lock-note">عند دعم المتصفح، تظهر بيانات التلاوة وأزرار التحكم في شاشة القفل وسماعة الهاتف.</p>
                     </div>
                 </section>

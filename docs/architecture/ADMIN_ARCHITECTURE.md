@@ -1,0 +1,4 @@
+# Independent administration
+The dashboard is a web application with its own `/admin/login`, layout, navigation and authorization boundary. It shares PHP services/database with Android, not UI code or privileged credentials. Progressive server rendering is suitable for shared PHP hosting; JavaScript enhances tables, filters, confirmations and feedback without owning permissions.
+
+Use existing admin/owner role boundaries, cookie sessions with CSRF and step-up for sensitive operations. Public browsing navigation/footer do not surround admin content. Arabic/English resources select direction at render time. Content CRUD, users, moderation, campaigns, services and owner recovery remain discoverable sidebar sections. Night Prayer controls only manage educational/default/module settings and privacy-safe aggregate adoption; never list private session history.

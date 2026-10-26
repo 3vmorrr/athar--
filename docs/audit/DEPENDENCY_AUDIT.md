@@ -1,0 +1,6 @@
+# Dependency audit
+The baseline has no Composer application dependency or root Node build. Browser dependencies are pinned CDN packages: ONNX Runtime Web 1.24.2 and `@tilawa/core` 0.4.0. Remote providers include AlQuran Cloud, MP3Quran v3, Quranpedia, approved Dorar v1 and rn0x/Adhkar-json. These providers have separate terms, data quality and availability; API reachability alone does not grant redistribution rights.
+
+The approximately 74.7 MB local model/corpus/IO assets are NPL-1.2 derivatives; notices are under `public/assets/models/`. The upstream notice separately identifies alketab code as research-only, with unspecified licensing. Do not port that code. Android ONNX inference requires model graph/input/state validation and a lawful integration; no accuracy percentage has been measured.
+
+Android build choices will be pinned in a version catalog and validated with Gradle. Prefer stable compatible versions supported by the installed SDK; avoid experimental library upgrades merely to use a newer number. Licenses and published artifact availability must be recorded before release. No paid SDK is required. Training files are historical experiments, not Android production dependencies.

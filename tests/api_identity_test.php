@@ -1,0 +1,83 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__) . '/backend/bootstrap.php';
+use Athar\Infrastructure\Database;
+use Athar\Infrastructure\MigrationRunner;
+use Athar\Identity\AuthService;
+use Athar\Identity\OtpService;
+use Athar\Identity\RateLimiter;
+use Athar\Http\ApiKernel;
+use Athar\Http\ApiError;
+use Athar\Http\Request;
+
+$assertions=0;
+function expect(bool $condition,string $name):void {global $assertions;$assertions++;if(!$condition)throw new RuntimeException('FAIL: '.$name);}
+function denied(callable $call,int $status,string $name):void {try{$call();}catch(ApiError $e){expect($e->status===$status,$name);return;}expect(false,$name);}
+$schema='athar_test_'.bin2hex(random_bytes(6));
+if(!preg_match('/^athar_test_[a-z0-9_]+$/',(string)(getenv('ATHAR_DB_NAME')?:'')))throw new RuntimeException('Tests require a dedicated athar_test_* control database.');
+if(!preg_match('/^athar_test_[a-f0-9]{12}$/',$schema))throw new RuntimeException('Unsafe test database name.');
+$control=Database::connect();$liveUsers=(int)$control->query('SELECT COUNT(*) FROM users')->fetchColumn();
+$control->exec('CREATE DATABASE `'.$schema.'` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+try {
+    $db=Database::connect($schema);$migrations=MigrationRunner::apply($db,dirname(__DIR__).'/database/migrations');
+    expect(count($migrations)>=10,'all additive migrations applied to isolated schema');
+    expect(MigrationRunner::apply($db,dirname(__DIR__).'/database/migrations')===[],'ledger makes migration replay a no-op');
+    $key=random_bytes(32);$codes=[];$deliver=true;
+    $mailer=static function(string $email,string $subject,string $body)use(&$codes,&$deliver):bool {preg_match('/[0-9]{6}/',$body,$m);$codes[$email]=$m[0]??'';return $deliver;};
+    $otp=new OtpService($db,$key,$mailer);$auth=new AuthService($db,$otp);$rates=new RateLimiter($db,$key);$api=new ApiKernel($db,$auth,$rates);
+    $input=['email'=>'one@example.invalid','username'=>'test_one','display_name'=>'Test One','password'=>'SafePassword123!','password_confirmation'=>'SafePassword123!'];
+    $bad=$input;$bad['password_confirmation']='different';$response=$api->handle(new Request('POST','/api/v1/auth/register',$bad));
+    expect($response->status===422,'password confirmation enforced');
+    $registration=$api->handle(new Request('POST','/api/v1/auth/register',$input));expect($registration->status===202,'pending registration');$one=$registration->body['data'];$oneId=$one['user']['id'];
+    expect($one['session']['scope']==='verification'&&$one['delivery_status']==='accepted','no full session before OTP');
+    expect(strlen($codes[$input['email']])===6,'fake provider received OTP, no live message sent');
+    expect($api->handle(new Request('GET','/api/v1/quran/metadata',[],['Authorization'=>'Bearer '.$one['session']['access_token']]))->status===403,'verification scope cannot read main content');
+    expect($api->handle(new Request('GET','/api/v1/me'))->status===401,'missing token is JSON 401');
+    $hash=$db->query("SELECT token_hash FROM auth_tokens WHERE hash_scheme='hmac-sha256-v1' LIMIT 1")->fetchColumn();expect($hash!==hash('sha256',$codes[$input['email']]),'OTP keyed rather than brute-forceable bare hash');
+    for($i=0;$i<5;$i++)denied(fn()=>$auth->verify($oneId,'000000'),422,'wrong OTP rejected');
+    $attempts=$db->query('SELECT failed_attempts FROM auth_tokens ORDER BY id DESC LIMIT 1')->fetchColumn();expect((int)$attempts===5,'failed attempts persist transactionally (observed '.(int)$attempts.')');
+    denied(fn()=>$auth->verify($oneId,$codes[$input['email']]),422,'correct code rejected after exhaustion');
+    $auth->resend($oneId);$verified=$auth->verify($oneId,$codes[$input['email']]);$token=$verified['session']['access_token'];expect($verified['user']['email_verified']===true,'OTP activates account');
+    denied(fn()=>$auth->authenticate($one['session']['access_token'],false),401,'verification credential revoked after activation');
+    $metadata=$api->handle(new Request('GET','/api/v1/quran/metadata',[],['Authorization'=>'Bearer '.$token]));expect($metadata->status===200&&count($metadata->body['data']['surahs'])===114,'verified API metadata');
+    expect(!isset($verified['user']['password_hash'])&&!isset($verified['user']['session_version']),'profile omits secrets and internal revocation state');
+    $stored=$db->query("SELECT access_hash FROM api_sessions WHERE id='".$verified['session']['id']."'")->fetchColumn();expect($stored!==$token&&$stored===hash('sha256',$token),'bearer stored only hashed');
+    $rotated=$auth->refresh($verified['session']['refresh_token']);$auth->authenticate($rotated['session']['access_token']);expect(true,'rotation produces a usable new token');
+    denied(fn()=>$auth->refresh($verified['session']['refresh_token']),401,'refresh replay rejected');
+    denied(fn()=>$auth->authenticate($rotated['session']['access_token']),401,'refresh replay revokes entire family');
+    $login=$auth->login($input['email'],$input['password']);$actor=$auth->authenticate($login['session']['access_token']);$auth->logout($actor);denied(fn()=>$auth->authenticate($login['session']['access_token']),401,'logout revokes session');
+    $other=$input;$other['email']='two@example.invalid';$other['username']='test_two';$deliver=false;$pending=$auth->register($other);expect($pending['delivery_status']==='unavailable'&&$pending['session']['scope']==='verification','SMTP unavailability stays pending and honest');
+    expect((int)$db->query("SELECT COUNT(*) FROM auth_tokens WHERE user_id=".(int)$pending['user']['id'])->fetchColumn()===0,'failed delivery leaves no undelivered active OTP');
+    $deliver=true;
+    $auth->requestReset($input['email']);$before=$auth->login($input['email'],$input['password']);$auth->reset($input['email'],$codes[$input['email']],'NewPassword123!','NewPassword123!');
+    denied(fn()=>$auth->authenticate($before['session']['access_token']),401,'password reset revokes access');
+    denied(fn()=>$auth->login($input['email'],$input['password']),401,'old password rejected');
+    expect($auth->login($input['email'],'NewPassword123!')['session']['scope']==='full','new password works');
+    $now=100000;expect($rates->consume('proof','same-account',2,60,$now),'first shared rate hit');$freshRates=new RateLimiter($db,$key);expect($freshRates->consume('proof','same-account',2,60,$now),'second shared rate hit');expect(!$freshRates->consume('proof','same-account',2,60,$now),'new PHP object cannot bypass rate bucket');
+    $localized=$api->handle(new Request('GET','/api/v1/me',[],['Accept-Language'=>'en']));expect($localized->body['error']['message']==='Sign in again to continue.','stable English error resource');
+    $db->prepare('UPDATE users SET suspended_at=UTC_TIMESTAMP() WHERE id=?')->execute([$oneId]);denied(fn()=>$auth->login($input['email'],'NewPassword123!'),401,'suspended account denied');
+    $cookie=$input;$cookie['email']='cookie@example.invalid';$cookie['username']='cookie_reader';$deliver=true;
+    $cookieReply=$auth->register($cookie);$before=(int)$db->query('SELECT COUNT(*) FROM api_sessions')->fetchColumn();
+    $cookieConfirmed=$auth->verify((int)$cookieReply['user']['id'],$codes[$cookie['email']],false);
+    expect($cookieConfirmed['session']===null&&$cookieConfirmed['user']['email_verified'],'cookie confirmation shares HMAC validation without bearer issuance');
+    expect((int)$db->query('SELECT COUNT(*) FROM api_sessions')->fetchColumn()===$before,'cookie confirmation creates no unused mobile session');
+    $otp->issue((int)$cookieReply['user']['id'],'password_reset');$resetCode=$codes[$cookie['email']];$deliver=false;$otp->issue((int)$cookieReply['user']['id'],'password_reset');
+    $auth->reset($cookie['email'],$resetCode,'CookieReset123!','CookieReset123!');
+    expect($auth->login($cookie['email'],'CookieReset123!')['user']['email_verified'],'failed replacement delivery preserves the prior reset code across adapters');
+    $beforeSessions=(int)$db->query('SELECT COUNT(*) FROM api_sessions')->fetchColumn();
+    $cookieLogin=$auth->login($cookie['email'],'CookieReset123!',false);
+    expect($cookieLogin['session']===null&&(int)$db->query('SELECT COUNT(*) FROM api_sessions')->fetchColumn()===$beforeSessions,'cookie login verifies credentials without unused bearer issuance');
+    $import=$input;$import['email']='import@example.invalid';$import['username']='import_reader';$beforeMail=count($codes);
+    $db->beginTransaction();$importId=$auth->createAccount($import,true);
+    $db->prepare('INSERT INTO quran_bookmarks (user_id,surah,ayah) VALUES (?,114,6)')->execute([$importId]);
+    expect((int)$db->query('SELECT email_marketing_opt_in FROM users WHERE id='.(int)$importId)->fetchColumn()===1,'explicit cookie marketing consent is preserved');
+    $db->rollBack();
+    expect((int)$db->query('SELECT COUNT(*) FROM users WHERE id='.(int)$importId)->fetchColumn()===0&&(int)$db->query('SELECT COUNT(*) FROM quran_bookmarks WHERE user_id='.(int)$importId)->fetchColumn()===0,'caller-owned account and guest import roll back together');
+    expect(count($codes)===$beforeMail&&(int)$db->query('SELECT COUNT(*) FROM api_sessions')->fetchColumn()===$beforeSessions,'account creation alone sends no mail or bearer credentials before import commit');
+    expect((int)$control->query('SELECT COUNT(*) FROM users')->fetchColumn()===$liveUsers,'configured control database unchanged');
+    echo 'PASS: '.$assertions." isolated identity/API/migration/rate/security assertions; no email sent.\n";
+} finally {
+    $db=null;
+    if(!preg_match('/^athar_test_[a-f0-9]{12}$/',$schema))throw new RuntimeException('Refusing unsafe cleanup.');
+    $control->exec('DROP DATABASE `'.$schema.'`');
+}

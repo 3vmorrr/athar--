@@ -1,0 +1,173 @@
+<resources>
+    <string name="app_name">Athar</string><string name="brand_description">Athar logo</string><string name="tagline">A quiet place for Quran, knowledge, and worship</string>
+    <string name="continue_action">Continue</string><string name="skip">Skip</string><string name="start">Begin your journey</string>
+    <string name="onboard_quran_title">The Quran, wherever you are</string><string name="onboard_quran_body">Read comfortably, listen to your preferred reciter, and save your place.</string><string name="onboard_knowledge_title">Knowledge within reach</string><string name="onboard_knowledge_body">Explore scholars, ordered lessons, books, and source-attributed search.</string><string name="onboard_worship_title">Make room for reflection</string><string name="onboard_worship_body">Keep your adhkar counter and plan your recitation and night prayer.</string><string name="onboard_private_title">Your journey is private</string><string name="onboard_private_body">A verified account keeps your progress and private insights without competition or judgment.</string><string name="step_of">%1$d of %2$d</string>
+    <string name="welcome_back">Welcome back</string><string name="create_account">Create an account</string><string name="login">Sign in</string><string name="logout">Sign out</string><string name="auth_description">Sign in to continue your journey with Athar.</string><string name="display_name">Display name</string><string name="username">Username</string><string name="email">Email address</string><string name="password">Password</string><string name="confirm_password">Confirm password</string><string name="current_password">Current password</string><string name="new_password">New password</string><string name="show_password">Show password</string><string name="hide_password">Hide password</string><string name="username_hint">3–24 lowercase English letters, digits, or underscores.</string><string name="password_hint">At least 10 characters.</string>
+    <string name="forgot_password">Forgot your password?</string><string name="recover_password">Recover your password</string><string name="send_reset">Send recovery code</string><string name="enter_reset_code">Enter recovery code</string><string name="reset_password">Reset password</string><string name="verify_title">Verify your email to continue</string><string name="verify_body">Enter the six-digit code for %1$s</string><string name="verification_code">Verification code</string><string name="verify_action">Verify email</string><string name="resend_code">Request a new code</string><string name="mail_accepted">The email provider accepted the code message. It may take a little while to arrive; check your spam folder too.</string><string name="mail_unavailable">The code could not be sent. Your account is still pending; request a new code later.</string><string name="reset_sent">If this address is registered, a recovery code will be sent.</string><string name="password_updated">Your password was updated. You can sign in now.</string>
+    <string name="password_mismatch">The passwords do not match.</string><string name="invalid_input">Check the required fields.</string><string name="network_error">Connection failed. Check your network and try again.</string><string name="loading">Loading…</string><string name="retry">Try again</string><string name="offline_notice">Showing data saved on this device. It will update when connected.</string><string name="empty_state">No items are available yet.</string><string name="save">Save</string><string name="saved">Saved</string><string name="cancel">Cancel</string><string name="delete_action">Delete</string><string name="back">Back</string><string name="close">Close</string><string name="search">Search</string><string name="search_hint">Enter a search term</string><string name="more">Show more</string>
+    <string name="home">Home</string><string name="quran">Quran</string><string name="knowledge">Knowledge</string><string name="adhkar">Adhkar</string><string name="account">My account</string><string name="night_prayer">Night Prayer</string><string name="books">Books</string><string name="scholars">Scholars</string><string name="series">Series</string><string name="lessons">Lessons</string><string name="dorar_search">Dorar search</string><string name="latest_lessons">Latest lessons</string><string name="view_all">View all</string><string name="hello_name">Welcome, %1$s</string><string name="home_invitation">Choose what to read, learn, or record in your journey today.</string>
+    <string name="read">Read</string><string name="listen">Listen</string><string name="tafsir">Tafsir</string><string name="recitation_review">Recitation review</string><string name="surah">Surah</string><string name="ayah">Ayah</string><string name="juz">Juz</string><string name="hizb">Hizb</string><string name="page">Page</string><string name="open_reader">Open in the Quran reader</string><string name="bookmark">Save bookmark</string><string name="bookmarks">My bookmarks</string><string name="resume_reading">Resume reading</string><string name="font_size">Quran font size</string><string name="quran_source">Text: Tanzil Project, version 1.1. Displayed verbatim from the source.</string><string name="source">Source</string><string name="reference">Reference</string>
+    <string name="choose_reciter">Choose reciter</string><string name="play">Play</string><string name="pause">Pause</string><string name="stop">Stop</string><string name="full_surah">Entire surah</string><string name="one_ayah">One ayah</string><string name="radio">Radio</string><string name="no_timing">Ayah tracking is unavailable for this recording. Audio playback remains available.</string><string name="unavailable_review">Local Android recitation review is unavailable until device and model compatibility are verified. Your microphone audio stays on your device.</string>
+    <string name="favorites">Favorites</string><string name="add_favorite">Add to favorites</string><string name="remove_favorite">Remove favorite</string><string name="download_book">Download book</string><string name="open_youtube">Open on YouTube</string><string name="comments">Comments</string><string name="comment_hint">Write a comment</string><string name="send_comment">Submit for review</string><string name="pending_comment">Pending review</string><string name="reset_counter">Reset counter</string><string name="next_dhikr">Next dhikr</string><string name="count_action">Count</string><string name="completed">Completed</string><string name="category">Category</string><string name="progress_count">%1$d of %2$d</string>
+    <string name="settings">Settings</string><string name="profile">Account details</string><string name="security">Security and privacy</string><string name="language">Language</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">Appearance</string><string name="light">Light</string><string name="dark">Dark</string><string name="system_theme">Use device setting</string><string name="khatmah">Khatmah plan</string><string name="target_date">Completion date</string><string name="completed_pages">Completed pages</string><string name="paused">Paused</string><string name="active">Active</string><string name="finished">Finished</string><string name="export_data">Export my data</string><string name="delete_account">Delete my account</string><string name="delete_account_body">Your account and private data will be deleted. Confirm your password to continue.</string><string name="change_password">Change password</string>
+<string name="sync">Sync</string>
+<string name="edit">Edit</string>
+<string name="use_server">Keep server version</string>
+<string name="night_intro">Plan your recitation and privately record what you read in night prayer.</string>
+<string name="night_totals">%1$d nights · %2$d verses</string>
+<string name="night_self_report">These are your personal records; they do not judge acceptance of worship or recitation quality.</string>
+<string name="night_measured_pace">Your measured pace: %1$.1f seconds per verse</string>
+<string name="night_add">Record a session</string>
+<string name="night_conflict">A session was edited on another device. Neither version was overwritten automatically. Review it before keeping the server version.</string>
+<string name="night_empty">Begin with one session. It is saved on this device and can be synced later.</string>
+<string name="night_session_count">%1$d verses</string>
+<string name="night_pending">Saved on device · awaiting sync</string>
+<string name="night_synced">Synced</string>
+<string name="night_source">Reference: Sunan Abu Dawud 1398, the narration about ten, one hundred and one thousand verses. Milestones are encouragement, not a judgment of worship.</string>
+<string name="night_delete_confirmation">Delete this session? Totals will update and the deletion will sync when connected.</string>
+<string name="night_date_explanation">Choose the date of the Maghrib that began this night, including when praying after midnight.</string>
+<string name="night_date">Night date YYYY-MM-DD</string>
+<string name="timezone">Time zone</string>
+<string name="night_manual_count">Verse count</string>
+<string name="night_range">Verse range</string>
+<string name="start_surah">Start surah</string>
+<string name="start_ayah">Start ayah</string>
+<string name="end_surah">End surah</string>
+<string name="end_ayah">End ayah</string>
+<string name="verse_count">Verses read</string>
+<string name="private_note">Private note</string>
+<string name="night_history">My sessions</string>
+<string name="night_tools">Prayer tools</string>
+<string name="verse_calculator">Verse calculator</string>
+<string name="target_count">Target verse count</string>
+<string name="calculate">Calculate</string>
+<string name="range_error">Check the surah, ayah and count. A range cannot pass the final verse or wrap to the beginning.</string>
+<string name="last_third">Last third of the night</string>
+<string name="latitude">Latitude</string>
+<string name="longitude">Longitude</string>
+<string name="prayer_calculation_notice">Enter your coordinates and calculation method. These are calculated times; consult your local mosque when they differ. Your location is not accessed without permission.</string>
+<string name="hanafi_asr">Hanafi Asr calculation</string>
+<string name="prayer_calculation_failed">A valid night could not be calculated for this location and date. Check the inputs or use reliable local times; no guessed time is displayed.</string>
+<string name="night_boundaries">Maghrib: %1$s\nLast third begins: %2$s\nNext Fajr: %3$s</string>
+<string name="local_exemptions">Local exempt periods</string>
+<string name="exemptions_notice">Optional and encrypted on this device only. They are never synced, shown to administrators, or counted as worship nights.</string>
+<string name="exemption_days">%1$d days saved on this device</string>
+<string name="start_date">Start date YYYY-MM-DD</string>
+<string name="end_date">End date YYYY-MM-DD</string>
+<string name="clear_local_exemptions">Clear local periods</string>
+<string name="follow_ayah">Follow the ayah with audio</string>
+<string name="audio_failed">Playback failed. Check the connection and selected recording; stop and try again.</string>
+<string name="quran_tools">All Quran tools</string>
+<string name="method_egyptian">Egyptian General Authority of Survey</string>
+<string name="method_mwl">Muslim World League</string>
+<string name="method_umm_al_qura">Umm al-Qura</string>
+<string name="method_karachi">University of Islamic Sciences, Karachi</string>
+<string name="method_dubai">Dubai</string>
+<string name="method_moonsighting">Moonsighting Committee</string>
+<string name="rule_middle">Middle of the night rule</string>
+<string name="rule_seventh">Seventh of the night rule</string>
+<string name="rule_angle">Twilight angle rule</string>
+<string name="export_explanation">Choose where to save your personal data copy. Unsynced device sessions are included; local exempt periods are excluded.</string>
+<string name="daily_pages">Current daily reading target: %1$s pages</string>
+<string name="counter_conflict">This counter was changed on another device. Review the server version before continuing.</string>
+<string name="show_ayah">Show ayah</string>
+<string name="choose_tafsir">Choose a tafsir book</string>
+<string name="tafsir_reference">Volume %1$s · page %2$s</string>
+<string name="quranpedia_source">Source: Quranpedia</string>
+<string name="syncing">Saving</string>
+<string name="remove_bookmark">Remove bookmark</string>
+<string name="your_journey">Your space in Athar</string>
+<string name="reading_sessions">Reading sessions</string>
+<string name="completed_lessons">Lessons completed</string>
+<string name="completed_adhkar">Adhkar completed</string>
+<string name="adhkar_invitation">One dhikr at a time, with your counter saved.</string>
+    <string name="night_calendar">Calendar</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="calendar_private">Your private record, including edits saved on this device. Empty dates are not a judgment about your worship.</string>
+    <string name="calendar_no_entry">No entry for this date</string>
+    <string name="calendar_recorded">Entry recorded</string>
+    <string name="calendar_local_exemption">Private device exemption</string>
+    <string name="watch_show_less">Show less</string>
+    <string name="watch_lesson_number">Lesson %1$s</string>
+    <string name="watch_current">Current lesson</string>
+    <string name="watch_completed">Completed</string>
+    <string name="watch_in_progress">In progress</string>
+    <string name="watch_comments_count">Comments · %1$d</string>
+    <string name="watch_expand_comments">Expand comments</string>
+    <string name="watch_newest">Newest</string>
+    <string name="watch_oldest">Oldest</string>
+    <string name="watch_no_comments">No comments are available yet.</string>
+    <string name="watch_hide_replies">Hide replies (%1$d)</string>
+    <string name="watch_view_replies">View replies (%1$d)</string>
+    <string name="watch_reply_to">Replying to %1$s</string>
+    <string name="watch_add_comment">Add a comment…</string>
+    <string name="watch_moderation_notice">Your comment will appear after review.</string>
+    <string name="watch_reply">Reply</string>
+    <string name="watch_video_unavailable">This video cannot be played here.</string>
+    <string name="watch_player_error">Video playback is unavailable. Retry or open it on YouTube.</string>
+    <string name="watch_position">Lesson %1$s of %2$s</string>
+    <string name="watch_mark_complete">Mark completed</string>
+    <string name="watch_share">Share</string>
+    <string name="watch_local_progress">Your watch position is saved automatically so you can continue later.</string>
+    <string name="watch_all_lessons">All lessons</string>
+    <string name="watch_finished">The video has ended. Continue to the next lesson or mark this lesson completed.</string>
+    <string name="watch_next">Next lesson</string>
+    <string name="watch_series_progress">%1$d of %2$d lessons completed</string>
+    <string name="watch_continue">Continue watching</string>
+    <string name="watch_progress_error">The watch position could not be saved on this device. Try again.</string>
+    <string name="watch_ready">Press play to start the video</string>
+    <string name="watch_playing">Playing</string>
+    <string name="watch_paused">Paused</string>
+    <string name="watch_buffering">Buffering…</string>
+    <string name="watch_comment_sent">Your comment has been submitted for review.</string>
+    <string name="scholar_source">Biography source</string>
+    <string name="scholar_standalone">Standalone lessons</string>
+    <string name="scholar_lesson_count">%1$d lessons</string>
+    <string name="adhkar_item_position">Entry %1$d of %2$d</string>
+    <string name="adhkar_no_fixed_count">The source does not specify a repetition count for this entry.</string>
+    <string name="adhkar_section_end">You have reached the last entry in this section.</string>
+    <string name="set_reading_position">Resume from here</string>
+    <string name="reading_position_label">Reading position: %1$s · Verse %2$d</string>
+    <string name="reading_pending">Saved on this device; synchronization is still pending.</string>
+    <string name="reading_conflict">Your account has a different position. Choose the position to keep.</string>
+    <string name="reading_use_account">Use account position</string>
+    <string name="reading_keep_device">Keep device position</string>
+    <string name="auth_invalid_credentials">The email or password is incorrect.</string>
+    <string name="auth_invalid_code">The verification code is incorrect or expired. Request a new code.</string>
+    <string name="auth_rate_limited">Too many attempts. Wait a little and try again.</string>
+    <string name="auth_account_conflict">These account details cannot be used. Check the email and username.</string>
+    <string name="auth_verification_required">Verify your email to continue.</string>
+    <string name="auth_session_expired">Your session has expired. Sign in again.</string>
+    <string name="auth_forbidden">This account cannot perform this action.</string>
+    <string name="upcoming_lessons">Upcoming Lessons</string>
+    <string name="upcoming_refresh">Refresh schedule</string>
+    <string name="upcoming_empty">There are no upcoming lessons right now.</string>
+    <string name="upcoming_live">LIVE NOW</string>
+    <string name="upcoming_last_live">Last saved status: live</string>
+    <string name="upcoming_scheduled">Scheduled</string>
+    <string name="upcoming_published">Published</string>
+    <string name="upcoming_cancelled">Cancelled</string>
+    <string name="upcoming_draft">Draft</string>
+    <string name="upcoming_time_unset">Time not set</string>
+    <string name="upcoming_device_time">Device local time</string>
+    <string name="upcoming_cancelled_body">This event was cancelled. Check Upcoming Lessons for new dates.</string>
+    <string name="upcoming_details">Lesson details</string>
+    <string name="upcoming_awaiting">The scheduled time has arrived; waiting for the lesson to start.</string>
+    <plurals name="upcoming_minutes">
+        <item quantity="one">Starts in %1$d minute</item>
+        <item quantity="other">Starts in %1$d minutes</item>
+    </plurals>
+    <plurals name="upcoming_hours">
+        <item quantity="one">Starts in %1$d hour</item>
+        <item quantity="other">Starts in %1$d hours</item>
+    </plurals>
+    <plurals name="upcoming_days">
+        <item quantity="one">Starts in %1$d day</item>
+        <item quantity="other">Starts in %1$d days</item>
+    </plurals>
+    <plurals name="upcoming_duration">
+        <item quantity="one">Estimated duration: %1$d minute</item>
+        <item quantity="other">Estimated duration: %1$d minutes</item>
+    </plurals>
+</resources>

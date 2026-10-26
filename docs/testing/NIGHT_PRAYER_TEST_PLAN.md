@@ -1,0 +1,6 @@
+# Night Prayer verification plan
+Domain cases: global index 1/6236 and all intermediate round trips; first/last surah ayahs; inclusive cross-surah counts; 10/100/1000 target presets; invalid/inverted/overflow ranges. Counts/milestones test 0/9/10/99/100/999/1000. Analytics test multiple sessions, editing/moving/deleting historical records, current/longest/category streaks, active-night grace and local exemptions without inflating totals.
+
+Time tests use explicit zoned timestamps: before/after midnight, spring/autumn DST, timezone travel, missing prayer times, high-latitude unavailability, stale device clock and manual historical night. Last-third results derive elapsed instants rather than naive clock subtraction. Pace tests use genuine measured seconds/counts, pause/resume/recreation and zero/missing values.
+
+Persistence/sync tests: Room transaction/outbox, restart offline CRUD, retry with same UUID/mutation, 409 conflict, tombstone resurrection, two-account isolation and cursor pagination. Security tests reject anonymous/unverified/other-user/admin-private reads and inspect payloads for leaked exemptions/notes. Native tests cover Arabic/English, compact/tablet/landscape/font scale/TalkBack, optional permissions/reminders and lifecycle timer. Provider/device checks are distinguished from fakes; append results, never assume success.

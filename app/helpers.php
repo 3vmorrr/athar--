@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once dirname(__DIR__).'/backend/bootstrap.php';
+require_once __DIR__.'/identity.php';
 
 function e(string $value): string
 {
@@ -10,16 +12,7 @@ function db(): PDO
 {
     static $pdo = null;
     if ($pdo instanceof PDO) return $pdo;
-    $host = getenv('ATHAR_DB_HOST') ?: '127.0.0.1';
-    $port = getenv('ATHAR_DB_PORT') ?: '3306';
-    $name = getenv('ATHAR_DB_NAME') ?: 'athar';
-    $user = getenv('ATHAR_DB_USER') ?: 'root';
-    $password = getenv('ATHAR_DB_PASSWORD') ?: '';
-    $pdo = new PDO("mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4", $user, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ]);
+    $pdo = \Athar\Infrastructure\Database::connect();
     return $pdo;
 }
 
@@ -59,13 +52,26 @@ function require_login(): array
         header('Location: /login?next=' . rawurlencode($_SERVER['REQUEST_URI'] ?? '/account'), true, 303);
         exit;
     }
-    $statement = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,preferences_json FROM users WHERE id=? LIMIT 1');
+    $statement = db()->prepare('SELECT id,email,display_name,username,role,session_version,email_verified_at,email_marketing_opt_in,preferences_json,suspended_at FROM users WHERE id=? LIMIT 1');
     $statement->execute([(int) $sessionUser['id']]);
     $activeUser = $statement->fetch();
-    if (!$activeUser || (int) ($sessionUser['session_version'] ?? 0) !== (int) $activeUser['session_version']) {
+    if (!$activeUser || !empty($activeUser['suspended_at']) || (int) ($sessionUser['session_version'] ?? 0) !== (int) $activeUser['session_version']) {
         unset($_SESSION['user'], $_SESSION['authenticated_at'], $_SESSION['last_activity']);
         header('Location: /login', true, 303);
         exit;
+    }
+    if (empty($activeUser['email_verified_at']) && !in_array(($activeUser['role'] ?? 'user'), ['admin','owner'], true)) {
+        $requestPath = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/';
+        if ($requestPath !== '/account' && $requestPath !== '/logout') {
+            if (str_starts_with($requestPath, '/api/')) {
+                http_response_code(403);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['ok' => false, 'error' => 'أكد بريدك الإلكتروني أولًا.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            header('Location: /account#account-verification', true, 303);
+            exit;
+        }
     }
     $_SESSION['last_activity'] = $now;
     $_SESSION['user'] = $activeUser;
@@ -119,8 +125,8 @@ function is_https_url(string $url): bool
 
 function quran_ayah_count(int $surah): int
 {
-    static $counts = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6];
-    return $counts[$surah - 1] ?? 0;
+    require_once dirname(__DIR__) . '/backend/src/Domain/QuranIndex.php';
+    return \Athar\Domain\QuranIndex::standard()->ayahCount($surah);
 }
 
 function youtube_video_id(string $url): ?string
@@ -162,16 +168,26 @@ function validated_lesson_scope(int $scholarId, int $seriesId): array
     return [$scholarId, $seriesId];
 }
 
-function store_book_pdf(array $file, string $storage): array
+function store_scholar_image(array $file, string $storage): string
 {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || (int) ($file['size'] ?? 0) > 15 * 1024 * 1024 || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-        throw new RuntimeException('تعذر قبول الملف. الحد الأقصى 15 ميجابايت.');
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || (int) ($file['size'] ?? 0) > 3 * 1024 * 1024 || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('ارفع صورة صالحة لا يتجاوز حجمها 3 ميجابايت.');
     }
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    $signature = file_get_contents($file['tmp_name'], false, null, 0, 5);
-    if ($mime !== 'application/pdf' || $signature !== '%PDF-') throw new RuntimeException('الملف المرفوع ليس PDF صالحًا.');
-    if (!is_dir($storage) && !mkdir($storage, 0700, true) && !is_dir($storage)) throw new RuntimeException('تعذر إعداد التخزين الخاص.');
-    $key = bin2hex(random_bytes(20)) . '.pdf';
-    if (!move_uploaded_file($file['tmp_name'], $storage . DIRECTORY_SEPARATOR . $key)) throw new RuntimeException('تعذر حفظ الملف.');
-    return ['key' => $key, 'size' => (int) $file['size']];
+    $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    $dimensions = @getimagesize($file['tmp_name']);
+    if (!isset($extensions[$mime]) || !$dimensions || $dimensions[0] < 80 || $dimensions[1] < 80 || $dimensions[0] > 6000 || $dimensions[1] > 6000) {
+        throw new RuntimeException('صيغة الصورة غير مدعومة. استخدم JPG أو PNG أو WebP بأبعاد مناسبة.');
+    }
+    if (!is_dir($storage) && !mkdir($storage, 0700, true) && !is_dir($storage)) throw new RuntimeException('تعذر إعداد تخزين الصور.');
+    $key = bin2hex(random_bytes(20)) . '.' . $extensions[$mime];
+    if (!move_uploaded_file($file['tmp_name'], $storage . DIRECTORY_SEPARATOR . $key)) throw new RuntimeException('تعذر حفظ صورة العالم.');
+    return $key;
+}
+
+function delete_scholar_image(?string $key, string $storage): void
+{
+    if (!is_string($key) || !preg_match('/^[a-f0-9]{40}\.(?:jpg|png|webp)$/', $key)) return;
+    $path = $storage . DIRECTORY_SEPARATOR . $key;
+    if (is_file($path)) unlink($path);
 }

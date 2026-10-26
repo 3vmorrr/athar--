@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/backup-assets.php';
 
 function backup_directory(): string
 {
@@ -142,8 +143,8 @@ function build_backup_archive(int $ownerId): array
         $database = getenv('ATHAR_DB_NAME') ?: 'athar';
         $list = $pdo->prepare("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME");
         $list->execute([$database]); $tables = $list->fetchAll(PDO::FETCH_COLUMN);
-        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants','platform_settings'];
-        $counts = []; $checksums = []; $bookFiles = []; $excludedTables = [];
+        $excluded = ['auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
+        $counts = []; $checksums = []; $assetKeys = ['books'=>[],'scholars'=>[]]; $excludedTables = [];
         foreach ($tables as $table) {
             if (!is_string($table) || !preg_match('/^[a-zA-Z0-9_]+$/', $table)) continue;
             $quoted = '`' . $table . '`';
@@ -158,19 +159,14 @@ function build_backup_archive(int $ownerId): array
             $entry = 'database/' . $table . '.json';
             if (!$zip->addFromString($entry, $json)) throw new RuntimeException('تعذر إضافة بيانات جدول إلى النسخة.');
             $counts[$table] = count($rows); $checksums[$entry] = hash('sha256', $json);
-            if ($table === 'books') foreach ($rows as $book) if (!empty($book['file_key'])) $bookFiles[] = (string) $book['file_key'];
+            if (isset($assetKeys[$table])) $assetKeys[$table] = backup_asset_keys($table,$rows);
         }
-        $assetManifest = [];
-        foreach (array_unique($bookFiles) as $fileKey) {
-            if (!preg_match('/^[a-f0-9]{40}\.pdf$/', $fileKey)) throw new RuntimeException('مفتاح ملف كتاب غير صالح؛ أوقفنا إنشاء النسخة.');
-            $sourceFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $fileKey;
-            if (!is_file($sourceFile) || !$zip->addFile($sourceFile, 'assets/books/' . $fileKey)) throw new RuntimeException('تعذر تضمين أحد ملفات الكتب المسجلة.');
-            $assetManifest[] = ['key' => $fileKey, 'sha256' => hash_file('sha256', $sourceFile), 'bytes' => filesize($sourceFile)];
-        }
+        $assetManifest = backup_add_assets($zip,dirname(__DIR__).DIRECTORY_SEPARATOR.'storage','books',$assetKeys['books']);
+        $scholarManifest = backup_add_assets($zip,dirname(__DIR__).DIRECTORY_SEPARATOR.'storage','scholars',$assetKeys['scholars']);
         $migration = $pdo->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn();
         $manifest = [
             'format' => 'athar-full-backup-v1', 'created_at_utc' => gmdate('c'), 'schema_version' => (string) ($migration ?: 'unknown'),
-            'database_name' => $database, 'tables' => $counts, 'checksums_sha256' => $checksums, 'book_assets' => $assetManifest,
+            'database_name' => $database, 'tables' => $counts, 'checksums_sha256' => $checksums, 'book_assets' => $assetManifest, 'scholar_assets'=>$scholarManifest,
             'excluded_tables' => $excludedTables,
             'excluded' => ['database credentials and environment secrets', 'SMTP/Dorar settings and encrypted secrets', 'auth token rows', 'backup artifact and grant rows', 'logs and temporary files', 'external YouTube media'],
         ];
@@ -199,7 +195,7 @@ function build_backup_archive(int $ownerId): array
         return ['id' => $id, 'schema_version' => (string) $verifiedManifest['schema_version'], 'byte_size' => filesize($encryptedPath), 'expires_at' => date('Y-m-d H:i:s', time() + 86400)];
     } catch (Throwable $exception) {
         if (db()->inTransaction()) db()->rollBack();
-        if ($zip instanceof ZipArchive) @$zip->close();
+        if ($zip instanceof ZipArchive) { try { $zip->close(); } catch (ValueError $ignored) {} }
         if (is_file($plainPath)) unlink($plainPath);
         if (is_string($encryptedPath) && is_file($encryptedPath)) unlink($encryptedPath);
         throw $exception;
@@ -245,7 +241,7 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             $contents = $zip->getFromName($entry);
             if ($contents === false || !hash_equals($expected, hash('sha256', $contents))) throw new RuntimeException('فشل التحقق من أحد ملفات النسخة.');
         }
-        $excluded = ['auth_tokens','backup_artifacts','backup_download_grants','platform_settings'];
+        $excluded = ['auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
         $tables = $db->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=" . $db->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
         $restoreTables = [];
         foreach ($manifest['tables'] as $table => $count) {
@@ -255,13 +251,12 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             $restoreTables[$table] = $rows;
         }
         if (count($restoreTables) !== count($tables) - count(array_intersect($excluded, $tables))) throw new RuntimeException('النسخة لا تحتوي على كل جداول التطبيق الحالية.');
-        foreach (($manifest['book_assets'] ?? []) as $asset) {
-            $assetKey = (string) ($asset['key'] ?? '');
-            if (!preg_match('/^[a-f0-9]{40}\.pdf$/', $assetKey)) throw new RuntimeException('اسم ملف كتاب داخل النسخة غير صالح.');
-            $bytes = $zip->getFromName('assets/books/' . $assetKey);
-            if ($bytes === false || !hash_equals((string) $asset['sha256'], hash('sha256', $bytes)) || strlen($bytes) !== (int) $asset['bytes']) throw new RuntimeException('تعذر التحقق من ملف كتاب ضمن النسخة.');
-            $stage = $directory . DIRECTORY_SEPARATOR . 'restore-' . bin2hex(random_bytes(16)) . '.pdf';
-            if (file_put_contents($stage, $bytes, LOCK_EX) !== strlen($bytes)) throw new RuntimeException('تعذر تجهيز ملف كتاب للاستعادة.'); @chmod($stage, 0600); $staged[$assetKey] = $stage;
+        foreach (['books'=>'book_assets','scholars'=>'scholar_assets'] as $kind=>$manifestField) {
+            $expectedKeys=backup_asset_keys($kind,$restoreTables[$kind]??[]);
+            foreach(backup_read_assets($zip,$kind,$manifest[$manifestField]??[],$expectedKeys) as $assetKey=>$bytes){
+                $stage = $directory . DIRECTORY_SEPARATOR . 'restore-' . bin2hex(random_bytes(16)) . '.asset';
+                if (file_put_contents($stage, $bytes, LOCK_EX) !== strlen($bytes)) throw new RuntimeException('تعذر تجهيز ملف للاستعادة.'); @chmod($stage, 0600); $staged[$kind.'/'.$assetKey] = $stage;
+            }
         }
         $zip->close(); $zip = new ZipArchive();
         $oldOwner = $db->prepare("SELECT email,password_hash FROM users WHERE id=? AND role='owner'"); $oldOwner->execute([$ownerId]); $ownerCredentials = $oldOwner->fetch();
@@ -283,16 +278,19 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             $preserve->execute([$ownerCredentials['password_hash'], $ownerCredentials['email']]);
             if (!$preserve->rowCount()) $db->prepare("INSERT INTO users(email,password_hash,role,session_version) VALUES (?,?,'owner',2)")->execute([$ownerCredentials['email'], $ownerCredentials['password_hash']]);
             $db->exec('DELETE FROM auth_tokens'); $db->exec('DELETE FROM backup_download_grants');
+            foreach(['api_sessions','auth_rate_buckets'] as $securityTable)if(in_array($securityTable,$tables,true))$db->exec('DELETE FROM `'.$securityTable.'`');
             $db->commit();
         } catch (Throwable $failure) { if ($db->inTransaction()) $db->rollBack(); throw $failure; }
         finally { $db->exec('SET FOREIGN_KEY_CHECKS=1'); }
-        $assetsDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
-        if (!is_dir($assetsDir)) mkdir($assetsDir, 0700, true);
-        foreach (glob($assetsDir . DIRECTORY_SEPARATOR . '*.pdf') ?: [] as $oldFile) if (preg_match('/^[a-f0-9]{40}\.pdf$/', basename($oldFile))) @unlink($oldFile);
-        foreach ($staged as $assetKey => $stage) { if (!rename($stage, $assetsDir . DIRECTORY_SEPARATOR . $assetKey)) throw new RuntimeException('استعيدت البيانات لكن تعذر نقل ملف كتاب؛ أعد الاستعادة من النسخة.'); unset($staged[$assetKey]); }
+        foreach ($staged as $assetKey => $stage) {
+            [$kind,$key]=explode('/',$assetKey,2);
+            $assetsDir=dirname(__DIR__).DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.$kind;
+            if(!is_dir($assetsDir)&&!mkdir($assetsDir,0700,true))throw new RuntimeException('تعذر إعداد مجلد الاستعادة.');
+            if (!rename($stage, $assetsDir . DIRECTORY_SEPARATOR . $key)) throw new RuntimeException('استعيدت البيانات لكن تعذر نقل ملف؛ أعد الاستعادة من النسخة.'); unset($staged[$assetKey]);
+        }
         db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$ownerId, 'backup-restored', 'backup', (string) $backupId]);
         append_owner_audit(['action' => 'backup-restored', 'actor_id' => $ownerId, 'backup_id' => $backupId]);
     } finally {
-        if ($zip instanceof ZipArchive) @$zip->close(); if (is_file($plain)) @unlink($plain); foreach ($staged as $stage) if (is_file($stage)) @unlink($stage);
+        if ($zip instanceof ZipArchive) { try { $zip->close(); } catch (ValueError $ignored) {} } if (is_file($plain)) @unlink($plain); foreach ($staged as $stage) if (is_file($stage)) @unlink($stage);
     }
 }

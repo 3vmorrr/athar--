@@ -1,5 +1,8 @@
 (() => {
     const english = {
+        'تأكيد كلمة المرور': 'Confirm password',
+        'كلمتا المرور غير متطابقتين.': 'The passwords do not match.',
+        'راجع كلمة المرور وتأكيدها.': 'Check your password and confirmation.',
         'المصحف وأدوات القراءة': 'Quran reader and tools', 'اختر ما تريد فعله أولًا، وسنفتح لك مساحة مخصصة للقراءة أو الاستماع أو البحث.': 'Choose what you want to do first. We’ll open a dedicated space for reading, listening, or search.',
         'مراجعة التلاوة': 'Recitation review', 'استماع محلي': 'On-device listening', 'راجع موضعًا تختاره مع تنبيهات صوتية وبصرية للكلمات المحتمل الخطأ فيها.': 'Review a verse with visual and optional audio alerts for possible word errors.', 'ابدأ مراجعة التلاوة': 'Start recitation review',
         'مراجعة مجانية على جهازك': 'Free on-device review', 'راجع تلاوتك': 'Review your recitation', 'يُنَزَّل نموذج وبيانات قرآنية (نحو 75 ميجابايت) عند أول استخدام، ويحاول المتصفح حفظها محليًا. تعمل المراجعة داخل المتصفح ولا يُرفع صوتك إلى خادم. يحتاج التشغيل إلى اتصال أول مرة وميكروفون، وقد يستهلك ذاكرة الهاتف؛ اترك الصفحة مفتوحة أثناء القراءة.': 'A Quran model and its data (about 75 MB) download on first use; the browser tries to cache them locally. Review runs in your browser, and audio is not uploaded. An internet connection is needed for the first download, along with microphone access. It may use substantial phone memory; keep this page open while reciting.',
@@ -155,7 +158,9 @@
         'مساحات للمعرفة': 'Explore the library', 'اكتشف المزيد': 'Discover more', 'كتب متاحة للقراءة': 'Books to read', 'تظهر هنا السلاسل المنشورة من العلماء.': 'Published scholar series appear here.',
         'تصفح كتب التفسير وعلوم القرآن المتاحة للجميع.': 'Browse public books on Quranic studies and tafsir.',
         'سياسة المحتوى والإحالات': 'Content and source policy', 'ملفي الشخصي والإحصاءات': 'Profile and activity', 'إنشاء حساب اختياري': 'Create an optional account',
-        'مساحتك الخاصة': 'Your personal space', 'علاماتك وتقدمك لا يراها غيرك.': 'Your bookmarks and progress are private.', 'نشاطك في أثر': 'Your activity on Athar',
+        'مساحتك الخاصة': 'Your personal space', 'علاماتك وتقدمك لا يراها غيرك.': 'Your bookmarks and progress are private.', 'علاماتك وتقدمك لا يراهما غيرك.': 'Your bookmarks and progress are private.', 'نشاطك في أثر': 'Your activity on Athar',
+        'أقسام الحساب': 'Account sections', 'النظرة العامة': 'Overview', 'القرآن والعلامات': 'Quran & bookmarks', 'الدروس والمفضلة': 'Lessons & favorites', 'التفضيلات': 'Preferences', 'الأمان والخصوصية': 'Security & privacy',
+        'ملخص إنجازاتك المحفوظة': 'A summary of your saved activity', 'حسابك اختياري؛ تصفح محتوى أثر متاح للجميع.': 'Your account is optional; Athar content is open to everyone.', 'خطة شخصية': 'Personal plan', 'معلوماتك': 'Your information', 'تعلمك ومتابعتك': 'Your learning activity', 'حماية بياناتك': 'Protect your data', 'تجربتك': 'Your experience', 'الاسم الظاهر': 'Display name',
         'جلسات القرآن': 'Quran sessions', 'دروس مكتملة': 'Lessons completed', 'أذكار مكتملة': 'Adhkar completed', 'كتب نُزّلت': 'Books downloaded', 'أيام نشطة': 'Active days',
         'نحتفظ بأعداد يومية إجمالية فقط، من دون سجلّ بأسماء الآيات أو الأذكار التي قرأتها.': 'We keep daily totals only, not a record of the verses or adhkar you read.',
         'البريد:': 'Email:', 'اسم المستخدم:': 'Username:', 'كلمة المرور الحالية': 'Current password', 'حفظ بيانات الحساب': 'Save account details',
@@ -175,6 +180,13 @@
         'تغيير كلمة المرور': 'Change password', 'سيؤدي حفظ كلمة مرور جديدة إلى إبطال الجلسات الأخرى على أجهزتك.': 'Saving a new password signs you out of your other devices.',
         'كلمة المرور الجديدة': 'New password', 'تفضيلات الحساب': 'Account preferences', 'المظهر': 'Appearance', 'فاتح': 'Light', 'داكن': 'Dark', 'حفظ التفضيلات': 'Save preferences',
         'إدارة المحتوى': 'Content management', 'لوحة أثر': 'Athar dashboard', 'تظهر المواد المنشورة للزوار. راجع حقوق النشر والمصدر قبل الإتاحة.': 'Published materials are visible to visitors. Check source and usage rights before publishing.',
+        'إدارة المنصة': 'Platform management', 'أقسام لوحة الإدارة': 'Admin sections', 'نظرة عامة وتحليلات': 'Overview & analytics', 'إضافة محتوى': 'Add content', 'المحتوى المحفوظ': 'Saved content', 'مراجعة التعليقات': 'Review comments', 'إعدادات الخدمات': 'Service settings', 'إدارة المستخدمين': 'Manage users', 'النسخ والاستعادة': 'Backups & restore', 'سجل العمليات': 'Activity log', 'اختر قسمًا لعرض أدواته وبياناته.': 'Choose a section to view its tools and data.', 'مؤشرات المنصة': 'Platform metrics', 'تعليقات تنتظر المراجعة': 'Comments awaiting review', 'نشاط الاستخدام المسجل': 'Recorded usage activity', 'مستخدمون نشطون خلال 30 يومًا': 'Active users in the last 30 days', 'إحصاءات مجمعة فقط؛ لا تعرض الآيات أو الأذكار التي قرأها المستخدم.': 'Aggregated statistics only; individual verses and adhkar are never shown.',
+        'الحسابات والخصوصية': 'Accounts & privacy', 'ابحث في الحسابات وافتح تفاصيل الاستخدام. يمكن للمدير تعديل أو حذف حساب مستخدم عادي؛ تغيير الصلاحيات وحسابات المديرين متاح لمالك المنصة فقط. لا تعرض هذه الشاشة كلمات المرور أو الرموز السرية.': 'Search accounts and review usage details. Admins can edit or delete regular user accounts. Role changes and admin accounts are restricted to the platform owner. Passwords and secret tokens are never shown here.',
+        'البحث بالبريد أو الاسم أو اسم المستخدم': 'Search by email, name, or username', 'اكتب جزءًا من الاسم أو البريد': 'Enter part of a name or email', 'تفاصيل الحساب والنشاط': 'Account and activity details', 'البريد مؤكد': 'Email verified', 'البريد غير مؤكد': 'Email not verified', 'آخر دخول': 'Last login', 'لا يوجد سجل بعد': 'No record yet', 'رقم الحساب': 'Account ID', 'آخر نشاط مسجل': 'Last recorded activity', 'جلسات القرآن': 'Quran sessions', 'إكمال الدروس': 'Completed lessons', 'إكمال الأذكار': 'Completed adhkar', 'تنزيلات الكتب': 'Book downloads', 'علامات القرآن': 'Quran bookmarks', 'المفضلة': 'Favorites', 'دروس محفوظ تقدمها': 'Saved lesson progress', 'خطة الختمة': 'Quran completion plan', 'لا توجد': 'None', 'آخر موضع قرآن محفوظ': 'Last saved Quran position', 'آخر تحديث للحساب': 'Last account update',
+        'تعديل الاسم واسم المستخدم': 'Edit name and username', 'اسم العرض': 'Display name', 'احفظ بيانات الحساب': 'Save account details', 'حفظ بيانات الحساب': 'Save account details', 'أعد إدخال كلمة مرورك': 'Re-enter your password', 'تغيير الصلاحية': 'Change role', 'أعد إدخال كلمة مرور المالك': 'Re-enter owner password', 'حفظ الصلاحية وإبطال الجلسات': 'Save role and revoke sessions', 'حذف الحساب': 'Delete account', 'اكتب البريد لتأكيد الحذف': 'Enter the email to confirm deletion', 'حذف الحساب نهائيًا': 'Permanently delete account',
+        'سجل العمليات': 'Activity log', 'الشفافية والأمان': 'Transparency & security', 'البحث في السجل': 'Search activity log', 'ابحث بالإجراء أو الهدف أو البريد': 'Search by action, target, or email', 'لا توجد نتائج تطابق البحث.': 'No matching activity found.', 'تسجيل دخول ناجح': 'Successful sign-in', 'إنشاء حساب': 'Account created', 'تسجيل خروج': 'Sign-out', 'تعديل بيانات مستخدم': 'User details updated', 'حذف مستخدم': 'User deleted', 'ترقية إلى مدير': 'Promoted to admin', 'تغيير إلى مستخدم': 'Changed to user', 'تفاصيل المدير ظاهرة، لكن تعديلها أو حذفها محصور بمالك المنصة.': 'Admin details are visible, but only the platform owner can edit or delete them.', 'حساب المالك محمي من التعديل والحذف عبر هذه الشاشة.': 'The owner account is protected from changes and deletion here.', 'لا يمكن للمدير تعديل حسابه من هذه الشاشة.': 'Admins cannot modify their own account here.', 'لا توجد حسابات تطابق بحثك.': 'No accounts match your search.',
+        'عرض': 'Showing', 'من أصل': 'of', 'حساب': 'accounts', 'مستخدم': 'User', 'مدير': 'Admin', 'مالك المنصة': 'Platform owner', 'UTC': 'UTC',
+        'إعدادات الخدمات': 'Service settings', 'بريد Gmail لرموز OTP': 'Gmail for OTP emails', 'إعداد الاتصال بـGmail ثابت داخل الموقع. أدخل بريد Gmail وApp Password فقط؛ لا تستخدم كلمة مرور الحساب العادية. App Password تتطلب تفعيل التحقق بخطوتين.': 'Gmail connection settings are built in. Enter only your Gmail address and App Password; do not use your regular account password. App Passwords require 2-Step Verification.', 'بريد Gmail': 'Gmail address', 'أدخل App Password': 'Enter App Password', 'حفظ بريد Gmail': 'Save Gmail settings', 'حفظ واختبار البريد': 'Save and test email', 'بحث الدرر السنية': 'Dorar search', 'هذا الإعداد خاص بواجهة البحث الحديثي ولا يغيّر بريد Gmail. يلزم رمز API بعد موافقة الدرر.': 'This setting is for hadith search and does not change Gmail. An API token is required after Dorar grants access.', 'رمز API المعتمد': 'Approved API token', 'حفظ إعدادات الدرر': 'Save Dorar settings', 'حالة الربط:': 'Connection status:',
         'خدمات المنصة': 'Platform services', 'البريد والبحث الحديثي': 'Email and hadith search', 'خادم SMTP': 'SMTP host', 'المنفذ': 'Port', 'التشفير': 'Encryption',
         'اسم المستخدم': 'Username', 'كلمة مرور SMTP': 'SMTP password', 'محفوظة؛ اتركها فارغة للإبقاء عليها': 'Saved; leave blank to keep it', 'أدخل كلمة المرور': 'Enter password',
         'حذف كلمة المرور المحفوظة': 'Remove saved password', 'بريد المرسل': 'Sender email', 'اسم المرسل': 'Sender name', 'رمز API المعتمد للدرر السنية': 'Approved Dorar API token',
@@ -243,14 +255,14 @@
     let language = 'ar';
     try { language = localStorage.getItem('athar-language') === 'en' ? 'en' : 'ar'; } catch (_) { /* Arabic remains the default. */ }
     const applyLanguage = () => {
-        const button = document.querySelector('[data-language-toggle]');
+        const buttons = document.querySelectorAll('[data-language-toggle]');
         document.documentElement.lang = language;
         document.documentElement.dir = language === 'en' ? 'ltr' : 'rtl';
-        if (button) {
+        buttons.forEach((button) => {
             button.textContent = language === 'en' ? 'عربي' : 'EN';
             button.setAttribute('aria-label', language === 'en' ? 'التبديل إلى العربية' : 'Switch to English');
             button.title = button.getAttribute('aria-label');
-        }
+        });
         if (language === 'en') translateTree(document.body);
         if (language === 'en') {
             const title = document.title.replace(/\s*\|\s*أثر$/, '');
@@ -259,11 +271,11 @@
         }
     };
     applyLanguage();
-    document.querySelector('[data-language-toggle]')?.addEventListener('click', () => {
+    document.querySelectorAll('[data-language-toggle]').forEach((button) => button.addEventListener('click', () => {
         language = language === 'en' ? 'ar' : 'en';
         try { localStorage.setItem('athar-language', language); } catch (_) { /* Language remains selected for this navigation. */ }
         window.location.reload();
-    });
+    }));
     if (language === 'en') new MutationObserver((records) => records.forEach((record) => {
         record.addedNodes.forEach((node) => { if (node.nodeType === Node.TEXT_NODE) { const value = node.nodeValue.trim(); const translated = translate(value); if (value && translated !== value) node.nodeValue = node.nodeValue.replace(value, translated); } else if (node.nodeType === Node.ELEMENT_NODE) translateTree(node); });
         if (record.type === 'characterData') { const value = record.target.nodeValue.trim(); const translated = translate(value); if (value && translated !== value) record.target.nodeValue = record.target.nodeValue.replace(value, translated); }

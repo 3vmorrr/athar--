@@ -1,0 +1,4 @@
+# Deployment guide
+Prepare supported PHP with PDO MySQL, mbstring, OpenSSL, fileinfo, JSON and ZIP; set the document root to `public/` only. Configure environment secrets, a least-privilege database account and writable private storage. Run migrations in order with the migration runner against the explicitly selected target. Preserve encrypted settings and backup keys outside Git. Deploy Android API only on an HTTPS host accessible without browser challenges.
+
+Verify health/JSON content type with a nonbrowser client, forbidden access to `app/backend/storage/config`, registration mail acceptance and recipient confirmation, provider calls, file-size limits, authorized admin login/CRUD, backup round-trip in staging and mobile TLS. Set native API base URL by build configuration and ship release network restrictions. No host or APK is declared production-ready until [release checklist](RELEASE_CHECKLIST.md) is satisfied.

@@ -1,0 +1,35 @@
+# Implementation plan
+
+## Formal checkpoint roadmap —2026-10-25
+
+The current source audit and24 remaining dependency-based work packages are recorded in [the formal checkpoint](../audit/CHECKPOINT_2026-10-25.md). These refine existing P4–P8 rather than restarting completed foundations. E01 has migration/API/native list/detail and focused hardware evidence; phase1 closes its remaining extended metadata/home/offline acceptance before the next work package. Stable milestones receive meaningful commits and normal pushes after verification and secret review. Independent Admin remains NOT STARTED; the legacy dashboard is not its acceptance substitute.
+
+Scope follows the approved master plus mandatory Night Prayer addendum. Existing website and local modifications are preserved. No silent paid services, destructive production migrations or feature removal.
+
+| Stage | Deliverables | Dependencies | Exit evidence |
+|---|---|---|---|
+| P0 Discovery | source/schema/feature/provider/license/brand/toolchain audit | repository | reproducible inventory, defects and blockers |
+| P1 Documentation | architecture, feature states, API/data/auth/offline/design/test/deployment contracts | P0 | linked specs and traceability |
+| P2 Backend foundation | canonical Quran index; bootstrap/router; scoped auth; rate/OTP services; additive migrations | P1 | isolated domain/API/auth tests |
+| P3 Android foundation | Gradle/native design/resources, splash/onboarding, verified auth, Keystore/Room/DataStore/navigation | P2 | unit/build/auth gate tests |
+| P4 Core modules | Quran/media/tafsir/search/review, adhkar, knowledge/books/content/comments/account/khatmah | P3 | feature integration and offline tests |
+| P5 Independent Admin | separate shell/login, full CRUD/users/moderation/campaign/services/recovery/localization | P2 | authorization/CSRF/CRUD/layout tests |
+| P6 Night Prayer and integration | calculators, explicit logging/timers/night context, history/streaks/calendar/pace/local exemptions/sync/admin settings/reminders | P3/P4/P5 | edge/DST/sync/privacy/device tests |
+| P7 Quality | performance/security/accessibility/reliability/regression fixes | implemented features | measured release evidence |
+| P8 Deployment | APK, signing/build scripts, supported free host verification, deployment package/docs | P7 | reproducible build + hosted mobile journey |
+
+Implementation tasks are tracked with evidence in [TASK_TRACKER](TASK_TRACKER.md). Blocking one external service does not prevent independent domain/backend/UI work; unavailable states must remain truthful. No stage is skipped to produce a superficial demo.
+
+## Current P4 execution order — watch requirement incorporated2026-10-25
+
+1. Complete native watch/series/discussion and provider-safe player integration with focused tests.
+2. Continue remaining P4 Quran/audio/adhkar/books/scholars/account/search/offline work without public legacy-web redesign. Scholar tab pagination and adhkar sequential counter now have Arabic/English device cases. Durable reading-position resume/conflicts/recreation now passes native storage and Arabic/English UI gates. Audio selection/configuration and actual whole-surah/timing/ayah-clip gates now pass, with physical/background/network acceptance still open. Arabic OTP input also passes native gates. Current account increment is stable-code localized feedback; continue catalog/account/export/khatmah/offline modules afterward. Keep physical fullscreen/back verification and release profiling open rather than treating an emulator playback pass as complete device acceptance.
+3. Execute independent P5 Admin, including shared discussion moderation, then complete P6/P7/P8 gates.
+
+Arabic/RTL/light is the fresh-install default regardless of host OS. English is explicit and persisted. Each substantial increment must build and have evidence before moving on. P4 is not complete merely because the watch screen is implemented.
+
+## Engagement and physical-device addenda —2026-10-25
+
+Physical execution is now a mandatory continuing gate: update/install the actual Debug application on the explicitly selected connected phone, use the established API/database via USB reverse, verify actual startup/network/localization and repeat at major milestones. Preserve existing data, the original damaged database and unrelated services. Test implemented modules immediately; missing future campaigns do not block current integration checks.
+
+Integrate engagement A upcoming/live UTC metadata and native UI into P4; B lesson local reminders/deep links plus D central channels/preferences/permission before E personal routines in P6; C explicit content follows; F push/device registration and G private inbox; H/I independent Admin campaigns/email queues and J policy with P5/P6; K physical/security/performance QA with P7. Keep campaigns opt-in and worship data outside Admin audiences. The stages extend dependencies instead of replacing completed work. No feature is complete from a notification screenshot alone.

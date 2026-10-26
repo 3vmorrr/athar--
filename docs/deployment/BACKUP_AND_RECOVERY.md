@@ -1,0 +1,4 @@
+# Backup and recovery
+Preserve owner-only authenticated encryption, manifest/checksum verification, short-lived one-use grants and maintenance locks. Baseline format backs up database/schema/legacy book files but omits scholar portraits; repair and version the managed-asset manifest before calling it complete. Include new API/session/privacy tables in the reviewed exclusion/inclusion policy; live access/refresh/OTP tokens and service secrets must not be restored as active credentials.
+
+Test recovery only on a disposable schema/storage root. Validate paths, archive members, bytes/checksums and matching schema before any mutation. Confirm backups include every referenced managed image/book; external source files are not mirrored. Production reset remains forbidden. Document that encrypted backups can contain private worship records and require owner-controlled retention; do not expose them through an admin browsing screen.

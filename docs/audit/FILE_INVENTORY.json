@@ -1,0 +1,2411 @@
+{
+  "base_commit": "c4446f4521a8f3b14be6707f481cc17efd456b89",
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 428,
+      "lines": 10,
+      "sha256": "3de0a8cbbf7c47c833c85c37b4021a00cc7017ab66daefb72669249689ee8062"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 323
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 462
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "bytes": 5114,
+      "lines": 99,
+      "sha256": "4bf8182f4a08bebc6c75300631b629159dc5ca9598aef73c852ea13e85b2f77e"
+    },
+    {
+      "path": "android/app/proguard-rules.pro",
+      "bytes": 493
+    },
+    {
+      "path": "android/app/schemas/org.athar.app.core.data.AppDatabase/1.json",
+      "bytes": 7640,
+      "lines": 246,
+      "sha256": "9bab8a1be810210bac4c052c489224377d9235f82c6205f5c7ab196b573ad153"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/AdhkarJourneyTest.kt",
+      "bytes": 4750,
+      "lines": 69,
+      "sha256": "8daa6f4a537e0b1a153ca429739f87119b785336c2e30baf54922a06ee4413d0"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/AtharTestRunner.kt",
+      "bytes": 1429,
+      "lines": 27,
+      "sha256": "7b6b40ab6eb9116cf632623bfd202490c0be1668a3123866a3aaac082a4ce23a"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/AudioPlaybackTest.kt",
+      "bytes": 4384,
+      "lines": 68,
+      "sha256": "954e7e53a4451fba1591ee2ff44c373d0d1038d674c07d04dc2133ba591c50c3"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/AudioSelectionJourneyTest.kt",
+      "bytes": 4500,
+      "lines": 72,
+      "sha256": "1720a7d9fe013a3c7c49542f6fbeecccf7b801d46a0aa4159458900c0e7b3b8c"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/AuthFeedbackJourneyTest.kt",
+      "bytes": 2537,
+      "lines": 39,
+      "sha256": "ad54b2cec0bbe656411cdd314da7293cfa8da16b7b7d3114bfabe8774ffcf3d2"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/CounterStorageTest.kt",
+      "bytes": 6089,
+      "lines": 94,
+      "sha256": "6ec5cc6436ae15e4ab207b70084bf36925a06d8e448f9bced75d89d266f30460"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/FreshInstallTest.kt",
+      "bytes": 1307,
+      "lines": 24,
+      "sha256": "652476ef6f0e29ec6184996f83e85d79a79c967aa9ccaf8c87c4ff689b6391af"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/LessonWatchTest.kt",
+      "bytes": 8053,
+      "lines": 84,
+      "sha256": "84f702075e6f3f65950736de1fb090a505d83c46231c6c79518206bc04e141b6"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt",
+      "bytes": 9754,
+      "lines": 147,
+      "sha256": "71a40697acf2b6e5a90037abe6df105ffc9716b55257eebbb617bd9c25aaf4a0"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/NativeUiJourneyTest.kt",
+      "bytes": 5584,
+      "lines": 81,
+      "sha256": "bc9eb164698655df3c7a2412601d89f4f68921687090e3137d29b19bcdd8e5b4"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/OfficialPlayerTest.kt",
+      "bytes": 6686,
+      "lines": 74,
+      "sha256": "bfffc6fb6d0d97d45512bcb4b13f64936af04535cdf693ac641a27562a205d95"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/OtpInputJourneyTest.kt",
+      "bytes": 2191,
+      "lines": 37,
+      "sha256": "ffef018787fc62ad668a4f6125d9124a082830b2c7a39b4fac0ec1d4c6037a31"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/PhysicalBackendSmokeTest.kt",
+      "bytes": 1839,
+      "lines": 34,
+      "sha256": "fc166b90e0bcf9a5115589e06c05e87ec75cd71ee9e4adbe0834dcfec771f13c"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/ReadingJourneyTest.kt",
+      "bytes": 4176,
+      "lines": 59,
+      "sha256": "e18c1cfaf156a9dfd5d1969d0568e3bcf687e08682ed8cd01b414d82500b2247"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/ReadingStorageTest.kt",
+      "bytes": 5435,
+      "lines": 105,
+      "sha256": "c75093060232fe171a5345f277ffa35f0c1b9d8a525e44d66debbdd179729fb4"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/athar/app/UpcomingJourneyTest.kt",
+      "bytes": 7231,
+      "lines": 94,
+      "sha256": "cb297b06acf8605b1128df09eac5d0a80b5ba8fa05997291314186ccf80032c3"
+    },
+    {
+      "path": "android/app/src/debug/res/xml/network_security_config.xml",
+      "bytes": 540,
+      "lines": 6,
+      "sha256": "7b5cfcb125fee3374b60825a9a795de6af4e88a8b448d5288814a73f167c1947"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "bytes": 1926,
+      "lines": 32,
+      "sha256": "deb83deff012a4264c3ea37eb828222eff2888daae0147454c95ce22a7a6bc09"
+    },
+    {
+      "path": "android/app/src/main/assets/licenses/ADHAN-MIT.txt",
+      "bytes": 1078
+    },
+    {
+      "path": "android/app/src/main/assets/licenses/AMIRI-QURAN-OFL.txt",
+      "bytes": 4485
+    },
+    {
+      "path": "android/app/src/main/assets/licenses/MATERIAL-SYMBOLS-APACHE-2.0.txt",
+      "bytes": 11324
+    },
+    {
+      "path": "android/app/src/main/assets/licenses/NOTO-SANS-ARABIC-OFL.txt",
+      "bytes": 4382
+    },
+    {
+      "path": "android/app/src/main/assets/quran/index.json",
+      "bytes": 73493,
+      "lines": 4311,
+      "sha256": "155735c519d8d08ae97aeee64fdcbddaca95143bcb06f8166caab03ee7e6ae19"
+    },
+    {
+      "path": "android/app/src/main/assets/quran/SOURCE.json",
+      "bytes": 598,
+      "lines": 12,
+      "sha256": "65e36fd9f1db04e99674e45c72f0618d6c60c9587c42984f31093eb127fcfce5"
+    },
+    {
+      "path": "android/app/src/main/assets/quran/tanzil-uthmani.xml",
+      "bytes": 1541387,
+      "lines": 6499,
+      "sha256": "8c5aeae20363a98f6963720d29fce040ca8b56a8e75f8b564c257fce7f6d0417"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+      "bytes": 9742,
+      "lines": 123,
+      "sha256": "31d06e3d5f3d4938307a3592f657c4cbe7e4d925e52ae35da7d4b64a01003c0c"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/AppViewModel.kt",
+      "bytes": 2938,
+      "lines": 44,
+      "sha256": "0afabbc07304a9361dc3daf35ca2901b5f2d13515da6a7ff3badc31a9df68487"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/AtharApplication.kt",
+      "bytes": 2022,
+      "lines": 34,
+      "sha256": "06a1ae516d7bbd88ae380ac1d68e5d90532dde855fe9aa9bc6d5cac41d445892"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/AuthFeedback.kt",
+      "bytes": 1064,
+      "lines": 23,
+      "sha256": "7b7fe94dc9f80c6156d6993137a22bfc140a8c147c7ae061ccd1a8e470f7fb47"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "bytes": 7106,
+      "lines": 84,
+      "sha256": "0821947e593220a2d5ef74737f6a24c50cd3e6a6e2433cb3bc04d9600d2a62ce"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/OnboardingIllustration.kt",
+      "bytes": 4888,
+      "lines": 59,
+      "sha256": "f50d9037dace11dbee88f6c2e2727ddcf9f9be791b3535e4557b18f765279e2a"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/OnboardingScreen.kt",
+      "bytes": 3833,
+      "lines": 51,
+      "sha256": "a53338d30cb022631609a5133994868bb8dc8043dce6b6810812da4926583514"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/OtpInput.kt",
+      "bytes": 579,
+      "lines": 17,
+      "sha256": "c0a172ebd025bb6d4069e9f57c151222f0e7c9cab07f488d03d17cd116589256"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
+      "bytes": 8329,
+      "lines": 121,
+      "sha256": "b98ece24ed317f94a6bd8ea57ce709ca3a5eb7946521a7b43cb840d9f9cf8a06"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/data/AppDatabase.kt",
+      "bytes": 4133,
+      "lines": 42,
+      "sha256": "ce6cbc6337903b2d7049c8aff7134f7ac1e777360322aa5e9c5b2905fff45339"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/data/ContentRepository.kt",
+      "bytes": 2277,
+      "lines": 41,
+      "sha256": "3c050fa909d2a03d7bb118d56b8e1cce0034893084e5803ef4f8f1a9240f5d27"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+      "bytes": 8093,
+      "lines": 120,
+      "sha256": "b53910be375794482cabc019f77a991b1246cd1e802c7ffeeef58b6e6df3f4ff"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/data/SettingsStore.kt",
+      "bytes": 1269,
+      "lines": 20,
+      "sha256": "bd3aaa166de1ca2314dc96169a2b9f6148bd108f1a8d1817e91dac5e8683c3a9"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/network/ApiTransport.kt",
+      "bytes": 3767,
+      "lines": 56,
+      "sha256": "8f8de364bccffc067fa44df1ba1642e612b3d059dd609c9a1281a48cb22e4b98"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/security/PrivateCipher.kt",
+      "bytes": 1623,
+      "lines": 32,
+      "sha256": "37826dafb571017167fd978824bca7ce428b6443fcce412cb10e12f2b1995b6b"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/security/TokenStore.kt",
+      "bytes": 2021,
+      "lines": 31,
+      "sha256": "797fae286d444eff8d9700b3044ed1c6d6c26453709908f57de97c415dd602c3"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+      "bytes": 6886,
+      "lines": 92,
+      "sha256": "c04cbc7f0d70618c651f792ad152b4a04885a110b2846e5e26f57b42cecc9905"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/AtharIcons.kt",
+      "bytes": 18944,
+      "lines": 162,
+      "sha256": "6543a6b8b40bc95981de49c458f1252c43a0e08a9742683dcdf788e9db9aa373"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/Components.kt",
+      "bytes": 4037,
+      "lines": 49,
+      "sha256": "bd62f151d5ccc2970036e3454b5a394cc827ee89a240904b2f3152c240a2801b"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/DataScreen.kt",
+      "bytes": 2771,
+      "lines": 54,
+      "sha256": "6cd1b9cdeba8242addd63ac6b81db869aab3f267eba4c4ab3b412c16f37dc2a7"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/DateField.kt",
+      "bytes": 1832,
+      "lines": 23,
+      "sha256": "823126e90aa62400e5236c0c0d0ea49e7ebb988f9fbbc13b29bb38bcd99dac5f"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt",
+      "bytes": 9777,
+      "lines": 101,
+      "sha256": "c71608234a23da0b1e49d3a10187f2be4192e3d4e323088305be19a9cad55778"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/LoadingSkeleton.kt",
+      "bytes": 1872,
+      "lines": 31,
+      "sha256": "723c0362f73d8cc0892a37967f29400e8694f64be07793a5479d9db293ba7f9a"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "bytes": 19916,
+      "lines": 217,
+      "sha256": "88fa76227dacf9f3c8d1db7247c7ec83ad4f2f67e4229ca2c2d6335096e5fc7b"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/MarkToggle.kt",
+      "bytes": 3070,
+      "lines": 48,
+      "sha256": "a7e4cfdd5a31f075ee7bbe4b09b81541fc2e9b337635b3d88dba4fdef3bd24db"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/Motion.kt",
+      "bytes": 1903,
+      "lines": 43,
+      "sha256": "c8985843c153cd47ba66cdeacb1a061312debf3d6a260d25f4c646e14e028477"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/core/ui/Theme.kt",
+      "bytes": 6515,
+      "lines": 70,
+      "sha256": "84d6ce09480296539a0fdb7f4ff289cadfaa0abaa3598a70ecf24420001ddd0a"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/CommentComposer.kt",
+      "bytes": 3986,
+      "lines": 72,
+      "sha256": "065df0ae16c80b6accc69d297a45dd0d2bf79280e1ad4e3ed106fc33b23ce91d"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/DiscussionPanel.kt",
+      "bytes": 5989,
+      "lines": 77,
+      "sha256": "eba9637dff000fc349415f7e8fb84b870883bed22a91d15c95e47926db2c03d4"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/DiscussionViewModel.kt",
+      "bytes": 6294,
+      "lines": 75,
+      "sha256": "90bfce18cee5834b0be400ccd9a0937942bb53bafdf9d2116f2ba838b3ae3dff"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/LearningComponents.kt",
+      "bytes": 3349,
+      "lines": 46,
+      "sha256": "30f9c0e8d1d92fdc93cec6a6fa9f93bb41b01e28f68ec93f81eb7100db7c7f3e"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/LessonRepository.kt",
+      "bytes": 4125,
+      "lines": 64,
+      "sha256": "659ace7dccb5f37e5f31db55a8d777264c73385ee85b46d67bf7c9c5abc189de"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/PlayerPolicy.kt",
+      "bytes": 610,
+      "lines": 12,
+      "sha256": "a4dc739ef29a06461c36d1d1719004f0569ff9f38ebb8027f72f76f921ad7107"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/ScholarScreen.kt",
+      "bytes": 4804,
+      "lines": 87,
+      "sha256": "235d6fd9e315428680d1839fba0892661f864f4835059a2e96ed91afa1e5a8c0"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/SeriesScreen.kt",
+      "bytes": 2836,
+      "lines": 43,
+      "sha256": "bc922ad6da932ebae65a4ab6ac097b0bb573b3d92f65e02dca726a0dbb55c60d"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/UpcomingLesson.kt",
+      "bytes": 2006,
+      "lines": 39,
+      "sha256": "5f26b56c5d713107419d33d932a6c4fc2ae780492662d6e4e4a6d43a65fda238"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+      "bytes": 7648,
+      "lines": 90,
+      "sha256": "f107b5d1d291eb49dad060064fc37c14ccd10ca567371a98997ec6efdad178ca"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/UpcomingViewModel.kt",
+      "bytes": 2334,
+      "lines": 37,
+      "sha256": "77b4fccdf13175a5527e1d646d80e0dd4610293a0e91ab68eb809559804de777"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/WatchScreen.kt",
+      "bytes": 14489,
+      "lines": 130,
+      "sha256": "c1be178db5af401745c091207e30e11a41a9da1d5ca182e9d8a98bb12773f3ab"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/WatchViewModel.kt",
+      "bytes": 4333,
+      "lines": 72,
+      "sha256": "a00c2edadb57b376ff78806a0c7563a68f70a09d2394db1b07c24c70f627d5d1"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/learning/YouTubePlayer.kt",
+      "bytes": 9732,
+      "lines": 128,
+      "sha256": "9971dfa1c359801ec033ec1a2604f7de26e4d029a4f79e39039ca7a6e164b14b"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/MainActivity.kt",
+      "bytes": 2208,
+      "lines": 46,
+      "sha256": "e0a3ec534c3050afe8150e8e0429379b1505635bc6b4aaf117d49c0d94223cb0"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+      "bytes": 9920,
+      "lines": 111,
+      "sha256": "6013c4f8923668b879793c3fa08d65d5038444e9f030c3e01006eb2701030840"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/media/AudioSelection.kt",
+      "bytes": 1195,
+      "lines": 27,
+      "sha256": "eabccf83709b9b0d4d2d22687d952397a42e943474120aebc74a16b6d5316371"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/media/AudioViewModel.kt",
+      "bytes": 6765,
+      "lines": 97,
+      "sha256": "4e892f2808781f2696d424cb8e7dffc7803d91e4b8997c2257405fb600d05182"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/media/PlaybackService.kt",
+      "bytes": 2913,
+      "lines": 47,
+      "sha256": "18c79b2b150c6611e8d8cda353408aa4db5686f08a11f3039370ddebdea4965a"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightCalendar.kt",
+      "bytes": 485,
+      "lines": 10,
+      "sha256": "77f2807c0d3ae0f25dfd1cf72d3d8e40cc3d364891dd798effdfb36cf046d5f6"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightCalendarScreen.kt",
+      "bytes": 7745,
+      "lines": 94,
+      "sha256": "fb69705ae0ce8b4992854e97be9682bd4c8042a58559f17ee8c0b61bebddffb4"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerRepository.kt",
+      "bytes": 7139,
+      "lines": 108,
+      "sha256": "efd7c83566ae580622f856060c52dd457678e5a6fd9892c76c0e4f88c497be3f"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+      "bytes": 12892,
+      "lines": 143,
+      "sha256": "06d831d0b1c874a5b656529e15eff2704d56b1d70241bc3eae6c2175dd018584"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
+      "bytes": 1929,
+      "lines": 30,
+      "sha256": "8ec78ee4cca0692373555b5796c8feb0d7147c237e1f5b2c16d7edd2c9d04ece"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
+      "bytes": 9583,
+      "lines": 97,
+      "sha256": "b8d0e55edc07511887192b553621337b8fc33a65068a3cb104013ac65c913499"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/nightprayer/PrayerCalculator.kt",
+      "bytes": 1271,
+      "lines": 20,
+      "sha256": "5fb885cccc3a38caf1bed5a11840f4cec73c573e84eed8b9f68040b112fee84e"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/quran/QuranIndex.kt",
+      "bytes": 3088,
+      "lines": 54,
+      "sha256": "02a338e029f7964fbf00ff539e8658f7192b304c57f593de1d4910cfbeb5b6b8"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/quran/QuranRepository.kt",
+      "bytes": 3211,
+      "lines": 50,
+      "sha256": "c5de91ffa6912571c29b8417beeb620c6a51dc6dc41008ab1ee864d183742923"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+      "bytes": 15889,
+      "lines": 185,
+      "sha256": "053508c0734d47e625c0cb5198570c004ef0b13b25597ce26761c0613683a31f"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/quran/ReadingRepository.kt",
+      "bytes": 5977,
+      "lines": 140,
+      "sha256": "b94f162f3e487c7bd506fb8c2e44f162c660f9dabbe21bdba3c2f969d3b813aa"
+    },
+    {
+      "path": "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+      "bytes": 6179,
+      "lines": 74,
+      "sha256": "7997dd3ee825b0019b36e5c9ef6b3b112317162162e1956369215ba45656c4dd"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/athar_logo.png",
+      "bytes": 188564
+    },
+    {
+      "path": "android/app/src/main/res/font/amiri_quran.ttf",
+      "bytes": 130184
+    },
+    {
+      "path": "android/app/src/main/res/font/noto_sans_arabic.ttf",
+      "bytes": 844676
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "bytes": 196,
+      "lines": 1,
+      "sha256": "3c6e441272a1c0f327198739e49e96729f4cee2ff383944e4324def3e76c3e68"
+    },
+    {
+      "path": "android/app/src/main/res/values/strings.xml",
+      "bytes": 24345,
+      "lines": 201,
+      "sha256": "ea51dce14f1d958378b5fe2beaffb50c8d0d708157d50e78ebd2f41767bed546"
+    },
+    {
+      "path": "android/app/src/main/res/values/themes.xml",
+      "bytes": 684,
+      "lines": 6,
+      "sha256": "32f7205dcc1fe44ed7491fe70192123ccc2c978e9f47fcbfda32ff33de0375f7"
+    },
+    {
+      "path": "android/app/src/main/res/values-en/strings.xml",
+      "bytes": 19263,
+      "lines": 173,
+      "sha256": "33365286bbafd075d040ba449ee43f553b7877555573a5876b221689715524cb"
+    },
+    {
+      "path": "android/app/src/main/res/xml/data_extraction_rules.xml",
+      "bytes": 219,
+      "lines": 2,
+      "sha256": "5b2376e760bfa846996a5b6f7fb1b237ead1020cd1f52d1887e4200a99dc8a9a"
+    },
+    {
+      "path": "android/app/src/main/res/xml/locales_config.xml",
+      "bytes": 186,
+      "lines": 2,
+      "sha256": "32f6f312e0123721c2200090a6def24efbaa9f986c6da79d54d1c13ae8545237"
+    },
+    {
+      "path": "android/app/src/main/res/xml/network_security_config.xml",
+      "bytes": 212,
+      "lines": 2,
+      "sha256": "30f0e4a81060a25105a2f36d8a3a255f4ee71955439a72868675e360ee66921b"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/AudioSelectionTest.kt",
+      "bytes": 1312,
+      "lines": 29,
+      "sha256": "9eb83e322bd6a6d719e4e60dd14b883a6f9c1e100f55099c33474b8d8f08e5b5"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/DomainTest.kt",
+      "bytes": 4668,
+      "lines": 80,
+      "sha256": "a77ef0ed3f15e2124d8786f92a8567848213127ca7c347fe2357a794068f1105"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/OtpInputTest.kt",
+      "bytes": 946,
+      "lines": 23,
+      "sha256": "d6217fd859bea5cb772aaf6124bb37860df8efeba75c8d1e572ae37d8bb02938"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/PlayerPolicyTest.kt",
+      "bytes": 1137,
+      "lines": 20,
+      "sha256": "ffee4a7b4a9fcd97db59044e7ea722bf49bb35ac6c2af52e3efcf0dc4fb90467"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/SessionRepositoryTest.kt",
+      "bytes": 4150,
+      "lines": 60,
+      "sha256": "e8db07d7443fa00ae0b9347fc583af1a644349614adbc86b588fec861d47dfab"
+    },
+    {
+      "path": "android/app/src/test/java/org/athar/app/UpcomingPolicyTest.kt",
+      "bytes": 1688,
+      "lines": 28,
+      "sha256": "24602a45e26ef7c84c86fb36de1fb7a99d48eb2b14e2732fdf0032320169ae10"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "bytes": 212,
+      "lines": 5,
+      "sha256": "e051aa69d1c03f2cf351e1d2ea5ed51c3e20e530cdee98e46349a151a9c2a092"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 45457
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 349
+    },
+    {
+      "path": "android/gradle.properties",
+      "bytes": 249
+    },
+    {
+      "path": "android/gradlew",
+      "bytes": 8618
+    },
+    {
+      "path": "android/gradlew.bat",
+      "bytes": 2896
+    },
+    {
+      "path": "android/README.md",
+      "bytes": 4311,
+      "lines": 45,
+      "sha256": "8cd0b0589eeedafbd97941a1359d3964cde24c109c653e6543d67029a31ad506"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "bytes": 267,
+      "lines": 4,
+      "sha256": "024eac28340b87cd3e44ae8b092e4a89d68cd492a9a85a537e1cfb103631cea5"
+    },
+    {
+      "path": "android/visual-sources/material-symbols/ArrowBack.svg",
+      "bytes": 171
+    },
+    {
+      "path": "android/visual-sources/material-symbols/ArrowForward.svg",
+      "bytes": 172
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Bookmark.svg",
+      "bytes": 241
+    },
+    {
+      "path": "android/visual-sources/material-symbols/BookmarkAdd.svg",
+      "bytes": 268
+    },
+    {
+      "path": "android/visual-sources/material-symbols/BookmarkFilled.svg",
+      "bytes": 191
+    },
+    {
+      "path": "android/visual-sources/material-symbols/CalendarMonth.svg",
+      "bytes": 913
+    },
+    {
+      "path": "android/visual-sources/material-symbols/ChatBubble.svg",
+      "bytes": 253
+    },
+    {
+      "path": "android/visual-sources/material-symbols/CheckCircle.svg",
+      "bytes": 444
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Close.svg",
+      "bytes": 203
+    },
+    {
+      "path": "android/visual-sources/material-symbols/ExpandMore.svg",
+      "bytes": 159
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Favorite.svg",
+      "bytes": 490
+    },
+    {
+      "path": "android/visual-sources/material-symbols/FavoriteFilled.svg",
+      "bytes": 299
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Fullscreen.svg",
+      "bytes": 234
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Home.svg",
+      "bytes": 225
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Lock.svg",
+      "bytes": 481
+    },
+    {
+      "path": "android/visual-sources/material-symbols/MenuBook.svg",
+      "bytes": 878
+    },
+    {
+      "path": "android/visual-sources/material-symbols/NightsStay.svg",
+      "bytes": 427
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Person.svg",
+      "bytes": 530
+    },
+    {
+      "path": "android/visual-sources/material-symbols/PlayArrow.svg",
+      "bytes": 171
+    },
+    {
+      "path": "android/visual-sources/material-symbols/School.svg",
+      "bytes": 289
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Search.svg",
+      "bytes": 358
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Share.svg",
+      "bytes": 777
+    },
+    {
+      "path": "android/visual-sources/material-symbols/SOURCES.json",
+      "bytes": 10618,
+      "lines": 277,
+      "sha256": "d29d502f170edb8fd072613cec7e931d77369caa6dcecddb4d76b26deae8ea94"
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Spa.svg",
+      "bytes": 613
+    },
+    {
+      "path": "android/visual-sources/material-symbols/Visibility.svg",
+      "bytes": 536
+    },
+    {
+      "path": "android/visual-sources/material-symbols/VisibilityOff.svg",
+      "bytes": 657
+    },
+    {
+      "path": "android/visual-sources/NOTO-SANS-ARABIC.json",
+      "bytes": 372,
+      "lines": 8,
+      "sha256": "5e1ca0812bb30fcda1dbcbb62856a0047f695c60606135ee73f489152787adea"
+    },
+    {
+      "path": "app/backup-assets.php",
+      "bytes": 2282,
+      "lines": 40,
+      "sha256": "4c48b3ab9512f990c07e5dcc572782f04affedec13dc2ceafb61a4c692f7c8eb"
+    },
+    {
+      "path": "app/backup.php",
+      "bytes": 21956,
+      "lines": 296,
+      "sha256": "c304c53ad081f3724d6fb08008f8c9bf4fa01f564f51cb91860c925614be4f6c"
+    },
+    {
+      "path": "app/helpers.php",
+      "bytes": 7903,
+      "lines": 193,
+      "sha256": "2934f98642c84c46c02cc0be6c5fe525c748650e2419355ab4eab907971a5beb"
+    },
+    {
+      "path": "app/identity.php",
+      "bytes": 1070,
+      "lines": 24,
+      "sha256": "e4c1b3032d94c090dae714bb1cc8346a26441f2df1a6a441f9eb6bdc888dcec3"
+    },
+    {
+      "path": "app/mailer.php",
+      "bytes": 12621,
+      "lines": 188,
+      "sha256": "d3c6bb1ca94dd9dc55bc18a130dec82392c98172f5dbcb0a3973afe7f923cef8"
+    },
+    {
+      "path": "app/Views/layout.php",
+      "bytes": 8731,
+      "lines": 83,
+      "sha256": "6b945da10e10296c65ba09cbdd97692298807e6ff249f9675427446610d06895"
+    },
+    {
+      "path": "app/Views/pages/about.php",
+      "bytes": 2445,
+      "lines": 14,
+      "sha256": "ba8f10138e44c571a16c3369698d4ec37c8d35f14a0eb0d702ba0a31b058bac1"
+    },
+    {
+      "path": "app/Views/pages/account.php",
+      "bytes": 18463,
+      "lines": 165,
+      "sha256": "a4fba4315beb01ac884f132d9ce0833205b3451ad8560bce9c0e0dbdf71b9b96"
+    },
+    {
+      "path": "app/Views/pages/adhkar.php",
+      "bytes": 2827,
+      "lines": 38,
+      "sha256": "5d5af86752fbdddc89f6c7166648c977fd811e549b6037e9aa32a8ea223994b4"
+    },
+    {
+      "path": "app/Views/pages/admin-row-actions.php",
+      "bytes": 6154,
+      "lines": 22,
+      "sha256": "52aa0ad49eb59ddbd4ce80da85eea1177f73161bff2b6075a2b38e214d8934ed"
+    },
+    {
+      "path": "app/Views/pages/admin.php",
+      "bytes": 38341,
+      "lines": 102,
+      "sha256": "f264ae046e533a288dd3608c330ce50e541a754bfbefe33269147970104388a6"
+    },
+    {
+      "path": "app/Views/pages/auth.php",
+      "bytes": 5296,
+      "lines": 21,
+      "sha256": "6f303b71f4f3b17fb5f08bbba6c151d3bb6906c1b360283e996ce9795532e5d6"
+    },
+    {
+      "path": "app/Views/pages/books.php",
+      "bytes": 4815,
+      "lines": 25,
+      "sha256": "ae3954da5a2fa3bd04c680b2a07e815f929f0666fac22d95b22d5a3d81a4d40a"
+    },
+    {
+      "path": "app/Views/pages/coming-soon.php",
+      "bytes": 704,
+      "lines": 8,
+      "sha256": "c9ed9243b3314e129a50eaba30d352e9d3e80a27846f8c7fb699e35b3d5499dd"
+    },
+    {
+      "path": "app/Views/pages/dorar.php",
+      "bytes": 2005,
+      "lines": 21,
+      "sha256": "a631b81881f18f416cea7844141f7f57ad0ff4f11940fb3c9ba84cbe7a210eb1"
+    },
+    {
+      "path": "app/Views/pages/hadith.php",
+      "bytes": 1554,
+      "lines": 19,
+      "sha256": "83ad2abaad8254edf98480c0528601ccada8fbbe2cca1c1e8dc499cca3d0cc44"
+    },
+    {
+      "path": "app/Views/pages/home.php",
+      "bytes": 9990,
+      "lines": 119,
+      "sha256": "8531112fd3b91aa781cbc383d6673db034c31f40e4fff29923c183ff4a497deb"
+    },
+    {
+      "path": "app/Views/pages/lessons.php",
+      "bytes": 8944,
+      "lines": 88,
+      "sha256": "1240df6ad5092cbfe27d48d5cca9beebeda30715efca040631243b29140cdb52"
+    },
+    {
+      "path": "app/Views/pages/not-found.php",
+      "bytes": 451,
+      "lines": 7,
+      "sha256": "4edc1364669a5e87706744612730b51908165959d62afcda6dc67f089f0761f8"
+    },
+    {
+      "path": "app/Views/pages/quran.php",
+      "bytes": 25389,
+      "lines": 129,
+      "sha256": "c7e6902b5575bf18a0cefbd9d326b064acfe34890f39d1732505cc1f6df62cda"
+    },
+    {
+      "path": "app/Views/pages/scholar.php",
+      "bytes": 2227,
+      "lines": 8,
+      "sha256": "0a530ee83658654b1b20349ed851a3f32bf02b5dab38c6034c24dc538babb0c1"
+    },
+    {
+      "path": "app/Views/pages/series.php",
+      "bytes": 4821,
+      "lines": 24,
+      "sha256": "8357de60e9eb1e1edb832cdad612d800ab7f676483e1edd5079315c9bcfbb8c3"
+    },
+    {
+      "path": "backend/api.php",
+      "bytes": 1451,
+      "lines": 21,
+      "sha256": "371f429889a3d03781cd678c072034ddd373614b4b36b22b32df94ff937a51cf"
+    },
+    {
+      "path": "backend/bootstrap.php",
+      "bytes": 1209,
+      "lines": 25,
+      "sha256": "deadb17d434581c32879705339aed022ebc2bfdaa4f3ed6d3cb8ca3247c2a4f0"
+    },
+    {
+      "path": "backend/resources/errors.php",
+      "bytes": 2348,
+      "lines": 10,
+      "sha256": "332a6b2292f7fc6e349c63134ce6176b035e56e4f78590b99224d75b7805aef2"
+    },
+    {
+      "path": "backend/src/Catalog/CatalogService.php",
+      "bytes": 6425,
+      "lines": 67,
+      "sha256": "673cfdf62f86ba4ace27f83acb620860e8f4185c9ce4a01f431d6170c44e308e"
+    },
+    {
+      "path": "backend/src/Domain/NightPrayer.php",
+      "bytes": 5247,
+      "lines": 101,
+      "sha256": "f2f2e07f4a043fe35f10a92c03e148b97cbf17af844b4ca4b188d633162cb13e"
+    },
+    {
+      "path": "backend/src/Domain/QuranIndex.php",
+      "bytes": 3514,
+      "lines": 77,
+      "sha256": "1840fc468e1fe43c302d034732aa62f66811b5ca21986892957e1960ad228c89"
+    },
+    {
+      "path": "backend/src/Domain/QuranText.php",
+      "bytes": 6062,
+      "lines": 65,
+      "sha256": "8bbef3df85dab15397b89e819272ee122588e79166ea87ddc749e652555fabf9"
+    },
+    {
+      "path": "backend/src/Http/ApiError.php",
+      "bytes": 342,
+      "lines": 10,
+      "sha256": "fad69f5e0c0b12bea20a2481975a7a02dbcf6a9483a5f4f0d9e116c7361b191b"
+    },
+    {
+      "path": "backend/src/Http/ApiKernel.php",
+      "bytes": 17226,
+      "lines": 185,
+      "sha256": "93eb4f6804a18e5b5e48eccc938b8b9c87bbbff984f85bf4e8bed1b9f7413610"
+    },
+    {
+      "path": "backend/src/Http/Request.php",
+      "bytes": 2408,
+      "lines": 45,
+      "sha256": "57ee63f3e2b98da515475de1ca77705d71f7a79621fc4f1022564726280f59d5"
+    },
+    {
+      "path": "backend/src/Http/Response.php",
+      "bytes": 590,
+      "lines": 15,
+      "sha256": "05a49c3d1e13fdb30518ea05b753d53b83698369de1fa9019d02c848902f6954"
+    },
+    {
+      "path": "backend/src/Identity/AuthService.php",
+      "bytes": 13800,
+      "lines": 182,
+      "sha256": "7f8b3d9159ded4eaad12ac83986010ce2f66a0f8aa131ae1f9581067cc36ea87"
+    },
+    {
+      "path": "backend/src/Identity/OtpService.php",
+      "bytes": 3457,
+      "lines": 45,
+      "sha256": "3e8cb4d8b9674906dd58474c8ff3450bab84934fafb96f523cc3204b148902c3"
+    },
+    {
+      "path": "backend/src/Identity/RateLimiter.php",
+      "bytes": 898,
+      "lines": 17,
+      "sha256": "c30ba1c78bf171a4b5a3baa9f9fde23a9b96dab35ed0e279b25962a7ad75221e"
+    },
+    {
+      "path": "backend/src/Infrastructure/Database.php",
+      "bytes": 813,
+      "lines": 15,
+      "sha256": "e9ed8e9d49dccf1e1cad155d0cec196484e48c8d7d471fb66c1d39e257a8b333"
+    },
+    {
+      "path": "backend/src/Infrastructure/MigrationRunner.php",
+      "bytes": 1495,
+      "lines": 30,
+      "sha256": "10a9c3ad3e968e664048977507144826b491ff5c10811cbd8147507cc898f5ea"
+    },
+    {
+      "path": "backend/src/Infrastructure/PublicProviderJson.php",
+      "bytes": 2681,
+      "lines": 42,
+      "sha256": "5416d94d76fcabbca598a756ae571c240521217c42084d093ce028749e2fb48c"
+    },
+    {
+      "path": "backend/src/Infrastructure/SecretKey.php",
+      "bytes": 1460,
+      "lines": 36,
+      "sha256": "1a44e3b06dde71c5cb92846c22844b015f270ea3fc44c598aa4bc0383b28c6c5"
+    },
+    {
+      "path": "backend/src/Learning/DiscussionService.php",
+      "bytes": 7376,
+      "lines": 69,
+      "sha256": "fc383f77215d543faeb4e6aaeb3932ea401cb0561bfe26d64ce691fb15ed4023"
+    },
+    {
+      "path": "backend/src/Learning/LessonService.php",
+      "bytes": 4281,
+      "lines": 35,
+      "sha256": "a564de1af79a84c4f87e6aaa200c94709dcb2298ac7fa894a0c8811d0e152030"
+    },
+    {
+      "path": "backend/src/Learning/UpcomingLessonService.php",
+      "bytes": 14793,
+      "lines": 181,
+      "sha256": "b8b9329db9576c02ef1df464038f24c774a35f2a8ac96879b61acb0b21dc228d"
+    },
+    {
+      "path": "backend/src/NightPrayer/NightPrayerService.php",
+      "bytes": 20032,
+      "lines": 156,
+      "sha256": "6ec9c81c3619186f2434c889354c3851964aebf57d80da7897e65c71ce29fcb2"
+    },
+    {
+      "path": "backend/src/Progress/ProgressService.php",
+      "bytes": 13752,
+      "lines": 117,
+      "sha256": "b638f097fe868c7c66dcd86f8b27c49231e183013a50697572c7b041066ff925"
+    },
+    {
+      "path": "backend/src/Providers/Mp3Quran.php",
+      "bytes": 6079,
+      "lines": 67,
+      "sha256": "02e0305ce79588e19adb8eabb4031aded922a4393dac2a8afd872801f0e37c07"
+    },
+    {
+      "path": "backend/src/Providers/Quranpedia.php",
+      "bytes": 3313,
+      "lines": 36,
+      "sha256": "e6519b6e9dc3977b3b92d74a54eea88f1ba1bce26c504935770db1858d6927ae"
+    },
+    {
+      "path": "bin/promote-admin.php",
+      "bytes": 1157,
+      "lines": 28,
+      "sha256": "bd17939365606404b241b11b1d122c71b81baa5cbd1e6fb294c3b6cde2ff6344"
+    },
+    {
+      "path": "bin/promote-owner.php",
+      "bytes": 1147,
+      "lines": 27,
+      "sha256": "1c5f1801732a37e82c97586fc992379a4ef4f4380b0c7be49ecb771a70bde0f0"
+    },
+    {
+      "path": "database/migrations/001_initial.sql",
+      "bytes": 5407,
+      "lines": 120,
+      "sha256": "95f7e86d4fbdd588c9159f6cc78a7c39f3a980c973fa0181e1632054b3cbce0e"
+    },
+    {
+      "path": "database/migrations/002_lesson_series.sql",
+      "bytes": 954,
+      "lines": 19,
+      "sha256": "40214465fdd57aad3d514c96b01a49481868cc7347eabc17c6fd440f557afc79"
+    },
+    {
+      "path": "database/migrations/003_favorites_and_video_progress.sql",
+      "bytes": 1357,
+      "lines": 27,
+      "sha256": "c39632642d449c3530f848a65db17080e8209b880a622673fc6a80674c22fc0b"
+    },
+    {
+      "path": "database/migrations/004_owner_backups_and_auth_tokens.sql",
+      "bytes": 2371,
+      "lines": 50,
+      "sha256": "c402fa4648d9c5839d601cca0079c78785f59e9c6933511cdeace4f2da23fe5b"
+    },
+    {
+      "path": "database/migrations/005_account_verification_and_preferences.sql",
+      "bytes": 257,
+      "lines": 7,
+      "sha256": "eddff36f0a8c4926b9ca209083ab6598f5db53efeed798eadcf7376cc6e13cac"
+    },
+    {
+      "path": "database/migrations/006_book_catalog_metadata.sql",
+      "bytes": 309,
+      "lines": 8,
+      "sha256": "a9b77af0329687bb2395ed9bd9af61fcc1171b37a097b12034ea44392b866e7a"
+    },
+    {
+      "path": "database/migrations/007_accounts_email_and_activity.sql",
+      "bytes": 2401,
+      "lines": 49,
+      "sha256": "2d32cbd7f1038770cc21d969cd1d1c70a124dea039f2a912186f7e6095c708c0"
+    },
+    {
+      "path": "database/migrations/008_email_campaigns.sql",
+      "bytes": 2126,
+      "lines": 42,
+      "sha256": "fb111438eb90562df14460356d79c8d0478df8f85b84a629270f919c2aca3057"
+    },
+    {
+      "path": "database/migrations/009_scholar_images.sql",
+      "bytes": 167,
+      "lines": 6,
+      "sha256": "664f24e4b84593b3461ed816b29715129bb27182ab3f119450fd026f59ca916b"
+    },
+    {
+      "path": "database/migrations/010_versioned_identity.sql",
+      "bytes": 1759,
+      "lines": 39,
+      "sha256": "97590b0adfeb0e12c0db20d7971a8648aa664a2a3cc70e948e31aec034cb6d88"
+    },
+    {
+      "path": "database/migrations/011_native_progress.sql",
+      "bytes": 1253,
+      "lines": 26,
+      "sha256": "e32fadcff8bffc77215adb453576e35f15cb30bd988d47e5568762e7b912c4e1"
+    },
+    {
+      "path": "database/migrations/012_night_prayer.sql",
+      "bytes": 2365,
+      "lines": 56,
+      "sha256": "e01750d494d368b137f034a51fe8b34460f23d130d0d1bdc394c2a53214198f3"
+    },
+    {
+      "path": "database/migrations/013_lesson_discussion.sql",
+      "bytes": 523,
+      "lines": 10,
+      "sha256": "1accc6e1a02c6d2b99fa88ffcdff9756d66c6687aa322d9d191cd3a349908d03"
+    },
+    {
+      "path": "database/migrations/014_lesson_events.sql",
+      "bytes": 2295,
+      "lines": 47,
+      "sha256": "f913d73df0d8124ea18c57792b1c1831841435760eee02742d98ddeeb61637a8"
+    },
+    {
+      "path": "docs/architecture/ADMIN_ARCHITECTURE.md",
+      "bytes": 869,
+      "lines": 4,
+      "sha256": "9b2b84ab95f065165de2daa3d5a99bbefbddce36d383bf3e210e1a8f331d29f1"
+    },
+    {
+      "path": "docs/architecture/ANDROID_ARCHITECTURE.md",
+      "bytes": 2326,
+      "lines": 12,
+      "sha256": "ea65373f177f5f1afd0d17a41f8c8b4e39c45ff15715a899acb4f79e8c802902"
+    },
+    {
+      "path": "docs/architecture/API_CONTRACT.md",
+      "bytes": 11442,
+      "lines": 89,
+      "sha256": "5b87b3d5d618ac98b408e0cec5242a24f92790b0af1061698161f578bb0a921d"
+    },
+    {
+      "path": "docs/architecture/AUTHENTICATION.md",
+      "bytes": 1211,
+      "lines": 6,
+      "sha256": "ee9286d625e50687ed4007ffc4ba2de30b6a9725e3280d428ec3919bb225ae74"
+    },
+    {
+      "path": "docs/architecture/BACKEND_ARCHITECTURE.md",
+      "bytes": 884,
+      "lines": 4,
+      "sha256": "b6ad4f15afd45127110a970777e843e55a74b37d99b23c59910afebad032d1e9"
+    },
+    {
+      "path": "docs/architecture/DATABASE_SCHEMA.md",
+      "bytes": 2709,
+      "lines": 17,
+      "sha256": "3b0f0d72c56929e1240a90c7bd90cff33bac48b1abb391318ab86b26f0fbf088"
+    },
+    {
+      "path": "docs/architecture/EXTENSIBILITY.md",
+      "bytes": 923,
+      "lines": 10,
+      "sha256": "48b1c176d26482be6299ed887313fbb5d5c677b774b22fbfe833ebf74ec85313"
+    },
+    {
+      "path": "docs/architecture/NIGHT_PRAYER_DATA_MODEL.md",
+      "bytes": 1272,
+      "lines": 6,
+      "sha256": "9e0b9453e70633603d181cff554d005dade0dc50aa8d13d0b20891e7132d78de"
+    },
+    {
+      "path": "docs/architecture/NIGHT_PRAYER_SYNC.md",
+      "bytes": 968,
+      "lines": 4,
+      "sha256": "89b283f85ade59587346962630f7b02ad57d5e565a2c0729e03740a5697b3b45"
+    },
+    {
+      "path": "docs/architecture/OFFLINE_AND_SYNC.md",
+      "bytes": 998,
+      "lines": 4,
+      "sha256": "57b2c8f9dd02bdafd67d3690d12b68d90b4d3f27d32e4ddbb6fd5591432e78d4"
+    },
+    {
+      "path": "docs/architecture/SYSTEM_ARCHITECTURE.md",
+      "bytes": 1174,
+      "lines": 6,
+      "sha256": "1599e6aaa2aa99e6893d8603d5ac4a9e9657266774f4bc1f90fd89eaa23caf27"
+    },
+    {
+      "path": "docs/audit/CHECKPOINT_2026-10-25.md",
+      "bytes": 18462,
+      "lines": 93,
+      "sha256": "4a49ccca8b6010766f03bb3b63711f11040518275756d774ad41d23fbdd1e37d"
+    },
+    {
+      "path": "docs/audit/DATABASE_AUDIT.md",
+      "bytes": 1471,
+      "lines": 17,
+      "sha256": "70f5539857b53896abe5a9ba9d9feb9111d62c62d17dc0bcc365e0d2ecaecbc9"
+    },
+    {
+      "path": "docs/audit/DEPENDENCY_AUDIT.md",
+      "bytes": 1211,
+      "lines": 6,
+      "sha256": "79ee6a5b82c5e7106df405253dca810b6fa59dda9682cc8bc840e6c034e6ca24"
+    },
+    {
+      "path": "docs/audit/FEATURE_INVENTORY.md",
+      "bytes": 5167,
+      "lines": 24,
+      "sha256": "83439cf808f3dc3e7bf7e2415acbf3a534aaa86506783c27316e3e6ce700d0b4"
+    },
+    {
+      "path": "docs/audit/LEGACY_BUGS.md",
+      "bytes": 1637,
+      "lines": 16,
+      "sha256": "9935ed29eb1ea7b2d4b1b9802207a77cf049ac8c946025b30c11b3323648883f"
+    },
+    {
+      "path": "docs/audit/MIGRATION_MATRIX.md",
+      "bytes": 2307,
+      "lines": 16,
+      "sha256": "5d504df9192406d36b411986f0892b800005a3a106c5419d9017f8a40c9ec2ee"
+    },
+    {
+      "path": "docs/audit/REPOSITORY_AUDIT.md",
+      "bytes": 3441,
+      "lines": 21,
+      "sha256": "b5673a94ff025f04c39395eb77ed9bac5450e17a5115421792dd76918668ee9d"
+    },
+    {
+      "path": "docs/audit/ROUTE_AND_API_AUDIT.md",
+      "bytes": 1407,
+      "lines": 6,
+      "sha256": "111285da30a885b688dfacfe5599a25460c53a2c8bb03be98c8096bdd0b7a05e"
+    },
+    {
+      "path": "docs/audit/RUNTIME_DATABASE_BLOCKER.md",
+      "bytes": 2390,
+      "lines": 17,
+      "sha256": "fe85f82512ca33d34e50204318b0396beeb71a6e9edf738dec50aa8cdd2c82ae"
+    },
+    {
+      "path": "docs/audit/SECURITY_AUDIT.md",
+      "bytes": 1747,
+      "lines": 8,
+      "sha256": "d739509382360788d898af2e74830c3c174046007d67c3ed8a315435447d01ce"
+    },
+    {
+      "path": "docs/audit/WORKTREE_BASELINE.md",
+      "bytes": 1207,
+      "lines": 38,
+      "sha256": "c6506d768c098305a24c789918d8e3c68eea656b70cff547c5d970f08a74ca3c"
+    },
+    {
+      "path": "docs/deployment/BACKUP_AND_RECOVERY.md",
+      "bytes": 939,
+      "lines": 4,
+      "sha256": "721b72b169a2162a3e2379562ed9c275c586dbe0a0a281c581162f10c13e8d8b"
+    },
+    {
+      "path": "docs/deployment/DEPLOYMENT_GUIDE.md",
+      "bytes": 934,
+      "lines": 4,
+      "sha256": "5545c1f63f48fd6710c62e9adb3d55c94e26856a59f920f4cd48fa076281daa5"
+    },
+    {
+      "path": "docs/deployment/ENVIRONMENT_VARIABLES.md",
+      "bytes": 956,
+      "lines": 4,
+      "sha256": "41d0e9ee7cbfcdf1e410467fcb06108ac9c19b5431bc7bc123e46aac0696b3b0"
+    },
+    {
+      "path": "docs/deployment/FREE_HOSTING_RESEARCH.md",
+      "bytes": 1691,
+      "lines": 10,
+      "sha256": "b904bed7f78e069cf89f10c583774d871081b50b089b7853601ec084ede00d85"
+    },
+    {
+      "path": "docs/deployment/LOCAL_RUNTIME.md",
+      "bytes": 3447,
+      "lines": 27,
+      "sha256": "cf1f73acb5840974a3e5954cb2f02dd6c703e01f36d41e539227ca776dc098a8"
+    },
+    {
+      "path": "docs/deployment/RELEASE_CHECKLIST.md",
+      "bytes": 1202,
+      "lines": 16,
+      "sha256": "e45204ad7b332da927d5db9463f1be88dd6412a0989adf386d653814c99ce715"
+    },
+    {
+      "path": "docs/design/ACCESSIBILITY.md",
+      "bytes": 722,
+      "lines": 4,
+      "sha256": "e18caaa85f724b6cf0d941d0a02989c828f933a5f202be89a9cdf9d4695c965f"
+    },
+    {
+      "path": "docs/design/ADMIN_SCREENS.md",
+      "bytes": 830,
+      "lines": 4,
+      "sha256": "43ff6aca2061b81c0b3e7e2eb93b3b85ece5b66a303cce404c784107de40ff2e"
+    },
+    {
+      "path": "docs/design/assets/athar-official.png",
+      "bytes": 188564
+    },
+    {
+      "path": "docs/design/BRAND_GUIDELINES.md",
+      "bytes": 762,
+      "lines": 4,
+      "sha256": "06256b7f8922d02e95a8820abe6bf111acda991110d56245afaf1a52917f3a80"
+    },
+    {
+      "path": "docs/design/DESIGN_RESEARCH.md",
+      "bytes": 1558,
+      "lines": 6,
+      "sha256": "01c0a09929fb25f9ebb674ddbe23cec3c72cb0a742108880808a5bfbca668c86"
+    },
+    {
+      "path": "docs/design/DESIGN_SYSTEM.md",
+      "bytes": 2316,
+      "lines": 12,
+      "sha256": "daef0d14145846b80396e36cd47c14eb729602cb5ae03a33833876e48b50b47c"
+    },
+    {
+      "path": "docs/design/MOBILE_SCREENS.md",
+      "bytes": 845,
+      "lines": 4,
+      "sha256": "88bed34395e90740835d530c10b2598cee56f8bb6890974ddf2cb83c35990cff"
+    },
+    {
+      "path": "docs/design/MOTION_GUIDELINES.md",
+      "bytes": 492,
+      "lines": 2,
+      "sha256": "50bc1d2ddaf55754167d275172b4bf1e54b4ba6b50f9eeb36efc55323fcde10f"
+    },
+    {
+      "path": "docs/design/MOTION_SYSTEM.md",
+      "bytes": 3400,
+      "lines": 38,
+      "sha256": "c6c2afa1d869393d3f09f969b159847ffd73a3f998e7d3adbc6d4947a7368f80"
+    },
+    {
+      "path": "docs/design/NIGHT_PRAYER_MOTION.md",
+      "bytes": 489,
+      "lines": 2,
+      "sha256": "fd7e91451b12278f170961c6f371af748ea1061b3282acb8926839e421ca8b44"
+    },
+    {
+      "path": "docs/design/NIGHT_PRAYER_UX.md",
+      "bytes": 860,
+      "lines": 4,
+      "sha256": "6a7c6af76189a32a91c4c5f3554823679c93f8ef342a36cc28db87f9b0d8de68"
+    },
+    {
+      "path": "docs/design/THIRD_PARTY_VISUAL_ASSETS.md",
+      "bytes": 2119,
+      "lines": 13,
+      "sha256": "fc45c778a503cddce94276586b05ff8842ed07cd99d860a099db477f32b8ea65"
+    },
+    {
+      "path": "docs/design/YOUTUBE_WATCH_RESEARCH.md",
+      "bytes": 6157,
+      "lines": 29,
+      "sha256": "46a4ae82c3313cec106bc95c93117621bc85a586062defe5e4bc9a77b543bf08"
+    },
+    {
+      "path": "docs/development/ANDROID_PHYSICAL_DEVICE.md",
+      "bytes": 3844,
+      "lines": 34,
+      "sha256": "2db93a128bb22c3fe05c04d3d602d20536b08e756a32bf58e35ca631f145ef78"
+    },
+    {
+      "path": "docs/development/LOCAL_DEVELOPMENT.md",
+      "bytes": 2537,
+      "lines": 28,
+      "sha256": "49d07205db2445645f2aaff1c41d0b604ad2374af2ab01d38af5dbc95579d6e4"
+    },
+    {
+      "path": "docs/engineering/AGENT_SKILLS.md",
+      "bytes": 1864,
+      "lines": 10,
+      "sha256": "4b5f177280cc49f036b14096060efd14ff97249416b0e4fbb49488184f931bf7"
+    },
+    {
+      "path": "docs/engineering/CODING_STANDARDS.md",
+      "bytes": 918,
+      "lines": 4,
+      "sha256": "a3f9e1a0dceac70396b16f0fa4f1d830cdba45429769a96d6b8930fa4b3c3a56"
+    },
+    {
+      "path": "docs/engineering/DEFINITION_OF_DONE.md",
+      "bytes": 804,
+      "lines": 4,
+      "sha256": "177ab5af9826a999358d52606b6a6ac58619afff7d0c73e1b2c5a3b5ebaccc69"
+    },
+    {
+      "path": "docs/engineering/PERFORMANCE.md",
+      "bytes": 919,
+      "lines": 4,
+      "sha256": "9b9e04bbb56b466bcd67c8223a3857c98b43a558fa0b99a0a70529b541e5cd5f"
+    },
+    {
+      "path": "docs/engineering/SECURITY.md",
+      "bytes": 1014,
+      "lines": 4,
+      "sha256": "f30592acf8ee2b894b24592df1cb3410c8eac0b199b006a22697e26795ee5a17"
+    },
+    {
+      "path": "docs/engineering/TEST_STRATEGY.md",
+      "bytes": 1323,
+      "lines": 6,
+      "sha256": "9895aeb94092f46253f9fbeee6baf7e933483f327340cb332d78393f0854a895"
+    },
+    {
+      "path": "docs/features/ACCOUNT.md",
+      "bytes": 3336,
+      "lines": 33,
+      "sha256": "cbde55eaa15b472a48e273aed772657c1b760756cd9f17f5eb32e88b023ba9e2"
+    },
+    {
+      "path": "docs/features/ADHKAR.md",
+      "bytes": 3858,
+      "lines": 35,
+      "sha256": "bbd4a26b061a19e700abc1db9703f6ed5dd9222fab278cce3fd8022706a89b96"
+    },
+    {
+      "path": "docs/features/ADMINISTRATION.md",
+      "bytes": 3251,
+      "lines": 33,
+      "sha256": "8fa5f158ca9381ad47ccaf66c8b62fe60dbe806a71e574797b8192a6c3bc2fa3"
+    },
+    {
+      "path": "docs/features/AUDIO_PLAYBACK.md",
+      "bytes": 3389,
+      "lines": 19,
+      "sha256": "061f363304a64737cafcfe1111a7151aafbc065eca4c0ea54e92f1edd0fc927a"
+    },
+    {
+      "path": "docs/features/AUTHENTICATION.md",
+      "bytes": 6070,
+      "lines": 47,
+      "sha256": "2cdd77459a14e8c7086908686a5e69b20c40bcd0d5e26ca05c5c1df407119512"
+    },
+    {
+      "path": "docs/features/BOOKS.md",
+      "bytes": 3285,
+      "lines": 33,
+      "sha256": "9bd1215eea8d3881cbeb6a9be741944c86075f44e1277db23313aec7a808e505"
+    },
+    {
+      "path": "docs/features/COMMENTS.md",
+      "bytes": 3123,
+      "lines": 33,
+      "sha256": "946310a8eb014e1cf473a041df821958c248a981bc1068d1ad0c5144a5548568"
+    },
+    {
+      "path": "docs/features/DORAR_SEARCH.md",
+      "bytes": 3228,
+      "lines": 33,
+      "sha256": "4add0a1ebb991860b8ca88884a9cde387f32e24af9b7b357d43a6ed6fa5078f8"
+    },
+    {
+      "path": "docs/features/ENGAGEMENT.md",
+      "bytes": 3221,
+      "lines": 15,
+      "sha256": "65fcfa1ba2b9e54607a086c0aa44320af2994c20bfdad522275954ed5ed7e6d1"
+    },
+    {
+      "path": "docs/features/KHATMAH.md",
+      "bytes": 3077,
+      "lines": 33,
+      "sha256": "12fbd3d0bde3922919f69dee872a0c525dd00a68fafb6149ad161416ec68e8a0"
+    },
+    {
+      "path": "docs/features/LAST_THIRD_CALCULATION.md",
+      "bytes": 3267,
+      "lines": 33,
+      "sha256": "31e190de358b9dfd7025cf8c6474d8fae91512cb4c15c58e5be5903fe3f36a6e"
+    },
+    {
+      "path": "docs/features/LESSON_WATCH.md",
+      "bytes": 3171,
+      "lines": 16,
+      "sha256": "83fce89e0623f9293edf0a73625976c4312e535df842f7dde2be13a1ec39c461"
+    },
+    {
+      "path": "docs/features/LESSONS.md",
+      "bytes": 3251,
+      "lines": 33,
+      "sha256": "87ec57a5ab96a79d293a373c155b4eb5e8e7705eacd15ce0567a4fdfc38d4bac"
+    },
+    {
+      "path": "docs/features/MEDIA_PROVIDER_IMPLEMENTATION.md",
+      "bytes": 1629,
+      "lines": 9,
+      "sha256": "fc06f868a4ecb813264c5bc7064e6446ef9e358c9c89c6ed64d71e2a346efc69"
+    },
+    {
+      "path": "docs/features/NIGHT_PRAYER.md",
+      "bytes": 4463,
+      "lines": 37,
+      "sha256": "54b5e8d2b723e0bf853af1c616fe57f8c2377d3b362f102f8b684d770372f118"
+    },
+    {
+      "path": "docs/features/NIGHT_PRAYER_ANALYTICS.md",
+      "bytes": 3255,
+      "lines": 33,
+      "sha256": "7a227648e9bc2a517c1c2fd8eceb18bf8293c263e3fa97f9d760815e9194de17"
+    },
+    {
+      "path": "docs/features/NIGHT_PRAYER_PRIVACY.md",
+      "bytes": 3314,
+      "lines": 33,
+      "sha256": "e6e4b48e603ac9c7ba78aac0aa90efc1512e9cebc839fd84e7709d8e95648ef2"
+    },
+    {
+      "path": "docs/features/QURAN.md",
+      "bytes": 4087,
+      "lines": 35,
+      "sha256": "c519b76c6bebf421f31713387d8f6f1516f07ce6fa89060ec6095644454bbf55"
+    },
+    {
+      "path": "docs/features/QURAN_READING_POSITION.md",
+      "bytes": 3137,
+      "lines": 17,
+      "sha256": "932fea6a720ab3ee35d3a2d95edb7dfd3a655ffdd5ff6d9b09b66a1687a4c673"
+    },
+    {
+      "path": "docs/features/READING_PACE.md",
+      "bytes": 3174,
+      "lines": 33,
+      "sha256": "ed6b2b33f5f5825679c08484c4e911e72817600966d583c3da59e23edef3ac3c"
+    },
+    {
+      "path": "docs/features/RECITATION_REVIEW.md",
+      "bytes": 3333,
+      "lines": 33,
+      "sha256": "6fe0cc3acf0b6dafeeae93c4843d5a0c45047b1a5e258143b895dbbff04c1e4f"
+    },
+    {
+      "path": "docs/features/SCHOLAR_PROFILE.md",
+      "bytes": 1435,
+      "lines": 9,
+      "sha256": "ff97a450fb39eb78fb0b27128f04b356f4b0c1b82fe14b50ff188611586d15d7"
+    },
+    {
+      "path": "docs/features/SCHOLARS.md",
+      "bytes": 3170,
+      "lines": 33,
+      "sha256": "5718df3b5f1b5bf3d9938ee23d7a7936ccf112861edf88305795536d3892da62"
+    },
+    {
+      "path": "docs/features/VERSE_CALCULATOR.md",
+      "bytes": 3178,
+      "lines": 33,
+      "sha256": "ab116d0e812e34cfeff45d97e02fc52aa000ad34d73dff866d7e48a9dc0edce6"
+    },
+    {
+      "path": "docs/planning/ADMIN_AND_OPERATIONS.md",
+      "bytes": 7195,
+      "lines": 50,
+      "sha256": "fc0e444317c5c6477c9437567c59153a0860180b1c0287b159fb8242193ec21b"
+    },
+    {
+      "path": "docs/planning/API_RESEARCH.md",
+      "bytes": 14414,
+      "lines": 75,
+      "sha256": "4e2ec382ca88f3b518908e8100ceb5d7367dd5ac3f47bc18d13600630c270e19"
+    },
+    {
+      "path": "docs/planning/ARCHITECTURE.md",
+      "bytes": 10455,
+      "lines": 77,
+      "sha256": "77123413c3f20d43b0e972540202201720d02b985303d563d17987b9dbc6d9c2"
+    },
+    {
+      "path": "docs/planning/DATA_MODEL.md",
+      "bytes": 8510,
+      "lines": 57,
+      "sha256": "e2327521222a003d97cd0bb42e87a6f015880fa84838cdfd72fba13963ac5c8a"
+    },
+    {
+      "path": "docs/planning/PRODUCT_REQUIREMENTS.md",
+      "bytes": 12659,
+      "lines": 105,
+      "sha256": "5755002922656c9e6b7e89c448c027e29870002891edcaddaab7c4881d073510"
+    },
+    {
+      "path": "docs/planning/PROJECT_BRIEF.md",
+      "bytes": 4711,
+      "lines": 59,
+      "sha256": "12055bf4ee9c9683dce36fc8283b69e30285becf5ab30d795a99c2b8b00edc61"
+    },
+    {
+      "path": "docs/planning/ROADMAP_AND_OPEN_QUESTIONS.md",
+      "bytes": 7748,
+      "lines": 80,
+      "sha256": "5108527461b1471b03190381d7dbb686184c97378fcc41d602fa05a14fc39bdf"
+    },
+    {
+      "path": "docs/planning/SECURITY_AND_PRIVACY.md",
+      "bytes": 11113,
+      "lines": 73,
+      "sha256": "3433c0a3802caa287627dac87b5634538e9b10590ca572f1dea02335a0a085f1"
+    },
+    {
+      "path": "docs/planning/UX_AND_DESIGN.md",
+      "bytes": 9817,
+      "lines": 77,
+      "sha256": "64e0f95b5cbc05d762e6e598022c3d660e6ad7b4782251d1b2f7980efeacfecf"
+    },
+    {
+      "path": "docs/product/ACCEPTANCE_CRITERIA.md",
+      "bytes": 1110,
+      "lines": 4,
+      "sha256": "9b7354a99d9417108676582fefe4fe910fba14434a3dcacd08fe3144e483bf0c"
+    },
+    {
+      "path": "docs/product/ENGAGEMENT_REQUIREMENTS.md",
+      "bytes": 28970,
+      "lines": 1616,
+      "sha256": "a5d23dc9e21e14e8954cb1d7f1c22decbb149d5ea0d44de4ebb8fc35e6eefcc7"
+    },
+    {
+      "path": "docs/product/FEATURE_SPECIFICATIONS.md",
+      "bytes": 1259,
+      "lines": 24,
+      "sha256": "9bd485f4090eb94511141364e0b64e067a2f386a019f8f27b7c1377c8660ac06"
+    },
+    {
+      "path": "docs/product/FUTURE_FEATURES.md",
+      "bytes": 630,
+      "lines": 4,
+      "sha256": "45fb66355da064d08b0cd531bb2a7c4f7535058493b6b57a9f908bc2e44e67b9"
+    },
+    {
+      "path": "docs/product/MASTER_REQUIREMENTS.md",
+      "bytes": 48352,
+      "lines": 1964,
+      "sha256": "d68f1540f56ea20468fe56e51e6918406893e2dd648718e7a3941d3213ecfb95"
+    },
+    {
+      "path": "docs/product/NIGHT_PRAYER_REQUIREMENTS.md",
+      "bytes": 22446,
+      "lines": 836,
+      "sha256": "48a1b4943fa66cc18df07b039f1bd460d5265d937630148a983437fc29251069"
+    },
+    {
+      "path": "docs/product/PHYSICAL_DEVICE_REQUIREMENTS.md",
+      "bytes": 18110,
+      "lines": 942,
+      "sha256": "2fff7677c4b209b5ed32335a1d78c391c252254fd4105d8fedcbbc525b8b49b2"
+    },
+    {
+      "path": "docs/product/PRODUCT_VISION.md",
+      "bytes": 801,
+      "lines": 4,
+      "sha256": "86865d11f3fa6faa104685dbec8912949cf3baa323e9084101c0d480dfe2e0e9"
+    },
+    {
+      "path": "docs/product/UI_UX_REQUIREMENTS.md",
+      "bytes": 7088,
+      "lines": 312,
+      "sha256": "743b39154b7c683d4c9afd7384845e0711579703a829586140269f03a383de2b"
+    },
+    {
+      "path": "docs/product/USER_JOURNEYS.md",
+      "bytes": 1256,
+      "lines": 6,
+      "sha256": "355a22cf99eef99c448d33d04d616d5ac150ea0cbec0250f1f770c22c1147464"
+    },
+    {
+      "path": "docs/product/USER_ROLES.md",
+      "bytes": 1079,
+      "lines": 15,
+      "sha256": "e8bb6caae3e80c9e6785161a331dd6b4ebd6460bf90900f5fc0d0ba3b1a056c7"
+    },
+    {
+      "path": "docs/progress/CHANGELOG.md",
+      "bytes": 6626,
+      "lines": 51,
+      "sha256": "f8b386473644b898788e78d33fd3f79fcbeac9bda981f876f32c5bf19dad91ac"
+    },
+    {
+      "path": "docs/progress/DECISION_LOG.md",
+      "bytes": 4339,
+      "lines": 28,
+      "sha256": "6a1d71717ecb8187af11651401e58402a09de4d8548e7422eb80845383d06227"
+    },
+    {
+      "path": "docs/progress/IMPLEMENTATION_PLAN.md",
+      "bytes": 5054,
+      "lines": 35,
+      "sha256": "71eb7d7bcbb7f3f2a110bace107d9ae727752c435d9432728c1c04d33b22d0dc"
+    },
+    {
+      "path": "docs/progress/TASK_TRACKER.md",
+      "bytes": 9713,
+      "lines": 43,
+      "sha256": "a7758aad201278eb38fff9abdfb924bbf102d3d288af64cdb6caabbcb93b9178"
+    },
+    {
+      "path": "docs/README.md",
+      "bytes": 2087,
+      "lines": 12,
+      "sha256": "8b8cc5568ae03d1afc130d84c0e6cbfd86a7311485d1e24f0b25283a4c97a97f"
+    },
+    {
+      "path": "docs/testing/LESSON_WATCH_ACCEPTANCE.md",
+      "bytes": 6087,
+      "lines": 38,
+      "sha256": "4c61f4231f3a648e1a408e0d2165d0cd05dcd480221aad1f79bf53b2c9a7d912"
+    },
+    {
+      "path": "docs/testing/NATIVE_UI_JOURNEY.md",
+      "bytes": 5039,
+      "lines": 44,
+      "sha256": "425af4b1ee15a70c45b05dc38e43ae3b2a0677771d593d1edf64a411e8db66c4"
+    },
+    {
+      "path": "docs/testing/NIGHT_PRAYER_TEST_PLAN.md",
+      "bytes": 1361,
+      "lines": 6,
+      "sha256": "b7e531f674974db2a9f79813942a5ddc0b3144ec7fc5aa6e954ab0a9b5e50df1"
+    },
+    {
+      "path": "docs/testing/PHYSICAL_DEVICE_REPORT.md",
+      "bytes": 4985,
+      "lines": 36,
+      "sha256": "c4570902ccbabe96a6eecc3a9068b66b5e6d66bffe4b044bfc5ab3ee3238a0b8"
+    },
+    {
+      "path": "docs/testing/QUALITY_FINDINGS.md",
+      "bytes": 2637,
+      "lines": 16,
+      "sha256": "25b170d96b40b788fe03964386c1f02e1e3c687f412709af8e6c05d6579b82ee"
+    },
+    {
+      "path": "docs/testing/screenshots/phone-calendar-ar.png",
+      "bytes": 112569
+    },
+    {
+      "path": "docs/testing/screenshots/phone-home-ar-dark-large.png",
+      "bytes": 340487
+    },
+    {
+      "path": "docs/testing/screenshots/phone-home-ar.png",
+      "bytes": 326391
+    },
+    {
+      "path": "docs/testing/screenshots/tablet-home-ar.png",
+      "bytes": 292050
+    },
+    {
+      "path": "docs/testing/screenshots/tablet-home-en.png",
+      "bytes": 299267
+    },
+    {
+      "path": "docs/testing/TEST_REPORT.md",
+      "bytes": 18147,
+      "lines": 109,
+      "sha256": "40f60c0a963301c836d0636d97a8848194db3a698219990fb9efb27ca0b17f1e"
+    },
+    {
+      "path": "hs_err_pid19656.log",
+      "bytes": 966475
+    },
+    {
+      "path": "public/.htaccess",
+      "bytes": 1384
+    },
+    {
+      "path": "public/assets/audio/review-alert.wav",
+      "bytes": 22094
+    },
+    {
+      "path": "public/assets/css/app.css",
+      "bytes": 106283
+    },
+    {
+      "path": "public/assets/fonts/AMIRI-QURAN-OFL.txt",
+      "bytes": 4485
+    },
+    {
+      "path": "public/assets/fonts/amiri-quran-regular.ttf",
+      "bytes": 130184
+    },
+    {
+      "path": "public/assets/images/athar-favicon.png",
+      "bytes": 61765
+    },
+    {
+      "path": "public/assets/images/athar-logo-cropped.png",
+      "bytes": 102289
+    },
+    {
+      "path": "public/assets/images/athar-logo.png",
+      "bytes": 188564
+    },
+    {
+      "path": "public/assets/js/app.js",
+      "bytes": 110491,
+      "lines": 1455,
+      "sha256": "f15526310f7f987216f7915500a2e234b2f38fd873478adcf39eac2ac410df9e"
+    },
+    {
+      "path": "public/assets/js/i18n.js",
+      "bytes": 57716,
+      "lines": 283,
+      "sha256": "30403000dc14ae9ff92c426436a297f7daa716a08a8c6a78ba0e0714652cf9b7"
+    },
+    {
+      "path": "public/assets/js/knowledge.js",
+      "bytes": 37004,
+      "lines": 604,
+      "sha256": "9200acb76c21dcca96cdf4939762d7971ce111b1728b9631ebbbfb45fffa86c2"
+    },
+    {
+      "path": "public/assets/js/recitation-audio-worklet.js",
+      "bytes": 1548,
+      "lines": 37,
+      "sha256": "2a831238b634a1d1761461a7ad166b8b2734ffaafb3ad6d5c516fb4d9f9e37e9"
+    },
+    {
+      "path": "public/assets/js/recitation-worker.js",
+      "bytes": 6496,
+      "lines": 129,
+      "sha256": "dce41945fc8996e8924cdb7bd84225ce02e83d77c914482c02e7115402370089"
+    },
+    {
+      "path": "public/assets/models/NOTICE.md",
+      "bytes": 2833,
+      "lines": 30,
+      "sha256": "c59d147aaa90b21b8f1643f51d8ec4de2091f509619a4eed49eae513d0d3a73b"
+    },
+    {
+      "path": "public/assets/models/NPL-1.2.txt",
+      "bytes": 7041,
+      "sha256": "77526bdbfac94132e5114c3a34492c33f915e4b7f310f00b9995500d3610cab5"
+    },
+    {
+      "path": "public/assets/models/README.md",
+      "bytes": 1678,
+      "lines": 13,
+      "sha256": "cab052cfe05fc6b4dc6b78ddccc85283d73560531adb7f5843545dc5ff966512"
+    },
+    {
+      "path": "public/assets/models/zipformer_a0w_ep1_a05.int8.onnx",
+      "bytes": 69246033,
+      "sha256": "bfb5b712695634a6099b45a6a78003bd5103417c4eae6338277d54679254905a"
+    },
+    {
+      "path": "public/assets/models/zipformer_a0w_ep1_a05.io.json",
+      "bytes": 37984,
+      "lines": 1823,
+      "sha256": "f195c3c33b99d5cb6c8d306f0951d9ad550877c019a79747db3215b804429f9f"
+    },
+    {
+      "path": "public/assets/models/zipformer_quran.json",
+      "bytes": 5453439,
+      "sha256": "24360c05ec88fcacf3419c1fe6cd81d69e653326a0bf0e4fb507e7b98fc88127"
+    },
+    {
+      "path": "public/athar-lan-ca.crt",
+      "bytes": 1662
+    },
+    {
+      "path": "public/athar-lan-ca.mobileconfig",
+      "bytes": 3273
+    },
+    {
+      "path": "public/index.php",
+      "bytes": 114751,
+      "lines": 1061,
+      "sha256": "3dce4079d4a9241f22daefe6c2954dbc64bb91538f3aa79fdd713b075e0d196a"
+    },
+    {
+      "path": "public/router.php",
+      "bytes": 1026,
+      "lines": 26,
+      "sha256": "4eaaf6988114ba692360f8a93799b53dd1aa5e243f337000303889c44016c566"
+    },
+    {
+      "path": "public/site.webmanifest",
+      "bytes": 383
+    },
+    {
+      "path": "README.md",
+      "bytes": 8143,
+      "lines": 50,
+      "sha256": "e3d09e4797d2ce66c233961dc1ae343b2bbbf9d586350897a928dc7509333fa4"
+    },
+    {
+      "path": "scripts/android-install-debug.ps1",
+      "bytes": 3953,
+      "lines": 55,
+      "sha256": "0bcf715b9d841f59b9cf9c9205fc818461ce6e00a8d213a592a220af3534c268"
+    },
+    {
+      "path": "scripts/apply-development-events.php",
+      "bytes": 5377,
+      "lines": 54,
+      "sha256": "ca79f178fbb00a675c6e5a1574cc846720dd8afecb05c9f97db926ee26a8b740"
+    },
+    {
+      "path": "scripts/audit_repository.py",
+      "bytes": 3504,
+      "lines": 57,
+      "sha256": "9115b7847d2fa9861db4576a87001cdc53d6345cba2e123958bd04de2895007f"
+    },
+    {
+      "path": "scripts/check-development-schema.php",
+      "bytes": 1594,
+      "lines": 21,
+      "sha256": "b88211335913c28640c9c9400c33a3faf8b5f4b3ce0accc80875f578497383ff"
+    },
+    {
+      "path": "scripts/checkpoint-security.py",
+      "bytes": 3651,
+      "lines": 85,
+      "sha256": "b8a2c47d85e3657702cff5a104f39fc6f76c6f5d02c08f03fdef5ecadc9b4fa4"
+    },
+    {
+      "path": "scripts/download_quran_text.py",
+      "bytes": 1595,
+      "lines": 18,
+      "sha256": "c2f752776adcf47acc52af86d111f9f57c3c42de19dfcfe07905a05166c99cb6"
+    },
+    {
+      "path": "scripts/migrate.php",
+      "bytes": 699,
+      "lines": 11,
+      "sha256": "921fa07b868aa253e8cad3736bb5667ac61e10a005527cf8a7b797f23520c82b"
+    },
+    {
+      "path": "scripts/prepare_material_symbols.py",
+      "bytes": 3377,
+      "lines": 52,
+      "sha256": "25fb67ad668ee233e99ead2775bf28e5c179d64543236e52ca369933935dede2"
+    },
+    {
+      "path": "scripts/prepare_quran_index.py",
+      "bytes": 1915,
+      "lines": 34,
+      "sha256": "d9b4e4f91dca9f6069237bd90650e746425fd6bf4230a2e3bce3e4cee594b3d1"
+    },
+    {
+      "path": "scripts/start-local.ps1",
+      "bytes": 3071,
+      "lines": 36,
+      "sha256": "2f08ebd6b2553601d3e5ee156d9cec059c1551407e92af360d8d4383ef63cddb"
+    },
+    {
+      "path": "scripts/test-backend.ps1",
+      "bytes": 3631,
+      "lines": 49,
+      "sha256": "07f3ec97e606c90d49a60f8da39790618316830d582255190a17804df14a53fe"
+    },
+    {
+      "path": "scripts/test-control.php",
+      "bytes": 1062,
+      "lines": 17,
+      "sha256": "82866d01dfe126f4d9b5200fe796ad7c2d26349da9592905fcfff330dd5f8db0"
+    },
+    {
+      "path": "scripts/verify_android_resources.py",
+      "bytes": 2208,
+      "lines": 37,
+      "sha256": "4d353f44bd58a414806a705f55a3700562ef80a7f18684955766ddb0030a5ebd"
+    },
+    {
+      "path": "scripts/wait-android-qa.ps1",
+      "bytes": 1136,
+      "lines": 22,
+      "sha256": "e997e47c802c975889d5ae3a90ba991ad56923f1cfbb958f53c74d4b05236855"
+    },
+    {
+      "path": "shared/quran/SOURCE.json",
+      "bytes": 598,
+      "lines": 12,
+      "sha256": "65e36fd9f1db04e99674e45c72f0618d6c60c9587c42984f31093eb127fcfce5"
+    },
+    {
+      "path": "shared/quran/tanzil-uthmani.xml",
+      "bytes": 1541387,
+      "lines": 6499,
+      "sha256": "8c5aeae20363a98f6963720d29fce040ca8b56a8e75f8b564c257fce7f6d0417"
+    },
+    {
+      "path": "shared/quran-index.json",
+      "bytes": 73493,
+      "lines": 4311,
+      "sha256": "155735c519d8d08ae97aeee64fdcbddaca95143bcb06f8166caab03ee7e6ae19"
+    },
+    {
+      "path": "tests/api_identity_test.php",
+      "bytes": 9719,
+      "lines": 83,
+      "sha256": "196f0bed89f1711b15789c0dbd1c4576b2f9ef8691a2ac890525c8ffc1b1ec6b"
+    },
+    {
+      "path": "tests/backup_assets_test.php",
+      "bytes": 2537,
+      "lines": 31,
+      "sha256": "ca971a755f60f36aba4f04d36ff0e045ecccd43f9a496e2572f87dadbed4b154"
+    },
+    {
+      "path": "tests/backup_roundtrip.php",
+      "bytes": 4778,
+      "lines": 90,
+      "sha256": "5b295c4f06760a5b8ccf57a10d646946ee9a45c9177a6a92b441a8bcac513448"
+    },
+    {
+      "path": "tests/catalog_progress_test.php",
+      "bytes": 9894,
+      "lines": 54,
+      "sha256": "c8db647dd4926740fdbbb2d0e05ecb581616e452376f475e38db4ae1c383c544"
+    },
+    {
+      "path": "tests/domain_test.php",
+      "bytes": 3960,
+      "lines": 42,
+      "sha256": "a7c6d0d1b2d240303abdd5e6853920450d9f4734d5a9f70b24ee6d3a0aba706a"
+    },
+    {
+      "path": "tests/integration_support.php",
+      "bytes": 1288,
+      "lines": 17,
+      "sha256": "4ec351ad830d00901c4c453b66f080314238bcbcbd64912e2d07f6121df397ba"
+    },
+    {
+      "path": "tests/learning_http_test.py",
+      "bytes": 1996,
+      "lines": 32,
+      "sha256": "3de14ccd9c5a622d6052d1fc22359b2ac1c6c5776c57a397dc87368cf3f72db7"
+    },
+    {
+      "path": "tests/learning_test.php",
+      "bytes": 7709,
+      "lines": 43,
+      "sha256": "6879720ec730d50a4f5d19c9ba8cd9404f837a744bcb6c8c7f2afe4f8c3e36c9"
+    },
+    {
+      "path": "tests/media_provider_test.php",
+      "bytes": 3724,
+      "lines": 34,
+      "sha256": "572993bdd9ea89ecd67cc4181d7791fa84a3208f408327aed6bfff681975668e"
+    },
+    {
+      "path": "tests/native_fixture.php",
+      "bytes": 5996,
+      "lines": 50,
+      "sha256": "42b6910aeaf82c42e1468069b7114d8a77554c4ef25382f51c8f497692687833"
+    },
+    {
+      "path": "tests/native_router.php",
+      "bytes": 955,
+      "lines": 13,
+      "sha256": "c60e980b8d75fe9cc5d8842249803160348c33b2b6e4f2fc1faa24d57d112caa"
+    },
+    {
+      "path": "tests/night_prayer_api_test.php",
+      "bytes": 7624,
+      "lines": 35,
+      "sha256": "6eeac0ea0b2945e664f5edbeb7d76c8c4b9c82ff5ae4a34485bf66c349af517e"
+    },
+    {
+      "path": "tests/quran_text_test.php",
+      "bytes": 1756,
+      "lines": 16,
+      "sha256": "c197108c1c34c675ccdb0e82e4b3a09159c2391f78350c62d1b167c7ccb5e876"
+    },
+    {
+      "path": "tests/seed_upcoming_fixture.php",
+      "bytes": 3160,
+      "lines": 34,
+      "sha256": "b5e496464b7bf2a8ef246407432e9963e5b4db6a5b66d11aa4c5dbf6f3c34b6b"
+    },
+    {
+      "path": "tests/tafsir_provider_test.php",
+      "bytes": 2170,
+      "lines": 23,
+      "sha256": "1f939a01cd11fef24a306717b88ec2b0d38584d78a5834f9b40060573b40f382"
+    },
+    {
+      "path": "tests/upcoming_lessons_test.php",
+      "bytes": 11509,
+      "lines": 98,
+      "sha256": "fa6ef2e2b47142886aa2f2a640458dbdce1e18e8805eeb685411f51c5ccb3c22"
+    },
+    {
+      "path": "tests/web_identity_http_test.py",
+      "bytes": 7129,
+      "lines": 92,
+      "sha256": "7451c47b3f95303171cdc52b4e4ee92123738102411fecdbc7510628035b6c4d"
+    },
+    {
+      "path": "training/evaluate_synthetic.mjs",
+      "bytes": 4350
+    },
+    {
+      "path": "training/package-lock.json",
+      "bytes": 10625,
+      "lines": 287,
+      "sha256": "3ce682790353d96ae82b494c9b2c6ee3685cc06b98dd119be7661c6540966ed9"
+    },
+    {
+      "path": "training/package.json",
+      "bytes": 175,
+      "lines": 9,
+      "sha256": "2c95f0e55f4207b424a362fd1326a423b1615a74bf7036b6c3c5095975440169"
+    },
+    {
+      "path": "training/prepare_synthetic_pilot.py",
+      "bytes": 5269,
+      "lines": 133,
+      "sha256": "f6af94df1a9c0fffc99c7800b3601cabea9084a004ff568d01c1af0a438c282a"
+    },
+    {
+      "path": "training/README.md",
+      "bytes": 1951,
+      "lines": 30,
+      "sha256": "dbd89510aae2d70fbfd33492e224463786186d7965e891975421edd44513c900"
+    }
+  ],
+  "provider_urls": {
+    "https://cdn.mp3quran.net/audio/reader/r1/001.mp3": [
+      "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt:52",
+      "tests/media_provider_test.php:23"
+    ],
+    "https://backup.qurango.net/radio/reader": [
+      "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt:53"
+    ],
+    "https://mp3quran.net.attacker.invalid/a.mp3": [
+      "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt:54"
+    ],
+    "https://user:pass@cdn.mp3quran.net/a.mp3": [
+      "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt:56"
+    ],
+    "https://127.0.0.1/a.mp3": [
+      "android/app/src/androidTest/java/org/athar/app/NativeStorageTest.kt:57",
+      "tests/media_provider_test.php:33"
+    ],
+    "https://i.ytimg.com/vi/": [
+      "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt:88",
+      "android/app/src/main/java/org/athar/app/learning/LearningComponents.kt:33",
+      "app/Views/pages/home.php:85"
+    ],
+    "https://www.youtube.com/watch?v=": [
+      "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt:160",
+      "android/app/src/main/java/org/athar/app/learning/PlayerPolicy.kt:9",
+      "app/Views/pages/lessons.php:83"
+    ],
+    "https://www.youtube.com/iframe_api": [
+      "android/app/src/main/java/org/athar/app/learning/YouTubePlayer.kt:127",
+      "public/assets/js/knowledge.js:498"
+    ],
+    "https://api.quranpedia.net/": [
+      "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt:57"
+    ],
+    "https://youtu.be/M7lc1UVf-VE": [
+      "android/app/src/test/java/org/athar/app/PlayerPolicyTest.kt:9"
+    ],
+    "https://www.youtube.com/watch?v=M7lc1UVf-VE": [
+      "android/app/src/test/java/org/athar/app/PlayerPolicyTest.kt:11"
+    ],
+    "https://org.athar.app.debug/": [
+      "android/app/src/test/java/org/athar/app/PlayerPolicyTest.kt:17"
+    ],
+    "https://quranpedia.net": [
+      "app/Views/pages/about.php:9",
+      "app/Views/pages/books.php:15",
+      "backend/src/Providers/Quranpedia.php:16"
+    ],
+    "https://alquran.cloud/": [
+      "app/Views/pages/about.php:9",
+      "app/Views/pages/quran.php:115"
+    ],
+    "https://quranicaudio.com/": [
+      "app/Views/pages/about.php:9"
+    ],
+    "https://dorar.net/api-services/hadith": [
+      "app/Views/pages/about.php:10"
+    ],
+    "https://support.google.com/youtube/answer/171780": [
+      "app/Views/pages/about.php:12"
+    ],
+    "https://github.com/rn0x/Adhkar-json": [
+      "app/Views/pages/adhkar.php:36"
+    ],
+    "https://example.org/book.pdf": [
+      "app/Views/pages/admin.php:57"
+    ],
+    "https://dorar.net/api-services": [
+      "app/Views/pages/dorar.php:18"
+    ],
+    "https://dorar.net": [
+      "app/Views/pages/hadith.php:16"
+    ],
+    "https://developers.google.com/youtube/iframe_api_reference": [
+      "app/Views/pages/lessons.php:85",
+      "tests/native_fixture.php:36"
+    ],
+    "https://www.mp3quran.net/ar/api": [
+      "app/Views/pages/quran.php:70",
+      "backend/src/Providers/Mp3Quran.php:37"
+    ],
+    "https://github.com/yazinsai/tilawa": [
+      "app/Views/pages/quran.php:111"
+    ],
+    "https://github.com/yazinsai/tilawa/blob/main/licenses/NPL-1.2.txt": [
+      "app/Views/pages/quran.php:111"
+    ],
+    "https://tanzil.net/": [
+      "backend/src/Domain/QuranText.php:55"
+    ],
+    "https://tanzil.net/docs/text_license": [
+      "backend/src/Domain/QuranText.php:55"
+    ],
+    "https://www.mp3quran.net/api/v3/": [
+      "backend/src/Infrastructure/PublicProviderJson.php:14"
+    ],
+    "https://api.quranpedia.net/v1/": [
+      "backend/src/Infrastructure/PublicProviderJson.php:20",
+      "backend/src/Providers/Quranpedia.php:27"
+    ],
+    "https://api.alquran.cloud/v1/search/": [
+      "public/assets/js/app.js:211",
+      "public/assets/js/knowledge.js:67"
+    ],
+    "https://mp3quran.net/api/v3/radios?language=ar": [
+      "public/assets/js/app.js:278"
+    ],
+    "https://api.quranpedia.net/v1": [
+      "public/assets/js/app.js:362",
+      "public/assets/js/knowledge.js:2"
+    ],
+    "https://mp3quran.net/api/v3/ayat_timing?surah=": [
+      "public/assets/js/app.js:455"
+    ],
+    "https://api.alquran.cloud/v1/ayah/": [
+      "public/assets/js/app.js:582"
+    ],
+    "https://api.alquran.cloud/v1/juz/": [
+      "public/assets/js/app.js:583"
+    ],
+    "https://api.alquran.cloud/v1/hizbQuarter/": [
+      "public/assets/js/app.js:586"
+    ],
+    "https://api.alquran.cloud/v1/page/": [
+      "public/assets/js/app.js:590"
+    ],
+    "https://api.quranpedia.net/embed?surah=": [
+      "public/assets/js/app.js:641"
+    ],
+    "https://mp3quran.net/api/v3/reciters?language=ar": [
+      "public/assets/js/app.js:1262"
+    ],
+    "https://mp3quran.net/api/v3/ayat_timing/reads": [
+      "public/assets/js/app.js:1263"
+    ],
+    "https://dorar.net/": [
+      "public/assets/js/knowledge.js:130",
+      "public/assets/js/knowledge.js:184"
+    ],
+    "https://raw.githubusercontent.com/rn0x/Adhkar-json/main/adhkar.json": [
+      "public/assets/js/knowledge.js:295"
+    ],
+    "https://cdn.jsdelivr.net/npm/@tilawa/core@0.4.0/+esm": [
+      "public/assets/js/recitation-worker.js:4"
+    ],
+    "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.2/dist/ort.wasm.min.mjs": [
+      "public/assets/js/recitation-worker.js:5"
+    ],
+    "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.2/dist/": [
+      "public/assets/js/recitation-worker.js:6"
+    ],
+    "https://i.ytimg.com": [
+      "public/index.php:28"
+    ],
+    "https://cdn.islamic.network": [
+      "public/index.php:28"
+    ],
+    "https://download.quranicaudio.com": [
+      "public/index.php:28"
+    ],
+    "https://cdn.jsdelivr.net": [
+      "public/index.php:28",
+      "public/index.php:28",
+      "public/index.php:28"
+    ],
+    "https://www.youtube.com": [
+      "public/index.php:28",
+      "public/index.php:28",
+      "public/index.php:28"
+    ],
+    "https://s.ytimg.com": [
+      "public/index.php:28"
+    ],
+    "https://api.quranpedia.net": [
+      "public/index.php:28",
+      "public/index.php:28"
+    ],
+    "https://api.alquran.cloud": [
+      "public/index.php:28"
+    ],
+    "https://quranicaudio.com": [
+      "public/index.php:28"
+    ],
+    "https://pray.api.islamic.network": [
+      "public/index.php:28"
+    ],
+    "https://mp3quran.net": [
+      "public/index.php:28"
+    ],
+    "https://raw.githubusercontent.com": [
+      "public/index.php:28"
+    ],
+    "https://www.youtube-nocookie.com": [
+      "public/index.php:28"
+    ],
+    "https://dorar.net/api/v1/": [
+      "public/index.php:71"
+    ],
+    "https://schema.org": [
+      "public/index.php:1044"
+    ],
+    "https://example.invalid/book": [
+      "tests/backup_roundtrip.php:36"
+    ],
+    "https://youtu.be/abcdefghijk": [
+      "tests/catalog_progress_test.php:11"
+    ],
+    "https://youtu.be/bcdefghijkl": [
+      "tests/catalog_progress_test.php:11"
+    ],
+    "https://example.invalid/source": [
+      "tests/catalog_progress_test.php:12",
+      "tests/catalog_progress_test.php:12",
+      "tests/native_fixture.php:31",
+      "tests/native_fixture.php:33",
+      "tests/native_fixture.php:37",
+      "tests/native_fixture.php:38",
+      "tests/native_fixture.php:39",
+      "tests/native_fixture.php:39",
+      "tests/seed_upcoming_fixture.php:20",
+      "tests/upcoming_lessons_test.php:16"
+    ],
+    "https://example.invalid/book.pdf": [
+      "tests/catalog_progress_test.php:12"
+    ],
+    "https://example.invalid": [
+      "tests/catalog_progress_test.php:26",
+      "tests/catalog_progress_test.php:49",
+      "tests/catalog_progress_test.php:49",
+      "tests/learning_test.php:13"
+    ],
+    "https://youtu.be/cdefghijklm": [
+      "tests/catalog_progress_test.php:44"
+    ],
+    "https://youtu.be/defghijklmn": [
+      "tests/catalog_progress_test.php:44"
+    ],
+    "https://cdn.mp3quran.net/audio/reader/r1/": [
+      "tests/media_provider_test.php:12",
+      "tests/media_provider_test.php:15"
+    ],
+    "https://attacker.invalid/": [
+      "tests/media_provider_test.php:12"
+    ],
+    "https://server8.mp3quran.net/reader/": [
+      "tests/media_provider_test.php:13"
+    ],
+    "https://backup.qurango.net/radio/example": [
+      "tests/media_provider_test.php:17"
+    ],
+    "https://evil.invalid": [
+      "tests/media_provider_test.php:26",
+      "tests/tafsir_provider_test.php:22"
+    ],
+    "https://mp3quran.net.evil.invalid/a.mp3": [
+      "tests/media_provider_test.php:31"
+    ],
+    "https://user:pass@server8.mp3quran.net/a.mp3": [
+      "tests/media_provider_test.php:32"
+    ],
+    "https://api.quranpedia.net/v1/ayah/1/1/book/5": [
+      "tests/tafsir_provider_test.php:19"
+    ]
+  }
+}

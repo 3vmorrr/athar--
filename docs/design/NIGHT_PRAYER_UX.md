@@ -1,0 +1,4 @@
+# Night Prayer experience
+Prominent Home/Quran entry, nested navigation rather than another crowded bottom item. Calm green/ivory/copper overview with greeting, fixed-context night label, genuine total, next milestone, start action, calculator/last-third links, continuity and recent nights. No empty large decorative card or unverifiable spiritual label.
+
+Calculator has target/range modes and 10/100/1000 presets; result shows inclusive references and overflow limits, then explicit open/save/start actions. Session logging supports quick manual count or computed range, optional measured timer/note, clear self-reporting and editable historical night. Details/history/calendar/pace show real records with numerical accessible labels. Privacy settings explain local-only generic exempt nights before enabling. No competitor colors/assets/layout copying.

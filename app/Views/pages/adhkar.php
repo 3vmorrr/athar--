@@ -1,22 +1,38 @@
-<section class="knowledge-page section-wrap" data-adhkar-page>
+<section class="knowledge-page section-wrap adhkar-page" data-adhkar-page>
     <a class="back-link" href="/">العودة إلى الرئيسية</a>
     <header class="knowledge-heading">
         <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> أذكار وأدعية بمراجعها</span>
         <h1>الأذكار</h1>
-        <p>تصفح الأذكار والأدعية، واستخدم العداد الشخصي عند الحاجة.</p>
+        <p>اختر قسمًا، وردّد الذكر مع عدّاده. ينتقل العرض للذكر التالي عند اكتمال العدد المطلوب.</p>
     </header>
-    <form class="knowledge-search" data-adhkar-form role="search">
-        <label for="adhkar-query">ابحث في النص أو الاسم</label>
-        <div class="search-row">
-            <input id="adhkar-query" name="q" type="search" minlength="2" maxlength="80" value="<?= e(is_string($_GET['q'] ?? null) ? $_GET['q'] : '') ?>" placeholder="مثال: التسبيح">
-            <select name="collection" aria-label="نوع المحتوى"><option value="adhkaars">الأذكار</option><option value="duas">الأدعية</option><option value="salawaats">الصلاة على النبي ﷺ</option></select>
-            <button class="button button-primary" type="submit">ابحث</button>
-        </div>
-    </form>
-    <p class="source-note">تُعرض مراجع الأذكار مع كل نصّ، وتظهر بقية النتائج عند طلب المزيد.</p>
-    <div class="knowledge-status" data-adhkar-status role="status" aria-live="polite" hidden></div>
-    <div class="knowledge-results" data-adhkar-results></div>
-    <?php if ($curatedAdhkar): ?><section class="curated-section"><div class="section-heading"><div><span class="eyebrow">مختارة ومراجَعة للموقع</span><h2>أذكار موثقة</h2></div></div><div class="knowledge-results">
-        <?php foreach ($curatedAdhkar as $item): ?><article class="knowledge-card dhikr-card"><span class="source-chip"><?= e($item['category']) ?></span><h2><?= e($item['title']) ?></h2><p class="dhikr-formula"><?= e($item['formula']) ?></p><?php if ($item['repeat_count']): ?><p>عدد التكرار كما ورد بالمصدر: <?= (int) $item['repeat_count'] ?></p><?php endif; ?><p class="dhikr-source">المرجع: <?= e($item['source_reference']) ?> · <a href="<?= e($item['source_url']) ?>" target="_blank" rel="noopener noreferrer">المصدر ↗</a></p></article><?php endforeach; ?>
-    </div></section><?php endif; ?>
+
+    <div class="adhkar-section-picker">
+        <label for="adhkar-category">قسم الأذكار
+            <select id="adhkar-category" data-adhkar-category disabled>
+                <option value="">جارٍ تحميل الأقسام…</option>
+            </select>
+        </label>
+        <p data-adhkar-category-progress>سيظهر تقدّمك هنا.</p>
+    </div>
+
+    <div class="knowledge-status adhkar-status" data-adhkar-status role="status" aria-live="polite">جارٍ تحميل الأذكار…</div>
+
+    <section class="adhkar-focus-section" data-adhkar-section hidden aria-labelledby="adhkar-section-heading">
+        <header class="adhkar-section-heading">
+            <div><span class="eyebrow">القسم الحالي</span><h2 id="adhkar-section-heading" data-adhkar-heading></h2></div>
+            <span class="adhkar-item-position" data-adhkar-position></span>
+        </header>
+        <div class="adhkar-section-progress" role="progressbar" aria-label="تقدّم قسم الأذكار" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-adhkar-progress></span></div>
+        <article class="adhkar-session-card" data-adhkar-card>
+            <p class="adhkar-text" data-adhkar-text lang="ar" dir="rtl"></p>
+            <div class="adhkar-repeat-meta"><span>التكرار المطلوب</span><strong data-adhkar-required></strong></div>
+            <div class="adhkar-counter-controls">
+                <button class="button button-primary adhkar-count-button" type="button" data-adhkar-count>سبّح +1</button>
+                <output class="adhkar-count-display" data-adhkar-count-display aria-live="polite" aria-label="عدد مرات التكرار">٠ / ٠</output>
+                <button class="button button-secondary adhkar-reset-button" type="button" data-adhkar-reset>تصفير</button>
+            </div>
+            <p class="adhkar-completion-message" data-adhkar-completion role="status" aria-live="polite" hidden></p>
+        </article>
+        <p class="adhkar-source-note">النصوص من ملف <a href="https://github.com/rn0x/Adhkar-json" target="_blank" rel="noopener noreferrer">Adhkar-json</a>، والمصدر المذكور في المستودع: كتاب حصن المسلم.</p>
+    </section>
 </section>

@@ -1,0 +1,6 @@
+# Authentication and verification
+Web administration uses an isolated cookie session with CSRF. Android uses opaque random access tokens (15 minutes) and rotating refresh tokens (30 days maximum), stored hashed server-side. Each token references the user `session_version`; password changes, suspension and account deletion invalidate credentials. Refresh rotation is transactional; reuse revokes its family.
+
+Registration validates display name, unique lowercase 3–24 ASCII username, email, 10–200 character password and confirmation. An unverified user receives a verification-scoped credential only, permitting OTP/resend/logout and no content API. OTP uses a keyed server hash, 10-minute expiry and five transactional attempts. Issuance/resend are rate-limited independently of PHP cookies. SMTP failure returns `delivery_unavailable` and a pending account; never state recipient delivery merely because the account row exists.
+
+Recovery responds generically to avoid email enumeration and applies shared rate limits. Validate codes with the same hashing/attempt service. A live OTP, password or raw bearer/refresh token must never appear in logs or admin UI. See [API contract](API_CONTRACT.md).

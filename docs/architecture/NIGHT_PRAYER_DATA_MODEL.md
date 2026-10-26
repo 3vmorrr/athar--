@@ -1,0 +1,6 @@
+# Night Prayer data model
+One stable UUID per explicit session, owned by a user. Fields: UUID/user, immutable `night_date` (local Gregorian date of Maghrib), IANA timezone and original offset, optional Maghrib/next-Fajr instants, boundary source/method, session start/end instants, manual/range entry type, optional canonical start/end global indices, derived verse count, optional measured seconds, optional private note, server revision, created/updated UTC timestamps and deletion marker.
+
+Range entries derive count; manual entries are labeled self-reported. A session is never created from playback. Store night context at creation and do not silently reassign historical rows after travel/settings changes. Validate global references and timezone/boundary ordering. Index `(user_id,night_date)` and `(user_id,revision)`; derive metrics from nondeleted owned rows. Tombstones retain UUID/revision only, clear personal content and reject stale resurrection.
+
+Preferences hold calculation method/city/timezone and opt-in reminder settings; coordinates are optional/minimized. Exempt nights live only in a separately encrypted local store with no v1 transport field. Planned ranges, ordinary Quran reading position and khatmah progress are distinct data concepts.

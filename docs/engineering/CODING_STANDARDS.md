@@ -1,0 +1,4 @@
+# Coding standards
+PHP 8-compatible strict types during local migration; supported production runtime is a separate deployment gate. Namespace new backend modules, keep pure rules separate from transport, use prepared SQL, explicit authorization and bounded inputs. No credentials or private logs in Git. Kotlin uses immutable screen state, coroutines/Flow, explicit repository dependencies and resource strings. JavaScript uses cancellation, safe text rendering and component-scoped listeners.
+
+Use one shared canonical Quran index. Do not duplicate religious content, scoring thresholds or date rules across unrelated controllers. Add stable API error codes and document compatibility. Preserve existing behavior unless an audited defect or latest approved requirement supersedes it. Every meaningful code change updates tests/specification/tracker. Generated build products and personal exports remain ignored.

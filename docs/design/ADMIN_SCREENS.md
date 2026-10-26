@@ -1,0 +1,4 @@
+# Administration screens
+Independent login and branded shell. Sidebar groups Overview, Content, Comments, Users, Email campaigns, Services, Night Prayer settings, Audit and owner-only Recovery. Show only authorized actions. Overview counts come from SQL; service status distinguishes configured, last checked and externally verified.
+
+Content list → search/filter/page → edit detail with source/rights/publication fields appropriate to the content. Keep scholar name/photo primary, with optional metadata available without blocking simple creation. Books support direct links and optional authorized PDF workflows per the new master scope. Narrow screens convert tables to labeled rows; top actions stay reachable, dialogs fit viewport and server errors survive reload. No public website footer/header in the admin shell.

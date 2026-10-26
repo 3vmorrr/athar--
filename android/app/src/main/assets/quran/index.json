@@ -1,0 +1,4311 @@
+{
+  "version": 1,
+  "source": "https://api.alquran.cloud/v1/meta",
+  "source_sha256": "9444749ea0b261054d4f744d4aec38286e666b25f1cf8aa78ce0a24f789caa5c",
+  "reviewed_date": "2026-10-25",
+  "total_ayahs": 6236,
+  "surahs": [
+    {
+      "number": 1,
+      "name": "سُورَةُ ٱلْفَاتِحَةِ",
+      "english_name": "Al-Faatiha",
+      "ayah_count": 7,
+      "start_index": 1
+    },
+    {
+      "number": 2,
+      "name": "سُورَةُ البَقَرَةِ",
+      "english_name": "Al-Baqara",
+      "ayah_count": 286,
+      "start_index": 8
+    },
+    {
+      "number": 3,
+      "name": "سُورَةُ آلِ عِمۡرَانَ",
+      "english_name": "Aal-i-Imraan",
+      "ayah_count": 200,
+      "start_index": 294
+    },
+    {
+      "number": 4,
+      "name": "سُورَةُ النِّسَاءِ",
+      "english_name": "An-Nisaa",
+      "ayah_count": 176,
+      "start_index": 494
+    },
+    {
+      "number": 5,
+      "name": "سُورَةُ المَائـِدَةِ",
+      "english_name": "Al-Maaida",
+      "ayah_count": 120,
+      "start_index": 670
+    },
+    {
+      "number": 6,
+      "name": "سُورَةُ الأَنۡعَامِ",
+      "english_name": "Al-An'aam",
+      "ayah_count": 165,
+      "start_index": 790
+    },
+    {
+      "number": 7,
+      "name": "سُورَةُ الأَعۡرَافِ",
+      "english_name": "Al-A'raaf",
+      "ayah_count": 206,
+      "start_index": 955
+    },
+    {
+      "number": 8,
+      "name": "سُورَةُ الأَنفَالِ",
+      "english_name": "Al-Anfaal",
+      "ayah_count": 75,
+      "start_index": 1161
+    },
+    {
+      "number": 9,
+      "name": "سُورَةُ التَّوۡبَةِ",
+      "english_name": "At-Tawba",
+      "ayah_count": 129,
+      "start_index": 1236
+    },
+    {
+      "number": 10,
+      "name": "سُورَةُ يُونُسَ",
+      "english_name": "Yunus",
+      "ayah_count": 109,
+      "start_index": 1365
+    },
+    {
+      "number": 11,
+      "name": "سُورَةُ هُودٍ",
+      "english_name": "Hud",
+      "ayah_count": 123,
+      "start_index": 1474
+    },
+    {
+      "number": 12,
+      "name": "سُورَةُ يُوسُفَ",
+      "english_name": "Yusuf",
+      "ayah_count": 111,
+      "start_index": 1597
+    },
+    {
+      "number": 13,
+      "name": "سُورَةُ الرَّعۡدِ",
+      "english_name": "Ar-Ra'd",
+      "ayah_count": 43,
+      "start_index": 1708
+    },
+    {
+      "number": 14,
+      "name": "سُورَةُ إِبۡرَاهِيمَ",
+      "english_name": "Ibrahim",
+      "ayah_count": 52,
+      "start_index": 1751
+    },
+    {
+      "number": 15,
+      "name": "سُورَةُ الحِجۡرِ",
+      "english_name": "Al-Hijr",
+      "ayah_count": 99,
+      "start_index": 1803
+    },
+    {
+      "number": 16,
+      "name": "سُورَةُ النَّحۡلِ",
+      "english_name": "An-Nahl",
+      "ayah_count": 128,
+      "start_index": 1902
+    },
+    {
+      "number": 17,
+      "name": "سُورَةُ الإِسۡرَاءِ",
+      "english_name": "Al-Israa",
+      "ayah_count": 111,
+      "start_index": 2030
+    },
+    {
+      "number": 18,
+      "name": "سُورَةُ الكَهۡفِ",
+      "english_name": "Al-Kahf",
+      "ayah_count": 110,
+      "start_index": 2141
+    },
+    {
+      "number": 19,
+      "name": "سُورَةُ مَرۡيَمَ",
+      "english_name": "Maryam",
+      "ayah_count": 98,
+      "start_index": 2251
+    },
+    {
+      "number": 20,
+      "name": "سُورَةُ طه",
+      "english_name": "Taa-Haa",
+      "ayah_count": 135,
+      "start_index": 2349
+    },
+    {
+      "number": 21,
+      "name": "سُورَةُ الأَنبِيَاءِ",
+      "english_name": "Al-Anbiyaa",
+      "ayah_count": 112,
+      "start_index": 2484
+    },
+    {
+      "number": 22,
+      "name": "سُورَةُ الحَجِّ",
+      "english_name": "Al-Hajj",
+      "ayah_count": 78,
+      "start_index": 2596
+    },
+    {
+      "number": 23,
+      "name": "سُورَةُ المُؤۡمِنُونَ",
+      "english_name": "Al-Muminoon",
+      "ayah_count": 118,
+      "start_index": 2674
+    },
+    {
+      "number": 24,
+      "name": "سُورَةُ النُّورِ",
+      "english_name": "An-Noor",
+      "ayah_count": 64,
+      "start_index": 2792
+    },
+    {
+      "number": 25,
+      "name": "سُورَةُ الفُرۡقَانِ",
+      "english_name": "Al-Furqaan",
+      "ayah_count": 77,
+      "start_index": 2856
+    },
+    {
+      "number": 26,
+      "name": "سُورَةُ الشُّعَرَاءِ",
+      "english_name": "Ash-Shu'araa",
+      "ayah_count": 227,
+      "start_index": 2933
+    },
+    {
+      "number": 27,
+      "name": "سُورَةُ النَّمۡلِ",
+      "english_name": "An-Naml",
+      "ayah_count": 93,
+      "start_index": 3160
+    },
+    {
+      "number": 28,
+      "name": "سُورَةُ القَصَصِ",
+      "english_name": "Al-Qasas",
+      "ayah_count": 88,
+      "start_index": 3253
+    },
+    {
+      "number": 29,
+      "name": "سُورَةُ العَنكَبُوتِ",
+      "english_name": "Al-Ankaboot",
+      "ayah_count": 69,
+      "start_index": 3341
+    },
+    {
+      "number": 30,
+      "name": "سُورَةُ الرُّومِ",
+      "english_name": "Ar-Room",
+      "ayah_count": 60,
+      "start_index": 3410
+    },
+    {
+      "number": 31,
+      "name": "سُورَةُ لُقۡمَانَ",
+      "english_name": "Luqman",
+      "ayah_count": 34,
+      "start_index": 3470
+    },
+    {
+      "number": 32,
+      "name": "سُورَةُ السَّجۡدَةِ",
+      "english_name": "As-Sajda",
+      "ayah_count": 30,
+      "start_index": 3504
+    },
+    {
+      "number": 33,
+      "name": "سُورَةُ الأَحۡزَابِ",
+      "english_name": "Al-Ahzaab",
+      "ayah_count": 73,
+      "start_index": 3534
+    },
+    {
+      "number": 34,
+      "name": "سُورَةُ سَبَإٍ",
+      "english_name": "Saba",
+      "ayah_count": 54,
+      "start_index": 3607
+    },
+    {
+      "number": 35,
+      "name": "سُورَةُ فَاطِرٍ",
+      "english_name": "Faatir",
+      "ayah_count": 45,
+      "start_index": 3661
+    },
+    {
+      "number": 36,
+      "name": "سُورَةُ يسٓ",
+      "english_name": "Yaseen",
+      "ayah_count": 83,
+      "start_index": 3706
+    },
+    {
+      "number": 37,
+      "name": "سُورَةُ الصَّافَّاتِ",
+      "english_name": "As-Saaffaat",
+      "ayah_count": 182,
+      "start_index": 3789
+    },
+    {
+      "number": 38,
+      "name": "سُورَةُ صٓ",
+      "english_name": "Saad",
+      "ayah_count": 88,
+      "start_index": 3971
+    },
+    {
+      "number": 39,
+      "name": "سُورَةُ الزُّمَرِ",
+      "english_name": "Az-Zumar",
+      "ayah_count": 75,
+      "start_index": 4059
+    },
+    {
+      "number": 40,
+      "name": "سُورَةُ غَافِرٍ",
+      "english_name": "Ghafir",
+      "ayah_count": 85,
+      "start_index": 4134
+    },
+    {
+      "number": 41,
+      "name": "سُورَةُ فُصِّلَتۡ",
+      "english_name": "Fussilat",
+      "ayah_count": 54,
+      "start_index": 4219
+    },
+    {
+      "number": 42,
+      "name": "سُورَةُ الشُّورَىٰ",
+      "english_name": "Ash-Shura",
+      "ayah_count": 53,
+      "start_index": 4273
+    },
+    {
+      "number": 43,
+      "name": "سُورَةُ الزُّخۡرُفِ",
+      "english_name": "Az-Zukhruf",
+      "ayah_count": 89,
+      "start_index": 4326
+    },
+    {
+      "number": 44,
+      "name": "سُورَةُ الدُّخَانِ",
+      "english_name": "Ad-Dukhaan",
+      "ayah_count": 59,
+      "start_index": 4415
+    },
+    {
+      "number": 45,
+      "name": "سُورَةُ الجَاثِيَةِ",
+      "english_name": "Al-Jaathiya",
+      "ayah_count": 37,
+      "start_index": 4474
+    },
+    {
+      "number": 46,
+      "name": "سُورَةُ الأَحۡقَافِ",
+      "english_name": "Al-Ahqaf",
+      "ayah_count": 35,
+      "start_index": 4511
+    },
+    {
+      "number": 47,
+      "name": "سُورَةُ مُحَمَّدٍ",
+      "english_name": "Muhammad",
+      "ayah_count": 38,
+      "start_index": 4546
+    },
+    {
+      "number": 48,
+      "name": "سُورَةُ الفَتۡحِ",
+      "english_name": "Al-Fath",
+      "ayah_count": 29,
+      "start_index": 4584
+    },
+    {
+      "number": 49,
+      "name": "سُورَةُ الحُجُرَاتِ",
+      "english_name": "Al-Hujuraat",
+      "ayah_count": 18,
+      "start_index": 4613
+    },
+    {
+      "number": 50,
+      "name": "سُورَةُ قٓ",
+      "english_name": "Qaaf",
+      "ayah_count": 45,
+      "start_index": 4631
+    },
+    {
+      "number": 51,
+      "name": "سُورَةُ الذَّارِيَاتِ",
+      "english_name": "Adh-Dhaariyat",
+      "ayah_count": 60,
+      "start_index": 4676
+    },
+    {
+      "number": 52,
+      "name": "سُورَةُ الطُّورِ",
+      "english_name": "At-Tur",
+      "ayah_count": 49,
+      "start_index": 4736
+    },
+    {
+      "number": 53,
+      "name": "سُورَةُ النَّجۡمِ",
+      "english_name": "An-Najm",
+      "ayah_count": 62,
+      "start_index": 4785
+    },
+    {
+      "number": 54,
+      "name": "سُورَةُ القَمَرِ",
+      "english_name": "Al-Qamar",
+      "ayah_count": 55,
+      "start_index": 4847
+    },
+    {
+      "number": 55,
+      "name": "سُورَةُ الرَّحۡمَٰن",
+      "english_name": "Ar-Rahmaan",
+      "ayah_count": 78,
+      "start_index": 4902
+    },
+    {
+      "number": 56,
+      "name": "سُورَةُ الوَاقِعَةِ",
+      "english_name": "Al-Waaqia",
+      "ayah_count": 96,
+      "start_index": 4980
+    },
+    {
+      "number": 57,
+      "name": "سُورَةُ الحَدِيدِ",
+      "english_name": "Al-Hadid",
+      "ayah_count": 29,
+      "start_index": 5076
+    },
+    {
+      "number": 58,
+      "name": "سُورَةُ المُجَادلَةِ",
+      "english_name": "Al-Mujaadila",
+      "ayah_count": 22,
+      "start_index": 5105
+    },
+    {
+      "number": 59,
+      "name": "سُورَةُ الحَشۡرِ",
+      "english_name": "Al-Hashr",
+      "ayah_count": 24,
+      "start_index": 5127
+    },
+    {
+      "number": 60,
+      "name": "سُورَةُ المُمۡتَحنَةِ",
+      "english_name": "Al-Mumtahana",
+      "ayah_count": 13,
+      "start_index": 5151
+    },
+    {
+      "number": 61,
+      "name": "سُورَةُ الصَّفِّ",
+      "english_name": "As-Saff",
+      "ayah_count": 14,
+      "start_index": 5164
+    },
+    {
+      "number": 62,
+      "name": "سُورَةُ الجُمُعَةِ",
+      "english_name": "Al-Jumu'a",
+      "ayah_count": 11,
+      "start_index": 5178
+    },
+    {
+      "number": 63,
+      "name": "سُورَةُ المُنَافِقُونَ",
+      "english_name": "Al-Munaafiqoon",
+      "ayah_count": 11,
+      "start_index": 5189
+    },
+    {
+      "number": 64,
+      "name": "سُورَةُ التَّغَابُنِ",
+      "english_name": "At-Taghaabun",
+      "ayah_count": 18,
+      "start_index": 5200
+    },
+    {
+      "number": 65,
+      "name": "سُورَةُ الطَّلَاقِ",
+      "english_name": "At-Talaaq",
+      "ayah_count": 12,
+      "start_index": 5218
+    },
+    {
+      "number": 66,
+      "name": "سُورَةُ التَّحۡرِيمِ",
+      "english_name": "At-Tahrim",
+      "ayah_count": 12,
+      "start_index": 5230
+    },
+    {
+      "number": 67,
+      "name": "سُورَةُ المُلۡكِ",
+      "english_name": "Al-Mulk",
+      "ayah_count": 30,
+      "start_index": 5242
+    },
+    {
+      "number": 68,
+      "name": "سُورَةُ القَلَمِ",
+      "english_name": "Al-Qalam",
+      "ayah_count": 52,
+      "start_index": 5272
+    },
+    {
+      "number": 69,
+      "name": "سُورَةُ الحَاقَّةِ",
+      "english_name": "Al-Haaqqa",
+      "ayah_count": 52,
+      "start_index": 5324
+    },
+    {
+      "number": 70,
+      "name": "سُورَةُ المَعَارِجِ",
+      "english_name": "Al-Ma'aarij",
+      "ayah_count": 44,
+      "start_index": 5376
+    },
+    {
+      "number": 71,
+      "name": "سُورَةُ نُوحٍ",
+      "english_name": "Nooh",
+      "ayah_count": 28,
+      "start_index": 5420
+    },
+    {
+      "number": 72,
+      "name": "سُورَةُ الجِنِّ",
+      "english_name": "Al-Jinn",
+      "ayah_count": 28,
+      "start_index": 5448
+    },
+    {
+      "number": 73,
+      "name": "سُورَةُ المُزَّمِّلِ",
+      "english_name": "Al-Muzzammil",
+      "ayah_count": 20,
+      "start_index": 5476
+    },
+    {
+      "number": 74,
+      "name": "سُورَةُ المُدَّثِّرِ",
+      "english_name": "Al-Muddaththir",
+      "ayah_count": 56,
+      "start_index": 5496
+    },
+    {
+      "number": 75,
+      "name": "سُورَةُ القِيَامَةِ",
+      "english_name": "Al-Qiyaama",
+      "ayah_count": 40,
+      "start_index": 5552
+    },
+    {
+      "number": 76,
+      "name": "سُورَةُ الإِنسَانِ",
+      "english_name": "Al-Insaan",
+      "ayah_count": 31,
+      "start_index": 5592
+    },
+    {
+      "number": 77,
+      "name": "سُورَةُ المُرۡسَلَاتِ",
+      "english_name": "Al-Mursalaat",
+      "ayah_count": 50,
+      "start_index": 5623
+    },
+    {
+      "number": 78,
+      "name": "سُورَةُ النَّبَإِ",
+      "english_name": "An-Naba",
+      "ayah_count": 40,
+      "start_index": 5673
+    },
+    {
+      "number": 79,
+      "name": "سُورَةُ النَّازِعَاتِ",
+      "english_name": "An-Naazi'aat",
+      "ayah_count": 46,
+      "start_index": 5713
+    },
+    {
+      "number": 80,
+      "name": "سُورَةُ عَبَسَ",
+      "english_name": "Abasa",
+      "ayah_count": 42,
+      "start_index": 5759
+    },
+    {
+      "number": 81,
+      "name": "سُورَةُ التَّكۡوِيرِ",
+      "english_name": "At-Takwir",
+      "ayah_count": 29,
+      "start_index": 5801
+    },
+    {
+      "number": 82,
+      "name": "سُورَةُ الانفِطَارِ",
+      "english_name": "Al-Infitaar",
+      "ayah_count": 19,
+      "start_index": 5830
+    },
+    {
+      "number": 83,
+      "name": "سُورَةُ المُطَفِّفِينَ",
+      "english_name": "Al-Mutaffifin",
+      "ayah_count": 36,
+      "start_index": 5849
+    },
+    {
+      "number": 84,
+      "name": "سُورَةُ الانشِقَاقِ",
+      "english_name": "Al-Inshiqaaq",
+      "ayah_count": 25,
+      "start_index": 5885
+    },
+    {
+      "number": 85,
+      "name": "سُورَةُ البُرُوجِ",
+      "english_name": "Al-Burooj",
+      "ayah_count": 22,
+      "start_index": 5910
+    },
+    {
+      "number": 86,
+      "name": "سُورَةُ الطَّارِقِ",
+      "english_name": "At-Taariq",
+      "ayah_count": 17,
+      "start_index": 5932
+    },
+    {
+      "number": 87,
+      "name": "سُورَةُ الأَعۡلَىٰ",
+      "english_name": "Al-A'laa",
+      "ayah_count": 19,
+      "start_index": 5949
+    },
+    {
+      "number": 88,
+      "name": "سُورَةُ الغَاشِيَةِ",
+      "english_name": "Al-Ghaashiya",
+      "ayah_count": 26,
+      "start_index": 5968
+    },
+    {
+      "number": 89,
+      "name": "سُورَةُ الفَجۡرِ",
+      "english_name": "Al-Fajr",
+      "ayah_count": 30,
+      "start_index": 5994
+    },
+    {
+      "number": 90,
+      "name": "سُورَةُ البَلَدِ",
+      "english_name": "Al-Balad",
+      "ayah_count": 20,
+      "start_index": 6024
+    },
+    {
+      "number": 91,
+      "name": "سُورَةُ الشَّمۡسِ",
+      "english_name": "Ash-Shams",
+      "ayah_count": 15,
+      "start_index": 6044
+    },
+    {
+      "number": 92,
+      "name": "سُورَةُ اللَّيۡلِ",
+      "english_name": "Al-Lail",
+      "ayah_count": 21,
+      "start_index": 6059
+    },
+    {
+      "number": 93,
+      "name": "سُورَةُ الضُّحَىٰ",
+      "english_name": "Ad-Dhuhaa",
+      "ayah_count": 11,
+      "start_index": 6080
+    },
+    {
+      "number": 94,
+      "name": "سُورَةُ الشَّرۡحِ",
+      "english_name": "Ash-Sharh",
+      "ayah_count": 8,
+      "start_index": 6091
+    },
+    {
+      "number": 95,
+      "name": "سُورَةُ التِّينِ",
+      "english_name": "At-Tin",
+      "ayah_count": 8,
+      "start_index": 6099
+    },
+    {
+      "number": 96,
+      "name": "سُورَةُ العَلَقِ",
+      "english_name": "Al-Alaq",
+      "ayah_count": 19,
+      "start_index": 6107
+    },
+    {
+      "number": 97,
+      "name": "سُورَةُ القَدۡرِ",
+      "english_name": "Al-Qadr",
+      "ayah_count": 5,
+      "start_index": 6126
+    },
+    {
+      "number": 98,
+      "name": "سُورَةُ البَيِّنَةِ",
+      "english_name": "Al-Bayyina",
+      "ayah_count": 8,
+      "start_index": 6131
+    },
+    {
+      "number": 99,
+      "name": "سُورَةُ الزَّلۡزَلَةِ",
+      "english_name": "Az-Zalzala",
+      "ayah_count": 8,
+      "start_index": 6139
+    },
+    {
+      "number": 100,
+      "name": "سُورَةُ العَادِيَاتِ",
+      "english_name": "Al-Aadiyaat",
+      "ayah_count": 11,
+      "start_index": 6147
+    },
+    {
+      "number": 101,
+      "name": "سُورَةُ القَارِعَةِ",
+      "english_name": "Al-Qaari'a",
+      "ayah_count": 11,
+      "start_index": 6158
+    },
+    {
+      "number": 102,
+      "name": "سُورَةُ التَّكَاثُرِ",
+      "english_name": "At-Takaathur",
+      "ayah_count": 8,
+      "start_index": 6169
+    },
+    {
+      "number": 103,
+      "name": "سُورَةُ العَصۡرِ",
+      "english_name": "Al-Asr",
+      "ayah_count": 3,
+      "start_index": 6177
+    },
+    {
+      "number": 104,
+      "name": "سُورَةُ الهُمَزَةِ",
+      "english_name": "Al-Humaza",
+      "ayah_count": 9,
+      "start_index": 6180
+    },
+    {
+      "number": 105,
+      "name": "سُورَةُ الفِيلِ",
+      "english_name": "Al-Fil",
+      "ayah_count": 5,
+      "start_index": 6189
+    },
+    {
+      "number": 106,
+      "name": "سُورَةُ قُرَيۡشٍ",
+      "english_name": "Quraish",
+      "ayah_count": 4,
+      "start_index": 6194
+    },
+    {
+      "number": 107,
+      "name": "سُورَةُ المَاعُونِ",
+      "english_name": "Al-Maa'un",
+      "ayah_count": 7,
+      "start_index": 6198
+    },
+    {
+      "number": 108,
+      "name": "سُورَةُ الكَوۡثَرِ",
+      "english_name": "Al-Kawthar",
+      "ayah_count": 3,
+      "start_index": 6205
+    },
+    {
+      "number": 109,
+      "name": "سُورَةُ الكَافِرُونَ",
+      "english_name": "Al-Kaafiroon",
+      "ayah_count": 6,
+      "start_index": 6208
+    },
+    {
+      "number": 110,
+      "name": "سُورَةُ النَّصۡرِ",
+      "english_name": "An-Nasr",
+      "ayah_count": 3,
+      "start_index": 6214
+    },
+    {
+      "number": 111,
+      "name": "سُورَةُ المَسَدِ",
+      "english_name": "Al-Masad",
+      "ayah_count": 5,
+      "start_index": 6217
+    },
+    {
+      "number": 112,
+      "name": "سُورَةُ الإِخۡلَاصِ",
+      "english_name": "Al-Ikhlaas",
+      "ayah_count": 4,
+      "start_index": 6222
+    },
+    {
+      "number": 113,
+      "name": "سُورَةُ الفَلَقِ",
+      "english_name": "Al-Falaq",
+      "ayah_count": 5,
+      "start_index": 6226
+    },
+    {
+      "number": 114,
+      "name": "سُورَةُ النَّاسِ",
+      "english_name": "An-Naas",
+      "ayah_count": 6,
+      "start_index": 6231
+    }
+  ],
+  "sections": {
+    "page": [
+      {
+        "surah": 1,
+        "ayah": 1
+      },
+      {
+        "surah": 2,
+        "ayah": 1
+      },
+      {
+        "surah": 2,
+        "ayah": 6
+      },
+      {
+        "surah": 2,
+        "ayah": 17
+      },
+      {
+        "surah": 2,
+        "ayah": 25
+      },
+      {
+        "surah": 2,
+        "ayah": 30
+      },
+      {
+        "surah": 2,
+        "ayah": 38
+      },
+      {
+        "surah": 2,
+        "ayah": 49
+      },
+      {
+        "surah": 2,
+        "ayah": 58
+      },
+      {
+        "surah": 2,
+        "ayah": 62
+      },
+      {
+        "surah": 2,
+        "ayah": 70
+      },
+      {
+        "surah": 2,
+        "ayah": 77
+      },
+      {
+        "surah": 2,
+        "ayah": 84
+      },
+      {
+        "surah": 2,
+        "ayah": 89
+      },
+      {
+        "surah": 2,
+        "ayah": 94
+      },
+      {
+        "surah": 2,
+        "ayah": 102
+      },
+      {
+        "surah": 2,
+        "ayah": 106
+      },
+      {
+        "surah": 2,
+        "ayah": 113
+      },
+      {
+        "surah": 2,
+        "ayah": 120
+      },
+      {
+        "surah": 2,
+        "ayah": 127
+      },
+      {
+        "surah": 2,
+        "ayah": 135
+      },
+      {
+        "surah": 2,
+        "ayah": 142
+      },
+      {
+        "surah": 2,
+        "ayah": 146
+      },
+      {
+        "surah": 2,
+        "ayah": 154
+      },
+      {
+        "surah": 2,
+        "ayah": 164
+      },
+      {
+        "surah": 2,
+        "ayah": 170
+      },
+      {
+        "surah": 2,
+        "ayah": 177
+      },
+      {
+        "surah": 2,
+        "ayah": 182
+      },
+      {
+        "surah": 2,
+        "ayah": 187
+      },
+      {
+        "surah": 2,
+        "ayah": 191
+      },
+      {
+        "surah": 2,
+        "ayah": 197
+      },
+      {
+        "surah": 2,
+        "ayah": 203
+      },
+      {
+        "surah": 2,
+        "ayah": 211
+      },
+      {
+        "surah": 2,
+        "ayah": 216
+      },
+      {
+        "surah": 2,
+        "ayah": 220
+      },
+      {
+        "surah": 2,
+        "ayah": 225
+      },
+      {
+        "surah": 2,
+        "ayah": 231
+      },
+      {
+        "surah": 2,
+        "ayah": 234
+      },
+      {
+        "surah": 2,
+        "ayah": 238
+      },
+      {
+        "surah": 2,
+        "ayah": 246
+      },
+      {
+        "surah": 2,
+        "ayah": 249
+      },
+      {
+        "surah": 2,
+        "ayah": 253
+      },
+      {
+        "surah": 2,
+        "ayah": 257
+      },
+      {
+        "surah": 2,
+        "ayah": 260
+      },
+      {
+        "surah": 2,
+        "ayah": 265
+      },
+      {
+        "surah": 2,
+        "ayah": 270
+      },
+      {
+        "surah": 2,
+        "ayah": 275
+      },
+      {
+        "surah": 2,
+        "ayah": 282
+      },
+      {
+        "surah": 2,
+        "ayah": 283
+      },
+      {
+        "surah": 3,
+        "ayah": 1
+      },
+      {
+        "surah": 3,
+        "ayah": 10
+      },
+      {
+        "surah": 3,
+        "ayah": 16
+      },
+      {
+        "surah": 3,
+        "ayah": 23
+      },
+      {
+        "surah": 3,
+        "ayah": 30
+      },
+      {
+        "surah": 3,
+        "ayah": 38
+      },
+      {
+        "surah": 3,
+        "ayah": 46
+      },
+      {
+        "surah": 3,
+        "ayah": 53
+      },
+      {
+        "surah": 3,
+        "ayah": 62
+      },
+      {
+        "surah": 3,
+        "ayah": 71
+      },
+      {
+        "surah": 3,
+        "ayah": 78
+      },
+      {
+        "surah": 3,
+        "ayah": 84
+      },
+      {
+        "surah": 3,
+        "ayah": 92
+      },
+      {
+        "surah": 3,
+        "ayah": 101
+      },
+      {
+        "surah": 3,
+        "ayah": 109
+      },
+      {
+        "surah": 3,
+        "ayah": 116
+      },
+      {
+        "surah": 3,
+        "ayah": 122
+      },
+      {
+        "surah": 3,
+        "ayah": 133
+      },
+      {
+        "surah": 3,
+        "ayah": 141
+      },
+      {
+        "surah": 3,
+        "ayah": 149
+      },
+      {
+        "surah": 3,
+        "ayah": 154
+      },
+      {
+        "surah": 3,
+        "ayah": 158
+      },
+      {
+        "surah": 3,
+        "ayah": 166
+      },
+      {
+        "surah": 3,
+        "ayah": 174
+      },
+      {
+        "surah": 3,
+        "ayah": 181
+      },
+      {
+        "surah": 3,
+        "ayah": 187
+      },
+      {
+        "surah": 3,
+        "ayah": 195
+      },
+      {
+        "surah": 4,
+        "ayah": 1
+      },
+      {
+        "surah": 4,
+        "ayah": 7
+      },
+      {
+        "surah": 4,
+        "ayah": 12
+      },
+      {
+        "surah": 4,
+        "ayah": 15
+      },
+      {
+        "surah": 4,
+        "ayah": 20
+      },
+      {
+        "surah": 4,
+        "ayah": 24
+      },
+      {
+        "surah": 4,
+        "ayah": 27
+      },
+      {
+        "surah": 4,
+        "ayah": 34
+      },
+      {
+        "surah": 4,
+        "ayah": 38
+      },
+      {
+        "surah": 4,
+        "ayah": 45
+      },
+      {
+        "surah": 4,
+        "ayah": 52
+      },
+      {
+        "surah": 4,
+        "ayah": 60
+      },
+      {
+        "surah": 4,
+        "ayah": 66
+      },
+      {
+        "surah": 4,
+        "ayah": 75
+      },
+      {
+        "surah": 4,
+        "ayah": 80
+      },
+      {
+        "surah": 4,
+        "ayah": 87
+      },
+      {
+        "surah": 4,
+        "ayah": 92
+      },
+      {
+        "surah": 4,
+        "ayah": 95
+      },
+      {
+        "surah": 4,
+        "ayah": 102
+      },
+      {
+        "surah": 4,
+        "ayah": 106
+      },
+      {
+        "surah": 4,
+        "ayah": 114
+      },
+      {
+        "surah": 4,
+        "ayah": 122
+      },
+      {
+        "surah": 4,
+        "ayah": 128
+      },
+      {
+        "surah": 4,
+        "ayah": 135
+      },
+      {
+        "surah": 4,
+        "ayah": 141
+      },
+      {
+        "surah": 4,
+        "ayah": 148
+      },
+      {
+        "surah": 4,
+        "ayah": 155
+      },
+      {
+        "surah": 4,
+        "ayah": 163
+      },
+      {
+        "surah": 4,
+        "ayah": 171
+      },
+      {
+        "surah": 4,
+        "ayah": 176
+      },
+      {
+        "surah": 5,
+        "ayah": 3
+      },
+      {
+        "surah": 5,
+        "ayah": 6
+      },
+      {
+        "surah": 5,
+        "ayah": 10
+      },
+      {
+        "surah": 5,
+        "ayah": 14
+      },
+      {
+        "surah": 5,
+        "ayah": 18
+      },
+      {
+        "surah": 5,
+        "ayah": 24
+      },
+      {
+        "surah": 5,
+        "ayah": 32
+      },
+      {
+        "surah": 5,
+        "ayah": 37
+      },
+      {
+        "surah": 5,
+        "ayah": 42
+      },
+      {
+        "surah": 5,
+        "ayah": 46
+      },
+      {
+        "surah": 5,
+        "ayah": 51
+      },
+      {
+        "surah": 5,
+        "ayah": 58
+      },
+      {
+        "surah": 5,
+        "ayah": 65
+      },
+      {
+        "surah": 5,
+        "ayah": 71
+      },
+      {
+        "surah": 5,
+        "ayah": 77
+      },
+      {
+        "surah": 5,
+        "ayah": 83
+      },
+      {
+        "surah": 5,
+        "ayah": 90
+      },
+      {
+        "surah": 5,
+        "ayah": 96
+      },
+      {
+        "surah": 5,
+        "ayah": 104
+      },
+      {
+        "surah": 5,
+        "ayah": 109
+      },
+      {
+        "surah": 5,
+        "ayah": 114
+      },
+      {
+        "surah": 6,
+        "ayah": 1
+      },
+      {
+        "surah": 6,
+        "ayah": 9
+      },
+      {
+        "surah": 6,
+        "ayah": 19
+      },
+      {
+        "surah": 6,
+        "ayah": 28
+      },
+      {
+        "surah": 6,
+        "ayah": 36
+      },
+      {
+        "surah": 6,
+        "ayah": 45
+      },
+      {
+        "surah": 6,
+        "ayah": 53
+      },
+      {
+        "surah": 6,
+        "ayah": 60
+      },
+      {
+        "surah": 6,
+        "ayah": 69
+      },
+      {
+        "surah": 6,
+        "ayah": 74
+      },
+      {
+        "surah": 6,
+        "ayah": 82
+      },
+      {
+        "surah": 6,
+        "ayah": 91
+      },
+      {
+        "surah": 6,
+        "ayah": 95
+      },
+      {
+        "surah": 6,
+        "ayah": 102
+      },
+      {
+        "surah": 6,
+        "ayah": 111
+      },
+      {
+        "surah": 6,
+        "ayah": 119
+      },
+      {
+        "surah": 6,
+        "ayah": 125
+      },
+      {
+        "surah": 6,
+        "ayah": 132
+      },
+      {
+        "surah": 6,
+        "ayah": 138
+      },
+      {
+        "surah": 6,
+        "ayah": 143
+      },
+      {
+        "surah": 6,
+        "ayah": 147
+      },
+      {
+        "surah": 6,
+        "ayah": 152
+      },
+      {
+        "surah": 6,
+        "ayah": 158
+      },
+      {
+        "surah": 7,
+        "ayah": 1
+      },
+      {
+        "surah": 7,
+        "ayah": 12
+      },
+      {
+        "surah": 7,
+        "ayah": 23
+      },
+      {
+        "surah": 7,
+        "ayah": 31
+      },
+      {
+        "surah": 7,
+        "ayah": 38
+      },
+      {
+        "surah": 7,
+        "ayah": 44
+      },
+      {
+        "surah": 7,
+        "ayah": 52
+      },
+      {
+        "surah": 7,
+        "ayah": 58
+      },
+      {
+        "surah": 7,
+        "ayah": 68
+      },
+      {
+        "surah": 7,
+        "ayah": 74
+      },
+      {
+        "surah": 7,
+        "ayah": 82
+      },
+      {
+        "surah": 7,
+        "ayah": 88
+      },
+      {
+        "surah": 7,
+        "ayah": 96
+      },
+      {
+        "surah": 7,
+        "ayah": 105
+      },
+      {
+        "surah": 7,
+        "ayah": 121
+      },
+      {
+        "surah": 7,
+        "ayah": 131
+      },
+      {
+        "surah": 7,
+        "ayah": 138
+      },
+      {
+        "surah": 7,
+        "ayah": 144
+      },
+      {
+        "surah": 7,
+        "ayah": 150
+      },
+      {
+        "surah": 7,
+        "ayah": 156
+      },
+      {
+        "surah": 7,
+        "ayah": 160
+      },
+      {
+        "surah": 7,
+        "ayah": 164
+      },
+      {
+        "surah": 7,
+        "ayah": 171
+      },
+      {
+        "surah": 7,
+        "ayah": 179
+      },
+      {
+        "surah": 7,
+        "ayah": 188
+      },
+      {
+        "surah": 7,
+        "ayah": 196
+      },
+      {
+        "surah": 8,
+        "ayah": 1
+      },
+      {
+        "surah": 8,
+        "ayah": 9
+      },
+      {
+        "surah": 8,
+        "ayah": 17
+      },
+      {
+        "surah": 8,
+        "ayah": 26
+      },
+      {
+        "surah": 8,
+        "ayah": 34
+      },
+      {
+        "surah": 8,
+        "ayah": 41
+      },
+      {
+        "surah": 8,
+        "ayah": 46
+      },
+      {
+        "surah": 8,
+        "ayah": 53
+      },
+      {
+        "surah": 8,
+        "ayah": 62
+      },
+      {
+        "surah": 8,
+        "ayah": 70
+      },
+      {
+        "surah": 9,
+        "ayah": 1
+      },
+      {
+        "surah": 9,
+        "ayah": 7
+      },
+      {
+        "surah": 9,
+        "ayah": 14
+      },
+      {
+        "surah": 9,
+        "ayah": 21
+      },
+      {
+        "surah": 9,
+        "ayah": 27
+      },
+      {
+        "surah": 9,
+        "ayah": 32
+      },
+      {
+        "surah": 9,
+        "ayah": 37
+      },
+      {
+        "surah": 9,
+        "ayah": 41
+      },
+      {
+        "surah": 9,
+        "ayah": 48
+      },
+      {
+        "surah": 9,
+        "ayah": 55
+      },
+      {
+        "surah": 9,
+        "ayah": 62
+      },
+      {
+        "surah": 9,
+        "ayah": 69
+      },
+      {
+        "surah": 9,
+        "ayah": 73
+      },
+      {
+        "surah": 9,
+        "ayah": 80
+      },
+      {
+        "surah": 9,
+        "ayah": 87
+      },
+      {
+        "surah": 9,
+        "ayah": 94
+      },
+      {
+        "surah": 9,
+        "ayah": 100
+      },
+      {
+        "surah": 9,
+        "ayah": 107
+      },
+      {
+        "surah": 9,
+        "ayah": 112
+      },
+      {
+        "surah": 9,
+        "ayah": 118
+      },
+      {
+        "surah": 9,
+        "ayah": 123
+      },
+      {
+        "surah": 10,
+        "ayah": 1
+      },
+      {
+        "surah": 10,
+        "ayah": 7
+      },
+      {
+        "surah": 10,
+        "ayah": 15
+      },
+      {
+        "surah": 10,
+        "ayah": 21
+      },
+      {
+        "surah": 10,
+        "ayah": 26
+      },
+      {
+        "surah": 10,
+        "ayah": 34
+      },
+      {
+        "surah": 10,
+        "ayah": 43
+      },
+      {
+        "surah": 10,
+        "ayah": 54
+      },
+      {
+        "surah": 10,
+        "ayah": 62
+      },
+      {
+        "surah": 10,
+        "ayah": 71
+      },
+      {
+        "surah": 10,
+        "ayah": 79
+      },
+      {
+        "surah": 10,
+        "ayah": 89
+      },
+      {
+        "surah": 10,
+        "ayah": 98
+      },
+      {
+        "surah": 10,
+        "ayah": 107
+      },
+      {
+        "surah": 11,
+        "ayah": 6
+      },
+      {
+        "surah": 11,
+        "ayah": 13
+      },
+      {
+        "surah": 11,
+        "ayah": 20
+      },
+      {
+        "surah": 11,
+        "ayah": 29
+      },
+      {
+        "surah": 11,
+        "ayah": 38
+      },
+      {
+        "surah": 11,
+        "ayah": 46
+      },
+      {
+        "surah": 11,
+        "ayah": 54
+      },
+      {
+        "surah": 11,
+        "ayah": 63
+      },
+      {
+        "surah": 11,
+        "ayah": 72
+      },
+      {
+        "surah": 11,
+        "ayah": 82
+      },
+      {
+        "surah": 11,
+        "ayah": 89
+      },
+      {
+        "surah": 11,
+        "ayah": 98
+      },
+      {
+        "surah": 11,
+        "ayah": 109
+      },
+      {
+        "surah": 11,
+        "ayah": 118
+      },
+      {
+        "surah": 12,
+        "ayah": 5
+      },
+      {
+        "surah": 12,
+        "ayah": 15
+      },
+      {
+        "surah": 12,
+        "ayah": 23
+      },
+      {
+        "surah": 12,
+        "ayah": 31
+      },
+      {
+        "surah": 12,
+        "ayah": 38
+      },
+      {
+        "surah": 12,
+        "ayah": 44
+      },
+      {
+        "surah": 12,
+        "ayah": 53
+      },
+      {
+        "surah": 12,
+        "ayah": 64
+      },
+      {
+        "surah": 12,
+        "ayah": 70
+      },
+      {
+        "surah": 12,
+        "ayah": 79
+      },
+      {
+        "surah": 12,
+        "ayah": 87
+      },
+      {
+        "surah": 12,
+        "ayah": 96
+      },
+      {
+        "surah": 12,
+        "ayah": 104
+      },
+      {
+        "surah": 13,
+        "ayah": 1
+      },
+      {
+        "surah": 13,
+        "ayah": 6
+      },
+      {
+        "surah": 13,
+        "ayah": 14
+      },
+      {
+        "surah": 13,
+        "ayah": 19
+      },
+      {
+        "surah": 13,
+        "ayah": 29
+      },
+      {
+        "surah": 13,
+        "ayah": 35
+      },
+      {
+        "surah": 13,
+        "ayah": 43
+      },
+      {
+        "surah": 14,
+        "ayah": 6
+      },
+      {
+        "surah": 14,
+        "ayah": 11
+      },
+      {
+        "surah": 14,
+        "ayah": 19
+      },
+      {
+        "surah": 14,
+        "ayah": 25
+      },
+      {
+        "surah": 14,
+        "ayah": 34
+      },
+      {
+        "surah": 14,
+        "ayah": 43
+      },
+      {
+        "surah": 15,
+        "ayah": 1
+      },
+      {
+        "surah": 15,
+        "ayah": 16
+      },
+      {
+        "surah": 15,
+        "ayah": 32
+      },
+      {
+        "surah": 15,
+        "ayah": 52
+      },
+      {
+        "surah": 15,
+        "ayah": 71
+      },
+      {
+        "surah": 15,
+        "ayah": 91
+      },
+      {
+        "surah": 16,
+        "ayah": 7
+      },
+      {
+        "surah": 16,
+        "ayah": 15
+      },
+      {
+        "surah": 16,
+        "ayah": 27
+      },
+      {
+        "surah": 16,
+        "ayah": 35
+      },
+      {
+        "surah": 16,
+        "ayah": 43
+      },
+      {
+        "surah": 16,
+        "ayah": 55
+      },
+      {
+        "surah": 16,
+        "ayah": 65
+      },
+      {
+        "surah": 16,
+        "ayah": 73
+      },
+      {
+        "surah": 16,
+        "ayah": 80
+      },
+      {
+        "surah": 16,
+        "ayah": 88
+      },
+      {
+        "surah": 16,
+        "ayah": 94
+      },
+      {
+        "surah": 16,
+        "ayah": 103
+      },
+      {
+        "surah": 16,
+        "ayah": 111
+      },
+      {
+        "surah": 16,
+        "ayah": 119
+      },
+      {
+        "surah": 17,
+        "ayah": 1
+      },
+      {
+        "surah": 17,
+        "ayah": 8
+      },
+      {
+        "surah": 17,
+        "ayah": 18
+      },
+      {
+        "surah": 17,
+        "ayah": 28
+      },
+      {
+        "surah": 17,
+        "ayah": 39
+      },
+      {
+        "surah": 17,
+        "ayah": 50
+      },
+      {
+        "surah": 17,
+        "ayah": 59
+      },
+      {
+        "surah": 17,
+        "ayah": 67
+      },
+      {
+        "surah": 17,
+        "ayah": 76
+      },
+      {
+        "surah": 17,
+        "ayah": 87
+      },
+      {
+        "surah": 17,
+        "ayah": 97
+      },
+      {
+        "surah": 17,
+        "ayah": 105
+      },
+      {
+        "surah": 18,
+        "ayah": 5
+      },
+      {
+        "surah": 18,
+        "ayah": 16
+      },
+      {
+        "surah": 18,
+        "ayah": 21
+      },
+      {
+        "surah": 18,
+        "ayah": 28
+      },
+      {
+        "surah": 18,
+        "ayah": 35
+      },
+      {
+        "surah": 18,
+        "ayah": 46
+      },
+      {
+        "surah": 18,
+        "ayah": 54
+      },
+      {
+        "surah": 18,
+        "ayah": 62
+      },
+      {
+        "surah": 18,
+        "ayah": 75
+      },
+      {
+        "surah": 18,
+        "ayah": 84
+      },
+      {
+        "surah": 18,
+        "ayah": 98
+      },
+      {
+        "surah": 19,
+        "ayah": 1
+      },
+      {
+        "surah": 19,
+        "ayah": 12
+      },
+      {
+        "surah": 19,
+        "ayah": 26
+      },
+      {
+        "surah": 19,
+        "ayah": 39
+      },
+      {
+        "surah": 19,
+        "ayah": 52
+      },
+      {
+        "surah": 19,
+        "ayah": 65
+      },
+      {
+        "surah": 19,
+        "ayah": 77
+      },
+      {
+        "surah": 19,
+        "ayah": 96
+      },
+      {
+        "surah": 20,
+        "ayah": 13
+      },
+      {
+        "surah": 20,
+        "ayah": 38
+      },
+      {
+        "surah": 20,
+        "ayah": 52
+      },
+      {
+        "surah": 20,
+        "ayah": 65
+      },
+      {
+        "surah": 20,
+        "ayah": 77
+      },
+      {
+        "surah": 20,
+        "ayah": 88
+      },
+      {
+        "surah": 20,
+        "ayah": 99
+      },
+      {
+        "surah": 20,
+        "ayah": 114
+      },
+      {
+        "surah": 20,
+        "ayah": 126
+      },
+      {
+        "surah": 21,
+        "ayah": 1
+      },
+      {
+        "surah": 21,
+        "ayah": 11
+      },
+      {
+        "surah": 21,
+        "ayah": 25
+      },
+      {
+        "surah": 21,
+        "ayah": 36
+      },
+      {
+        "surah": 21,
+        "ayah": 45
+      },
+      {
+        "surah": 21,
+        "ayah": 58
+      },
+      {
+        "surah": 21,
+        "ayah": 73
+      },
+      {
+        "surah": 21,
+        "ayah": 82
+      },
+      {
+        "surah": 21,
+        "ayah": 91
+      },
+      {
+        "surah": 21,
+        "ayah": 102
+      },
+      {
+        "surah": 22,
+        "ayah": 1
+      },
+      {
+        "surah": 22,
+        "ayah": 6
+      },
+      {
+        "surah": 22,
+        "ayah": 16
+      },
+      {
+        "surah": 22,
+        "ayah": 24
+      },
+      {
+        "surah": 22,
+        "ayah": 31
+      },
+      {
+        "surah": 22,
+        "ayah": 39
+      },
+      {
+        "surah": 22,
+        "ayah": 47
+      },
+      {
+        "surah": 22,
+        "ayah": 56
+      },
+      {
+        "surah": 22,
+        "ayah": 65
+      },
+      {
+        "surah": 22,
+        "ayah": 73
+      },
+      {
+        "surah": 23,
+        "ayah": 1
+      },
+      {
+        "surah": 23,
+        "ayah": 18
+      },
+      {
+        "surah": 23,
+        "ayah": 28
+      },
+      {
+        "surah": 23,
+        "ayah": 43
+      },
+      {
+        "surah": 23,
+        "ayah": 60
+      },
+      {
+        "surah": 23,
+        "ayah": 75
+      },
+      {
+        "surah": 23,
+        "ayah": 90
+      },
+      {
+        "surah": 23,
+        "ayah": 105
+      },
+      {
+        "surah": 24,
+        "ayah": 1
+      },
+      {
+        "surah": 24,
+        "ayah": 11
+      },
+      {
+        "surah": 24,
+        "ayah": 21
+      },
+      {
+        "surah": 24,
+        "ayah": 28
+      },
+      {
+        "surah": 24,
+        "ayah": 32
+      },
+      {
+        "surah": 24,
+        "ayah": 37
+      },
+      {
+        "surah": 24,
+        "ayah": 44
+      },
+      {
+        "surah": 24,
+        "ayah": 54
+      },
+      {
+        "surah": 24,
+        "ayah": 59
+      },
+      {
+        "surah": 24,
+        "ayah": 62
+      },
+      {
+        "surah": 25,
+        "ayah": 3
+      },
+      {
+        "surah": 25,
+        "ayah": 12
+      },
+      {
+        "surah": 25,
+        "ayah": 21
+      },
+      {
+        "surah": 25,
+        "ayah": 33
+      },
+      {
+        "surah": 25,
+        "ayah": 44
+      },
+      {
+        "surah": 25,
+        "ayah": 56
+      },
+      {
+        "surah": 25,
+        "ayah": 68
+      },
+      {
+        "surah": 26,
+        "ayah": 1
+      },
+      {
+        "surah": 26,
+        "ayah": 20
+      },
+      {
+        "surah": 26,
+        "ayah": 40
+      },
+      {
+        "surah": 26,
+        "ayah": 61
+      },
+      {
+        "surah": 26,
+        "ayah": 84
+      },
+      {
+        "surah": 26,
+        "ayah": 112
+      },
+      {
+        "surah": 26,
+        "ayah": 137
+      },
+      {
+        "surah": 26,
+        "ayah": 160
+      },
+      {
+        "surah": 26,
+        "ayah": 184
+      },
+      {
+        "surah": 26,
+        "ayah": 207
+      },
+      {
+        "surah": 27,
+        "ayah": 1
+      },
+      {
+        "surah": 27,
+        "ayah": 14
+      },
+      {
+        "surah": 27,
+        "ayah": 23
+      },
+      {
+        "surah": 27,
+        "ayah": 36
+      },
+      {
+        "surah": 27,
+        "ayah": 45
+      },
+      {
+        "surah": 27,
+        "ayah": 56
+      },
+      {
+        "surah": 27,
+        "ayah": 64
+      },
+      {
+        "surah": 27,
+        "ayah": 77
+      },
+      {
+        "surah": 27,
+        "ayah": 89
+      },
+      {
+        "surah": 28,
+        "ayah": 6
+      },
+      {
+        "surah": 28,
+        "ayah": 14
+      },
+      {
+        "surah": 28,
+        "ayah": 22
+      },
+      {
+        "surah": 28,
+        "ayah": 29
+      },
+      {
+        "surah": 28,
+        "ayah": 36
+      },
+      {
+        "surah": 28,
+        "ayah": 44
+      },
+      {
+        "surah": 28,
+        "ayah": 51
+      },
+      {
+        "surah": 28,
+        "ayah": 60
+      },
+      {
+        "surah": 28,
+        "ayah": 71
+      },
+      {
+        "surah": 28,
+        "ayah": 78
+      },
+      {
+        "surah": 28,
+        "ayah": 85
+      },
+      {
+        "surah": 29,
+        "ayah": 7
+      },
+      {
+        "surah": 29,
+        "ayah": 15
+      },
+      {
+        "surah": 29,
+        "ayah": 24
+      },
+      {
+        "surah": 29,
+        "ayah": 31
+      },
+      {
+        "surah": 29,
+        "ayah": 39
+      },
+      {
+        "surah": 29,
+        "ayah": 46
+      },
+      {
+        "surah": 29,
+        "ayah": 53
+      },
+      {
+        "surah": 29,
+        "ayah": 64
+      },
+      {
+        "surah": 30,
+        "ayah": 6
+      },
+      {
+        "surah": 30,
+        "ayah": 16
+      },
+      {
+        "surah": 30,
+        "ayah": 25
+      },
+      {
+        "surah": 30,
+        "ayah": 33
+      },
+      {
+        "surah": 30,
+        "ayah": 42
+      },
+      {
+        "surah": 30,
+        "ayah": 51
+      },
+      {
+        "surah": 31,
+        "ayah": 1
+      },
+      {
+        "surah": 31,
+        "ayah": 12
+      },
+      {
+        "surah": 31,
+        "ayah": 20
+      },
+      {
+        "surah": 31,
+        "ayah": 29
+      },
+      {
+        "surah": 32,
+        "ayah": 1
+      },
+      {
+        "surah": 32,
+        "ayah": 12
+      },
+      {
+        "surah": 32,
+        "ayah": 21
+      },
+      {
+        "surah": 33,
+        "ayah": 1
+      },
+      {
+        "surah": 33,
+        "ayah": 7
+      },
+      {
+        "surah": 33,
+        "ayah": 16
+      },
+      {
+        "surah": 33,
+        "ayah": 23
+      },
+      {
+        "surah": 33,
+        "ayah": 31
+      },
+      {
+        "surah": 33,
+        "ayah": 36
+      },
+      {
+        "surah": 33,
+        "ayah": 44
+      },
+      {
+        "surah": 33,
+        "ayah": 51
+      },
+      {
+        "surah": 33,
+        "ayah": 55
+      },
+      {
+        "surah": 33,
+        "ayah": 63
+      },
+      {
+        "surah": 34,
+        "ayah": 1
+      },
+      {
+        "surah": 34,
+        "ayah": 8
+      },
+      {
+        "surah": 34,
+        "ayah": 15
+      },
+      {
+        "surah": 34,
+        "ayah": 23
+      },
+      {
+        "surah": 34,
+        "ayah": 32
+      },
+      {
+        "surah": 34,
+        "ayah": 40
+      },
+      {
+        "surah": 34,
+        "ayah": 49
+      },
+      {
+        "surah": 35,
+        "ayah": 4
+      },
+      {
+        "surah": 35,
+        "ayah": 12
+      },
+      {
+        "surah": 35,
+        "ayah": 19
+      },
+      {
+        "surah": 35,
+        "ayah": 31
+      },
+      {
+        "surah": 35,
+        "ayah": 39
+      },
+      {
+        "surah": 35,
+        "ayah": 45
+      },
+      {
+        "surah": 36,
+        "ayah": 13
+      },
+      {
+        "surah": 36,
+        "ayah": 28
+      },
+      {
+        "surah": 36,
+        "ayah": 41
+      },
+      {
+        "surah": 36,
+        "ayah": 55
+      },
+      {
+        "surah": 36,
+        "ayah": 71
+      },
+      {
+        "surah": 37,
+        "ayah": 1
+      },
+      {
+        "surah": 37,
+        "ayah": 25
+      },
+      {
+        "surah": 37,
+        "ayah": 52
+      },
+      {
+        "surah": 37,
+        "ayah": 77
+      },
+      {
+        "surah": 37,
+        "ayah": 103
+      },
+      {
+        "surah": 37,
+        "ayah": 127
+      },
+      {
+        "surah": 37,
+        "ayah": 154
+      },
+      {
+        "surah": 38,
+        "ayah": 1
+      },
+      {
+        "surah": 38,
+        "ayah": 17
+      },
+      {
+        "surah": 38,
+        "ayah": 27
+      },
+      {
+        "surah": 38,
+        "ayah": 43
+      },
+      {
+        "surah": 38,
+        "ayah": 62
+      },
+      {
+        "surah": 38,
+        "ayah": 84
+      },
+      {
+        "surah": 39,
+        "ayah": 6
+      },
+      {
+        "surah": 39,
+        "ayah": 11
+      },
+      {
+        "surah": 39,
+        "ayah": 22
+      },
+      {
+        "surah": 39,
+        "ayah": 32
+      },
+      {
+        "surah": 39,
+        "ayah": 41
+      },
+      {
+        "surah": 39,
+        "ayah": 48
+      },
+      {
+        "surah": 39,
+        "ayah": 57
+      },
+      {
+        "surah": 39,
+        "ayah": 68
+      },
+      {
+        "surah": 39,
+        "ayah": 75
+      },
+      {
+        "surah": 40,
+        "ayah": 8
+      },
+      {
+        "surah": 40,
+        "ayah": 17
+      },
+      {
+        "surah": 40,
+        "ayah": 26
+      },
+      {
+        "surah": 40,
+        "ayah": 34
+      },
+      {
+        "surah": 40,
+        "ayah": 41
+      },
+      {
+        "surah": 40,
+        "ayah": 50
+      },
+      {
+        "surah": 40,
+        "ayah": 59
+      },
+      {
+        "surah": 40,
+        "ayah": 67
+      },
+      {
+        "surah": 40,
+        "ayah": 78
+      },
+      {
+        "surah": 41,
+        "ayah": 1
+      },
+      {
+        "surah": 41,
+        "ayah": 12
+      },
+      {
+        "surah": 41,
+        "ayah": 21
+      },
+      {
+        "surah": 41,
+        "ayah": 30
+      },
+      {
+        "surah": 41,
+        "ayah": 39
+      },
+      {
+        "surah": 41,
+        "ayah": 47
+      },
+      {
+        "surah": 42,
+        "ayah": 1
+      },
+      {
+        "surah": 42,
+        "ayah": 11
+      },
+      {
+        "surah": 42,
+        "ayah": 16
+      },
+      {
+        "surah": 42,
+        "ayah": 23
+      },
+      {
+        "surah": 42,
+        "ayah": 32
+      },
+      {
+        "surah": 42,
+        "ayah": 45
+      },
+      {
+        "surah": 42,
+        "ayah": 52
+      },
+      {
+        "surah": 43,
+        "ayah": 11
+      },
+      {
+        "surah": 43,
+        "ayah": 23
+      },
+      {
+        "surah": 43,
+        "ayah": 34
+      },
+      {
+        "surah": 43,
+        "ayah": 48
+      },
+      {
+        "surah": 43,
+        "ayah": 61
+      },
+      {
+        "surah": 43,
+        "ayah": 74
+      },
+      {
+        "surah": 44,
+        "ayah": 1
+      },
+      {
+        "surah": 44,
+        "ayah": 19
+      },
+      {
+        "surah": 44,
+        "ayah": 40
+      },
+      {
+        "surah": 45,
+        "ayah": 1
+      },
+      {
+        "surah": 45,
+        "ayah": 14
+      },
+      {
+        "surah": 45,
+        "ayah": 23
+      },
+      {
+        "surah": 45,
+        "ayah": 33
+      },
+      {
+        "surah": 46,
+        "ayah": 6
+      },
+      {
+        "surah": 46,
+        "ayah": 15
+      },
+      {
+        "surah": 46,
+        "ayah": 21
+      },
+      {
+        "surah": 46,
+        "ayah": 29
+      },
+      {
+        "surah": 47,
+        "ayah": 1
+      },
+      {
+        "surah": 47,
+        "ayah": 12
+      },
+      {
+        "surah": 47,
+        "ayah": 20
+      },
+      {
+        "surah": 47,
+        "ayah": 30
+      },
+      {
+        "surah": 48,
+        "ayah": 1
+      },
+      {
+        "surah": 48,
+        "ayah": 10
+      },
+      {
+        "surah": 48,
+        "ayah": 16
+      },
+      {
+        "surah": 48,
+        "ayah": 24
+      },
+      {
+        "surah": 48,
+        "ayah": 29
+      },
+      {
+        "surah": 49,
+        "ayah": 5
+      },
+      {
+        "surah": 49,
+        "ayah": 12
+      },
+      {
+        "surah": 50,
+        "ayah": 1
+      },
+      {
+        "surah": 50,
+        "ayah": 16
+      },
+      {
+        "surah": 50,
+        "ayah": 36
+      },
+      {
+        "surah": 51,
+        "ayah": 7
+      },
+      {
+        "surah": 51,
+        "ayah": 31
+      },
+      {
+        "surah": 51,
+        "ayah": 52
+      },
+      {
+        "surah": 52,
+        "ayah": 15
+      },
+      {
+        "surah": 52,
+        "ayah": 32
+      },
+      {
+        "surah": 53,
+        "ayah": 1
+      },
+      {
+        "surah": 53,
+        "ayah": 27
+      },
+      {
+        "surah": 53,
+        "ayah": 45
+      },
+      {
+        "surah": 54,
+        "ayah": 7
+      },
+      {
+        "surah": 54,
+        "ayah": 28
+      },
+      {
+        "surah": 54,
+        "ayah": 50
+      },
+      {
+        "surah": 55,
+        "ayah": 17
+      },
+      {
+        "surah": 55,
+        "ayah": 41
+      },
+      {
+        "surah": 55,
+        "ayah": 68
+      },
+      {
+        "surah": 56,
+        "ayah": 17
+      },
+      {
+        "surah": 56,
+        "ayah": 51
+      },
+      {
+        "surah": 56,
+        "ayah": 77
+      },
+      {
+        "surah": 57,
+        "ayah": 4
+      },
+      {
+        "surah": 57,
+        "ayah": 12
+      },
+      {
+        "surah": 57,
+        "ayah": 19
+      },
+      {
+        "surah": 57,
+        "ayah": 25
+      },
+      {
+        "surah": 58,
+        "ayah": 1
+      },
+      {
+        "surah": 58,
+        "ayah": 7
+      },
+      {
+        "surah": 58,
+        "ayah": 12
+      },
+      {
+        "surah": 58,
+        "ayah": 22
+      },
+      {
+        "surah": 59,
+        "ayah": 4
+      },
+      {
+        "surah": 59,
+        "ayah": 10
+      },
+      {
+        "surah": 59,
+        "ayah": 17
+      },
+      {
+        "surah": 60,
+        "ayah": 1
+      },
+      {
+        "surah": 60,
+        "ayah": 6
+      },
+      {
+        "surah": 60,
+        "ayah": 12
+      },
+      {
+        "surah": 61,
+        "ayah": 6
+      },
+      {
+        "surah": 62,
+        "ayah": 1
+      },
+      {
+        "surah": 62,
+        "ayah": 9
+      },
+      {
+        "surah": 63,
+        "ayah": 5
+      },
+      {
+        "surah": 64,
+        "ayah": 1
+      },
+      {
+        "surah": 64,
+        "ayah": 10
+      },
+      {
+        "surah": 65,
+        "ayah": 1
+      },
+      {
+        "surah": 65,
+        "ayah": 6
+      },
+      {
+        "surah": 66,
+        "ayah": 1
+      },
+      {
+        "surah": 66,
+        "ayah": 8
+      },
+      {
+        "surah": 67,
+        "ayah": 1
+      },
+      {
+        "surah": 67,
+        "ayah": 13
+      },
+      {
+        "surah": 67,
+        "ayah": 27
+      },
+      {
+        "surah": 68,
+        "ayah": 16
+      },
+      {
+        "surah": 68,
+        "ayah": 43
+      },
+      {
+        "surah": 69,
+        "ayah": 9
+      },
+      {
+        "surah": 69,
+        "ayah": 35
+      },
+      {
+        "surah": 70,
+        "ayah": 11
+      },
+      {
+        "surah": 70,
+        "ayah": 40
+      },
+      {
+        "surah": 71,
+        "ayah": 11
+      },
+      {
+        "surah": 72,
+        "ayah": 1
+      },
+      {
+        "surah": 72,
+        "ayah": 14
+      },
+      {
+        "surah": 73,
+        "ayah": 1
+      },
+      {
+        "surah": 73,
+        "ayah": 20
+      },
+      {
+        "surah": 74,
+        "ayah": 18
+      },
+      {
+        "surah": 74,
+        "ayah": 48
+      },
+      {
+        "surah": 75,
+        "ayah": 20
+      },
+      {
+        "surah": 76,
+        "ayah": 6
+      },
+      {
+        "surah": 76,
+        "ayah": 26
+      },
+      {
+        "surah": 77,
+        "ayah": 20
+      },
+      {
+        "surah": 78,
+        "ayah": 1
+      },
+      {
+        "surah": 78,
+        "ayah": 31
+      },
+      {
+        "surah": 79,
+        "ayah": 16
+      },
+      {
+        "surah": 80,
+        "ayah": 1
+      },
+      {
+        "surah": 81,
+        "ayah": 1
+      },
+      {
+        "surah": 82,
+        "ayah": 1
+      },
+      {
+        "surah": 83,
+        "ayah": 7
+      },
+      {
+        "surah": 83,
+        "ayah": 35
+      },
+      {
+        "surah": 85,
+        "ayah": 1
+      },
+      {
+        "surah": 86,
+        "ayah": 1
+      },
+      {
+        "surah": 87,
+        "ayah": 16
+      },
+      {
+        "surah": 89,
+        "ayah": 1
+      },
+      {
+        "surah": 89,
+        "ayah": 24
+      },
+      {
+        "surah": 91,
+        "ayah": 1
+      },
+      {
+        "surah": 92,
+        "ayah": 15
+      },
+      {
+        "surah": 95,
+        "ayah": 1
+      },
+      {
+        "surah": 97,
+        "ayah": 1
+      },
+      {
+        "surah": 98,
+        "ayah": 8
+      },
+      {
+        "surah": 100,
+        "ayah": 10
+      },
+      {
+        "surah": 103,
+        "ayah": 1
+      },
+      {
+        "surah": 106,
+        "ayah": 1
+      },
+      {
+        "surah": 109,
+        "ayah": 1
+      },
+      {
+        "surah": 112,
+        "ayah": 1
+      }
+    ],
+    "juz": [
+      {
+        "surah": 1,
+        "ayah": 1
+      },
+      {
+        "surah": 2,
+        "ayah": 142
+      },
+      {
+        "surah": 2,
+        "ayah": 253
+      },
+      {
+        "surah": 3,
+        "ayah": 93
+      },
+      {
+        "surah": 4,
+        "ayah": 24
+      },
+      {
+        "surah": 4,
+        "ayah": 148
+      },
+      {
+        "surah": 5,
+        "ayah": 82
+      },
+      {
+        "surah": 6,
+        "ayah": 111
+      },
+      {
+        "surah": 7,
+        "ayah": 88
+      },
+      {
+        "surah": 8,
+        "ayah": 41
+      },
+      {
+        "surah": 9,
+        "ayah": 93
+      },
+      {
+        "surah": 11,
+        "ayah": 6
+      },
+      {
+        "surah": 12,
+        "ayah": 53
+      },
+      {
+        "surah": 15,
+        "ayah": 1
+      },
+      {
+        "surah": 17,
+        "ayah": 1
+      },
+      {
+        "surah": 18,
+        "ayah": 75
+      },
+      {
+        "surah": 21,
+        "ayah": 1
+      },
+      {
+        "surah": 23,
+        "ayah": 1
+      },
+      {
+        "surah": 25,
+        "ayah": 21
+      },
+      {
+        "surah": 27,
+        "ayah": 56
+      },
+      {
+        "surah": 29,
+        "ayah": 46
+      },
+      {
+        "surah": 33,
+        "ayah": 31
+      },
+      {
+        "surah": 36,
+        "ayah": 28
+      },
+      {
+        "surah": 39,
+        "ayah": 32
+      },
+      {
+        "surah": 41,
+        "ayah": 47
+      },
+      {
+        "surah": 46,
+        "ayah": 1
+      },
+      {
+        "surah": 51,
+        "ayah": 31
+      },
+      {
+        "surah": 58,
+        "ayah": 1
+      },
+      {
+        "surah": 67,
+        "ayah": 1
+      },
+      {
+        "surah": 78,
+        "ayah": 1
+      }
+    ],
+    "hizb_quarter": [
+      {
+        "surah": 1,
+        "ayah": 1
+      },
+      {
+        "surah": 2,
+        "ayah": 26
+      },
+      {
+        "surah": 2,
+        "ayah": 44
+      },
+      {
+        "surah": 2,
+        "ayah": 60
+      },
+      {
+        "surah": 2,
+        "ayah": 75
+      },
+      {
+        "surah": 2,
+        "ayah": 92
+      },
+      {
+        "surah": 2,
+        "ayah": 106
+      },
+      {
+        "surah": 2,
+        "ayah": 124
+      },
+      {
+        "surah": 2,
+        "ayah": 142
+      },
+      {
+        "surah": 2,
+        "ayah": 158
+      },
+      {
+        "surah": 2,
+        "ayah": 177
+      },
+      {
+        "surah": 2,
+        "ayah": 189
+      },
+      {
+        "surah": 2,
+        "ayah": 203
+      },
+      {
+        "surah": 2,
+        "ayah": 219
+      },
+      {
+        "surah": 2,
+        "ayah": 233
+      },
+      {
+        "surah": 2,
+        "ayah": 243
+      },
+      {
+        "surah": 2,
+        "ayah": 253
+      },
+      {
+        "surah": 2,
+        "ayah": 263
+      },
+      {
+        "surah": 2,
+        "ayah": 272
+      },
+      {
+        "surah": 2,
+        "ayah": 283
+      },
+      {
+        "surah": 3,
+        "ayah": 15
+      },
+      {
+        "surah": 3,
+        "ayah": 33
+      },
+      {
+        "surah": 3,
+        "ayah": 52
+      },
+      {
+        "surah": 3,
+        "ayah": 75
+      },
+      {
+        "surah": 3,
+        "ayah": 93
+      },
+      {
+        "surah": 3,
+        "ayah": 113
+      },
+      {
+        "surah": 3,
+        "ayah": 133
+      },
+      {
+        "surah": 3,
+        "ayah": 153
+      },
+      {
+        "surah": 3,
+        "ayah": 171
+      },
+      {
+        "surah": 3,
+        "ayah": 186
+      },
+      {
+        "surah": 4,
+        "ayah": 1
+      },
+      {
+        "surah": 4,
+        "ayah": 12
+      },
+      {
+        "surah": 4,
+        "ayah": 24
+      },
+      {
+        "surah": 4,
+        "ayah": 36
+      },
+      {
+        "surah": 4,
+        "ayah": 58
+      },
+      {
+        "surah": 4,
+        "ayah": 74
+      },
+      {
+        "surah": 4,
+        "ayah": 88
+      },
+      {
+        "surah": 4,
+        "ayah": 100
+      },
+      {
+        "surah": 4,
+        "ayah": 114
+      },
+      {
+        "surah": 4,
+        "ayah": 135
+      },
+      {
+        "surah": 4,
+        "ayah": 148
+      },
+      {
+        "surah": 4,
+        "ayah": 163
+      },
+      {
+        "surah": 5,
+        "ayah": 1
+      },
+      {
+        "surah": 5,
+        "ayah": 12
+      },
+      {
+        "surah": 5,
+        "ayah": 27
+      },
+      {
+        "surah": 5,
+        "ayah": 41
+      },
+      {
+        "surah": 5,
+        "ayah": 51
+      },
+      {
+        "surah": 5,
+        "ayah": 67
+      },
+      {
+        "surah": 5,
+        "ayah": 82
+      },
+      {
+        "surah": 5,
+        "ayah": 97
+      },
+      {
+        "surah": 5,
+        "ayah": 109
+      },
+      {
+        "surah": 6,
+        "ayah": 13
+      },
+      {
+        "surah": 6,
+        "ayah": 36
+      },
+      {
+        "surah": 6,
+        "ayah": 59
+      },
+      {
+        "surah": 6,
+        "ayah": 74
+      },
+      {
+        "surah": 6,
+        "ayah": 95
+      },
+      {
+        "surah": 6,
+        "ayah": 111
+      },
+      {
+        "surah": 6,
+        "ayah": 127
+      },
+      {
+        "surah": 6,
+        "ayah": 141
+      },
+      {
+        "surah": 6,
+        "ayah": 151
+      },
+      {
+        "surah": 7,
+        "ayah": 1
+      },
+      {
+        "surah": 7,
+        "ayah": 31
+      },
+      {
+        "surah": 7,
+        "ayah": 47
+      },
+      {
+        "surah": 7,
+        "ayah": 65
+      },
+      {
+        "surah": 7,
+        "ayah": 88
+      },
+      {
+        "surah": 7,
+        "ayah": 117
+      },
+      {
+        "surah": 7,
+        "ayah": 142
+      },
+      {
+        "surah": 7,
+        "ayah": 156
+      },
+      {
+        "surah": 7,
+        "ayah": 171
+      },
+      {
+        "surah": 7,
+        "ayah": 189
+      },
+      {
+        "surah": 8,
+        "ayah": 1
+      },
+      {
+        "surah": 8,
+        "ayah": 22
+      },
+      {
+        "surah": 8,
+        "ayah": 41
+      },
+      {
+        "surah": 8,
+        "ayah": 61
+      },
+      {
+        "surah": 9,
+        "ayah": 1
+      },
+      {
+        "surah": 9,
+        "ayah": 19
+      },
+      {
+        "surah": 9,
+        "ayah": 34
+      },
+      {
+        "surah": 9,
+        "ayah": 46
+      },
+      {
+        "surah": 9,
+        "ayah": 60
+      },
+      {
+        "surah": 9,
+        "ayah": 75
+      },
+      {
+        "surah": 9,
+        "ayah": 93
+      },
+      {
+        "surah": 9,
+        "ayah": 111
+      },
+      {
+        "surah": 9,
+        "ayah": 122
+      },
+      {
+        "surah": 10,
+        "ayah": 11
+      },
+      {
+        "surah": 10,
+        "ayah": 26
+      },
+      {
+        "surah": 10,
+        "ayah": 53
+      },
+      {
+        "surah": 10,
+        "ayah": 71
+      },
+      {
+        "surah": 10,
+        "ayah": 90
+      },
+      {
+        "surah": 11,
+        "ayah": 6
+      },
+      {
+        "surah": 11,
+        "ayah": 24
+      },
+      {
+        "surah": 11,
+        "ayah": 41
+      },
+      {
+        "surah": 11,
+        "ayah": 61
+      },
+      {
+        "surah": 11,
+        "ayah": 84
+      },
+      {
+        "surah": 11,
+        "ayah": 108
+      },
+      {
+        "surah": 12,
+        "ayah": 7
+      },
+      {
+        "surah": 12,
+        "ayah": 30
+      },
+      {
+        "surah": 12,
+        "ayah": 53
+      },
+      {
+        "surah": 12,
+        "ayah": 77
+      },
+      {
+        "surah": 12,
+        "ayah": 101
+      },
+      {
+        "surah": 13,
+        "ayah": 5
+      },
+      {
+        "surah": 13,
+        "ayah": 19
+      },
+      {
+        "surah": 13,
+        "ayah": 35
+      },
+      {
+        "surah": 14,
+        "ayah": 10
+      },
+      {
+        "surah": 14,
+        "ayah": 28
+      },
+      {
+        "surah": 15,
+        "ayah": 1
+      },
+      {
+        "surah": 15,
+        "ayah": 50
+      },
+      {
+        "surah": 16,
+        "ayah": 1
+      },
+      {
+        "surah": 16,
+        "ayah": 30
+      },
+      {
+        "surah": 16,
+        "ayah": 51
+      },
+      {
+        "surah": 16,
+        "ayah": 75
+      },
+      {
+        "surah": 16,
+        "ayah": 90
+      },
+      {
+        "surah": 16,
+        "ayah": 111
+      },
+      {
+        "surah": 17,
+        "ayah": 1
+      },
+      {
+        "surah": 17,
+        "ayah": 23
+      },
+      {
+        "surah": 17,
+        "ayah": 50
+      },
+      {
+        "surah": 17,
+        "ayah": 70
+      },
+      {
+        "surah": 17,
+        "ayah": 99
+      },
+      {
+        "surah": 18,
+        "ayah": 17
+      },
+      {
+        "surah": 18,
+        "ayah": 32
+      },
+      {
+        "surah": 18,
+        "ayah": 51
+      },
+      {
+        "surah": 18,
+        "ayah": 75
+      },
+      {
+        "surah": 18,
+        "ayah": 99
+      },
+      {
+        "surah": 19,
+        "ayah": 22
+      },
+      {
+        "surah": 19,
+        "ayah": 59
+      },
+      {
+        "surah": 20,
+        "ayah": 1
+      },
+      {
+        "surah": 20,
+        "ayah": 55
+      },
+      {
+        "surah": 20,
+        "ayah": 83
+      },
+      {
+        "surah": 20,
+        "ayah": 111
+      },
+      {
+        "surah": 21,
+        "ayah": 1
+      },
+      {
+        "surah": 21,
+        "ayah": 29
+      },
+      {
+        "surah": 21,
+        "ayah": 51
+      },
+      {
+        "surah": 21,
+        "ayah": 83
+      },
+      {
+        "surah": 22,
+        "ayah": 1
+      },
+      {
+        "surah": 22,
+        "ayah": 19
+      },
+      {
+        "surah": 22,
+        "ayah": 38
+      },
+      {
+        "surah": 22,
+        "ayah": 60
+      },
+      {
+        "surah": 23,
+        "ayah": 1
+      },
+      {
+        "surah": 23,
+        "ayah": 36
+      },
+      {
+        "surah": 23,
+        "ayah": 75
+      },
+      {
+        "surah": 24,
+        "ayah": 1
+      },
+      {
+        "surah": 24,
+        "ayah": 21
+      },
+      {
+        "surah": 24,
+        "ayah": 35
+      },
+      {
+        "surah": 24,
+        "ayah": 53
+      },
+      {
+        "surah": 25,
+        "ayah": 1
+      },
+      {
+        "surah": 25,
+        "ayah": 21
+      },
+      {
+        "surah": 25,
+        "ayah": 53
+      },
+      {
+        "surah": 26,
+        "ayah": 1
+      },
+      {
+        "surah": 26,
+        "ayah": 52
+      },
+      {
+        "surah": 26,
+        "ayah": 111
+      },
+      {
+        "surah": 26,
+        "ayah": 181
+      },
+      {
+        "surah": 27,
+        "ayah": 1
+      },
+      {
+        "surah": 27,
+        "ayah": 27
+      },
+      {
+        "surah": 27,
+        "ayah": 56
+      },
+      {
+        "surah": 27,
+        "ayah": 82
+      },
+      {
+        "surah": 28,
+        "ayah": 12
+      },
+      {
+        "surah": 28,
+        "ayah": 29
+      },
+      {
+        "surah": 28,
+        "ayah": 51
+      },
+      {
+        "surah": 28,
+        "ayah": 76
+      },
+      {
+        "surah": 29,
+        "ayah": 1
+      },
+      {
+        "surah": 29,
+        "ayah": 26
+      },
+      {
+        "surah": 29,
+        "ayah": 46
+      },
+      {
+        "surah": 30,
+        "ayah": 1
+      },
+      {
+        "surah": 30,
+        "ayah": 31
+      },
+      {
+        "surah": 30,
+        "ayah": 54
+      },
+      {
+        "surah": 31,
+        "ayah": 22
+      },
+      {
+        "surah": 32,
+        "ayah": 11
+      },
+      {
+        "surah": 33,
+        "ayah": 1
+      },
+      {
+        "surah": 33,
+        "ayah": 18
+      },
+      {
+        "surah": 33,
+        "ayah": 31
+      },
+      {
+        "surah": 33,
+        "ayah": 51
+      },
+      {
+        "surah": 33,
+        "ayah": 60
+      },
+      {
+        "surah": 34,
+        "ayah": 10
+      },
+      {
+        "surah": 34,
+        "ayah": 24
+      },
+      {
+        "surah": 34,
+        "ayah": 46
+      },
+      {
+        "surah": 35,
+        "ayah": 15
+      },
+      {
+        "surah": 35,
+        "ayah": 41
+      },
+      {
+        "surah": 36,
+        "ayah": 28
+      },
+      {
+        "surah": 36,
+        "ayah": 60
+      },
+      {
+        "surah": 37,
+        "ayah": 22
+      },
+      {
+        "surah": 37,
+        "ayah": 83
+      },
+      {
+        "surah": 37,
+        "ayah": 145
+      },
+      {
+        "surah": 38,
+        "ayah": 21
+      },
+      {
+        "surah": 38,
+        "ayah": 52
+      },
+      {
+        "surah": 39,
+        "ayah": 8
+      },
+      {
+        "surah": 39,
+        "ayah": 32
+      },
+      {
+        "surah": 39,
+        "ayah": 53
+      },
+      {
+        "surah": 40,
+        "ayah": 1
+      },
+      {
+        "surah": 40,
+        "ayah": 21
+      },
+      {
+        "surah": 40,
+        "ayah": 41
+      },
+      {
+        "surah": 40,
+        "ayah": 66
+      },
+      {
+        "surah": 41,
+        "ayah": 9
+      },
+      {
+        "surah": 41,
+        "ayah": 25
+      },
+      {
+        "surah": 41,
+        "ayah": 47
+      },
+      {
+        "surah": 42,
+        "ayah": 13
+      },
+      {
+        "surah": 42,
+        "ayah": 27
+      },
+      {
+        "surah": 42,
+        "ayah": 51
+      },
+      {
+        "surah": 43,
+        "ayah": 24
+      },
+      {
+        "surah": 43,
+        "ayah": 57
+      },
+      {
+        "surah": 44,
+        "ayah": 17
+      },
+      {
+        "surah": 45,
+        "ayah": 12
+      },
+      {
+        "surah": 46,
+        "ayah": 1
+      },
+      {
+        "surah": 46,
+        "ayah": 21
+      },
+      {
+        "surah": 47,
+        "ayah": 10
+      },
+      {
+        "surah": 47,
+        "ayah": 33
+      },
+      {
+        "surah": 48,
+        "ayah": 18
+      },
+      {
+        "surah": 49,
+        "ayah": 1
+      },
+      {
+        "surah": 49,
+        "ayah": 14
+      },
+      {
+        "surah": 50,
+        "ayah": 27
+      },
+      {
+        "surah": 51,
+        "ayah": 31
+      },
+      {
+        "surah": 52,
+        "ayah": 24
+      },
+      {
+        "surah": 53,
+        "ayah": 26
+      },
+      {
+        "surah": 54,
+        "ayah": 9
+      },
+      {
+        "surah": 55,
+        "ayah": 1
+      },
+      {
+        "surah": 56,
+        "ayah": 1
+      },
+      {
+        "surah": 56,
+        "ayah": 75
+      },
+      {
+        "surah": 57,
+        "ayah": 16
+      },
+      {
+        "surah": 58,
+        "ayah": 1
+      },
+      {
+        "surah": 58,
+        "ayah": 14
+      },
+      {
+        "surah": 59,
+        "ayah": 11
+      },
+      {
+        "surah": 60,
+        "ayah": 7
+      },
+      {
+        "surah": 62,
+        "ayah": 1
+      },
+      {
+        "surah": 63,
+        "ayah": 4
+      },
+      {
+        "surah": 65,
+        "ayah": 1
+      },
+      {
+        "surah": 66,
+        "ayah": 1
+      },
+      {
+        "surah": 67,
+        "ayah": 1
+      },
+      {
+        "surah": 68,
+        "ayah": 1
+      },
+      {
+        "surah": 69,
+        "ayah": 1
+      },
+      {
+        "surah": 70,
+        "ayah": 19
+      },
+      {
+        "surah": 72,
+        "ayah": 1
+      },
+      {
+        "surah": 73,
+        "ayah": 20
+      },
+      {
+        "surah": 75,
+        "ayah": 1
+      },
+      {
+        "surah": 76,
+        "ayah": 19
+      },
+      {
+        "surah": 78,
+        "ayah": 1
+      },
+      {
+        "surah": 80,
+        "ayah": 1
+      },
+      {
+        "surah": 82,
+        "ayah": 1
+      },
+      {
+        "surah": 84,
+        "ayah": 1
+      },
+      {
+        "surah": 87,
+        "ayah": 1
+      },
+      {
+        "surah": 90,
+        "ayah": 1
+      },
+      {
+        "surah": 94,
+        "ayah": 1
+      },
+      {
+        "surah": 100,
+        "ayah": 9
+      }
+    ]
+  }
+}

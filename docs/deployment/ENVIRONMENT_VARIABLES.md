@@ -1,0 +1,4 @@
+# Environment configuration
+Existing: `ATHAR_DB_HOST`, `ATHAR_DB_PORT`, `ATHAR_DB_NAME`, `ATHAR_DB_USER`, `ATHAR_DB_PASSWORD`, `ATHAR_BASE_URL`, `ATHAR_SETTINGS_KEY`, `ATHAR_BACKUP_KEY`, optional approved `ATHAR_DORAR_API_TOKEN`, and `APP_ENV`. Real credentials stay outside source control. The settings key encrypts configured Gmail/Dorar secrets; the backup key is separate. Changing either without migration invalidates corresponding ciphertext.
+
+New identity service requires a separate server-side OTP/rate HMAC key (`ATHAR_AUTH_KEY`) and explicit API mode/base URL; define and document it before use. Android base URL is configuration, never a database credential. `ATHAR_DB_NAME=athar_test_*` is mandatory for integration/destructive tests. No ordinary Android preference contains live auth secrets. `.env.example` is a template, not a claim that environment loading exists; the new bootstrap must explicitly support local configuration safely.

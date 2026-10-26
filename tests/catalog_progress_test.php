@@ -1,0 +1,54 @@
+<?php
+declare(strict_types=1);
+require __DIR__.'/integration_support.php';
+use Athar\Catalog\CatalogService;
+use Athar\Progress\ProgressService;
+use Athar\Http\ApiError;
+$checks=0;function assert_progress(bool $v,string $name):void{global $checks;$checks++;if(!$v)throw new RuntimeException('FAIL: '.$name);}
+function reject_progress(callable $call,int $status,string $name):void{try{$call();}catch(ApiError $e){assert_progress($e->status===$status,$name);return;}catch(InvalidArgumentException $e){assert_progress($status===422,$name);return;}assert_progress(false,$name);}
+isolated_database(static function(PDO $db):void{
+    foreach(['one','two'] as $name)$db->prepare("INSERT INTO users (email,username,display_name,password_hash,email_verified_at) VALUES (?,?,?,'unused',UTC_TIMESTAMP())")->execute([$name.'@example.invalid',$name,$name]);
+    $u=1;$other=2;$db->exec("INSERT INTO scholars (name,is_published) VALUES ('Published',1),('Draft',0)");$db->exec("INSERT INTO series (scholar_id,title,is_published) VALUES (1,'Series',1),(2,'Private Parent',1)");$db->exec("INSERT INTO lessons (scholar_id,series_id,title,youtube_id,source_url,is_published) VALUES (1,1,'Visible Lesson','abcdefghijk','https://youtu.be/abcdefghijk',1),(2,2,'Hidden Lesson','bcdefghijkl','https://youtu.be/bcdefghijkl',1)");
+    $db->exec("INSERT INTO books (title,author,keywords,source_url,download_url,rights_basis,can_download,is_published) VALUES ('A Book','Author Query','index-term','https://example.invalid/source','https://example.invalid/book.pdf','Permission',1,1),('Draft Book','Author','','https://example.invalid/source',NULL,'',0,0)");
+    $catalog=new CatalogService($db);$progress=new ProgressService($db,$catalog);
+    assert_progress($catalog->list('scholars',[])['pagination']['total']===1,'draft scholar hidden');assert_progress($catalog->list('lessons',[])['pagination']['total']===1,'draft parent lesson hidden');reject_progress(fn()=>$catalog->detail('lessons',2),404,'direct hidden lesson unavailable');assert_progress($catalog->list('books',['q'=>'Author Query'])['pagination']['total']===1,'book author search');assert_progress($catalog->list('books',['q'=>'index-term'])['pagination']['total']===1,'book keyword search');assert_progress($catalog->detail('books',1)['can_download']===true,'rights-authorized direct book');
+    $mark=$progress->addBookmark($u,['surah'=>114,'ayah'=>6,'label'=>'Last']);assert_progress(count($progress->bookmarks($u))===1,'last-surah bookmark supported');reject_progress(fn()=>$progress->deleteBookmark($other,(int)$mark['id']),404,'bookmark owner enforced');assert_progress($progress->bookmarks($other)===[],'other-user bookmark list isolated');
+    $progress->deleteBookmarkAt($other,['surah'=>114,'ayah'=>6]);assert_progress(count($progress->bookmarks($u))===1,'coordinate delete cannot remove another account bookmark');
+    $progress->deleteBookmarkAt($u,['surah'=>114,'ayah'=>6]);$progress->deleteBookmarkAt($u,['surah'=>114,'ayah'=>6]);assert_progress($progress->bookmarks($u)===[],'coordinate delete is idempotent');
+    reject_progress(fn()=>$progress->deleteBookmarkAt($u,['surah'=>114,'ayah'=>7]),422,'coordinate delete validates canonical ayah');
+    $saved=$progress->savePosition($u,['surah'=>114,'ayah'=>6,'expected_revision'=>0]);assert_progress((int)$saved['revision']===1,'initial reading position revision');reject_progress(fn()=>$progress->savePosition($u,['surah'=>1,'ayah'=>1,'expected_revision'=>0]),409,'stale position rejected');$next=$progress->savePosition($u,['surah'=>1,'ayah'=>1,'expected_revision'=>1]);assert_progress((int)$next['revision']===2,'valid reading position CAS');
+    $progress->favorite($u,'series',1,true);$progress->favorite($u,'series',1,true);assert_progress(count($progress->favorites($u))===1,'series favorite idempotent');assert_progress($progress->favorites($other)===[],'favorites private');reject_progress(fn()=>$progress->favorite($u,'book',2,true),404,'draft book cannot be favorited');
+    $event=test_uuid();$progress->activity($u,$event,'quran_session');$progress->activity($u,$event,'quran_session');assert_progress((int)$db->query('SELECT quran_sessions FROM account_daily_stats')->fetchColumn()===1,'activity retry counted once');reject_progress(fn()=>$progress->activity($u,$event,'book_download'),409,'event ID cannot be reused for a different kind');
+    $lesson=['lesson_id'=>1,'position_seconds'=>90,'duration_seconds'=>100,'is_complete'=>true,'event_id'=>test_uuid()];$progress->saveLessonProgress($u,$lesson);$progress->saveLessonProgress($u,$lesson);assert_progress((int)$db->query('SELECT lesson_completions FROM account_daily_stats')->fetchColumn()===1,'completion retry does not inflate totals');
+    $progress->addComment($u,1,'A pending comment');assert_progress(count($progress->comments($u,1))===1,'author sees own pending comment');assert_progress($progress->comments($other,1)===[],'pending text hidden from other user');$db->exec("UPDATE lesson_comments SET status='visible'");assert_progress(count($progress->comments($other,1))===1,'visible comment can be read');
+    $plan=$progress->saveKhatmah($u,['target_date'=>gmdate('Y-m-d',time()+86400),'completed_pages'=>600,'status'=>'active']);assert_progress($plan['remaining_pages']===4&&$plan['daily_pages']===2,'inclusive daily workload');reject_progress(fn()=>$progress->saveKhatmah($u,['target_date'=>gmdate('Y-m-d'),'completed_pages'=>10,'status'=>'finished']),422,'cannot finish incomplete plan');
+    $prefs=$progress->preferences($u,['language'=>'en','theme'=>'dark']);assert_progress($prefs['language']==='en','allowlisted preference persists');reject_progress(fn()=>$progress->preferences($u,['role'=>'owner']),422,'preferences cannot escalate privilege');
+    $db->exec("INSERT INTO adhkar_items(title,formula,source_reference,source_url,repeat_count,is_reviewed,is_published) VALUES ('Dhikr','Formula','Reference','https://example.invalid',3,1,1)");
+    $counter=$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>2,'expected_revision'=>0]);assert_progress($counter['repeat_count']===3&&$counter['revision']===1,'counter target comes from reviewed source');
+    reject_progress(fn()=>$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>4,'expected_revision'=>1]),422,'counter cannot exceed repeat target');
+    $completion=test_uuid();$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>3,'expected_revision'=>1,'event_id'=>$completion]);
+    reject_progress(fn()=>$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>3,'expected_revision'=>1,'event_id'=>$completion]),409,'counter replay cannot overwrite a newer revision');
+    $progress->saveAdhkar($u,['item_id'=>1,'current_count'=>3,'expected_revision'=>2,'event_id'=>$completion]);assert_progress((int)$db->query('SELECT adhkar_completions FROM account_daily_stats')->fetchColumn()===1,'completed counter retries counted once');
+    assert_progress($progress->adhkar($other)===[],'counter list belongs to account');
+    $db->exec("UPDATE adhkar_progress SET updated_at='2020-01-01 00:00:00' WHERE user_id=1");
+    for($i=1000;$i<=1500;$i++)$db->prepare("INSERT INTO adhkar_progress(user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES(1,?,0,1,1,'2026-01-01 00:00:00')")->execute(['curated:'.$i]);
+    assert_progress(count($progress->adhkar($u))===500,'legacy counter overview remains bounded');
+    $targeted=$progress->adhkar($u,['item_id'=>'1']);
+    assert_progress(count($targeted)===1&&(int)$targeted[0]['current_count']===3,'targeted counter lookup finds an older row beyond overview window');
+    assert_progress($progress->adhkar($other,['item_id'=>'1'])===[],'targeted counter lookup stays account scoped');
+    reject_progress(fn()=>$progress->adhkar($u,['item_id'=>'1 OR 1=1']),422,'targeted lookup validates canonical positive ID');
+    $progress->favorite($u,'lesson',1,true);$db->exec('UPDATE scholars SET is_published=0 WHERE id=1');
+    assert_progress($progress->favorites($u)===[],'unpublished ancestor removes lesson and series from favorites');
+    $db->exec('UPDATE lessons SET scholar_id=NULL WHERE id=1');reject_progress(fn()=>$catalog->detail('lessons',1),404,'series ancestor remains enforced without a direct lesson scholar');
+    $db->exec('UPDATE scholars SET is_published=1 WHERE id=1');
+    $db->exec("INSERT INTO lessons (scholar_id,series_id,title,youtube_id,source_url,is_published) VALUES (2,1,'Hidden direct scholar','cdefghijklm','https://youtu.be/cdefghijklm',1),(1,NULL,'Standalone','defghijklmn','https://youtu.be/defghijklmn',1)");
+    assert_progress((int)$catalog->detail('series',1)['lesson_count']===1,'series count excludes unpublished direct scholars');
+    assert_progress($catalog->list('lessons',['scholar_id'=>1])['pagination']['total']===2,'scholar filter includes inherited series scholar');
+    $standalone=$catalog->list('lessons',['scholar_id'=>1,'standalone'=>'1']);
+    assert_progress($standalone['pagination']['total']===1&&$standalone['items'][0]['title']==='Standalone','standalone scholar tab excludes series lessons');
+    $db->exec("INSERT INTO adhkar_items(title,formula,source_reference,source_url,category,repeat_count,is_reviewed,is_published) VALUES ('Hidden category','Formula','Ref','https://example.invalid','Private',1,0,1),('Late category','Formula','Ref','https://example.invalid','Z-last',NULL,1,1)");
+    $categories=$catalog->adhkarCategories();
+    assert_progress(count($categories)===2&&!in_array('Private',array_column($categories,'category'),true),'category index includes all reviewed sections and excludes unreviewed content');
+    $late=$catalog->list('adhkar',['category'=>'Z-last']);
+    assert_progress($late['pagination']['total']===1&&$late['items'][0]['repeat_count']===null,'category query preserves unspecified repeat count');
+});echo 'PASS: '.$checks." catalog/publication/ownership/progress/retry/comment/plan assertions.\n";

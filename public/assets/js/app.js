@@ -137,7 +137,182 @@
     });
 
     const quranReader = document.querySelector('[data-quran-reader]');
-    if (quranReader && quranReader.dataset.tool !== 'search') {
+    if (quranReader?.dataset.tool === 'search') {
+        const form = quranReader.querySelector('[data-quran-search-form]');
+        const input = form?.querySelector('[name="q"]');
+        const submit = form?.querySelector('button[type="submit"]');
+        const status = quranReader.querySelector('[data-quran-search-status]');
+        const results = quranReader.querySelector('[data-quran-search-results]');
+        let matches = [];
+        let visibleCount = 0;
+        const batchSize = 24;
+
+        const setSearchStatus = (message, state = 'ready') => {
+            if (!status) return;
+            status.textContent = message;
+            status.dataset.state = state;
+            status.hidden = !message;
+        };
+
+        const renderSearchResults = (append = false) => {
+            if (!results) return;
+            results.querySelector('.quran-search-more')?.remove();
+            if (!append) results.replaceChildren();
+            const fragment = document.createDocumentFragment();
+            const end = Math.min(visibleCount + batchSize, matches.length);
+            for (let index = visibleCount; index < end; index += 1) {
+                const match = matches[index];
+                if (!Number.isInteger(Number(match?.surah?.number)) || !Number.isInteger(Number(match?.numberInSurah)) || typeof match?.text !== 'string') continue;
+                const card = document.createElement('article');
+                card.className = 'knowledge-card quran-search-result';
+                const text = document.createElement('p');
+                text.className = 'quran-search-ayah';
+                text.lang = 'ar';
+                text.dir = 'rtl';
+                text.textContent = match.text;
+                const footer = document.createElement('div');
+                footer.className = 'quran-search-result-footer';
+                const reference = document.createElement('span');
+                reference.className = 'source-chip';
+                reference.textContent = `سورة ${match.surah.name} · الآية ${match.numberInSurah}`;
+                const open = document.createElement('a');
+                open.className = 'button button-secondary';
+                open.href = `/quran?tool=ayah&surah=${Number(match.surah.number)}&ayah=${Number(match.numberInSurah)}`;
+                open.textContent = 'افتح الآية';
+                footer.append(reference, open);
+                card.append(text, footer);
+                fragment.append(card);
+            }
+            visibleCount = end;
+            results.append(fragment);
+            if (visibleCount < matches.length) {
+                const more = document.createElement('button');
+                more.type = 'button';
+                more.className = 'button button-secondary quran-search-more';
+                more.textContent = `عرض ${Math.min(batchSize, matches.length - visibleCount)} نتيجة أخرى`;
+                more.addEventListener('click', () => renderSearchResults(true), { once: true });
+                results.append(more);
+            }
+        };
+
+        const searchQuran = async (query) => {
+            const normalized = query.trim();
+            if (normalized.length < 2) {
+                setSearchStatus('اكتب كلمتين على الأقل للبحث في الآيات.', 'error');
+                input?.focus();
+                return;
+            }
+            if (!input || !submit || !results) return;
+            submit.disabled = true;
+            submit.setAttribute('aria-busy', 'true');
+            setSearchStatus('جارٍ البحث في نص القرآن الكريم…', 'loading');
+            results.replaceChildren();
+            try {
+                const endpoint = `https://api.alquran.cloud/v1/search/${encodeURIComponent(normalized)}/all/quran-uthmani`;
+                const response = await fetch(endpoint, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
+                if (!response.ok) throw new Error('search-unavailable');
+                const payload = await response.json();
+                if (payload.code !== 200 || !Array.isArray(payload.data?.matches)) throw new Error('search-response');
+                matches = payload.data.matches;
+                visibleCount = 0;
+                if (!matches.length) {
+                    setSearchStatus('لم نعثر على آيات مطابقة. جرّب كلمة أخرى أو اكتبها من دون تشكيل.', 'empty');
+                    return;
+                }
+                renderSearchResults();
+                setSearchStatus(`عُثر على ${Number(payload.data.count) || matches.length} موضعًا. تظهر النتائج على دفعات لتسهيل التصفح.`, 'success');
+            } catch (_) {
+                setSearchStatus('تعذر البحث الآن. تحقق من الاتصال بالإنترنت ثم حاول مرة أخرى.', 'error');
+            } finally {
+                submit.disabled = false;
+                submit.removeAttribute('aria-busy');
+            }
+        };
+
+        form?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const query = input?.value || '';
+            const url = new URL(window.location.href);
+            url.searchParams.set('q', query.trim());
+            window.history.replaceState({}, '', url);
+            searchQuran(query);
+        });
+        if (input?.value.trim()) searchQuran(input.value);
+    }
+    const radioPage = document.querySelector('[data-quran-radio]');
+    if (radioPage) {
+        const search = radioPage.querySelector('[data-radio-search]');
+        const list = radioPage.querySelector('[data-radio-list]');
+        const player = radioPage.querySelector('[data-radio-audio]');
+        const current = radioPage.querySelector('[data-radio-current]');
+        const status = radioPage.querySelector('[data-radio-status]');
+        const cacheKey = 'athar-mp3quran-radios-ar-v1';
+        let stations = [];
+        const renderStations = () => {
+            const query = (search.value || '').trim().toLocaleLowerCase('ar');
+            const filtered = stations.filter((station) => station.name.toLocaleLowerCase('ar').includes(query));
+            list.replaceChildren();
+            if (!filtered.length) {
+                const empty = document.createElement('p'); empty.className = 'radio-empty';
+                empty.textContent = stations.length ? 'لا توجد محطة بهذا الاسم.' : 'تعذر تحميل قائمة الإذاعات. تحقق من الاتصال ثم أعد تحميل الصفحة.';
+                list.append(empty); return;
+            }
+            const fragment = document.createDocumentFragment();
+            filtered.forEach((station) => {
+                const button = document.createElement('button'); button.type = 'button'; button.className = 'radio-station';
+                button.dataset.radioId = String(station.id);
+                button.setAttribute('aria-pressed', 'false');
+                const name = document.createElement('strong'); name.textContent = station.name;
+                const play = document.createElement('span'); play.textContent = 'استمع'; play.setAttribute('aria-hidden', 'true');
+                button.append(name, play); fragment.append(button);
+            });
+            list.append(fragment);
+        };
+        const loadStations = async () => {
+            try {
+                const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+                stations = Array.isArray(cached?.items) && Date.now() - cached.savedAt < 86400000 ? cached.items : [];
+            } catch (_) { stations = []; }
+            if (!stations.length) {
+                try {
+                    const response = await fetch('https://mp3quran.net/api/v3/radios?language=ar', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
+                    if (!response.ok) throw new Error('radio-provider');
+                    const payload = await response.json();
+                    stations = (Array.isArray(payload.radios) ? payload.radios : []).filter((station) => Number.isInteger(Number(station.id)) && typeof station.name === 'string' && /^https:\/\//i.test(station.url)).map((station) => ({ id: Number(station.id), name: station.name.trim(), url: station.url }));
+                    if (!stations.length) throw new Error('radio-shape');
+                    try { localStorage.setItem(cacheKey, JSON.stringify({ items: stations, savedAt: Date.now() })); } catch (_) { /* The directory works without local storage. */ }
+                } catch (_) { stations = []; }
+            }
+            renderStations();
+        };
+        search.addEventListener('input', renderStations);
+        list.addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-radio-id]');
+            if (!button) return;
+            const station = stations.find((item) => String(item.id) === button.dataset.radioId);
+            if (!station) return;
+            player.pause(); player.src = station.url; player.load();
+            current.textContent = station.name;
+            status.textContent = `جارٍ الاتصال بإذاعة ${station.name}…`;
+            list.querySelectorAll('.radio-station').forEach((item) => { item.classList.toggle('is-active', item === button); item.setAttribute('aria-pressed', String(item === button)); });
+            try { await player.play(); status.textContent = `يعمل البث الآن: ${station.name}`; }
+            catch (_) { status.textContent = 'اضغط تشغيل في مشغل الصوت لبدء البث.'; }
+            if (navigator.mediaSession && window.MediaMetadata) {
+                navigator.mediaSession.metadata = new MediaMetadata({ title: station.name, artist: 'إذاعة القرآن الكريم', album: 'أثر · إذاعات MP3Quran' });
+                navigator.mediaSession.playbackState = player.paused ? 'paused' : 'playing';
+            }
+        });
+        player.addEventListener('error', () => { status.textContent = 'تعذر تشغيل هذه الإذاعة الآن. جرّب محطة أخرى.'; });
+        player.addEventListener('play', () => { if (navigator.mediaSession) navigator.mediaSession.playbackState = 'playing'; });
+        player.addEventListener('pause', () => { if (navigator.mediaSession) navigator.mediaSession.playbackState = 'paused'; });
+        if (navigator.mediaSession) {
+            try { navigator.mediaSession.setActionHandler('play', () => player.play()); } catch (_) { /* Lock-screen action not supported. */ }
+            try { navigator.mediaSession.setActionHandler('pause', () => player.pause()); } catch (_) { /* Lock-screen action not supported. */ }
+            try { navigator.mediaSession.setActionHandler('stop', () => { player.pause(); player.removeAttribute('src'); player.load(); }); } catch (_) { /* Lock-screen action not supported. */ }
+        }
+        loadStations();
+    }
+    if (quranReader && !['search', 'radio'].includes(quranReader.dataset.tool)) {
         const form = quranReader.querySelector('[data-quran-form]');
         const modeInput = quranReader.querySelector('[data-reading-mode]');
         const surahInput = quranReader.querySelector('[name="surah"]');
@@ -157,6 +332,9 @@
         const repeatInput = quranReader.querySelector('[data-audio-repeat]');
         const previousAudioButton = quranReader.querySelector('[data-audio-previous]');
         const nextAudioButton = quranReader.querySelector('[data-audio-next]');
+        const audioCurrentSurah = quranReader.querySelector('[data-audio-current-surah]');
+        const audioCurrentVerse = quranReader.querySelector('[data-audio-current-verse]');
+        const audioCurrentNumber = quranReader.querySelector('[data-audio-current-number]');
         const tafsirSection = quranReader.querySelector('[data-quran-tafsir]');
         const tafsirButton = quranReader.querySelector('[data-tafsir-toggle]');
         const tafsirFrame = quranReader.querySelector('[data-tafsir-frame]');
@@ -164,6 +342,9 @@
         const reviewStart = quranReader.querySelector('[data-review-start]');
         const reviewStop = quranReader.querySelector('[data-review-stop]');
         const reviewStatus = quranReader.querySelector('[data-review-status]');
+        const reviewAlert = quranReader.querySelector('[data-review-alert]');
+        const reviewAlertTitle = quranReader.querySelector('[data-review-alert-title]');
+        const reviewAlertAudio = quranReader.querySelector('[data-review-alert-audio]');
         const reviewResult = quranReader.querySelector('[data-review-result]');
         const reviewActions = quranReader.querySelector('[data-review-actions]');
         const reviewBeep = quranReader.querySelector('[data-review-beep]');
@@ -186,7 +367,11 @@
         let activeIndex = 0;
         let activeTrack = null;
         let requestVersion = 0;
+        let playbackRequestVersion = 0;
         let fullSurahReciters = [];
+        let timingReads = [];
+        let activeTimings = [];
+        let activeSegmentTiming = null;
 
         const getMediaSession = () => 'mediaSession' in navigator ? navigator.mediaSession : null;
         const stopPlayback = () => {
@@ -253,22 +438,63 @@
             if (previousAudioButton) { previousAudioButton.disabled = activeIndex === 0; previousAudioButton.hidden = scopeValue() === 'surah'; }
             if (nextAudioButton) { nextAudioButton.disabled = activeIndex >= activeVerses.length - 1; nextAudioButton.hidden = scopeValue() === 'surah'; }
             content.querySelector(`#ayah-${verse.surah}-${verse.numberInSurah}`)?.classList.add('is-playing');
+            if (audioCurrentSurah) audioCurrentSurah.textContent = `سورة ${surahNames[verse.surah - 1]}`;
+            if (audioCurrentVerse) audioCurrentVerse.textContent = verse.text;
+            if (audioCurrentNumber) audioCurrentNumber.textContent = `الآية ${new Intl.NumberFormat('ar').format(verse.numberInSurah)}`;
             mediaMetadata(verse);
             if (audioStatus) audioStatus.textContent = scopeValue() === 'surah' ? `الآن: سورة ${surahNames[verse.surah - 1]} كاملة` : `الآن: ${surahNames[verse.surah - 1]} · الآية ${verse.numberInSurah}`;
         };
 
+        const timingFor = (ayah) => activeTimings.find((timing) => Number(timing.ayah) === Number(ayah));
+        const loadAyahTimings = async (readId, surah) => {
+            const cacheKey = `athar-mp3quran-timing-${readId}-${surah}-v1`;
+            try {
+                const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+                if (Array.isArray(cached?.items) && Date.now() - cached.savedAt < 30 * 86400000) return cached.items;
+            } catch (_) { /* Continue to the public timing endpoint. */ }
+            const response = await fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${surah}&read=${readId}`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
+            if (!response.ok) throw new Error('timing-unavailable');
+            const items = await response.json();
+            if (!Array.isArray(items)) throw new Error('timing-shape');
+            try { localStorage.setItem(cacheKey, JSON.stringify({ items, savedAt: Date.now() })); } catch (_) { /* Timing remains usable in memory. */ }
+            return items;
+        };
+        const selectedAudioRead = () => fullSurahReciters.find((item) => item.key === reciterInput?.value) || null;
+        const setAudioPosition = (startSeconds) => {
+            if (!audio || !Number.isFinite(startSeconds)) return;
+            const seek = () => { audio.currentTime = Math.max(0, startSeconds); };
+            if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) seek();
+            else audio.addEventListener('loadedmetadata', seek, { once: true });
+        };
         const playVerse = async (index, shouldPlay = true) => {
             if (!audio || !activeVerses.length) return;
+            const playbackRequest = ++playbackRequestVersion;
             activeIndex = Math.max(0, Math.min(index, activeVerses.length - 1));
             const verse = activeVerses[activeIndex];
             paintActiveVerse();
-            if (content.querySelector(`#ayah-${verse.surah}-${verse.numberInSurah}`)) content.querySelector(`#ayah-${verse.surah}-${verse.numberInSurah}`).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            const identifier = reciterInput.value;
-            const qari = fullSurahReciters.find((item) => `qa:${item.id}` === identifier);
-            const url = scopeValue() === 'surah'
-                ? (qari ? `https://download.quranicaudio.com/quran/${qari.relative_path}${String(Number(surahInput.value)).padStart(3, '0')}.mp3` : `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${Number(surahInput.value)}.mp3`)
-                : `https://cdn.islamic.network/quran/audio/128/${encodeURIComponent(identifier.replace(/^verse:/, ''))}/${verse.globalNumber}.mp3`;
+            const qari = selectedAudioRead();
+            if (!qari) { if (audioStatus) audioStatus.textContent = 'اختر قارئًا متاحًا لهذا النطاق.'; return; }
+            const url = `${qari.server}${String(Number(surahInput.value)).padStart(3, '0')}.mp3`;
+            activeSegmentTiming = null;
+            activeTimings = [];
+            if (scopeValue() === 'current') {
+                try {
+                    activeTimings = await loadAyahTimings(qari.timingReadId, Number(surahInput.value));
+                    if (playbackRequest !== playbackRequestVersion) return;
+                    activeSegmentTiming = timingFor(verse.numberInSurah);
+                    if (!activeSegmentTiming) throw new Error('timing-ayah-unavailable');
+                } catch (_) {
+                    if (audioStatus) audioStatus.textContent = 'تعذر تحميل توقيت هذه الآية. اختر السورة كاملة أو قارئًا آخر.';
+                    return;
+                }
+            } else if (qari.timingReadId) {
+                try { activeTimings = await loadAyahTimings(qari.timingReadId, Number(surahInput.value)); }
+                catch (_) { activeTimings = []; }
+                if (playbackRequest !== playbackRequestVersion) return;
+            }
+            if (playbackRequest !== playbackRequestVersion) return;
             if (activeTrack !== url) { audio.pause(); audio.src = url; audio.load(); activeTrack = url; }
+            if (scopeValue() === 'current' && activeSegmentTiming) setAudioPosition(Number(activeSegmentTiming.start_time) / 1000);
             if (!shouldPlay) return;
             try { await audio.play(); }
             catch (_) { if (audioStatus) audioStatus.textContent = 'اضغط تشغيل من مشغل الصوت لبدء التلاوة.'; }
@@ -407,7 +633,7 @@
                         [['/quran?tool=listen', 'استمع إلى الآية'], ['/quran?tool=tafsir', 'افتح التفسير']].forEach(([href, label]) => { const link = document.createElement('a'); link.className = 'button button-secondary'; link.textContent = label; link.href = `${href}&surah=${currentVerse.surah}&ayah=${currentVerse.numberInSurah}`; actions.append(link); });
                     }
                 }
-                content.hidden = quranReader.dataset.tool === 'review';
+                content.hidden = ['review', 'listen'].includes(quranReader.dataset.tool);
                 if (mode === 'surah' && ayah && tafsirSection && tafsirButton && tafsirFrame) {
                     tafsirSection.hidden = false;
                     tafsirButton.onclick = () => {
@@ -450,17 +676,17 @@
             if (repeatLabel) repeatLabel.lastChild.textContent = full ? ' تكرار السورة' : ' تكرار التلاوة';
             const providerNote = quranReader.querySelector('[data-audio-provider-note]');
             if (providerNote) providerNote.textContent = full
-                ? 'اختر من مكتبة قراء السور الكاملة على QuranicAudio.'
-                : 'الآية المنفردة متاحة من قراء Al Quran Cloud؛ اختر السورة كاملة للوصول إلى المكتبة الأوسع.';
+                ? 'المكتبة تضم القراء والروايات المتاحة، ويظهر موضع الآية عند توفر التوقيت.'
+                : 'اختر قارئًا له توقيت لهذه السورة؛ يشغّل المشغل موضع الآية فقط من ملف السورة.';
         };
-        scopeInputs.forEach((input) => input.addEventListener('change', () => { updateAudioScope(); loadReciters(scopeValue()).then(() => configurePlayback(false)); }));
+        scopeInputs.forEach((input) => input.addEventListener('change', () => { updateAudioScope(); loadReciters(scopeValue(), Number(surahInput.value)).then(() => configurePlayback(false)); }));
         updateAudioScope();
-        form?.addEventListener('submit', (event) => {
+        form?.addEventListener('submit', async (event) => {
             event.preventDefault();
             if (modeInput.value === 'page' && (Number(pageInput.value) < 1 || Number(pageInput.value) > 604)) { pageInput.setCustomValidity('رقم الصفحة يجب أن يكون بين 1 و604'); pageInput.reportValidity(); return; }
             pageInput.setCustomValidity('');
             const query = new URLSearchParams({ tool: quranReader.dataset.tool, mode: modeInput.value, surah: surahInput.value, juz: juzInput.value, hizb: hizbInput?.value || '1', page: pageInput.value });
-            if (modeInput.value === 'surah' && ayahInput.value) query.set('ayah', ayahInput.value);
+            if (modeInput.value === 'surah' && ayahInput.value && (quranReader.dataset.tool !== 'listen' || scopeValue() === 'current')) query.set('ayah', ayahInput.value);
             if (quranReader.dataset.tool === 'review') query.set('ayah_end', ayahEndInput.value || ayahInput.value);
             history.replaceState(null, '', `/quran?${query}`);
             if (quranReader.dataset.tool === 'review' && reviewWorker) {
@@ -468,6 +694,7 @@
                 if (reviewResult) reviewResult.hidden = true;
                 reviewSetStatus(reviewText('يتم تحميل الآية المختارة.', 'Loading the selected verse.'));
             }
+            if (quranReader.dataset.tool === 'listen') await loadReciters(scopeValue(), Number(surahInput.value));
             loadReading({ ayahEnd: Number(ayahEndInput?.value) || Number(ayahInput.value) || null });
         });
         quranReader.querySelectorAll('[data-font-step]').forEach((button) => button.addEventListener('click', () => { fontSize = Math.min(2.8, Math.max(1.2, fontSize + Number(button.dataset.fontStep) * 0.2)); quranReader.style.setProperty('--reading-font-size', `${fontSize}rem`); }));
@@ -475,6 +702,7 @@
         let reviewWorker = null;
         let reviewStream = null;
         let reviewContext = null;
+        let reviewResampler = null;
         let reviewProcessor = null;
         let reviewPendingChunks = [];
         let reviewPendingLength = 0;
@@ -489,6 +717,7 @@
         let reviewWordOffsets = [];
         let reviewDisplayedWords = new Map();
         let reviewMatchedWords = new Map();
+        let reviewWordVerdicts = new Map();
         let reviewWordNodes = new Map();
         let reviewCurrentWordNode = null;
         let reviewCurrentWordKey = '';
@@ -497,7 +726,21 @@
         const reviewVersesPerPage = 10;
         let reviewAudioWorkletLoaded = false;
         let reviewSignalSeconds = 0;
+        let reviewAlertAudioPrimed = false;
         const reviewText = (ar, en) => root.lang === 'en' ? en : ar;
+        const reviewIntro = reviewPanel?.querySelector('[data-review-intro]');
+        if (reviewIntro) reviewIntro.textContent = reviewText(
+            'اختر السورة والآيات ثم ابدأ التلاوة. الكلمات المعروضة نص المصحف المرجعي وليست تفريغًا حرفيًا للصوت؛ اللون يوضح حكم النموذج على المطابقة. يعمل النموذج محليًا؛ يلزم اتصال لتنزيله أول مرة، واترك الصفحة مفتوحة أثناء المراجعة.',
+            'Choose a surah and verses, then recite. Displayed words are the reference Mushaf text, not a verbatim transcript; colors show the model’s match judgment. Recognition runs on this device; the model downloads once, and the page must stay open during review.',
+        );
+        const reviewLegend = reviewPanel?.querySelector('[data-review-verdict-legend]');
+        if (reviewLegend) {
+            reviewLegend.setAttribute('aria-label', reviewText('دلالات ألوان المراجعة', 'Recitation review color legend'));
+            const labels = root.lang === 'en'
+                ? { clear: 'Clear match', unsure: 'Uncertain or possible vowel issue', error: 'Possible mismatch' }
+                : { clear: 'مطابقة واضحة', unsure: 'غير محسومة أو حركة محتملة', error: 'اختلاف محتمل' };
+            reviewLegend.querySelectorAll('[data-review-legend]').forEach((item) => { item.textContent = labels[item.dataset.reviewLegend] || item.textContent; });
+        }
         const reviewSetStatus = (message, state = 'info') => { if (reviewStatus) { reviewStatus.textContent = message; reviewStatus.dataset.state = state; } };
         const reviewDisconnectProcessor = () => {
             if (reviewProcessor) {
@@ -509,19 +752,91 @@
         const reviewStopCapture = () => {
             reviewDisconnectProcessor();
             if (reviewStream) { reviewStream.getTracks().forEach((track) => track.stop()); reviewStream = null; }
+            reviewResampler = null;
             reviewPendingChunks = []; reviewPendingLength = 0;
             if (reviewStart) reviewStart.disabled = !loadedVerses.length;
             if (reviewStop) reviewStop.disabled = true;
         };
-        const reviewResample = (input, fromRate) => {
-            const ratio = fromRate / 16000;
-            const length = Math.max(1, Math.floor(input.length / ratio));
-            const output = new Float32Array(length);
-            for (let i = 0; i < length; i++) {
-                const at = i * ratio; const left = Math.floor(at); const fraction = at - left;
-                output[i] = input[left] * (1 - fraction) + (input[Math.min(left + 1, input.length - 1)] || 0) * fraction;
+        const createReviewResampler = (fromRate) => {
+            const targetRate = 16000;
+            if (fromRate === targetRate) return { process: (input) => input };
+            if (fromRate < targetRate) {
+                return { process: (input) => {
+                    const ratio = fromRate / targetRate;
+                    const output = new Float32Array(Math.max(1, Math.floor(input.length / ratio)));
+                    for (let i = 0; i < output.length; i++) {
+                        const at = i * ratio; const left = Math.floor(at); const fraction = at - left;
+                        output[i] = input[left] * (1 - fraction) + (input[Math.min(left + 1, input.length - 1)] || 0) * fraction;
+                    }
+                    return output;
+                } };
             }
-            return output;
+
+            // Low-pass before decimation. Linear interpolation alone aliases
+            // sibilants and other high-frequency consonant cues into the model band.
+            const ratio = fromRate / targetRate;
+            const radius = 16;
+            const phaseCount = 128;
+            const cutoff = 0.47 / ratio;
+            const phases = Array.from({ length: phaseCount }, (_, phase) => {
+                const fraction = phase / phaseCount;
+                const weights = new Float32Array(radius * 2 + 1);
+                let total = 0;
+                for (let tap = -radius; tap <= radius; tap++) {
+                    const distance = tap - fraction;
+                    const windowPos = distance / (radius + 1);
+                    const window = Math.abs(windowPos) >= 1 ? 0
+                        : 0.42 + 0.5 * Math.cos(Math.PI * windowPos) + 0.08 * Math.cos(2 * Math.PI * windowPos);
+                    const x = 2 * cutoff * distance;
+                    const sinc = Math.abs(x) < 1e-8 ? 1 : Math.sin(Math.PI * x) / (Math.PI * x);
+                    const weight = 2 * cutoff * sinc * window;
+                    weights[tap + radius] = weight;
+                    total += weight;
+                }
+                for (let i = 0; i < weights.length; i++) weights[i] /= total;
+                return weights;
+            });
+            let carry = new Float32Array(0);
+            let carryStart = 0;
+            let received = 0;
+            let outputIndex = 0;
+            return {
+                process(input) {
+                    const source = new Float32Array(carry.length + input.length);
+                    source.set(carry);
+                    source.set(input, carry.length);
+                    received += input.length;
+                    const output = [];
+                    while (outputIndex * ratio + radius < received) {
+                        const position = outputIndex * ratio;
+                        let center = Math.floor(position);
+                        let phase = Math.round((position - center) * phaseCount);
+                        if (phase === phaseCount) { center += 1; phase = 0; }
+                        const weights = phases[phase];
+                        let value = 0;
+                        for (let tap = -radius; tap <= radius; tap++) {
+                            const absolute = center + tap;
+                            const local = absolute - carryStart;
+                            const sample = absolute < 0 ? source[0] : (source[local] || 0);
+                            value += sample * weights[tap + radius];
+                        }
+                        output.push(value);
+                        outputIndex += 1;
+                    }
+                    const keepFrom = Math.max(0, Math.floor(outputIndex * ratio) - radius - 1);
+                    const discard = Math.min(source.length, Math.max(0, keepFrom - carryStart));
+                    carry = source.slice(discard);
+                    carryStart += discard;
+                    return Float32Array.from(output);
+                },
+            };
+        };
+        const reviewResample = (input, fromRate) => {
+            if (!reviewResampler || reviewResampler.sampleRate !== fromRate) {
+                reviewResampler = createReviewResampler(fromRate);
+                reviewResampler.sampleRate = fromRate;
+            }
+            return reviewResampler.process(input);
         };
         const reviewSendAudio = (buffer, rms) => {
             if (!(buffer instanceof ArrayBuffer) || !reviewWorker) return;
@@ -542,6 +857,7 @@
         const reviewStartCapture = async ({ resume = false } = {}) => {
             if (!reviewContext || !reviewReady) return;
             await reviewContext.resume();
+            reviewResampler = null;
             if (!reviewStream) reviewStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
             const expected = loadedVerses[0];
             const lastExpected = loadedVerses.at(-1);
@@ -555,7 +871,7 @@
                         await reviewContext.audioWorklet.addModule('/assets/js/recitation-audio-worklet.js');
                         reviewAudioWorkletLoaded = true;
                     }
-                    reviewProcessor = new AudioWorkletNode(reviewContext, 'athar-review-capture', { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1, channelCountMode: 'explicit', outputChannelCount: [1], processorOptions: { chunkSeconds: 0.28 } });
+                    reviewProcessor = new AudioWorkletNode(reviewContext, 'athar-review-capture', { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1, channelCountMode: 'explicit', outputChannelCount: [1], processorOptions: { chunkSeconds: 0.2 } });
                     reviewProcessor.port.onmessage = (event) => reviewSendAudio(event.data?.samples, event.data?.rms);
                 } catch (_) { reviewProcessor = null; }
             }
@@ -564,7 +880,7 @@
                 reviewProcessor.onaudioprocess = (event) => {
                     const data = event.inputBuffer.getChannelData(0);
                     reviewPendingChunks.push(new Float32Array(data)); reviewPendingLength += data.length;
-                    if (reviewPendingLength < reviewContext.sampleRate * 0.28) return;
+                    if (reviewPendingLength < reviewContext.sampleRate * 0.2) return;
                     const merged = new Float32Array(reviewPendingLength); let offset = 0;
                     reviewPendingChunks.forEach((chunk) => { merged.set(chunk, offset); offset += chunk.length; });
                     reviewPendingChunks = []; reviewPendingLength = 0;
@@ -585,17 +901,45 @@
             }
             if (reviewListening) { reviewListening.classList.add('is-listening'); delete reviewListening.dataset.audioDetected; reviewListening.querySelectorAll('i').forEach((bar) => { bar.style.height = ''; }); }
             if (reviewListeningLabel) reviewListeningLabel.textContent = reviewText('ينتظر صوتك', 'Waiting for your voice');
-            reviewResult.hidden = true; reviewSetStatus(reviewText(`نستمع الآن للنطاق من الآية ${expected.numberInSurah} إلى ${lastExpected.numberInSurah}.`, `Listening to verses ${expected.numberInSurah} through ${lastExpected.numberInSurah}.`), 'ready');
+            reviewAlert.hidden = true; reviewActions.hidden = true;
+            reviewResult.textContent = '';
+            reviewResult.hidden = true;
+            reviewSetStatus(reviewText(`نستمع الآن للنطاق من الآية ${expected.numberInSurah} إلى ${lastExpected.numberInSurah}.`, `Listening to verses ${expected.numberInSurah} through ${lastExpected.numberInSurah}.`), 'ready');
+        };
+        const reviewPrimeAlertAudio = () => {
+            if (!reviewAlertAudio || reviewAlertAudioPrimed) return;
+            reviewAlertAudio.muted = true;
+            reviewAlertAudio.currentTime = 0;
+            const priming = reviewAlertAudio.play();
+            if (!priming?.then) {
+                reviewAlertAudio.pause(); reviewAlertAudio.muted = false; reviewAlertAudioPrimed = true;
+                return;
+            }
+            priming.then(() => {
+                reviewAlertAudio.pause(); reviewAlertAudio.currentTime = 0;
+                reviewAlertAudio.muted = false; reviewAlertAudioPrimed = true;
+            }).catch(() => { reviewAlertAudio.muted = false; });
         };
         const reviewBeepOnce = async () => {
-            if (!reviewBeep?.checked || !reviewContext) return;
+            if (!reviewBeep?.checked) return;
+            if (reviewAlertAudio) {
+                try {
+                    reviewAlertAudio.muted = false;
+                    reviewAlertAudio.volume = 1;
+                    reviewAlertAudio.currentTime = 0;
+                    await reviewAlertAudio.play();
+                    return;
+                } catch (_) { /* Fall back to Web Audio where media playback is unavailable. */ }
+            }
+            if (!reviewContext) return;
             try { await reviewContext.resume(); } catch { return; }
+            if (reviewContext.state !== 'running') return;
             const oscillator = reviewContext.createOscillator(); const gain = reviewContext.createGain();
             const now = reviewContext.currentTime;
-            oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(880, now); oscillator.frequency.setValueAtTime(660, now + 0.13);
-            gain.gain.setValueAtTime(0.0001, now); gain.gain.exponentialRampToValueAtTime(0.24, now + 0.025);
-            gain.gain.setValueAtTime(0.24, now + 0.11); gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.27);
-            oscillator.connect(gain); gain.connect(reviewContext.destination); oscillator.start(now); oscillator.stop(now + 0.28);
+            oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(1046, now); oscillator.frequency.setValueAtTime(784, now + 0.16);
+            gain.gain.setValueAtTime(0.0001, now); gain.gain.exponentialRampToValueAtTime(0.38, now + 0.025);
+            gain.gain.setValueAtTime(0.38, now + 0.14); gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+            oscillator.connect(gain); gain.connect(reviewContext.destination); oscillator.start(now); oscillator.stop(now + 0.42);
         };
         const reviewVibrateOnce = () => {
             if (!reviewVibrate?.checked || typeof navigator.vibrate !== 'function') return;
@@ -604,8 +948,53 @@
         if (typeof navigator.vibrate !== 'function') {
             const vibrateLabel = reviewVibrate?.closest('label');
             if (vibrateLabel) vibrateLabel.hidden = true;
+            const hapticsNote = reviewPanel?.querySelector('[data-review-haptics-note]');
+            if (hapticsNote) hapticsNote.hidden = false;
         }
         const reviewWordsOf = (verse) => verse.text.trim().split(/\s+/u);
+        const reviewApplyVerdict = (node, verdict) => {
+            if (!node) return;
+            const state = verdict?.state || '';
+            node.classList.toggle('is-reviewed-correct', state === 'ok');
+            node.classList.toggle('is-review-uncertain', state === 'unsure' || state === 'possible_vowel');
+            node.classList.toggle('is-possible-error', state === 'wrong' || state === 'skipped');
+            node.dataset.reviewState = state;
+            node.title = state === 'ok' ? reviewText('تطابق صوتي واضح بحسب النموذج', 'Clear acoustic match according to the model')
+                : state === 'unsure' ? reviewText('النموذج غير متأكد من هذه الكلمة', 'The model is unsure about this word')
+                    : state === 'possible_vowel' ? reviewText('اختلاف محتمل في الحركة؛ راجع نطق الكلمة', 'Possible short-vowel mismatch; check the word')
+                    : state === 'wrong' || state === 'skipped' ? reviewText('اختلاف صوتي محتمل — راجعه بنفسك', 'Possible acoustic mismatch — please check it') : '';
+        };
+        const reviewStoreVerdicts = (surah, ayah, verdicts) => {
+            const verseIndex = reviewVerseIndexes.get(`${surah}:${ayah}`);
+            if (!Number.isInteger(verseIndex) || !Array.isArray(verdicts)) return;
+            const byWord = new Map();
+            verdicts.forEach((verdict) => {
+                const word = Number(verdict?.word);
+                if (!Number.isInteger(word) || word < 0 || word >= reviewWordCounts[verseIndex]
+                    || !['ok', 'unsure', 'wrong', 'skipped', 'pending'].includes(verdict?.state)) return;
+                let displayVerdict = verdict;
+                // Match the SDK's own clear-word evidence gate before showing
+                // green. A cursor/alignment result alone is not proof that the
+                // phonemes were heard clearly enough.
+                if (verdict.state === 'ok' && !(Number.isFinite(verdict.distance) && verdict.distance <= 0.15
+                    && Number.isFinite(verdict.margin) && verdict.margin >= 0.55
+                    && Number.isFinite(verdict.heard_ratio) && verdict.heard_ratio >= 0.75 && verdict.heard_ratio <= 1.3)) {
+                    displayVerdict = { ...verdict, state: 'unsure' };
+                }
+                byWord.set(word, displayVerdict);
+                if (Number.isInteger(word) && word >= 0 && word < reviewWordCounts[verseIndex]
+                    && ['ok', 'unsure'].includes(displayVerdict.state) && Number(verdict.vowel_errors) > 0
+                    && Number(verdict.vowel_margin) >= 0.05 && Number(verdict.margin) >= 0.8
+                    && Number(verdict.heard_ratio) >= 0.75 && Number(verdict.heard_ratio) <= 1.3) {
+                    byWord.set(word, { ...displayVerdict, state: 'possible_vowel' });
+                }
+            });
+            reviewWordVerdicts.set(verseIndex, byWord);
+            reviewMatchedWords.set(verseIndex, new Set([...byWord].filter(([, verdict]) => verdict.state === 'ok').map(([word]) => word)));
+            const displayed = reviewDisplayedWords.get(verseIndex) || new Set();
+            byWord.forEach((verdict, word) => { if (verdict.state !== 'pending') displayed.add(word); });
+            reviewDisplayedWords.set(verseIndex, displayed);
+        };
         const reviewBuildPage = (pageIndex) => {
             if (!reviewLines) return;
             const firstIndex = pageIndex * reviewVersesPerPage;
@@ -626,10 +1015,12 @@
                     slot.style.setProperty('--slot-units', String(Math.max(2, Math.min(10, letters))));
                     const display = reviewDisplayedWords.get(verseIndex);
                     const matched = reviewMatchedWords.get(verseIndex);
+                    const verdict = reviewWordVerdicts.get(verseIndex)?.get(wordIndex);
                     if (display?.has(wordIndex) || reviewCurrentWordKey === `${verse.surah}:${verse.numberInSurah}:${wordIndex}`) {
                         slot.textContent = word; slot.classList.add('is-revealed');
-                        if (matched?.has(wordIndex)) slot.classList.add('is-reviewed-correct');
                     }
+                    if (matched?.has(wordIndex)) slot.classList.add('is-reviewed-correct');
+                    reviewApplyVerdict(slot, verdict);
                     reviewWordNodes.set(`${verse.surah}:${verse.numberInSurah}:${wordIndex}`, slot);
                     ayah.append(slot, document.createTextNode(' '));
                 });
@@ -642,7 +1033,7 @@
             reviewVisiblePageIndex = pageIndex;
         };
         const reviewPrepareTemplate = () => {
-            reviewDisplayedWords = new Map(); reviewMatchedWords = new Map(); reviewCurrentWordKey = ''; reviewVisiblePageIndex = -1;
+            reviewDisplayedWords = new Map(); reviewMatchedWords = new Map(); reviewWordVerdicts = new Map(); reviewCurrentWordKey = ''; reviewVisiblePageIndex = -1;
             reviewSurahMeta.textContent = reviewText(`سورة ${surahNames[loadedVerses[0].surah - 1]}`, `Surah ${surahNames[loadedVerses[0].surah - 1]}`);
             const formatNumber = (value) => new Intl.NumberFormat(root.lang === 'en' ? 'en' : 'ar').format(value);
             reviewRangeMeta.textContent = reviewText(`من الآية ${formatNumber(loadedVerses[0].numberInSurah)} إلى الآية ${formatNumber(loadedVerses.at(-1).numberInSurah)}`, `Verses ${formatNumber(loadedVerses[0].numberInSurah)}–${formatNumber(loadedVerses.at(-1).numberInSurah)}`);
@@ -655,10 +1046,11 @@
             if (!Number.isInteger(verseIndex)) return;
             const nextCurrentKey = `${surah}:${ayah}:${wordIndex}`;
             const matched = reviewMatchedWords.get(verseIndex) || new Set();
-            matchedIndices.filter(Number.isInteger).forEach((index) => { if (index >= 0 && index < reviewWordCounts[verseIndex]) matched.add(index); });
             reviewMatchedWords.set(verseIndex, matched);
-            const displayed = reviewDisplayedWords.get(verseIndex) || new Set(matched);
+            const displayed = reviewDisplayedWords.get(verseIndex) || new Set();
+            matchedIndices.filter(Number.isInteger).forEach((index) => { if (index >= 0 && index < reviewWordCounts[verseIndex]) displayed.add(index); });
             matched.forEach((index) => displayed.add(index));
+            reviewWordVerdicts.get(verseIndex)?.forEach((verdict, index) => { if (verdict.state !== 'pending') displayed.add(index); });
             const lastWord = Math.max(0, Math.min(reviewWordCounts[verseIndex] - 1, Number(wordIndex) || 0));
             if (revealWholeVerse) for (let index = 0; index < reviewWordCounts[verseIndex]; index++) displayed.add(index);
             else if (Number.isInteger(Number(wordIndex))) displayed.add(lastWord);
@@ -668,12 +1060,12 @@
             if (pageIndex !== reviewVisiblePageIndex) reviewBuildPage(pageIndex);
             const verse = loadedVerses[verseIndex];
             const words = reviewWordsOf(verse);
-            const indexesToReveal = revealWholeVerse ? displayed : new Set([...matched, lastWord]);
+            const indexesToReveal = revealWholeVerse ? displayed : new Set([...displayed, ...matched, lastWord]);
             for (const index of indexesToReveal) {
                 const node = reviewWordNodes.get(`${surah}:${ayah}:${index}`);
                 if (!node) continue;
                 if (!node.classList.contains('is-revealed')) { node.textContent = words[index]; node.classList.add('is-revealed'); }
-                node.classList.toggle('is-reviewed-correct', matched.has(index));
+                reviewApplyVerdict(node, reviewWordVerdicts.get(verseIndex)?.get(index));
             }
             reviewCurrentWordNode?.classList.remove('is-review-current');
             reviewCurrentWordNode = reviewWordNodes.get(reviewCurrentWordKey) || null;
@@ -682,8 +1074,13 @@
         };
         const reviewHandleEvent = (message) => {
             if (message.type === 'word_progress') {
-                reviewRevealThrough(message.surah, message.ayah, message.word_index);
+                reviewStoreVerdicts(message.surah, message.ayah, message.word_verdicts);
+                reviewRevealThrough(message.surah, message.ayah, message.word_index, message.matched_indices || []);
                 const currentIndex = reviewVerseIndexes.get(`${message.surah}:${message.ayah}`);
+                if (reviewListeningLabel && Number.isInteger(currentIndex)) {
+                    const wordNumber = Math.max(1, Number(message.word_index) + 1);
+                    reviewListeningLabel.textContent = reviewText(`نتابع الآية ${message.ayah} · الكلمة ${wordNumber}`, `Following verse ${message.ayah} · word ${wordNumber}`);
+                }
                 if (reviewProgress && reviewTotalWords > 0 && Number.isInteger(currentIndex)) {
                     const wordIndex = Math.max(0, Math.min(reviewWordCounts[currentIndex] - 1, Number(message.word_index) || 0));
                     const percent = Math.min(100, Math.round(((reviewWordOffsets[currentIndex] + wordIndex + 1) / reviewTotalWords) * 100));
@@ -699,7 +1096,11 @@
                     const verse = Number.isInteger(verseIndex) ? loadedVerses[verseIndex] : null;
                     const words = verse ? reviewWordsOf(verse) : [];
                     const wholeAyah = ['possible_skipped_ayah', 'unclear_ayah'].includes(issue.kind);
-                    const wordIndex = Number.isInteger(issue.wordIndex) ? issue.wordIndex : Number(issue.word) - 1;
+                    // `issue.word` is the zero-based position within this ayah.
+                    // `issue.wordIndex` is the corpus-wide position, so using it
+                    // against this ayah's word array silently drops highlights
+                    // for most of the Quran (and can point at the wrong word).
+                    const wordIndex = Number.isInteger(issue.word) ? issue.word : -1;
                     const word = wholeAyah ? null : words[wordIndex];
                     if (verse && (word || wholeAyah)) {
                         const corrected = message.state?.phase === 'corrected';
@@ -713,6 +1114,9 @@
                             reviewIssueKey = '';
                             reviewSetStatus(reviewText('تم رصد تحسن في إعادة المحاولة.', 'The retry appears improved.'), 'ready');
                             reviewResult.textContent = reviewText('تحسّنت المحاولة بحسب النموذج. تظل النتيجة استرشادية.', 'The model detected an improved retry. This result is still advisory.');
+                            reviewAlert.dataset.state = 'success';
+                            reviewAlertTitle.textContent = reviewText('تحسّنت المحاولة', 'Retry improved');
+                            reviewAlert.hidden = false;
                             reviewActions.hidden = false;
                             reviewActions.querySelector('[data-review-action="retry"]').hidden = true;
                             reviewActions.querySelector('[data-review-action="continue"]').hidden = false;
@@ -720,6 +1124,11 @@
                         } else {
                             const issueKey = `${issue.surah}:${issue.ayah}:${issue.word}:${issue.kind}`;
                             if (issueKey !== reviewIssueKey) { reviewIssueKey = issueKey; void reviewBeepOnce(); reviewVibrateOnce(); }
+                            reviewAlert.dataset.state = message.state?.phase === 'error' ? 'error' : 'warning';
+                            reviewAlertTitle.textContent = message.state?.phase === 'error'
+                                ? reviewText('توقفت المراجعة عند موضع يحتاج مراجعة', 'Review paused at a possible mistake')
+                                : reviewText('تنبيه مراجعة', 'Recitation check');
+                            reviewAlert.hidden = false;
                             reviewResult.textContent = wholeAyah
                                 ? reviewText('لم يتمكن النموذج من متابعة الآية بثقة؛ راجعها كاملة بنفسك.', 'The model could not confidently follow this verse; please check the whole verse yourself.')
                                 : reviewText(`تنبيه: قد تحتاج كلمة «${word}» إلى مراجعة. قد يخطئ النموذج؛ استمع إلى تلاوتك وتحقق بنفسك.`, `Possible issue near “${word}”. The model can be wrong; listen and check the word yourself.`);
@@ -740,7 +1149,10 @@
                             reviewSetStatus(reviewText('أوقفنا الالتقاط عند موضع يحتاج مراجعة محتملة. أعده أو تابعه؛ قد يخطئ النموذج.', 'Capture paused at a possible issue. Repeat it or continue; the model can be wrong.'), 'error');
                         }
                     }
-                } else reviewActions.hidden = true;
+                } else {
+                    reviewActions.hidden = true;
+                    reviewAlert.hidden = true;
+                }
             } else if (message.type === 'correction_note') {
                 reviewSetStatus(reviewText('ملاحظة استرشادية: ربما تكررت كلمة. راجع الآية بنفسك.', 'Advisory: a word may have been repeated. Please check the verse.'), 'info');
             } else if (message.type === 'verse_match') {
@@ -766,7 +1178,8 @@
         };
         const reviewEnsureWorker = () => {
             if (!reviewWorker) {
-                reviewWorker = new Worker('/assets/js/recitation-worker.js', { type: 'module' });
+                const workerUrl = new URL('/assets/js/recitation-worker.js', window.location.origin);
+                reviewWorker = new Worker(workerUrl, { type: 'module' });
                 reviewWorker.addEventListener('message', (event) => reviewHandleEvent(event.data));
                 reviewWorker.addEventListener('error', () => { reviewStartQueued = false; reviewStopCapture(); reviewWorker?.terminate(); reviewWorker = null; reviewReady = false; reviewSetStatus(reviewText('تعذر تحميل محرك المراجعة. تحقق من الاتصال وحاول مجددًا.', 'The review engine failed to load. Check your connection and try again.'), 'error'); });
                 reviewWorker.postMessage({ type: 'init', quran: loadedVerses.map((item) => ({ surah: item.surah, ayah: item.numberInSurah, text_uthmani: item.text, surah_name: surahNames[item.surah - 1], surah_name_en: `Surah ${item.surah}` })) });
@@ -775,6 +1188,7 @@
             reviewSetStatus(reviewText('يتم تجهيز النموذج القرآني المجاني على جهازك. التنزيل الأول نحو 75 ميجابايت.', 'Preparing the free Quran model on your device. The first download is about 75 MB.'), 'loading');
         };
         reviewStart?.addEventListener('click', async () => {
+            reviewPrimeAlertAudio();
             if (!loadedVerses.length || !Number(ayahInput.value)) { reviewSetStatus(reviewText('حدد السورة وبداية ونهاية النطاق ثم اضغط «تجهيز النطاق».', 'Choose a surah and range, then press “Prepare range”.'), 'error'); return; }
             reviewStart.disabled = true;
             try {
@@ -822,6 +1236,7 @@
             if (['retry', 'continue', 'dismiss'].includes(button.dataset.reviewAction)) {
                 reviewPaused = true;
                 reviewResumeAction = button.dataset.reviewAction;
+                reviewAlert.hidden = true;
                 reviewResult.hidden = true;
                 content.querySelectorAll('.verse-word.is-possible-error, .review-mushaf-slot.is-possible-error').forEach((word) => word.classList.remove('is-possible-error'));
                 reviewStart.disabled = false;
@@ -835,64 +1250,206 @@
             if (Number(ayahEndInput.value) < Number(ayahInput.value)) ayahEndInput.value = ayahInput.value;
         });
 
-        const loadReciters = async (scope = scopeValue()) => {
+        const loadReciters = async (scope = scopeValue(), selectedSurah = Number(surahInput.value)) => {
             if (!reciterInput) return;
             try {
-                let options;
-                if (scope === 'surah') {
-                    const cached = JSON.parse(localStorage.getItem('athar-full-surah-reciters') || 'null');
-                    fullSurahReciters = Array.isArray(cached?.items) && Date.now() - cached.savedAt < 86400000 ? cached.items : null;
-                    if (!fullSurahReciters) {
-                        const response = await fetch('https://quranicaudio.com/api/qaris', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
-                        if (!response.ok) throw new Error('reciters-unavailable');
-                        const payload = await response.json();
-                        fullSurahReciters = payload.filter((item) => Number.isInteger(Number(item.id)) && typeof item.relative_path === 'string' && /^[a-z0-9_-]+(?:\/[a-z0-9_-]+)*\/$/i.test(item.relative_path))
-                            .map(({ id, name, arabic_name, relative_path }) => ({ id: Number(id), name: (arabic_name || name || '').trim(), relative_path }))
-                            .filter((item) => item.name);
-                        if (!fullSurahReciters.length) throw new Error('reciters-shape');
-                        localStorage.setItem('athar-full-surah-reciters', JSON.stringify({ items: fullSurahReciters, savedAt: Date.now() }));
-                    }
-                    options = fullSurahReciters.map((reciter) => ({ value: `qa:${reciter.id}`, label: reciter.name }));
-                } else {
-                    const cached = JSON.parse(localStorage.getItem('athar-quran-reciters') || 'null');
-                    verseReciters = Array.isArray(cached?.items) && Date.now() - cached.savedAt < 86400000 ? cached.items : null;
-                    if (!verseReciters) {
-                        const response = await fetch('https://api.alquran.cloud/v1/edition/format/audio', { signal: AbortSignal.timeout(10000) });
-                        if (!response.ok) throw new Error('reciters-unavailable');
-                        const payload = await response.json();
-                        verseReciters = payload.data.filter((edition) => edition.language === 'ar' && edition.type === 'versebyverse' && /^ar\.[a-z0-9-]+$/.test(edition.identifier) && !/-\d+$/.test(edition.identifier)).map(({ identifier, name }) => ({ identifier, name }));
-                        localStorage.setItem('athar-quran-reciters', JSON.stringify({ items: verseReciters, savedAt: Date.now() }));
-                    }
-                    options = verseReciters.map((reciter) => ({ value: `verse:${reciter.identifier}`, label: reciter.name }));
-                }
-                const current = reciterInput.value;
+                const recitersCacheKey = 'athar-mp3quran-reciter-catalog-ar-v1';
+                let cached = null;
+                try { cached = JSON.parse(localStorage.getItem(recitersCacheKey) || 'null'); } catch (_) { /* Fetch fresh catalog. */ }
+                let catalog = Array.isArray(cached?.items) && Date.now() - cached.savedAt < 86400000 ? cached.items : null;
+                if (!catalog) {
+                    const [recitersResponse, timingResponse] = await Promise.all([
+                        fetch('https://mp3quran.net/api/v3/reciters?language=ar', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) }),
+                        fetch('https://mp3quran.net/api/v3/ayat_timing/reads', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) }),
+                    ]);
+                    if (!recitersResponse.ok) throw new Error('reciters-unavailable');
+                    const [recitersPayload, timingPayload] = await Promise.all([recitersResponse.json(), timingResponse.ok ? timingResponse.json() : Promise.resolve([])]);
+                    timingReads = Array.isArray(timingPayload) ? timingPayload : [];
+                    const timingByFolder = new Map(timingReads.filter((entry) => typeof entry.folder_url === 'string').map((entry) => [entry.folder_url.replace(/\/$/, ''), Number(entry.id)]));
+                    catalog = (Array.isArray(recitersPayload.reciters) ? recitersPayload.reciters : []).flatMap((reciter) => (Array.isArray(reciter.moshaf) ? reciter.moshaf : []).map((moshaf) => {
+                        const server = typeof moshaf.server === 'string' ? moshaf.server : '';
+                        const surahList = String(moshaf.surah_list || '').split(',').map(Number).filter(Number.isInteger);
+                        return {
+                            key: `mp3:${moshaf.id}`,
+                            reciterId: Number(reciter.id),
+                            name: String(reciter.name || '').trim(),
+                            moshafName: String(moshaf.name || '').trim(),
+                            server,
+                            surahList,
+                            timingReadId: timingByFolder.get(server.replace(/\/$/, '')) || null,
+                        };
+                    })).filter((entry) => entry.name && /^https:\/\//i.test(entry.server) && entry.surahList.length);
+                    if (!catalog.length) throw new Error('reciters-shape');
+                    fullSurahReciters = catalog;
+                    try { localStorage.setItem(recitersCacheKey, JSON.stringify({ items: catalog, savedAt: Date.now() })); } catch (_) { /* Playback remains available without storage. */ }
+                } else fullSurahReciters = catalog;
+                const compatible = catalog.filter((entry) => entry.surahList.includes(selectedSurah) && (scope === 'surah' || entry.timingReadId));
+                const options = compatible.map((entry) => ({ value: entry.key, label: entry.moshafName ? `${entry.name} · ${entry.moshafName}` : entry.name }));
+                const previous = reciterInput.value;
                 reciterInput.replaceChildren(...options.map(({ value, label }) => { const option = document.createElement('option'); option.value = value; option.textContent = label; return option; }));
-                if (options.some((option) => option.value === current)) reciterInput.value = current;
-                mediaMetadata(activeVerses[activeIndex]);
-                if (loadedVerses.length) configurePlayback(false);
+                if (!options.length) {
+                    const empty = document.createElement('option'); empty.value = ''; empty.textContent = 'لا يتوفر قارئ بهذا النطاق لهذه السورة'; reciterInput.append(empty);
+                    if (audioStatus) audioStatus.textContent = scope === 'current' ? 'هذه السورة لا تتوفر لها توقيتات للآية المنفردة؛ اختر السورة كاملة.' : 'لا تتوفر تلاوة لهذه السورة في المصدر حاليًا.';
+                    return;
+                }
+                reciterInput.value = options.some((option) => option.value === previous) ? previous : options[0].value;
+                if (audioStatus) audioStatus.textContent = `${options.length} قراءة متاحة لهذا الاختيار.`;
             } catch (_) {
-                const fallback = document.createElement('option');
-                fallback.value = 'verse:ar.alafasy'; fallback.textContent = 'مشاري راشد العفاسي';
+                const fallback = document.createElement('option'); fallback.value = ''; fallback.textContent = 'تعذر تحميل قائمة القراء';
                 reciterInput.replaceChildren(fallback);
+                if (audioStatus) audioStatus.textContent = 'تعذر الاتصال بمكتبة MP3Quran. تحقق من الاتصال ثم أعد تحميل الصفحة.';
             }
         };
-        reciterInput?.addEventListener('change', () => { const wasPlaying = !audio.paused; activeTrack = null; playVerse(activeIndex, wasPlaying); });
+        reciterInput?.addEventListener('change', () => { const wasPlaying = !audio.paused; audio.pause(); activeTrack = null; playVerse(activeIndex, wasPlaying); });
         previousAudioButton?.addEventListener('click', () => { if (activeIndex > 0) playVerse(activeIndex - 1); });
         nextAudioButton?.addEventListener('click', () => { if (activeIndex + 1 < activeVerses.length) playVerse(activeIndex + 1); });
         audio?.addEventListener('ended', () => { if (repeatInput.checked) { audio.currentTime = 0; audio.play(); } else if (scopeValue() !== 'surah' && activeIndex + 1 < activeVerses.length) playVerse(activeIndex + 1); else { const session = getMediaSession(); if (session) session.playbackState = 'none'; if (audioStatus) audioStatus.textContent = 'اكتملت التلاوة لهذا النطاق.'; } });
         audio?.addEventListener('play', () => { const session = getMediaSession(); if (session) session.playbackState = 'playing'; });
         audio?.addEventListener('pause', () => { const session = getMediaSession(); if (session && !audio.ended) session.playbackState = 'paused'; });
-        audio?.addEventListener('timeupdate', updatePosition);
+        audio?.addEventListener('timeupdate', () => {
+            updatePosition();
+            const elapsed = audio.currentTime * 1000;
+            if (scopeValue() === 'current' && activeSegmentTiming && elapsed >= Number(activeSegmentTiming.end_time)) {
+                if (repeatInput?.checked) setAudioPosition(Number(activeSegmentTiming.start_time) / 1000);
+                else { audio.pause(); if (audioStatus) audioStatus.textContent = 'اكتمل الاستماع إلى الآية المحددة.'; }
+                return;
+            }
+            if (!activeTimings.length) return;
+            const timing = activeTimings.find((entry) => Number(entry.ayah) > 0 && elapsed >= Number(entry.start_time) && elapsed < Number(entry.end_time));
+            if (!timing) return;
+            const nextIndex = activeVerses.findIndex((verse) => verse.numberInSurah === Number(timing.ayah));
+            if (nextIndex >= 0 && nextIndex !== activeIndex) { activeIndex = nextIndex; paintActiveVerse(); }
+        });
         audio?.addEventListener('error', () => { if (audioStatus) audioStatus.textContent = 'تعذر تشغيل التلاوة. اختر قارئًا آخر أو تحقق من الاتصال.'; });
         const session = getMediaSession();
         if (session) {
             const actions = { play: () => audio?.play(), pause: () => audio?.pause(), stop: stopPlayback, nexttrack: () => playVerse(activeIndex + 1), previoustrack: () => playVerse(activeIndex - 1), seekto: ({ seekTime }) => { if (audio && Number.isFinite(seekTime)) audio.currentTime = seekTime; }, seekforward: () => { if (audio) audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + 10); }, seekbackward: () => { if (audio) audio.currentTime = Math.max(0, audio.currentTime - 10); } };
             Object.entries(actions).forEach(([name, handler]) => { try { session.setActionHandler(name, handler); } catch (_) { /* Action is not supported by this browser. */ } });
         }
-        if (quranReader.dataset.tool === 'listen') loadReciters(scopeValue());
         if (['ayah', 'tafsir', 'review'].includes(quranReader.dataset.tool) && !quranReader.dataset.ayah) {
             status.dataset.state = 'info';
             status.textContent = quranReader.dataset.tool === 'review' ? 'حدد السورة وبداية ونهاية النطاق ثم اضغط تجهيز النطاق.' : 'اختر السورة ورقم الآية ثم اضغط عرض.';
-            } else loadReading({ mode: quranReader.dataset.mode, surah: Number(quranReader.dataset.surah), ayah: Number(quranReader.dataset.ayah) || null, ayahEnd: Number(quranReader.dataset.ayahEnd) || Number(quranReader.dataset.ayah) || null, juz: Number(quranReader.dataset.juz), hizb: Number(quranReader.dataset.hizb), page: Number(quranReader.dataset.page) });
+        } else {
+            const initialReading = () => loadReading({ mode: quranReader.dataset.mode, surah: Number(quranReader.dataset.surah), ayah: Number(quranReader.dataset.ayah) || null, ayahEnd: Number(quranReader.dataset.ayahEnd) || Number(quranReader.dataset.ayah) || null, juz: Number(quranReader.dataset.juz), hizb: Number(quranReader.dataset.hizb), page: Number(quranReader.dataset.page) });
+            if (quranReader.dataset.tool === 'listen') loadReciters(scopeValue(), Number(surahInput.value)).then(initialReading);
+            else initialReading();
+        }
     }
+})();
+(() => {
+    const accountNav = document.querySelector('[data-account-nav]');
+    if (!accountNav) return;
+    const links = [...accountNav.querySelectorAll('a[href^="#account-"]')];
+    const panels = [...document.querySelectorAll('[data-account-panel]')];
+    const showSection = (hash, scroll = false) => {
+        const active = links.find((link) => link.hash === hash) || links[0];
+        const activePanel = panels.find((panel) => `#${panel.id}` === active?.hash) || panels[0];
+        links.forEach((link) => {
+            if (link === active) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+        });
+        panels.forEach((panel) => { panel.hidden = panel !== activePanel; });
+        active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        if (scroll && activePanel) activePanel.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    };
+    showSection(window.location.hash);
+    accountNav.addEventListener('click', (event) => {
+        const link = event.target.closest('a[href^="#account-"]');
+        if (link && accountNav.contains(link)) showSection(link.hash, true);
+    });
+    window.addEventListener('hashchange', () => showSection(window.location.hash, true));
+})();
+
+(() => {
+    const adminNav = document.querySelector('[data-admin-nav]');
+    if (!adminNav) return;
+    const links = [...adminNav.querySelectorAll('a[href^="#admin-"]')];
+    const panels = [...document.querySelectorAll('[data-admin-panel]')];
+    const showSection = (hash, scroll = false) => {
+        const active = links.find((link) => link.hash === hash) || links[0];
+        const activePanel = panels.find((panel) => `#${panel.id}` === active?.hash) || panels.find((panel) => panel.id === 'admin-overview');
+        links.forEach((link) => {
+            if (link === active) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+        });
+        panels.forEach((panel) => { panel.hidden = panel !== activePanel; });
+        active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        if (scroll && activePanel) activePanel.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    };
+    showSection(window.location.hash);
+    adminNav.addEventListener('click', (event) => {
+        const link = event.target.closest('a[href^="#admin-"]');
+        if (link && adminNav.contains(link)) showSection(link.hash, true);
+    });
+    window.addEventListener('hashchange', () => showSection(window.location.hash, true));
+})();
+
+(() => {
+    const wireFilter = (inputSelector, rowSelector, emptySelector) => {
+        const input = document.querySelector(inputSelector);
+        if (!input) return;
+        const rows = [...document.querySelectorAll(rowSelector)];
+        const empty = document.querySelector(emptySelector);
+        const filter = () => {
+            const query = input.value.trim().toLocaleLowerCase();
+            let visible = 0;
+            rows.forEach((row) => {
+                const matches = !query || (row.dataset.search || '').toLocaleLowerCase().includes(query);
+                row.hidden = !matches;
+                if (matches) visible += 1;
+            });
+            if (empty) empty.hidden = visible !== 0;
+        };
+        input.addEventListener('input', filter);
+    };
+    wireFilter('[data-admin-user-search]', '[data-admin-user]', '[data-admin-user-empty]');
+    wireFilter('[data-admin-audit-search]', '[data-admin-audit]', '[data-admin-audit-empty]');
+})();
+
+(() => {
+    const forms = [...document.querySelectorAll('[data-campaign-batch]')];
+    if (!forms.length) return;
+    const feedback = document.querySelector('[data-campaign-feedback]');
+    const stopButton = document.querySelector('[data-campaign-stop]');
+    let stopRequested = false;
+    let active = false;
+    stopButton?.addEventListener('click', () => {
+        stopRequested = true;
+        stopButton.textContent = 'سيتم الإيقاف بعد الدفعة الحالية';
+        stopButton.disabled = true;
+    });
+    forms.forEach((form) => form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (active) return;
+        active = true;
+        stopRequested = false;
+        const button = form.querySelector('button[type="submit"]');
+        const originalLabel = button?.textContent || 'بدء الإرسال';
+        if (button) { button.disabled = true; button.textContent = 'جارٍ إرسال الحملة…'; }
+        if (stopButton) { stopButton.hidden = false; stopButton.disabled = false; stopButton.textContent = 'إيقاف بعد الدفعة الحالية'; }
+        let totals = { sent: Number(form.closest('.admin-campaign-row')?.querySelector('.admin-campaign-stats span')?.textContent.match(/\d+/)?.[0] || 0), pending: 0 };
+        try {
+            while (!stopRequested) {
+                const payload = new FormData(form);
+                payload.append('ajax_campaign_batch', '1');
+                const response = await fetch('/admin', { method: 'POST', body: payload, credentials: 'same-origin', headers: { Accept: 'application/json' } });
+                const result = await response.json();
+                if (!response.ok || !result.ok) throw new Error(result.error || 'تعذر إرسال دفعة البريد.');
+                totals = { sent: Number(result.stats?.sent || 0), pending: Number(result.stats?.pending || 0) };
+                if (feedback) feedback.textContent = `تقدم الحملة: أُرسلت ${totals.sent} رسالة، وتبقى ${totals.pending}.`;
+                if (result.paused || totals.pending === 0) {
+                    if (result.paused && feedback) feedback.textContent += ' توقفت الحملة مؤقتًا عند حد Gmail اليومي.';
+                    window.location.reload();
+                    return;
+                }
+            }
+            if (feedback) feedback.textContent = `توقف الإرسال بعد الدفعة الحالية. أُرسلت ${totals.sent} رسالة، وتبقى ${totals.pending}.`;
+            window.location.reload();
+        } catch (error) {
+            if (feedback) feedback.textContent = error instanceof Error ? error.message : 'تعذر إكمال الإرسال.';
+            if (button) { button.disabled = false; button.textContent = originalLabel; }
+            if (stopButton) stopButton.hidden = true;
+            active = false;
+        }
+    }));
 })();

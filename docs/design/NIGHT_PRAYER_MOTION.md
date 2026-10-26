@@ -1,0 +1,2 @@
+# Night Prayer motion
+Use localized progress interpolation, restrained milestone confirmation and short screen transitions. The Maghrib→Fajr timeline highlights the mathematical final third and exposes times/duration as text; animation must not replace information. Timers update the smallest text scope, not the whole screen every frame. Reduced motion uses immediate state changes and static focus/status. Never make a streak break an alarming animation or use shame-based feedback.
