@@ -31,9 +31,10 @@ data class ReminderCenterCounts(
     val adhkar: Int,
     val builtin: Int,
     val custom: Int,
+    val khatmah: Int = 0,
 ) {
-    val total: Int get() = lessons + quran + adhkar + builtin + custom
-    val activeTypes: Int get() = listOf(lessons,quran,adhkar,builtin,custom).count { it > 0 }
+    val total: Int get() = lessons + quran + adhkar + builtin + custom + khatmah
+    val activeTypes: Int get() = listOf(lessons,quran,adhkar,builtin,custom,khatmah).count { it > 0 }
 }
 
 @Composable
@@ -52,6 +53,8 @@ fun ReminderCenterOverview(
     val builtin by remember(owner) { graph.builtinRoutines.observe(owner) }
         .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
     val custom by remember(owner) { graph.customRoutines.observe(owner) }
+        .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
+    val khatmah by remember(owner) { graph.khatmahReminders.observe(owner) }
         .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
 
     val context = LocalContext.current
@@ -78,14 +81,16 @@ fun ReminderCenterOverview(
     val adhkarState = (adhkar as? ProtectedRead.Ready)?.value
     val builtinState = (builtin as? ProtectedRead.Ready)?.value
     val customState = (custom as? ProtectedRead.Ready)?.value
+    val khatmahRule = (khatmah as? ProtectedRead.Ready)?.value
     val counts = ReminderCenterCounts(
         lessons = lessonValues.size,
         quran = if (quranState?.rule?.enabled == true) 1 else 0,
         adhkar = adhkarState?.rules?.count { it.enabled } ?: 0,
         builtin = builtinState?.rules?.count { it.enabled } ?: 0,
         custom = customState?.rules?.count { it.enabled } ?: 0,
+        khatmah = if (khatmahRule?.enabled == true) 1 else 0,
     )
-    val unreadable = listOf(choices,quran,adhkar,builtin,custom,preferenceRead).any { it == ProtectedRead.Unreadable }
+    val unreadable = listOf(choices,quran,adhkar,builtin,custom,khatmah,preferenceRead).any { it == ProtectedRead.Unreadable }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         permissionRevision++
@@ -195,6 +200,26 @@ fun ReminderCenterOverview(
             ReminderCountRow(R.string.adhkar, counts.adhkar) { open("adhkar") }
             ReminderCountRow(R.string.salawat_friday_summary, counts.builtin)
             ReminderCountRow(R.string.custom_routines_title, counts.custom)
+            ReminderCountRow(R.string.khatmah, counts.khatmah)
+            if (khatmahRule?.enabled == true) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    Text(
+                        stringResource(R.string.khatmah_reminder_time, khatmahRule.time),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    TextButton(onClick = {
+                        scope.launch {
+                            try { graph.khatmahReminders.disable(owner) }
+                            catch (failure: CancellationException) { throw failure }
+                            catch (_: Exception) { message = R.string.reminder_center_update_failed }
+                        }
+                    }) { Text(stringResource(R.string.khatmah_reminder_disable)) }
+                }
+            }
 
             lessonValues.forEach { choice ->
                 Surface(
