@@ -140,6 +140,9 @@
 <string name="night_totals">%1$d ليلة · %2$d آية</string>
 <string name="night_self_report">هذه سجلاتك الشخصية؛ لا نحكم على قبول عبادتك أو إتقان تلاوتك.</string>
 <string name="night_measured_pace">سرعتك المقاسة: %1$.1f ثانية لكل آية</string>
+<string name="night_measured_pace_samples">متوسط القياس: %1$.1f ثانية لكل آية · من %2$d جلسات مقاسة</string>
+<string name="night_measured_pace_insufficient">نحتاج جلستين مقاستين على الأقل قبل عرض متوسط للسرعة؛ لا نستنتجها من جلسة واحدة.</string>
+<string name="night_measured_pace_outliers">استُبعدت %1$d جلسة شاذة من المتوسط فقط؛ بقيت الجلسات محفوظة في سجلك.</string>
 <string name="night_add">تسجيل جلسة</string>
 <string name="night_timer_title">جلسة مقاسة</string>
 <string name="night_timer_intro">ابدأ القياس فقط عند بدء القراءة فعليًا. يتوقف القياس عند خروج التطبيق للخلفية ولا يحسب وقت الغياب.</string>
