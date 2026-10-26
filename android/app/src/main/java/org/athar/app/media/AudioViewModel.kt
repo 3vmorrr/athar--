@@ -2,6 +2,7 @@ package org.athar.app.media
 
 import android.content.ComponentName
 import android.net.Uri
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.media3.common.*
 import androidx.media3.session.MediaController
@@ -132,6 +133,7 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
             buffer = player.playbackState == Player.STATE_BUFFERING,
             interrupted = player.playbackSuppressionReason !=
                 Player.PLAYBACK_SUPPRESSION_REASON_NONE,
+            clipStart = metadata.extras?.getLong("athar_clip_start_ms", 0L) ?: 0L,
             mediaKey = mediaId,
             radio = radioItem,
         )
@@ -156,19 +158,13 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
                     "edition" to "$edition",
                     "surah" to "$surah",
                 )
+                val quranData = graph.quran.data()
+                val verseCount = quranData.surah(surah).size
                 val audio = graph.content.get("quran/audio", query).data
                 if (!isCurrentRequest(generation)) return@launch
+
                 val uri = Uri.parse(audio.text("url"))
                 require(PlaybackService.approvedMedia(uri))
-                val item = MediaItem.Builder()
-                    .setMediaId(mediaKey)
-                    .setUri(uri)
-                    .setMediaMetadata(
-                        MediaMetadata.Builder()
-                            .setTitle(graph.quran.data().index.surahs[surah - 1].name)
-                            .setArtist(audio.text("reciter_name"))
-                            .build(),
-                    )
 
                 var timings = emptyList<AyahTiming>()
                 if (audio.text("tracking_available") == "true") {
@@ -178,24 +174,44 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
                             .data
                             .array("items")
                         if (!isCurrentRequest(generation)) return@launch
-                        timings = timingRows.map {
-                            AyahTiming(
-                                it.text("ayah").toInt(),
-                                it.text("start_ms").toLong(),
-                                it.text("end_ms").toLong(),
-                            )
-                        }
+                        timings = validatedAyahTimings(
+                            timingRows.map {
+                                AyahTiming(
+                                    it.text("ayah").toInt(),
+                                    it.text("start_ms").toLong(),
+                                    it.text("end_ms").toLong(),
+                                )
+                            },
+                            verseCount,
+                        )
                     } catch (failure: CancellationException) {
                         throw failure
                     } catch (_: Exception) {
                         // Whole-surah playback remains usable without timing.
+                        timings = emptyList()
                     }
                 }
 
                 val selected = ayah?.let { number ->
-                    timings.firstOrNull { it.ayah == number }
+                    timingForAyah(timings, number)
                         ?: throw IllegalArgumentException("Timing unavailable")
                 }
+                val metadata = MediaMetadata.Builder()
+                    .setTitle(quranData.index.surahs[surah - 1].name)
+                    .setArtist(audio.text("reciter_name"))
+                    .setExtras(
+                        Bundle().apply {
+                            putLong("athar_clip_start_ms", selected?.start ?: 0L)
+                            putInt("athar_surah", surah)
+                            putInt("athar_ayah", ayah ?: 0)
+                        },
+                    )
+                    .build()
+                val item = MediaItem.Builder()
+                    .setMediaId(mediaKey)
+                    .setUri(uri)
+                    .setMediaMetadata(metadata)
+
                 if (selected != null) {
                     item.setClippingConfiguration(
                         MediaItem.ClippingConfiguration.Builder()
@@ -216,7 +232,7 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
                     recording = audio,
                     loading = false,
                     timings = timings,
-                    clipStart = selected?.start ?: 0,
+                    clipStart = selected?.start ?: 0L,
                     mediaKey = mediaKey,
                     radio = false,
                 )
