@@ -27,9 +27,11 @@ import org.athar.app.core.data.protectedReads
 import java.time.*
 
 data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = emptyList(), val busy: Boolean = false, val error: Boolean = false,
-    val conflictRows:List<NightConflict> = emptyList(),val loading:Boolean=true,val unreadable:Boolean=false,
-    val reviewId:String?=null,val review:NightConflictReview?=null,val reviewLoading:Boolean=false,val reviewError:Boolean=false,val reviewChanged:Boolean=false,val reviewLocalError:Boolean=false){
+    val conflictRows:List<NightConflict> = emptyList(),val rejectionRows:List<NightRejection> = emptyList(),val loading:Boolean=true,val unreadable:Boolean=false,
+    val reviewId:String?=null,val review:NightConflictReview?=null,val reviewLoading:Boolean=false,val reviewError:Boolean=false,val reviewChanged:Boolean=false,val reviewLocalError:Boolean=false,
+    val rejectionReviewId:String?=null,val rejectionReview:NightRejectionReview?=null,val rejectionReviewLoading:Boolean=false,val rejectionReviewError:Boolean=false,val rejectionReviewChanged:Boolean=false,val rejectionReviewLocalError:Boolean=false){
     val conflicts:Int get()=conflictRows.size
+    val rejections:Int get()=rejectionRows.size
 }
 class NightViewModel(val graph: AppGraph) : ViewModel() {
     private val user = requireNotNull(graph.session.userId)
@@ -42,10 +44,10 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     fun retryLocal(){
         observation?.cancel()
         mutable.value=mutable.value.copy(loading=true,unreadable=false)
-        observation=viewModelScope.launch { combine(graph.nightPrayer.observe(user),graph.nightPrayer.observeConflicts(user)){rows,conflicts->rows to conflicts}.protectedReads().collect {
+        observation=viewModelScope.launch { combine(graph.nightPrayer.observe(user),graph.nightPrayer.observeConflicts(user),graph.nightPrayer.observeRejections(user)){rows,conflicts,rejections->Triple(rows,conflicts,rejections)}.protectedReads().collect {
             when(it){
-                is ProtectedRead.Ready->mutable.value=mutable.value.copy(rows=it.value.first,conflictRows=it.value.second,loading=false,unreadable=false)
-                ProtectedRead.Unreadable->{reviewJob?.cancel();mutable.value=mutable.value.copy(rows=emptyList(),conflictRows=emptyList(),reviewId=null,review=null,loading=false,unreadable=true)}
+                is ProtectedRead.Ready->mutable.value=mutable.value.copy(rows=it.value.first,conflictRows=it.value.second,rejectionRows=it.value.third,loading=false,unreadable=false)
+                ProtectedRead.Unreadable->{reviewJob?.cancel();mutable.value=mutable.value.copy(rows=emptyList(),conflictRows=emptyList(),rejectionRows=emptyList(),reviewId=null,review=null,rejectionReviewId=null,rejectionReview=null,loading=false,unreadable=true)}
                 ProtectedRead.Loading->Unit
             }
         } }
@@ -78,6 +80,52 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             catch(_:NightConflictChanged){mutable.value=mutable.value.copy(review=null,reviewChanged=true)}
             catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(reviewError=true,reviewLocalError=true)}
             catch(_:Exception){mutable.value=mutable.value.copy(reviewError=true)}
+            finally{mutable.value=mutable.value.copy(busy=false)}
+        }
+    }
+    fun reviewRejection(id:String){
+        if(mutable.value.busy||mutable.value.loading||mutable.value.unreadable||graph.session.userId!=user)return
+        reviewJob?.cancel()
+        mutable.value=mutable.value.copy(rejectionReviewId=id,rejectionReview=null,rejectionReviewLoading=true,rejectionReviewError=false,rejectionReviewChanged=false,rejectionReviewLocalError=false)
+        reviewJob=viewModelScope.launch{
+            try{val result=graph.nightPrayer.reviewRejection(id,user);if(mutable.value.rejectionReviewId==id)mutable.value=mutable.value.copy(rejectionReview=result,rejectionReviewLoading=false)}
+            catch(failure:CancellationException){throw failure}
+            catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(rejectionReviewLoading=false,rejectionReviewError=true,rejectionReviewLocalError=true)}
+            catch(_:Exception){mutable.value=mutable.value.copy(rejectionReviewLoading=false,rejectionReviewError=true)}
+        }
+    }
+    fun closeRejectionReview(){if(!mutable.value.busy){reviewJob?.cancel();mutable.value=mutable.value.copy(rejectionReviewId=null,rejectionReview=null,rejectionReviewLoading=false,rejectionReviewError=false,rejectionReviewChanged=false,rejectionReviewLocalError=false)}}
+    private fun resolveRejection(block:suspend(NightRejectionReview)->Unit){
+        val selected=mutable.value.rejectionReview?:return
+        if(mutable.value.busy||mutable.value.loading||mutable.value.unreadable||graph.session.userId!=user)return
+        viewModelScope.launch{
+            mutable.value=mutable.value.copy(busy=true,rejectionReviewError=false,rejectionReviewChanged=false,rejectionReviewLocalError=false,error=false)
+            try{
+                block(selected)
+                mutable.value=mutable.value.copy(rejectionReviewId=null,rejectionReview=null)
+                try{graph.nightPrayer.sync(user)}catch(failure:CancellationException){throw failure}catch(_:Exception){mutable.value=mutable.value.copy(error=true)}
+            }catch(failure:CancellationException){throw failure}
+            catch(_:NightRejectionChanged){mutable.value=mutable.value.copy(rejectionReview=null,rejectionReviewChanged=true)}
+            catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(rejectionReviewError=true,rejectionReviewLocalError=true)}
+            catch(_:Exception){mutable.value=mutable.value.copy(rejectionReviewError=true)}
+            finally{mutable.value=mutable.value.copy(busy=false)}
+        }
+    }
+    fun retryRejection()=resolveRejection{graph.nightPrayer.retryRejection(it)}
+    fun acceptAccountRejection()=resolveRejection{graph.nightPrayer.acceptAccountRejection(it)}
+    fun repairRejection(review:NightRejectionReview,payload:JsonObject,done:()->Unit){
+        if(mutable.value.busy||mutable.value.loading||mutable.value.unreadable||graph.session.userId!=user)return
+        viewModelScope.launch{
+            mutable.value=mutable.value.copy(busy=true,rejectionReviewError=false,rejectionReviewChanged=false,rejectionReviewLocalError=false,error=false)
+            try{
+                graph.nightPrayer.repairRejection(review,payload)
+                mutable.value=mutable.value.copy(rejectionReviewId=null,rejectionReview=null)
+                done()
+                try{graph.nightPrayer.sync(user)}catch(failure:CancellationException){throw failure}catch(_:Exception){mutable.value=mutable.value.copy(error=true)}
+            }catch(failure:CancellationException){throw failure}
+            catch(_:NightRejectionChanged){mutable.value=mutable.value.copy(rejectionReview=null,rejectionReviewChanged=true)}
+            catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(rejectionReviewError=true,rejectionReviewLocalError=true)}
+            catch(_:Exception){mutable.value=mutable.value.copy(rejectionReviewError=true)}
             finally{mutable.value=mutable.value.copy(busy=false)}
         }
     }
@@ -134,11 +182,12 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 supportingText = stringResource(R.string.night_intro),
                 statusText = when {
                     state.unreadable -> stringResource(R.string.local_data_unreadable)
+                    state.rejections > 0 -> stringResource(R.string.night_rejection)
                     state.conflicts > 0 -> stringResource(R.string.night_conflict)
                     state.rows.any { it.first.dirty } -> stringResource(R.string.night_pending)
                     else -> null
                 },
-                statusTone = if (state.unreadable || state.conflicts > 0) {
+                statusTone = if (state.unreadable || state.rejections > 0 || state.conflicts > 0) {
                     AtharHeroStatusTone.Warning
                 } else {
                     AtharHeroStatusTone.Neutral
@@ -233,6 +282,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     var editing by remember {
         mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null)
     }
+    var repairReview by remember { mutableStateOf<NightRejectionReview?>(null) }
     var form by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<String?>(null) }
     var expandedId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -257,6 +307,9 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     }
     val conflictedIds = remember(state.conflictRows) {
         state.conflictRows.map { it.local.id }.toSet()
+    }
+    val rejectedIds = remember(state.rejectionRows) {
+        state.rejectionRows.map { it.local.id }.toSet()
     }
     val visibleRows = remember(state.rows, page) {
         state.rows
@@ -371,6 +424,43 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 MessagePanel(stringResource(R.string.night_conflict), true)
             }
         }
+        if (state.rejections > 0) {
+            item(key = "rejection", contentType = "feedback") {
+                MessagePanel(stringResource(R.string.night_rejection_notice), true)
+            }
+        }
+
+        items(
+            state.rejectionRows.filter { it.local.deleted },
+            key = { "deleted-rejection:${it.local.id}" },
+            contentType = { "deleted-rejection" },
+        ) { rejection ->
+            OutlinedCard(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.night_pending_delete),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        stringResource(
+                            if (rejection.status == 404) R.string.night_rejection_missing
+                            else R.string.night_rejection_generic,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    TextButton(
+                        onClick = { vm.reviewRejection(rejection.local.id) },
+                        enabled = !state.busy,
+                        modifier = Modifier.testTag("night-rejection-${rejection.local.id}"),
+                    ) {
+                        Text(stringResource(R.string.night_review_rejection))
+                    }
+                }
+            }
+        }
 
         items(
             state.conflictRows.filter { it.local.deleted },
@@ -399,7 +489,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             }
         }
 
-        if (state.rows.isEmpty()) {
+        if (state.rows.isEmpty() && state.rejectionRows.isEmpty() && state.conflictRows.none { it.local.deleted }) {
             item(key = "empty", contentType = "empty") {
                 QuietEmptyState(stringResource(R.string.night_empty))
             }
@@ -411,6 +501,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             contentType = { "session" },
         ) { (local, body) ->
             val conflicted = local.id in conflictedIds
+            val rejected = local.id in rejectedIds
             val expanded = expandedId == local.id
 
             OutlinedCard(Modifier.fillMaxWidth()) {
@@ -499,20 +590,28 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                                 editing = local to body
                                 form = true
                             },
-                            enabled = !state.busy && !conflicted,
+                            enabled = !state.busy && !conflicted && !rejected,
                         ) {
                             Text(stringResource(R.string.edit))
                         }
                         TextButton(
                             onClick = { deleting = local.id },
-                            enabled = !state.busy && !conflicted,
+                            enabled = !state.busy && !conflicted && !rejected,
                         ) {
                             Text(
                                 stringResource(R.string.delete_action),
                                 color = MaterialTheme.colorScheme.error,
                             )
                         }
-                        if (conflicted) {
+                        if (rejected) {
+                            TextButton(
+                                onClick = { vm.reviewRejection(local.id) },
+                                enabled = !state.busy,
+                                modifier = Modifier.testTag("night-rejection-${local.id}"),
+                            ) {
+                                Text(stringResource(R.string.night_review_rejection))
+                            }
+                        } else if (conflicted) {
                             TextButton(
                                 onClick = { vm.review(local.id) },
                                 enabled = !state.busy,
@@ -578,7 +677,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             graph = graph,
             editing = editing,
             busy = state.busy,
-            conflicted = editing?.first?.id in conflictedIds,
+            conflicted = editing?.first?.id in conflictedIds || editing?.first?.id in rejectedIds,
             dismiss = { form = false },
             save = { payload ->
                 vm.save(payload, editing?.first?.id) {
@@ -594,6 +693,30 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             { state.reviewId?.let(vm::review) },
             vm::resolve,
         )
+    }
+    if (state.rejectionReviewId != null && repairReview == null) {
+        NightRejectionDialog(
+            state = state,
+            close = vm::closeRejectionReview,
+            reload = { state.rejectionReviewId?.let(vm::reviewRejection) },
+            retryMutation = vm::retryRejection,
+            useAccount = vm::acceptAccountRejection,
+            repair = { state.rejectionReview?.let { repairReview = it } },
+        )
+    }
+    repairReview?.let { review ->
+        review.rejection.body?.let { body ->
+            NightEntryDialog(
+                graph = graph,
+                editing = review.rejection.local to body,
+                busy = state.busy,
+                conflicted = false,
+                dismiss = { repairReview = null },
+                save = { payload ->
+                    vm.repairRejection(review, payload) { repairReview = null }
+                },
+            )
+        }
     }
     if (deleting != null) {
         AlertDialog(

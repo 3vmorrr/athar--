@@ -404,5 +404,17 @@
 <string name="night_review_changed">A version changed during review. Reload both before choosing; your device changes are still saved.</string>
 <string name="night_review_duration">Recorded duration: %1$d seconds</string>
 <string name="night_edit_conflict">Another change arrived for this session. Your draft is still here; close this form and review the pending change before saving.</string>
+    <string name="night_rejection">A saved change needs recovery</string>
+    <string name="night_review_rejection">Review rejected change</string>
+    <string name="night_rejection_notice">The rejected change is still saved on this device. Review it and retry, repair it, or use the account state; other sessions can continue syncing.</string>
+    <string name="night_rejection_review_notice">The saved change will not be discarded automatically. Review the device version and current account state before choosing an action.</string>
+    <string name="night_rejection_invalid">The server rejected this change because some of its data is no longer accepted. You can repair it and submit a new mutation.</string>
+    <string name="night_rejection_missing">This session no longer exists in the account. Review the current state before retrying or accepting the account state.</string>
+    <string name="night_rejection_generic">The server permanently rejected this change. Its original device data is retained for review.</string>
+    <string name="night_rejection_retry">Retry unchanged</string>
+    <string name="night_rejection_repair">Repair change</string>
+    <string name="night_rejection_use_account">Use current account state</string>
+    <string name="night_account_missing">There is no current account copy of this session.</string>
+    <string name="night_rejection_changed">The session changed during review. Reopen the review before continuing; the device data is still saved.</string>
     <string name="account_data_unavailable">Account data could not be read. Retry; your data has not been treated as empty or changed.</string>
 </resources>

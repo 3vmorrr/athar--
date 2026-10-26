@@ -432,5 +432,17 @@
 <string name="night_review_changed">تغيرت إحدى النسختين أثناء المراجعة. أعد تحميلهما قبل الاختيار؛ تعديلات الجهاز ما زالت محفوظة.</string>
 <string name="night_review_duration">المدة المسجّلة: %1$d ثانية</string>
 <string name="night_edit_conflict">وصل تعديل آخر لهذه الجلسة. نصك المكتوب ما زال هنا؛ أغلق النموذج وراجع التعديل المعلّق قبل الحفظ.</string>
+    <string name="night_rejection">يوجد تعديل تعذر على الحساب قبوله</string>
+    <string name="night_review_rejection">مراجعة التعديل المرفوض</string>
+    <string name="night_rejection_notice">أبقينا التعديل المرفوض محفوظًا على جهازك. راجعه واختر إعادة المحاولة أو إصلاحه أو استخدام حالة الحساب؛ الجلسات الأخرى تستمر في المزامنة.</string>
+    <string name="night_rejection_review_notice">لن نحذف التعديل المحفوظ تلقائيًا. راجع نسخة الجهاز وحالة الحساب قبل اختيار الإجراء.</string>
+    <string name="night_rejection_invalid">رفض الخادم هذا التعديل لأن بعض بياناته لم تعد مقبولة. يمكنك إصلاحه ثم إرساله من جديد.</string>
+    <string name="night_rejection_missing">لم تعد الجلسة موجودة في الحساب. راجع الحالة قبل إعادة المحاولة أو اعتماد حالة الحساب.</string>
+    <string name="night_rejection_generic">رفض الخادم هذا التعديل نهائيًا. بقيت بياناته محفوظة على الجهاز للمراجعة.</string>
+    <string name="night_rejection_retry">إعادة المحاولة دون تغيير</string>
+    <string name="night_rejection_repair">إصلاح التعديل</string>
+    <string name="night_rejection_use_account">استخدام حالة الحساب الحالية</string>
+    <string name="night_account_missing">لا توجد نسخة حالية لهذه الجلسة في الحساب.</string>
+    <string name="night_rejection_changed">تغيّرت حالة الجلسة أثناء المراجعة. أعد فتح المراجعة قبل المتابعة؛ بيانات الجهاز ما زالت محفوظة.</string>
     <string name="account_data_unavailable">تعذر قراءة بيانات الحساب. أعد المحاولة؛ لم نعتبر بياناتك فارغة ولم نغيّرها.</string>
 </resources>
