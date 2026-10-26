@@ -156,14 +156,160 @@ final class ProgressService
 
     public function khatmah(int $user): ?array
     {
-        $q=$this->db->prepare('SELECT start_date,target_date,total_pages,completed_pages,status,updated_at FROM khatmah_plans WHERE user_id=?');$q->execute([$user]);$plan=$q->fetch();if(!$plan)return null;
-        $remaining=max(0,(int)$plan['total_pages']-(int)$plan['completed_pages']);$days=max(1,(int)(new \DateTimeImmutable(gmdate('Y-m-d')))->diff(new \DateTimeImmutable($plan['target_date']))->format('%r%a')+1);$plan['remaining_pages']=$remaining;$plan['daily_pages']=$plan['status']==='active'?(int)ceil($remaining/$days):0;return $plan;
+        $q=$this->db->prepare(
+            'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+             FROM khatmah_plans
+             WHERE user_id=?'
+        );
+        $q->execute([$user]);
+        $plan=$q->fetch();
+        return $plan?$this->decorateKhatmah($plan):null;
     }
+
     public function saveKhatmah(int $user,array $data): array
     {
-        $date=(string)($data['target_date']??'');if(!NightPrayer::validDate($date)||$date<gmdate('Y-m-d')||$date>gmdate('Y-m-d',time()+5*366*86400))throw new ApiError('invalid_fields',422,['target_date'=>'invalid']);$completed=$this->integer($data,'completed_pages',0,604);$status=(string)($data['status']??'active');if(!in_array($status,['active','paused','finished'],true)||($status==='finished'&&$completed!==604))throw new ApiError('invalid_fields',422,['status'=>'invalid']);
-        $this->db->prepare('INSERT INTO khatmah_plans (user_id,start_date,target_date,completed_pages,status) VALUES (?,UTC_DATE(),?,?,?) ON DUPLICATE KEY UPDATE target_date=VALUES(target_date),completed_pages=VALUES(completed_pages),status=VALUES(status)')->execute([$user,$date,$completed,$status]);return (array)$this->khatmah($user);
+        $start=(string)($data['start_date']??'');
+        $target=(string)($data['target_date']??'');
+        $completed=$this->integer($data,'completed_pages',0,604);
+        $expected=$this->integer($data,'expected_revision',0,2147483647);
+        $status=(string)($data['status']??'active');
+
+        $this->validateKhatmahDates($start,$target);
+        if(!in_array($status,['active','paused','finished'],true)){
+            throw new ApiError('invalid_fields',422,['status'=>'invalid']);
+        }
+        if($status==='finished'&&$completed!==604){
+            throw new ApiError('invalid_fields',422,['status'=>'requires_completion']);
+        }
+
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare(
+                'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+                 FROM khatmah_plans
+                 WHERE user_id=?
+                 FOR UPDATE'
+            );
+            $q->execute([$user]);
+            $current=$q->fetch();
+            $revision=$current?(int)$current['revision']:0;
+            if($revision!==$expected){
+                throw new ApiError(
+                    'conflict',
+                    409,
+                    ['current'=>$current?$this->decorateKhatmah($current):null]
+                );
+            }
+
+            if($current){
+                $this->db->prepare(
+                    'UPDATE khatmah_plans
+                     SET start_date=?,target_date=?,total_pages=604,completed_pages=?,status=?,
+                         revision=revision+1,updated_at=UTC_TIMESTAMP()
+                     WHERE user_id=?'
+                )->execute([$start,$target,$completed,$status,$user]);
+            }else{
+                $this->db->prepare(
+                    'INSERT INTO khatmah_plans
+                     (user_id,start_date,target_date,total_pages,completed_pages,status,revision)
+                     VALUES (?,?,?,604,?,?,1)'
+                )->execute([$user,$start,$target,$completed,$status]);
+            }
+
+            $this->db->commit();
+            return (array)$this->khatmah($user);
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
     }
+
+    private function validateKhatmahDates(string $start,string $target):void
+    {
+        if(!NightPrayer::validDate($start)||!NightPrayer::validDate($target)){
+            throw new ApiError('invalid_fields',422,['date'=>'invalid']);
+        }
+        $today=gmdate('Y-m-d');
+        $minimum=gmdate('Y-m-d',time()-5*366*86400);
+        $maximumStart=gmdate('Y-m-d',time()+366*86400);
+        if($start<$minimum||$start>$maximumStart||$target<$start){
+            throw new ApiError('invalid_fields',422,['start_date'=>'invalid']);
+        }
+
+        $startDate=new \DateTimeImmutable($start.'T00:00:00Z');
+        $targetDate=new \DateTimeImmutable($target.'T00:00:00Z');
+        $maximumTarget=$startDate->modify('+5 years');
+        if($targetDate>$maximumTarget){
+            throw new ApiError('invalid_fields',422,['target_date'=>'too_far']);
+        }
+
+        // A new or edited active schedule cannot intentionally target a date already gone.
+        if($target<$today){
+            throw new ApiError('invalid_fields',422,['target_date'=>'past']);
+        }
+    }
+
+    private function decorateKhatmah(array $plan):array
+    {
+        $total=(int)$plan['total_pages'];
+        $completed=(int)$plan['completed_pages'];
+        $remaining=max(0,$total-$completed);
+        $status=(string)$plan['status'];
+
+        $start=new \DateTimeImmutable((string)$plan['start_date'].'T00:00:00Z');
+        $target=new \DateTimeImmutable((string)$plan['target_date'].'T00:00:00Z');
+        $today=new \DateTimeImmutable(gmdate('Y-m-d').'T00:00:00Z');
+
+        $totalDays=(int)$start->diff($target)->format('%a')+1;
+        $startsIn=0;
+        $elapsed=0;
+        $daysRemaining=0;
+
+        if($today<$start){
+            $startsIn=(int)$today->diff($start)->format('%a');
+            $elapsed=0;
+            $daysRemaining=$totalDays;
+        }elseif($today>$target){
+            $elapsed=$totalDays;
+            $daysRemaining=0;
+        }else{
+            $elapsed=(int)$start->diff($today)->format('%a')+1;
+            $daysRemaining=(int)$today->diff($target)->format('%a')+1;
+        }
+
+        $expected=$elapsed<=0
+            ?0
+            :min($total,(int)floor(($total*$elapsed)/max(1,$totalDays)));
+        $daily=$status==='active'&&$remaining>0&&$daysRemaining>0
+            ?(int)ceil($remaining/$daysRemaining)
+            :0;
+        $plannedDaily=(int)ceil($total/max(1,$totalDays));
+
+        return [
+            'start_date'=>(string)$plan['start_date'],
+            'target_date'=>(string)$plan['target_date'],
+            'total_pages'=>$total,
+            'completed_pages'=>$completed,
+            'status'=>$status,
+            'revision'=>(int)$plan['revision'],
+            'updated_at'=>(string)$plan['updated_at'],
+            'remaining_pages'=>$remaining,
+            'total_days'=>$totalDays,
+            'elapsed_days'=>$elapsed,
+            'days_remaining'=>$daysRemaining,
+            'starts_in_days'=>$startsIn,
+            'daily_pages'=>$daily,
+            'planned_daily_pages'=>$plannedDaily,
+            'expected_pages_today'=>$expected,
+            'pages_behind'=>max(0,$expected-$completed),
+            'pages_ahead'=>max(0,$completed-$expected),
+            'overdue'=>$today>$target&&$remaining>0&&$status!=='finished',
+            'progress_percent'=>$total>0
+                ?(int)round(($completed*100)/$total)
+                :0,
+        ];
+    }
+
     public function comments(int $user,int $lesson): array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare("SELECT c.id,c.body,c.status,c.created_at,u.display_name,u.username FROM lesson_comments c JOIN users u ON u.id=c.user_id WHERE c.lesson_id=? AND c.parent_id IS NULL AND (c.status='visible' OR (c.user_id=? AND c.status='pending')) ORDER BY c.id DESC LIMIT 50");$q->execute([$lesson,$user]);return $q->fetchAll();}
     public function addComment(int $user,int $lesson,string $body): array
     {
