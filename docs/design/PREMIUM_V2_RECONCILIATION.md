@@ -6,7 +6,7 @@ The branch-only diff from the common ancestor has20 Compose presentation files p
 
 | Area | Queue task | Reconciliation decision / validation |
 |---|---|---|
-| Shared premium primitives/motion/docs |21.1|Next dependency; inspect full diff, import narrowly, compile/device/reduced-motion checks before acceptance |
+| Shared premium primitives/motion/docs |21.1|Scoped implementation accepted:47 JVM/build/lint; Arabic7/English8 component+regression and physical main API1; caller/system reduction/draft/contrast/large-font checks. Target commit recorded in next receipt |
 | Night conflict/recovery surface |02.5,21.8|Preserve ProtectedRead, ciphertext/pending records and new conflict logic before presentation |
 | Watch/account unreadable state |02.6|Preserve current checkpoint and owner guards; do not replace whole older files |
 | Home/navigation |21.2|Retain current routes/owner bindings/three-item upcoming query |
@@ -15,4 +15,4 @@ The branch-only diff from the common ancestor has20 Compose presentation files p
 | Scholar/series/watch/discussion/upcoming |12.*,21.9–21.13|Retain pagination/provider/moderation/event availability and newer tests |
 | Loading/large text/RTL/theme/accessibility |21.14–21.17|Presentation source is not a device/contrast/TalkBack/performance pass |
 
-No premium UI source has yet been integrated at this ledger snapshot. No full merge/cherry-pick/checkout replacement has been performed. Branch review is not visual acceptance. Preserve calm Arabic-first Material3 surfaces, native reduced-motion-aware transitions and no decorative sacred-text animation. Before each overlapping edit, refresh/read the relevant two-sided diff and record the chosen change here and in the premium changelog when integration occurs.
+Task21.1 integrates only shared premium primitives/motion and the two required design docs. Source/diff reviewed before writing each existing file; applicable focused build/device gates pass. No other presentation screen is applied. No full merge/cherry-pick/checkout replacement has been performed. Branch review alone is not visual acceptance; actual component captures were inspected. Preserve calm Arabic-first Material3 surfaces, native reduced-motion-aware transitions and no decorative sacred-text animation. Before each overlapping edit, refresh/read the relevant two-sided diff and record the chosen change here and in the premium changelog when integration occurs.

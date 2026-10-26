@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task21.1 — premium shared UI foundation
+
+- Reconciled only reviewed premium spacing/hero/section/action/status/metric primitives and motion tokens from UI tip0e6f4ba. Added real disabled-action semantics, accessible headings/button role, large-font section stacking and explicit foreground contrast. No data/backend/auth/permissions/dependency changes.
+- Controlled remembered page transitions with lifecycle-owned animateTo/snapTo, caller/system reduction, preserved current drafts and keyed target state. No sacred-text looping/celebration/new haptic or external runtime.
+-47 JVM/build/lint/292 resources PASS; physical Arabic4 component +3 protected/normal cases, English8 component/protected/normal/watch cases and main API1 case PASS. Scoped normal startup has zero matching critical failures; captures inspected. Single-frame harness failures are retained and final effect/composition budget is explicit.
+- Remaining premium screen merges, tablet/TalkBack and release performance gates stay open. Next02.5 is durable Night Prayer conflict resolution with intentional overlapping presentation reconciliation.
+
 ## Task02.4 — authentication session ownership
 
 - Fixed old response/refresh success/revocation races during a new login/registration. Authentication intent and durable credential-save boundary share a mutex; successful new authentication also invalidates requests started during its wait. Failed sign-in preserves the prior stored session.

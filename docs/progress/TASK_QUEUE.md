@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **21.1**. Open tasks: **139**. Overall estimate: **44%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.5**. Open tasks: **138**. Overall estimate: **44%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -50,7 +50,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 21.1 — Premium shared primitives and motion reconciliation
 
-- Parent: Work package 21; state: **PARTIAL**; dependencies: 02.4.
+- Parent: Work package21: UX/accessibility; state: **COMPLETE**; dependencies: 02.4.
 - Exact scope: Review/import only shared premium surfaces, motion and required design docs from pinned UI branch; preserve immediate auth boundaries and reduced motion.
 - Files/modules: android/app/src/main/java/org/athar/app/core/ui/PremiumComponents.kt; android/app/src/main/java/org/athar/app/core/ui/Motion.kt; docs/design/.
 - Automated gates: Compile shared component call sites; Compose semantics/reduced-motion tests; no data/backend diff. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

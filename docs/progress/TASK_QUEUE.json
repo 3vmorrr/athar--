@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "21.1",
+  "current_task": "02.5",
   "overall_estimate_percent": 44,
-  "overall_estimate_detail": 43.63,
+  "overall_estimate_detail": 43.93,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -97,9 +97,9 @@
     {
       "id": "21.1",
       "name": "Premium shared primitives and motion reconciliation",
-      "parent": "Work package 21",
+      "parent": "Work package21: UX/accessibility",
       "scope": "Review/import only shared premium surfaces, motion and required design docs from pinned UI branch; preserve immediate auth boundaries and reduced motion.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "02.4"
       ],
@@ -111,7 +111,8 @@
       "automated_tests": "Compile shared component call sites; Compose semantics/reduced-motion tests; no data/backend diff. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Review/import only shared premium surfaces, motion and required design docs from pinned UI branch; preserve immediate auth boundaries and reduced motion. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
+      "estimated_contribution_pp": 0.1579,
+      "evidence": "47 JVM/build/lint/292 resources; API27 Arabic4 component +3 regression; English8 component/protected/reader/counter/watch; physical main API1; captures inspected; source protected modules unchanged."
     },
     {
       "id": "02.5",
@@ -2615,9 +2616,9 @@
     "Independent Admin": 0,
     "Database": 74,
     "Notifications/reminders": 5,
-    "UI/UX polish": 50,
-    "Testing/QA": 45,
-    "Documentation": 75,
+    "UI/UX polish": 52,
+    "Testing/QA": 46,
+    "Documentation": 76,
     "weights_percent": [
       25,
       18,
@@ -2628,5 +2629,6 @@
       7,
       3
     ]
-  }
+  },
+  "phase_completion_method": "Phase2 uses its fixed task weights; other closure packages use COMPLETE task share. Current phase21 closure is1/17 (6% rounded); phase2 remains55%. These are remaining-package gates, not full-product area estimates."
 }
