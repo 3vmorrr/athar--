@@ -7,6 +7,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import androidx.lifecycle.*
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.athar.app.AppGraph
@@ -45,16 +46,66 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
     private var controller: MediaController? = null
     private var request: Job? = null
     private val listener = object : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) { mutable.value = mutable.value.copy(playing = isPlaying) }
-        override fun onPlaybackStateChanged(playbackState: Int) { mutable.value = mutable.value.copy(buffer = playbackState == Player.STATE_BUFFERING) }
-        override fun onPlayerError(error: PlaybackException) { mutable.value = mutable.value.copy(error = true, loading = false) }
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            mutable.value = mutable.value.copy(playing = isPlaying)
+        }
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            mutable.value = mutable.value.copy(
+                buffer = playbackState == Player.STATE_BUFFERING,
+            )
+        }
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            controller?.let(::hydrateFromPlayer)
+        }
+        override fun onPlayerError(error: PlaybackException) {
+            mutable.value = mutable.value.copy(error = true, loading = false)
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            try {
+                hydrateFromPlayer(player())
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                // The screen can still select fresh media if a stale service session is unavailable.
+            }
+        }
     }
     private suspend fun player(): MediaController {
         controller?.let { return it }
         val ready = suspendCancellableCoroutine<MediaController> { continuation ->
             future.addListener({ if (continuation.isActive) try { continuation.resume(future.get()) } catch (error: Exception) { continuation.resumeWithException(error) } }, ContextCompat.getMainExecutor(getApplication()))
         }
-        controller = ready; ready.addListener(listener); return ready
+        controller = ready
+        ready.addListener(listener)
+        hydrateFromPlayer(ready)
+        return ready
+    }
+
+    private fun hydrateFromPlayer(player: Player) {
+        val item = player.currentMediaItem ?: return
+        val mediaId = item.mediaId.takeIf { it.isNotBlank() } ?: return
+        val radioItem = mediaId.startsWith("radio:")
+        val metadata = item.mediaMetadata
+        val recording = JsonObject().apply {
+            if (radioItem) {
+                addProperty("name", metadata.title?.toString().orEmpty())
+            } else {
+                addProperty("name", metadata.title?.toString().orEmpty())
+                addProperty("reciter_name", metadata.artist?.toString().orEmpty())
+            }
+        }
+        mutable.value = mutable.value.copy(
+            loading = false,
+            error = false,
+            recording = recording,
+            playing = player.isPlaying,
+            buffer = player.playbackState == Player.STATE_BUFFERING,
+            mediaKey = mediaId,
+            radio = radioItem,
+        )
     }
     fun load(reciter: Int, edition: Int, surah: Int, ayah: Int? = null) {
         request?.cancel()
@@ -86,7 +137,30 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
     fun radio(row: JsonElement) {
         request?.cancel(); request = viewModelScope.launch {
             mutable.value = AudioUiState(loading = true, radio = true)
-            try { val player = player(); player.stop(); player.clearMediaItems(); mutable.value = AudioUiState(recording = row, radio = true); player.setMediaItem(MediaItem.Builder().setUri(row.text("url")).setMediaMetadata(MediaMetadata.Builder().setTitle(row.text("name")).build()).build()); player.prepare(); player.play() }
+            try {
+                val player = player()
+                player.stop()
+                player.clearMediaItems()
+                val mediaId = "radio:${row.text("id")}"
+                mutable.value = AudioUiState(
+                    recording = row,
+                    mediaKey = mediaId,
+                    radio = true,
+                )
+                player.setMediaItem(
+                    MediaItem.Builder()
+                        .setMediaId(mediaId)
+                        .setUri(row.text("url"))
+                        .setMediaMetadata(
+                            MediaMetadata.Builder()
+                                .setTitle(row.text("name"))
+                                .build(),
+                        )
+                        .build(),
+                )
+                player.prepare()
+                player.play()
+            }
             catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = AudioUiState(error = true) }
         }
     }
