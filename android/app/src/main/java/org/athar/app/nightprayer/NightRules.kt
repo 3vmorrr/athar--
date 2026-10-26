@@ -37,12 +37,62 @@ fun resolveNightIdentity(
 
     return NightIdentity(localDate, false, today)
 }
+data class NightPaceInsight(
+    val sampleCount: Int,
+    val usedSampleCount: Int,
+    val measuredVerses: Int,
+    val measuredSeconds: Int,
+    val secondsPerVerse: Double,
+)
+
 object NightRules {
     fun serverTimezone(zone: ZoneId): String = if (zone.normalized() == ZoneOffset.UTC) "UTC" else zone.id
     fun milestone(count: Int): Int = when { count >= 1000 -> 1000; count >= 100 -> 100; count >= 10 -> 10; else -> 0 }
-    fun pace(sessions: List<Pair<Int, Int>>): Double? {
-        val measured = sessions.filter { it.first > 0 && it.second > 0 }
-        return measured.takeIf { it.isNotEmpty() }?.let { it.sumOf { session -> session.second.toLong() }.toDouble() / it.sumOf { session -> session.first.toLong() } }
+    fun pace(sessions: List<Pair<Int, Int>>): Double? =
+        paceInsight(sessions)?.secondsPerVerse
+
+    fun paceInsight(sessions: List<Pair<Int, Int>>): NightPaceInsight? {
+        val valid = sessions.filter { (verses, seconds) ->
+            verses in 1..100_000 && seconds in 1..86_400
+        }
+        if (valid.size < 2) return null
+
+        val used = if (valid.size >= 5) {
+            val rates = valid.map { (verses, seconds) ->
+                seconds.toDouble() / verses.toDouble()
+            }.sorted()
+            fun percentile(fraction: Double): Double {
+                val index = ((rates.lastIndex) * fraction)
+                val lower = index.toInt()
+                val upper = kotlin.math.ceil(index).toInt()
+                if (lower == upper) return rates[lower]
+                val weight = index - lower
+                return rates[lower] * (1.0 - weight) + rates[upper] * weight
+            }
+            val q1 = percentile(0.25)
+            val q3 = percentile(0.75)
+            val iqr = (q3 - q1).coerceAtLeast(0.0)
+            val low = q1 - 1.5 * iqr
+            val high = q3 + 1.5 * iqr
+            valid.filter { (verses, seconds) ->
+                val rate = seconds.toDouble() / verses.toDouble()
+                rate in low..high
+            }.takeIf { it.size >= 2 } ?: valid
+        } else {
+            valid
+        }
+
+        val verses = used.sumOf { it.first.toLong() }
+        val seconds = used.sumOf { it.second.toLong() }
+        if (verses <= 0L || seconds <= 0L) return null
+
+        return NightPaceInsight(
+            sampleCount = valid.size,
+            usedSampleCount = used.size,
+            measuredVerses = verses.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+            measuredSeconds = seconds.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+            secondsPerVerse = seconds.toDouble() / verses.toDouble(),
+        )
     }
     fun streak(totals: Map<LocalDate, Int>, threshold: Int, current: LocalDate, nightInProgress: Boolean, exemptions: Set<LocalDate> = emptySet()): Pair<Int, Int> {
         require(threshold in listOf(1, 10, 100, 1000))
