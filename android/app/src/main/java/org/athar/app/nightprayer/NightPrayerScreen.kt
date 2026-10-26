@@ -46,12 +46,53 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("history") }
     val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
     Column(Modifier.fillMaxSize()) {
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        AtharHeroSurface(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        AtharIcons.NightsStay,
+                        null,
+                        Modifier.padding(12.dp).size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.night_prayer), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        stringResource(R.string.night_intro),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+        FlowRow(
+            Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             FilterChip(section == "history", { section = "history" }, label = { Text(stringResource(R.string.night_history)) })
             FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
             FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
         }
-        Box(Modifier.weight(1f)) { when(section) { "tools" -> NightToolsScreen(graph); "calendar" -> NightCalendarScreen(vm); else -> NightHistoryScreen(graph) } }
+        AtharPageTransition(section, Modifier.weight(1f)) {
+            when(it) {
+                "tools" -> NightToolsScreen(graph)
+                "calendar" -> NightCalendarScreen(vm)
+                else -> NightHistoryScreen(graph)
+            }
+        }
     }
 }
 
@@ -63,8 +104,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     var deleting by remember { mutableStateOf<String?>(null) }
     val totals = remember(state.rows) { state.rows.groupBy { it.first.nightDate }.mapValues { (_, list) -> list.sumOf { it.first.verseCount } } }
     LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "heading", contentType = "heading") { Text(stringResource(R.string.night_prayer), style = MaterialTheme.typography.headlineMedium); Text(stringResource(R.string.night_intro)) }
-        item(key = "summary", contentType = "summary") { ElevatedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        item(key = "summary", contentType = "summary") { Surface(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLow, border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.night_totals, totals.size, totals.values.sum()), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.night_self_report), style = MaterialTheme.typography.bodySmall)
             val pace = NightRules.pace(state.rows.mapNotNull { row -> row.first.measuredSeconds?.let { row.first.verseCount to it } })
