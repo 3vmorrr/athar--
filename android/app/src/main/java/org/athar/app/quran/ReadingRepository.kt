@@ -61,12 +61,13 @@ class ReadingRepository(
         dao.cache(CachedDocument(user, key, cipher.seal(gson.toJson(value)), System.currentTimeMillis()))
     }
 
-    suspend fun save(surah: Int, ayah: Int) = withContext(Dispatchers.IO) {
-        index().global(surah, ayah)
+    suspend fun save(surah: Int, ayah: Int,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
+        session.requireVerifiedOwner(expectedOwner)
+        index().global(surah, ayah)
         local.withLock {
             val old = saved(user)
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             check(old?.conflict != true)
             write(user, SavedReadingPosition(surah, ayah, old?.revision ?: 0, (old?.version ?: 0) + 1, pending = true))
         }
@@ -90,11 +91,12 @@ class ReadingRepository(
         return SavedReadingPosition(surah, ayah, revision)
     }
 
-    suspend fun refresh() = remote.withLock { withContext(Dispatchers.IO) {
+    suspend fun refresh(expectedOwner:Long?=session.userId) = remote.withLock { withContext(Dispatchers.IO) {
         val user = session.userId ?: return@withContext
+        session.requireVerifiedOwner(expectedOwner)
         val server = fetch(user)
         local.withLock {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val current = saved(user)
             if (current?.pending != true) {
                 if (server == null) dao.removeCache(user, key)
@@ -109,6 +111,7 @@ class ReadingRepository(
     suspend fun sync(expectedOwner:Long?=null) = remote.withLock { withContext(Dispatchers.IO) {
         val user = session.userId ?: return@withContext
         if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
+        session.requireVerifiedOwner(user)
         val snapshot = local.withLock { saved(user) } ?: return@withContext
         if (!snapshot.pending || snapshot.conflict) return@withContext
         val server = try {
@@ -118,7 +121,7 @@ class ReadingRepository(
             fetch(user)
         }
         local.withLock {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val current = saved(user) ?: return@withLock
             val acknowledged = server != null && server.surah == snapshot.surah && server.ayah == snapshot.ayah && server.revision > snapshot.revision
             if (acknowledged) {
@@ -130,11 +133,12 @@ class ReadingRepository(
     } }
 
     /** Always read the latest remote revision before an explicit conflict choice. */
-    suspend fun resolve(useRemote: Boolean) = remote.withLock { withContext(Dispatchers.IO) {
+    suspend fun resolve(useRemote: Boolean,expectedOwner:Long?=session.userId) = remote.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
+        session.requireVerifiedOwner(expectedOwner)
         val server = fetch(user)
         local.withLock {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val current = saved(user)
             if (useRemote) {
                 if (server == null) dao.removeCache(user, key)

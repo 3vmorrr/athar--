@@ -17,15 +17,18 @@ data class CachedResult(val data: JsonElement, val offline: Boolean)
 class ContentRepository(private val session: SessionRepository, private val dao: AtharDao, private val cipher: PrivateCipher, private val language: () -> String = { "ar" },private val cachePolicy:ContentCachePolicy=ContentCachePolicy(),private val now:()->Long=System::currentTimeMillis) {
     private val changes = MutableStateFlow(0L)
     val revision = changes.asStateFlow()
-    private fun checkOwner(user:Long){if(session.userId!=user)throw ApiException(401,"session_changed","")}
+    private fun checkOwner(user:Long){session.requireVerifiedOwner(user)}
     private fun cacheKey(path: String, query: Map<String, String>) = language().substringBefore('-').substringBefore(',').let{if(it=="en")"en" else "ar"} + ":" + path + "?" + query.toSortedMap().entries.joinToString("&") { "${URLEncoder.encode(it.key, "UTF-8")}=${URLEncoder.encode(it.value, "UTF-8")}" }
-    suspend fun invalidate(path: String) {
+    suspend fun invalidate(path: String,expectedOwner:Long?=session.userId) {
         val user = session.userId ?: return
+        session.requireVerifiedOwner(expectedOwner)
         dao.removeCache(user, cacheKey(path, emptyMap()))
+        checkOwner(user)
         changes.value++
     }
     suspend fun get(path: String, query: Map<String, String> = emptyMap(), allowCache: Boolean = true): CachedResult = withContext(Dispatchers.IO) {
         val user = session.userId ?: throw ApiException(401, "unauthenticated", "")
+        session.requireVerifiedOwner(user)
         val key = cacheKey(path, query)
         if(allowCache)dao.trimContentCache(user,now(),cachePolicy)
         try {

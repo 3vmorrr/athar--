@@ -38,7 +38,7 @@ import java.util.Locale
     var exemptionError by remember(vm){mutableStateOf(false)}
     LaunchedEffect(vm,monthKey,exemptionAttempt) {
         exemptionReady=false;exemptionError=false
-        try{exemptions=vm.graph.nightPrayer.localExemptions();exemptionReady=true}
+        try{exemptions=vm.exemptions();exemptionReady=true}
         catch(failure:CancellationException){throw failure}
         catch(_:Exception){exemptionError=true}
     }

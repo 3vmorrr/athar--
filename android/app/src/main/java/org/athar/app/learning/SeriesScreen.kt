@@ -15,6 +15,7 @@ import org.athar.app.R
 import org.athar.app.core.ui.*
 
 @Composable fun SeriesScreen(graph:AppGraph,id:Int,open:(String)->Unit) {
+    val owner=remember{requireNotNull(graph.session.userId)}
     var page by rememberSaveable(id){mutableIntStateOf(1)}
     val snackbar=remember{SnackbarHostState()}
     Box(Modifier.fillMaxSize()){
@@ -24,7 +25,7 @@ import org.athar.app.core.ui.*
             item(key="series-summary",contentType="summary") {
             Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
             Text(series.text("title"),style=MaterialTheme.typography.headlineSmall)
-            MarkToggle("series-$id",series.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "series","target_id" to id));graph.content.invalidate("me/favorites")}
+            MarkToggle("series-$id",series.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "series","target_id" to id),expectedUser=owner);graph.content.invalidate("me/favorites",owner)}
             if(series.text("scholar_id").toIntOrNull()!=null)TextButton(onClick={open("scholars/${series.text("scholar_id")}")}){Text(series.text("scholar_name"))}
             val count=series.text("lesson_count").toIntOrNull()?:0;val complete=series.text("completed_count").toIntOrNull()?:0
             Text(stringResource(R.string.watch_series_progress,complete,count))

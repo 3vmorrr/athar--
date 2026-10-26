@@ -39,7 +39,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     private var load: Job? = null
     init {
         select(1)
-        viewModelScope.launch { try { graph.reading.refresh() } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Local resume remains available offline. */ } }
+        viewModelScope.launch { try { graph.reading.refresh(readerOwner) } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Local resume remains available offline. */ } }
         viewModelScope.launch {
             try { val data = graph.content.get("quran/bookmarks").data; mutableBookmarks.value = data.asJsonArray.map { row -> graph.quran.data().index.global(row.text("surah").toInt(), row.text("ayah").toInt()) }.toSet() }
             catch (failure: CancellationException) { throw failure } catch (_: Exception) { /* Initial marker lookup may be unavailable offline. */ }
@@ -68,10 +68,13 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
         }
     }
+    suspend fun savePosition(ayah:AyahText)=graph.reading.save(ayah.position.surah,ayah.position.ayah,readerOwner)
+    suspend fun resolvePosition(remote:Boolean)=graph.reading.resolve(remote,readerOwner)
+    suspend fun syncReading()=graph.reading.sync(readerOwner)
     suspend fun bookmark(ayah: AyahText, saved: Boolean) {
-        graph.session.request(if (saved) "POST" else "DELETE", "quran/bookmarks", mapOf("surah" to ayah.position.surah, "ayah" to ayah.position.ayah))
+        graph.session.request(if (saved) "POST" else "DELETE", "quran/bookmarks", mapOf("surah" to ayah.position.surah, "ayah" to ayah.position.ayah),expectedUser=readerOwner)
         mutableBookmarks.value = if (saved) mutableBookmarks.value + ayah.position.globalIndex else mutableBookmarks.value - ayah.position.globalIndex
-        graph.content.invalidate("quran/bookmarks")
+        graph.content.invalidate("quran/bookmarks",readerOwner)
     }
 }
 
@@ -123,13 +126,13 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                                 if (position.pending && !position.conflict) Text(stringResource(R.string.reading_pending), style = MaterialTheme.typography.labelSmall)
                             }
                             IconButton(onClick = { searchMode = false; vm.select(position.surah, position.ayah) }) { Icon(AtharIcons.ArrowForward, stringResource(R.string.resume_reading)) }
-                            if (position.pending && !position.conflict) TextButton(onClick = { scope.launch { try { graph.reading.sync() } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.retry)) }
+                            if (position.pending && !position.conflict) TextButton(onClick = { scope.launch { try { vm.syncReading() } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.retry)) }
                         }
                         if (position.conflict) {
                             Text(stringResource(R.string.reading_conflict), style = MaterialTheme.typography.bodySmall)
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 listOf(true to R.string.reading_use_account, false to R.string.reading_keep_device).forEach { (remote, label) ->
-                                    TextButton(onClick = { scope.launch { try { graph.reading.resolve(remote) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(label)) }
+                                    TextButton(onClick = { scope.launch { try { vm.resolvePosition(remote) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(label)) }
                                 }
                             }
                         }
@@ -167,7 +170,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                             Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                TextButton(onClick = { scope.launch { try { graph.reading.save(ayah.position.surah, ayah.position.ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
+                                TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
                                 MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

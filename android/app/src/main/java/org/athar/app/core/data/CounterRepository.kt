@@ -41,12 +41,13 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
     private suspend fun write(user: Long, state: CounterState) = dao.cache(CachedDocument(user, key(state.item), cipher.seal(gson.toJson(state)), System.currentTimeMillis()))
     fun observe(user: Long, item: Int, target: Int): Flow<CounterState> = dao.observeCache(user, key(item)).map { it?.let(::decode) ?: CounterState(item, target) }.flowOn(Dispatchers.Default)
 
-    suspend fun tap(item: Int, target: Int, reset: Boolean = false) = withContext(Dispatchers.IO) {
+    suspend fun tap(item: Int, target: Int, reset: Boolean = false,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
+        session.requireVerifiedOwner(expectedOwner)
         require(item > 0 && target in 1..65535)
         // A new installation has no revision, not a known server count of zero.
         initializing.withLock {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             if(dao.cache(user,key(item))==null) {
                 try { refresh(item,target,user) }
                 catch(failure: IOException) { if(failure is ApiException && failure.status in listOf(401,403,422)) throw failure }
@@ -54,7 +55,7 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         }
         val updated = local.withLock {
             val previous = state(user, item, target)
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             check(!previous.conflict)
             val count = if (reset || previous.target != target) 0 else (previous.count + 1).coerceAtMost(target)
             if(!reset && previous.target==target && count==previous.count) return@withLock previous
@@ -73,24 +74,25 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
     suspend fun sync(expectedOwner:Long?=null) = syncing.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
         if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
+        session.requireVerifiedOwner(user)
         for (document in dao.caches(user, "adhkar:%")) {
             val snapshot = local.withLock { decode(dao.cache(user, document.cacheKey) ?: document) }
             if ((!snapshot.pending && snapshot.events.isEmpty()) || snapshot.conflict) continue
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             for (event in snapshot.events) {
                 session.request("POST", "me/activity", mapOf("event_id" to event, "activity_type" to "adhkar_completion"),expectedUser=user)
-                local.withLock { val latest = state(user, snapshot.item, snapshot.target); write(user, latest.copy(events = latest.events - event)) }
+                local.withLock { session.requireVerifiedOwner(user);val latest = state(user, snapshot.item, snapshot.target); write(user, latest.copy(events = latest.events - event)) }
             }
             if(!snapshot.pending) continue
             try {
                 val response = session.request("PUT", "me/adhkar-progress", mapOf("item_id" to snapshot.item, "current_count" to snapshot.count, "expected_revision" to snapshot.revision, "event_id" to snapshot.lastCompletion),expectedUser=user).asJsonObject
-                check(session.userId == user)
-                local.withLock { val latest = state(user, snapshot.item, snapshot.target); write(user, latest.copy(revision = response["revision"].asInt, pending = latest.localVersion != snapshot.localVersion)) }
+                session.requireVerifiedOwner(user)
+                local.withLock { session.requireVerifiedOwner(user);val latest = state(user, snapshot.item, snapshot.target); write(user, latest.copy(revision = response["revision"].asInt, pending = latest.localVersion != snapshot.localVersion)) }
             } catch (failure: ApiException) {
                 if (failure.status != 409) throw failure
                 val server = fetchServer(user,snapshot.item)
                 local.withLock {
-                    check(session.userId == user)
+                    session.requireVerifiedOwner(user)
                     val latest = state(user, snapshot.item, snapshot.target)
                     val acknowledged = server!=null && server.target==snapshot.target && server.count==snapshot.count && server.revision>snapshot.revision
                     write(user,if(acknowledged) latest.copy(revision=requireNotNull(server).revision,pending=latest.localVersion!=snapshot.localVersion,conflict=false) else latest.copy(conflict=true))
@@ -104,13 +106,13 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         if(target !in 1..65535 || count !in 0..target || revision<1) throw IOException("Invalid counter state")
         return CounterState(item,target,count,revision)
     }
-    suspend fun refresh(item:Int,target:Int,expectedUser:Long?=null) = syncing.withLock { withContext(Dispatchers.IO) {
+    suspend fun refresh(item:Int,target:Int,expectedUser:Long?=session.userId) = syncing.withLock { withContext(Dispatchers.IO) {
         require(item>0 && target in 1..65535)
         val user=requireNotNull(session.userId)
-        check(expectedUser==null || expectedUser==user)
+        session.requireVerifiedOwner(expectedUser)
         val server=fetchServer(user,item)
         local.withLock {
-            check(session.userId==user)
+            session.requireVerifiedOwner(user)
             val previous=state(user,item,target)
             if(previous.pending || previous.conflict || previous.events.isNotEmpty()) return@withLock
             if((server?.revision ?: 0)<previous.revision) write(user,previous.copy(conflict=true))
@@ -119,11 +121,12 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         schedule()
         if(hasPending(user))requestSync(user)
     } }
-    suspend fun useServer(item: Int, target: Int) = syncing.withLock { withContext(Dispatchers.IO) {
+    suspend fun useServer(item: Int, target: Int,expectedOwner:Long?=session.userId) = syncing.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
+        session.requireVerifiedOwner(expectedOwner)
         val server = fetchServer(user,item)
-        check(session.userId == user)
-        local.withLock { val previous = state(user, item, target); write(user, previous.copy(count = if(server?.target==target) server.count else 0, target = target, revision = server?.revision ?: 0, localVersion=previous.localVersion+1, pending = false, conflict = false)) }
+        session.requireVerifiedOwner(user)
+        local.withLock { session.requireVerifiedOwner(user);val previous = state(user, item, target); write(user, previous.copy(count = if(server?.target==target) server.count else 0, target = target, revision = server?.revision ?: 0, localVersion=previous.localVersion+1, pending = false, conflict = false)) }
         schedule()
         if(hasPending(user))requestSync(user)
     } }

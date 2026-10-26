@@ -32,6 +32,7 @@ data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = em
 }
 class NightViewModel(val graph: AppGraph) : ViewModel() {
     private val user = requireNotNull(graph.session.userId)
+    suspend fun exemptions()=graph.nightPrayer.localExemptions(user)
     private val mutable = MutableStateFlow(NightUiState())
     val state = mutable.asStateFlow()
     private var observation:Job?=null

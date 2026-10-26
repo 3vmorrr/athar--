@@ -11,6 +11,52 @@ import org.athar.app.core.network.*
 import org.athar.app.core.security.*
 
 class SessionRepositoryTest {
+    @Test fun pendingActorCanVerifyAndResendButCannotDispatchPrivateApiRequests()=runTest{
+        var privateCalls=0;var resendCalls=0
+        val repo=SessionRepository(FakeTransport{path,_->when(path){
+            "auth/login"->reply(scope="verification",verified=false)
+            "auth/resend"->{resendCalls++;JsonParser.parseString("""{"delivery_status":"accepted"}""")}
+            "auth/verify-email"->reply()
+            else->{privateCalls++;JsonParser.parseString("{}")}
+        }},MemoryStore())
+        repo.login("reader@example.test","Fixture123!")
+        assertTrue(runCatching{repo.request("PUT","me/favorites",expectedUser=1)}.exceptionOrNull() is ApiException)
+        assertEquals(0,privateCalls);assertTrue(repo.state.value is AuthState.Pending)
+        assertEquals("accepted",repo.resend(1));assertEquals(1,resendCalls)
+        repo.verify("123456",1);assertTrue(repo.state.value is AuthState.SignedIn)
+        repo.request("GET","home",expectedUser=1);assertEquals(1,privateCalls)
+    }
+    @Test fun sameActorPendingCredentialsDoNotAuthorizePrivateMutation(){
+        runTest{
+            var pending=false
+            val repo=SessionRepository(FakeTransport{_,_->reply(scope=if(pending)"verification" else"full",verified=!pending)},MemoryStore())
+            repo.login("reader@example.test","Fixture123!")
+            assertEquals(1L,repo.requireVerifiedOwner(1))
+            pending=true;repo.login("reader@example.test","Fixture123!")
+            assertTrue(repo.state.value is AuthState.Pending)
+            assertTrue(runCatching{repo.requireVerifiedOwner(1)}.exceptionOrNull() is ApiException)
+            assertEquals(1L,repo.userId);assertTrue(repo.state.value is AuthState.Pending)
+        }
+    }
+    @Test fun staleAccountActionsAreRejectedBeforeTransportOrCredentialClearing()=runTest {
+        var actor=1;var writes=0
+        val store=MemoryStore()
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply(id=actor)else{writes++;JsonParser.parseString("{}")}},store)
+        repo.login("reader@example.test","Fixture123!")
+        actor=2;repo.login("other@example.test","Fixture123!")
+        val before=store.value
+        val results=listOf(
+            runCatching{repo.updateProfile("Fixture","fixture",1)},
+            runCatching{repo.changePassword("old","new password","new password",1)},
+            runCatching{repo.delete("fixture password",1)},
+            runCatching{repo.logout(1)},
+            runCatching{repo.verify("123456",1)},
+            runCatching{repo.resend(1)},
+            runCatching{repo.request("DELETE","me/favorites",expectedUser=1)}
+        )
+        assertTrue(results.all{it.exceptionOrNull() is ApiException})
+        assertEquals(0,writes);assertEquals(before,store.value);assertEquals(2L,repo.userId)
+    }
     @Test fun queuedPrivateWritesCannotUseAnotherAccount()=runTest {
         var writes=0
         val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply()else{writes++;JsonParser.parseString("{}")}},MemoryStore())

@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                         settings == null || auth is AuthState.Restoring -> LoadingScreen()
                         settings?.onboardingComplete == false -> OnboardingScreen(vm::completeOnboarding)
                         auth is AuthState.SignedOut -> AuthScreen(vm)
-                        auth is AuthState.Pending -> VerificationScreen(vm, auth as AuthState.Pending)
+                        auth is AuthState.Pending -> key((auth as AuthState.Pending).user.id) { VerificationScreen(vm, auth as AuthState.Pending) }
                         auth is AuthState.SignedIn -> key((auth as AuthState.SignedIn).user.id) { MainShell(vm, auth as AuthState.SignedIn) }
                     }
                 }

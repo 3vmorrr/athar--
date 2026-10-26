@@ -30,6 +30,7 @@ import org.athar.app.core.ui.*
 import org.athar.app.core.data.ProtectedRead
 
 @Composable fun WatchScreen(graph:AppGraph,initial:Int,open:(String)->Unit) {
+    val owner=remember{requireNotNull(graph.session.userId)}
     val vm:WatchViewModel=viewModel(key="watch:${graph.session.userId}:$initial",factory=object:ViewModelProvider.Factory{@Suppress("UNCHECKED_CAST") override fun<T:ViewModel>create(modelClass:Class<T>):T=WatchViewModel(graph,initial) as T})
     val discussion:DiscussionViewModel=viewModel(key="discussion:${graph.session.userId}:$initial",factory=object:ViewModelProvider.Factory{@Suppress("UNCHECKED_CAST")override fun<T:ViewModel>create(modelClass:Class<T>):T=DiscussionViewModel(graph) as T})
     val state by vm.state.collectAsStateWithLifecycle();val embed by vm.player.collectAsStateWithLifecycle();val comments by discussion.preview.collectAsStateWithLifecycle()
@@ -84,7 +85,7 @@ import org.athar.app.core.data.ProtectedRead
                         }
                         item(key="actions",contentType="actions") {
                             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).testTag("watch-actions"),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically) {
-                                MarkToggle("lesson-$id",lesson.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "lesson","target_id" to id));graph.content.invalidate("me/favorites")}
+                                MarkToggle("lesson-$id",lesson.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "lesson","target_id" to id),expectedUser=owner);graph.content.invalidate("me/favorites",owner)}
                                 AssistChip(onClick={scope.launch{try{vm.complete()}catch(e:CancellationException){throw e}catch(_:Exception){snackbar.showSnackbar(failed)}}},enabled=!state.completed&&!state.loading,label={Text(stringResource(if(state.completed)R.string.watch_completed else R.string.watch_mark_complete))},leadingIcon={Icon(AtharIcons.CheckCircle,null,Modifier.size(20.dp))})
                                 if(PlayerPolicy.validVideo(video)){
                                     AssistChip(onClick={context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply{type="text/plain";putExtra(Intent.EXTRA_TEXT,lesson.text("title")+"\n"+PlayerPolicy.youtubeUrl(video))},null))},label={Text(stringResource(R.string.watch_share))},leadingIcon={Icon(AtharIcons.Share,null,Modifier.size(20.dp))})

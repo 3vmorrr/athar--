@@ -66,7 +66,7 @@ import java.time.LocalDate
                 item { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("active" to R.string.active, "paused" to R.string.paused, "finished" to R.string.finished).forEach { (key,label) -> FilterChip(status == key, { status = key }, label = { Text(stringResource(label)) }) } } }
                 item { Button(enabled = !busy, onClick = { scope.launch {
                     busy = true
-                    try { graph.session.request("PUT", "me/khatmah", mapOf("target_date" to LocalDate.parse(target).toString(), "completed_pages" to completed.toInt(), "status" to status)); saved = true; failed = false }
+                    try { graph.session.request("PUT", "me/khatmah", mapOf("target_date" to LocalDate.parse(target).toString(), "completed_pages" to completed.toInt(), "status" to status),expectedUser=requireNotNull(owner)); saved = true; failed = false }
                     catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true } finally { busy = false }
                 } }) { Text(stringResource(R.string.save)) } }
                 if (saved) item { MessagePanel(stringResource(R.string.saved)) }
@@ -86,7 +86,7 @@ import java.time.LocalDate
                             if (tool == "bookmarks") Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
                             else TextButton(onClick = { val kind = row.text("target_type"); open((if (kind == "series") "series" else kind + "s") + "/" + row.text("target_id")) }) { Text(row.text("title")) }
                             TextButton(onClick = { scope.launch {
-                                try { if (tool == "bookmarks") graph.session.request("DELETE", "$path/${row.text("id")}") else graph.session.request("DELETE", path, mapOf("target_type" to row.text("target_type"), "target_id" to row.text("target_id").toInt())); reload() }
+                                try { if (tool == "bookmarks") graph.session.request("DELETE", "$path/${row.text("id")}",expectedUser=requireNotNull(owner)) else graph.session.request("DELETE", path, mapOf("target_type" to row.text("target_type"), "target_id" to row.text("target_id").toInt()),expectedUser=requireNotNull(owner)); reload() }
                                 catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true }
                             } }) { Text(stringResource(R.string.delete_action)) }
                             HorizontalDivider()

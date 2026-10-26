@@ -22,7 +22,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
     private val dao = database.dao()
     private val syncLock = Mutex()
     @Volatile private var continuationOwner:Long?=null
-    private fun user() = requireNotNull(session.userId) { "Unauthenticated" }
+    private fun user() = session.requireVerifiedOwner(session.userId)
     private fun verseCount(payload:JsonObject):Int {
         val count=when(payload["entry_type"].asString){
             "range"->Math.addExact(Math.subtractExact(payload["end_index"].asInt,payload["start_index"].asInt),1)
@@ -52,11 +52,11 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         ids.map{id->val row=requireNotNull(dao.night(user,id));NightConflict(row,retainedBody(row))}
     }.flowOn(Dispatchers.IO)
 
-    suspend fun save(payload: JsonObject, id: String = UUID.randomUUID().toString(),expectedOwner:Long?=null) = withContext(Dispatchers.IO) {
+    suspend fun save(payload: JsonObject, id: String = UUID.randomUUID().toString(),expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = user()
-        check(expectedOwner==null||expectedOwner==user)
+        session.requireVerifiedOwner(expectedOwner)
         database.withTransaction {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val previous = dao.night(user, id)
             check(!dao.hasNightConflict(user,id))
             require(previous?.deleted != true)
@@ -73,11 +73,11 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         requestSync(user)
     }
 
-    suspend fun delete(id: String,expectedOwner:Long?=null) = withContext(Dispatchers.IO) {
+    suspend fun delete(id: String,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         val user = user()
-        check(expectedOwner==null||expectedOwner==user)
+        session.requireVerifiedOwner(expectedOwner)
         database.withTransaction {
-            check(session.userId==user)
+            session.requireVerifiedOwner(user)
             val previous = requireNotNull(dao.night(user, id)); if (previous.deleted) return@withTransaction
             check(!dao.hasNightConflict(user,id));read(previous)
             val mutation = UUID.randomUUID().toString()
@@ -98,14 +98,15 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         var more: Boolean
         var batches = 0
         do {
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val eligible = dao.eligiblePending(user)
             val cursorDoc = dao.cache(user, "night-sync-cursor")
             val cursor = cursorDoc?.let { cipher.open(it.payloadCipher).toLong() } ?: 0L
             val operations = eligible.map { mapOf("id" to it.sessionId, "operation" to it.operation, "data" to JsonParser.parseString(cipher.open(it.payloadCipher))) }
             val reply = session.request("POST", "night-prayer/sync", mapOf("cursor" to cursor, "operations" to operations),expectedUser=user).asJsonObject
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             database.withTransaction {
+                session.requireVerifiedOwner(user)
                 reply["results"].asJsonArray.forEachIndexed { index, element ->
                     val result = element.asJsonObject; val mutation = eligible[index]
                     if (result["status"].asString == "applied") {
@@ -143,7 +144,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
     }
     private suspend fun accountVersion(owner:Long,id:String):JsonObject {
         val body=session.request("GET","night-prayer/sessions/$id",expectedUser=owner).asJsonObject
-        check(session.userId==owner)
+        session.requireVerifiedOwner(owner)
         require(body["id"].asString==id&&body["revision"].asInt>0&&body["deleted"].asJsonPrimitive.isBoolean)
         val deleted=body["deleted"].asBoolean
         val row=LocalNightSession(owner,id,if(deleted)"" else body["night_date"].asString,if(deleted)0 else body["verse_count"].asInt,
@@ -151,8 +152,8 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         retainedBody(row)
         return body
     }
-    suspend fun reviewConflict(id:String,expectedOwner:Long?=null):NightConflictReview=syncLock.withLock{withContext(Dispatchers.IO){
-        val owner=user();check(expectedOwner==null||expectedOwner==owner);check(dao.hasNightConflict(owner,id))
+    suspend fun reviewConflict(id:String,expectedOwner:Long?=session.userId):NightConflictReview=syncLock.withLock{withContext(Dispatchers.IO){
+        val owner=user();check(expectedOwner==owner);check(dao.hasNightConflict(owner,id))
         val local=requireNotNull(dao.night(owner,id));val body=validateRetained(local)
         val account=accountVersion(owner,id)
         if(dao.night(owner,id)!=local)throw NightConflictChanged()
@@ -165,7 +166,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         if(account!=review.account)throw NightConflictChanged()
         var resultingId=id
         database.withTransaction{
-            check(session.userId==owner)
+            session.requireVerifiedOwner(owner)
             val local=requireNotNull(dao.night(owner,id))
             if(local!=review.local||!dao.hasNightConflict(owner,id))throw NightConflictChanged()
             val body=validateRetained(local)
@@ -199,18 +200,20 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         dao.night(LocalNightSession(user, item["id"].asString, if (deleted) "" else item["night_date"].asString, if (deleted) 0 else item["verse_count"].asInt, item["measured_seconds"]?.takeUnless { it.isJsonNull }?.asInt, cipher.seal(item.toString()), revision, revision, deleted, false, System.currentTimeMillis()))
     }
 
-    suspend fun localExemptions(): Set<LocalDate> = withContext(Dispatchers.IO) {
+    suspend fun localExemptions(expectedOwner:Long?=session.userId): Set<LocalDate> = withContext(Dispatchers.IO) {
         val owner=user()
+        check(expectedOwner==owner)
         val result=dao.exemptions(owner)?.let { readExemptions(it) }.orEmpty()
-        check(session.userId==owner)
+        session.requireVerifiedOwner(owner)
         result
     }
     private fun readExemptions(row:PrivateExemptions):Set<LocalDate> = JsonParser.parseString(cipher.open(row.encryptedPayload)).asJsonArray.map { LocalDate.parse(it.asString) }.toSet()
-    suspend fun localExemptions(dates: Set<LocalDate>) = withContext(Dispatchers.IO) {
+    suspend fun localExemptions(dates: Set<LocalDate>,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         require(dates.size <= 3660)
         val owner=user()
+        check(expectedOwner==owner)
         dao.exemptions(owner)?.let{readExemptions(it)}
-        check(session.userId==owner)
+        session.requireVerifiedOwner(owner)
         dao.exemptions(PrivateExemptions(owner, cipher.seal(com.google.gson.Gson().toJson(dates.map { it.toString() }.sorted()))))
     }
 }

@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task02.7.1 — captured-owner mutation dispatch
+
+- Capture the intended actor before local IO/lock/index waits and at account/reading/counter/Night exemption/bookmark/favorite/discussion call sites; stale actions cannot retarget another account or consume retained pending rows.
+- Verified/full SignedIn access is required for private local/API actions, including same-actor transition to Pending. Verify/resend keep their narrow pending-account allowance; logout checks its intended actor; verification UI state is keyed by account. Existing generation/token-persistence protections remain.
+- Final53 JVM/build/test APK/lint/306 resources PASS; API27 Arabic10/English32 +main API1 PASS. No real email/profile/password/key reset, backend/schema or visual replacement.
+- Overall45%, phase2 83%; new immersive-hero addendum adds four explicit tasks. Next21.18 documents the direction, followed by functional02.7.2;141 tasks open.
+
 ## Task02.6 — watch/account local recovery
 
 - Strict retained lesson checkpoint decoding/observation, retry and no-write/no-completion guards; captured-owner save/flush; preserve ready player composition during ordinary metadata switches and own checkpoint/ack updates.

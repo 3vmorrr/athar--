@@ -22,6 +22,10 @@ Shared foundation commit: `981a9e1293b4270b5e9d2accc8f0a50174bd0763` (pushed/ver
 
 Reviewed current files against pinned0e6f4ba before editing. Integrated only headlineSmall for watch title and larger bordered low-surface comments preview. Preserve current player/source identity, lazy/first-party comments, playlist/moderation logic and all newer private checkpoint ownership/recovery. Full account presentation stays separately queued.Final50 JVM/build/lint/306 resources PASS; API27 Arabic5/English15 plus main API1 PASS; Arabic/English watch/comments captures inspected, dark150-percent account error/retry checked. Keep ready player composition during ordinary metadata switching; isolate unreadable checkpoints behind retry without writes. Earlier USB reverse loss/4 failed English HTTP cases is retained; restored mapping/full rerun passed. Full provider/tablet/TalkBack/release profiling and account presentation remain later gates. The next receipt records the resulting integration commit SHA.
 
+### Task02.7.1 — ownership-only overlapping call sites, verified
+
+Reviewed two-sided Quran/Adhkar/Night tools/account/auth/watch/series changes against pinned0e6f4ba. This task changes actor binding and pending-auth composition identity, retaining current presentation and already accepted premium slices. No additional presentation is imported: broader visual reconciliation stays in its21.* tasks so an ownership safety fix does not become an unrelated screen redesign. Auth removal stays immediate, without animated signed-in content retention. Final53 JVM/build/lint/306 resources PASS; API27 Arabic10/English32 +main API1 PASS, including ordinary reader/counter/prayer/watch/auth and retained data regression. No new presentation/animation is claimed. The user’s new immersive-hero refinement is queued as21.18 documentation before any such UI implementation; later shared/screen tasks are explicit and retain the functional roadmap.
+
 Date: 2026-10-26  
 Branch: `uiux/athar-premium-v2`  
 Base branch: `codex/android-ecosystem`  

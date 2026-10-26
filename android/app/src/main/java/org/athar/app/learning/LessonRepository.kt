@@ -43,19 +43,18 @@ class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCip
     }
     suspend fun saved(user: Long, id: Int): SavedLessonProgress? = withContext(Dispatchers.IO) { dao.cache(user, key(id))?.let(::decode) }
     fun observe(user:Long,id:Int)=dao.observeCache(user,key(id)).map{it?.let(::decode)}.flowOn(Dispatchers.Default)
-    suspend fun retained(user:Long)=withContext(Dispatchers.IO){dao.caches(user,"lesson-progress:%").map(::decode).also{check(session.userId==user)}}
+    suspend fun retained(user:Long)=withContext(Dispatchers.IO){session.requireVerifiedOwner(user);dao.caches(user,"lesson-progress:%").map(::decode).also{session.requireVerifiedOwner(user)}}
     fun checkpoint(id:Int,position:Int,duration:Int,complete:Boolean,expectedOwner:Long?=null) {
         val user=session.userId ?: return
         if(expectedOwner!=null&&expectedOwner!=user)return
         scope.launch { try { if(session.userId==user)save(id,position,duration,complete,user) }catch(e:CancellationException){throw e}catch(_:Exception){failed.value=user} }
     }
-    suspend fun save(id: Int, position: Int, duration: Int, complete: Boolean = false,expectedOwner:Long?=null) = withContext(Dispatchers.IO) {
+    suspend fun save(id: Int, position: Int, duration: Int, complete: Boolean = false,expectedOwner:Long?=session.userId) = withContext(Dispatchers.IO) {
         require(id > 0 && position in 0..86400 && duration in 0..86400)
-        val user = requireNotNull(session.userId)
-        check(expectedOwner==null||expectedOwner==user)
+        val user = session.requireVerifiedOwner(expectedOwner)
         local.withLock {
             val old = saved(user, id)
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             val bounded = if (duration > 0) position.coerceAtMost(duration) else position
             val next = SavedLessonProgress(id, bounded, duration, complete || old?.complete == true, old?.eventId ?: if (complete) UUID.randomUUID().toString() else null, version = (old?.version ?: 0) + 1)
             dao.cache(CachedDocument(user, key(id), cipher.seal(gson.toJson(next)), System.currentTimeMillis()))
@@ -67,13 +66,14 @@ class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCip
     suspend fun sync(expectedOwner:Long?=null) = remote.withLock { withContext(Dispatchers.IO) {
         val user = session.userId ?: return@withContext
         if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
+        session.requireVerifiedOwner(user)
         for (row in dao.caches(user, "lesson-progress:%")) {
             val snapshot = local.withLock { saved(user, decode(row).lessonId) } ?: continue
             if (!snapshot.pending) continue
-            check(session.userId == user)
+            session.requireVerifiedOwner(user)
             session.request("PUT", "me/lesson-progress", mapOf("lesson_id" to snapshot.lessonId, "position_seconds" to snapshot.positionSeconds, "duration_seconds" to snapshot.durationSeconds, "is_complete" to snapshot.complete, "event_id" to snapshot.eventId),expectedUser=user)
             local.withLock {
-                check(session.userId == user)
+                session.requireVerifiedOwner(user)
                 val latest = saved(user, snapshot.lessonId) ?: return@withLock
                 if (latest.version == snapshot.version) dao.cache(CachedDocument(user, key(latest.lessonId), cipher.seal(gson.toJson(latest.copy(pending = false))), System.currentTimeMillis()))
             }

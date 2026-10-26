@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter
     key(graph.session.userId){NightToolsContent(graph)}
 }
 @Composable private fun NightToolsContent(graph:AppGraph) {
+    val owner=remember{requireNotNull(graph.session.userId)}
     var fromSurah by remember { mutableStateOf("1") }; var fromAyah by remember { mutableStateOf("1") }
     var toSurah by remember { mutableStateOf("1") }; var toAyah by remember { mutableStateOf("7") }
     var count by remember { mutableStateOf("100") }; var byTarget by remember { mutableStateOf(true) }
@@ -41,7 +42,7 @@ import java.time.format.DateTimeFormatter
     val scope = rememberCoroutineScope()
     LaunchedEffect(graph.session.userId,exemptAttempt) {
         exemptReady=false;exemptUnreadable=false
-        try{exemptTotal=graph.nightPrayer.localExemptions().size;exemptReady=true}
+        try{exemptTotal=graph.nightPrayer.localExemptions(owner).size;exemptReady=true}
         catch(failure:CancellationException){throw failure}
         catch(_:Exception){exemptUnreadable=true}
     }
@@ -91,15 +92,15 @@ import java.time.format.DateTimeFormatter
                         val start = LocalDate.parse(exemptStart); val end = LocalDate.parse(exemptEnd)
                         require(!end.isBefore(start) && end <= LocalDate.now() && java.time.temporal.ChronoUnit.DAYS.between(start, end) <= 365)
                         try {
-                            val values = graph.nightPrayer.localExemptions().toMutableSet()
+                            val values = graph.nightPrayer.localExemptions(owner).toMutableSet()
                             var day=start;while(day<=end){values.add(day);day=day.plusDays(1)}
-                            graph.nightPrayer.localExemptions(values);exemptTotal=values.size;exemptFormError=false
+                            graph.nightPrayer.localExemptions(values,owner);exemptTotal=values.size;exemptFormError=false
                         }catch(failure:CancellationException){throw failure}
                         catch(_:Exception){exemptUnreadable=true;exemptReady=false}
                     }
                     catch (failure: CancellationException) { throw failure } catch (_: Exception) { exemptFormError = true }
                 } }) { Text(stringResource(R.string.save)) }
-                TextButton(enabled=exemptReady,onClick = { scope.launch { try{graph.nightPrayer.localExemptions(emptySet()); exemptTotal = 0;exemptFormError=false}catch(failure:CancellationException){throw failure}catch(_:Exception){exemptUnreadable=true;exemptReady=false} } }) { Text(stringResource(R.string.clear_local_exemptions)) }
+                TextButton(enabled=exemptReady,onClick = { scope.launch { try{graph.nightPrayer.localExemptions(emptySet(),owner); exemptTotal = 0;exemptFormError=false}catch(failure:CancellationException){throw failure}catch(_:Exception){exemptUnreadable=true;exemptReady=false} } }) { Text(stringResource(R.string.clear_local_exemptions)) }
             }
         } }
     }

@@ -76,9 +76,9 @@ import org.athar.app.core.ui.*
             if (state.message == null && state.error == null && pending.deliveryStatus != null) MessagePanel(stringResource(if (pending.deliveryStatus == "accepted") R.string.mail_accepted else R.string.mail_unavailable), pending.deliveryStatus != "accepted")
             Feedback(state)
             OutlinedTextField(code, { code = OtpInput.normalize(it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.verification_code)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword))
-            Button(onClick = { vm.verify(code) }, enabled = !state.busy && code.length == 6, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.verify_action)) }
-            TextButton(onClick = vm::resend, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.resend_code)) }
-            TextButton(onClick = vm::logout, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.logout)) }
+            Button(onClick = { vm.verify(code,pending.user.id) }, enabled = !state.busy && code.length == 6, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.verify_action)) }
+            TextButton(onClick = {vm.resend(pending.user.id)}, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.resend_code)) }
+            TextButton(onClick = {vm.logout(pending.user.id)}, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.logout)) }
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "02.7.1",
+  "current_task": "21.18",
   "overall_estimate_percent": 45,
-  "overall_estimate_detail": 45.08,
+  "overall_estimate_detail": 45.43,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -162,7 +162,7 @@
       "name": "Captured-owner mutation dispatch guards",
       "parent": "Work package 2",
       "scope": "Capture the intended actor before asynchronous private/local or account-action dispatch; reject writes after account switching, including reading, counters, local exemptions and account tools. Preserve existing pending rows and verified-access gating.",
-      "state": "NOT STARTED",
+      "state": "COMPLETE",
       "dependencies": [
         "02.5",
         "02.6"
@@ -172,12 +172,39 @@
         "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
         "android/app/src/main/java/org/athar/app/nightprayer/",
         "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
-        "android/app/src/androidTest/"
+        "android/app/src/androidTest/",
+        "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
+        "android/app/src/main/java/org/athar/app/learning/DiscussionViewModel.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt"
       ],
       "automated_tests": "Deterministic actor switch before IO dispatch and during suspended mutation; rejected original-owner write and no new-owner row/API mutation; existing recovery/regression/build/lint/resources.",
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Capture the intended actor before asynchronous private/local or account-action dispatch; reject writes after account switching, including reading, counters, local exemptions and account tools. Preserve existing pending rows and verified-access gating. Applicable tests, physical Arabic/English owner-safe journey, docs, reviewed commit and verified normal push pass.",
       "estimated_contribution_pp": 0.1789
+    },
+    {
+      "id": "21.18",
+      "name": "Document immersive section heroes and original artwork",
+      "parent": "Work package 21: UI/UX closure",
+      "scope": "Define the additive Athar Immersive Section Hero system, section visual language, hero motion/scroll, state/ownership rules and original artwork/fallback specification from six user-supplied inspiration images. Reconcile the premium branch and route future implementation without pausing feature work or claiming static mocks as completed UI.",
+      "state": "NOT STARTED",
+      "dependencies": [
+        "02.7.1",
+        "21.1"
+      ],
+      "modules": [
+        "docs/design/IMMERSIVE_SECTION_HERO.md",
+        "docs/design/SECTION_VISUAL_LANGUAGE.md",
+        "docs/design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md",
+        "docs/design/ARTWORK_LIBRARY.md",
+        "docs/design/UI_UX_PREMIUM_V2_CHANGELOG.md",
+        "docs/progress/"
+      ],
+      "automated_tests": "Check internal Markdown links, required sections/asset specifications, queue dependencies/render and documentation-only diff; verify cited Android/provider guidance. No new Android/runtime/backend gate is claimed for documentation only.",
+      "physical_device": "Not applicable to this documentation-only task. Every implementing screen/component task still requires actual-device Arabic/English, state/motion/performance acceptance.",
+      "definition_of_done": "All required design/asset/scroll documents cover purpose, affected screens, visual/behavior/motion do/donot, performance/accessibility/reduced-motion, truthful data/CTA and existing branch integration. Exact subsequent tasks are recorded; links/queue/diff reviewed; logical documentation commit normally pushed and remote SHA verified. This is not native screen completion.",
+      "estimated_contribution_pp": 0.03,
+      "evidence": "47 JVM/build/lint/292 resources; API27 Arabic4 component +3 regression; English8 component/protected/reader/counter/watch; physical main API1; captures inspected; source protected modules unchanged."
     },
     {
       "id": "02.7.2",
@@ -2069,13 +2096,35 @@
       "blocker": "Authorized real recipient inbox delivery not yet proven."
     },
     {
+      "id": "21.19",
+      "name": "Implement immersive hero and layered-content primitives",
+      "parent": "Work package21: UX/accessibility",
+      "scope": "Evolve accepted shared Compose primitives with original branded lightweight artwork/fallback registry, image scrim/contrast treatment, adaptive hero/compact-header and layered-content structure, truthful accessible CTA/state handling and reduced-motion-aware lifecycle/scroll behavior. Preserve auth isolation and player/data ownership; no arbitrary backend/runtime change.",
+      "state": "NOT STARTED",
+      "dependencies": [
+        "21.1",
+        "21.18"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/core/ui/",
+        "android/app/src/main/res/drawable/",
+        "docs/design/ARTWORK_LIBRARY.md",
+        "android/app/src/androidTest/"
+      ],
+      "automated_tests": "Component state/contrast/semantics/RTL/LTR/large-font and reduced-motion/scroll/draft retention tests; asset provenance/dimensions/budget checks; build/JVM/test APK/lint/resources; no backend/data regression.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Functional native primitives and original/fallback artwork meet the new documented visual system; no fake handles/actions, no sacred-text animation or provider overlay. Normal/reduced-motion, light/dark, Arabic/English/200-percent/landscape and physical memory/scroll gates are recorded. Docs, reviewed logical commit and verified normal push pass. Screen implementations remain separate.",
+      "estimated_contribution_pp": 0.2,
+      "evidence": "47 JVM/build/lint/292 resources; API27 Arabic4 component +3 regression; English8 component/protected/reader/counter/watch; physical main API1; captures inspected; source protected modules unchanged."
+    },
+    {
       "id": "21.2",
       "name": "Home and navigation premium reconciliation",
       "parent": "Work package 21: UX/accessibility",
-      "scope": "Integrate pinned home/nav hierarchy preserving owned data, upcoming limits and routes; fix account clipping/landscape density.",
+      "scope": "Integrate pinned home/nav hierarchy preserving owned data, upcoming limits and routes; fix account clipping/landscape density. Immersive Home hero and layered content, actual continuation/next event and original artwork; shared source-to-section continuity only where supported. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
       "state": "PARTIAL",
       "dependencies": [
-        "21.1",
+        "21.19",
         "20.4"
       ],
       "modules": [
@@ -2088,31 +2137,13 @@
       "estimated_contribution_pp": 0.1579
     },
     {
-      "id": "21.3",
-      "name": "Auth and account premium reconciliation",
-      "parent": "Work package 21: UX/accessibility",
-      "scope": "Integrate reviewed hero/tool presentation preserving OTP/session/gates and account operations.",
-      "state": "PARTIAL",
-      "dependencies": [
-        "21.2"
-      ],
-      "modules": [
-        "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
-        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt"
-      ],
-      "automated_tests": "Auth error/loading/verification/security and tool switching tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-      "definition_of_done": "Integrate reviewed hero/tool presentation preserving OTP/session/gates and account operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
-    },
-    {
       "id": "21.4",
       "name": "Quran premium reconciliation acceptance",
       "parent": "Work package 21: UX/accessibility",
-      "scope": "Close hub/reader/control sheet visual reconciliation after functional tasks without losing protected resume.",
+      "scope": "Close hub/reader/control sheet visual reconciliation after functional tasks without losing protected resume. Immersive Quran hub with protected real reading CTA and four actual tools; keep the reader compact and canonical text/Amiri shaping untouched. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
       "state": "PARTIAL",
       "dependencies": [
-        "21.3"
+        "21.2"
       ],
       "modules": [
         "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt"
@@ -2123,64 +2154,13 @@
       "estimated_contribution_pp": 0.1579
     },
     {
-      "id": "21.5",
-      "name": "Audio premium reconciliation acceptance",
-      "parent": "Work package 21: UX/accessibility",
-      "scope": "Review audio/radio hero and bottom sheets preserving player identity/timing/focus behavior.",
-      "state": "PARTIAL",
-      "dependencies": [
-        "21.4"
-      ],
-      "modules": [
-        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
-      ],
-      "automated_tests": "Selector/source/paused state/rotation/reduced-motion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-      "definition_of_done": "Review audio/radio hero and bottom sheets preserving player identity/timing/focus behavior. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
-    },
-    {
-      "id": "21.6",
-      "name": "Tafsir premium reconciliation acceptance",
-      "parent": "Work package 21: UX/accessibility",
-      "scope": "Review source hierarchy/book sheet while retaining provider/paging/offline contracts.",
-      "state": "PARTIAL",
-      "dependencies": [
-        "21.5"
-      ],
-      "modules": [
-        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt"
-      ],
-      "automated_tests": "Selection/paging/source/error/large-font cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-      "definition_of_done": "Review source hierarchy/book sheet while retaining provider/paging/offline contracts. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
-    },
-    {
-      "id": "21.7",
-      "name": "Adhkar premium reconciliation acceptance",
-      "parent": "Work package 21: UX/accessibility",
-      "scope": "Close current-dhikr/category/counter hierarchy and source readability without changing daily completion rules.",
-      "state": "PARTIAL",
-      "dependencies": [
-        "21.6"
-      ],
-      "modules": [
-        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
-      ],
-      "automated_tests": "Rapid counter/advance/NULL/unreadable/reduced-motion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-      "definition_of_done": "Close current-dhikr/category/counter hierarchy and source readability without changing daily completion rules. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
-    },
-    {
       "id": "21.8",
       "name": "Night Prayer premium reconciliation acceptance",
       "parent": "Work package 21: UX/accessibility",
-      "scope": "Close history/calendar/tools/tonight hierarchy with protected private states and no fixed overhead starving content.",
+      "scope": "Close history/calendar/tools/tonight hierarchy with protected private states and no fixed overhead starving content. Original deep-night hero, only validated night context/countdown and implemented session CTA; retain explicit history/calendar/tools and local-only exemptions. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
       "state": "PARTIAL",
       "dependencies": [
-        "21.7"
+        "21.4"
       ],
       "modules": [
         "android/app/src/main/java/org/athar/app/nightprayer/"
@@ -2194,7 +2174,7 @@
       "id": "21.9",
       "name": "Watch premium reconciliation and provider hardware",
       "parent": "Work package 21: UX/accessibility",
-      "scope": "Reconcile watch hierarchy and close real official provider fullscreen/back/configuration loss/error transitions.",
+      "scope": "Reconcile watch hierarchy and close real official provider fullscreen/back/configuration loss/error transitions. Media hero around the official16:9 player with real metadata; no custom YouTube overlays/extraction/ad bypass or player recreation on collapse. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
       "state": "PARTIAL",
       "dependencies": [
         "21.8"
@@ -2209,13 +2189,142 @@
       "estimated_contribution_pp": 0.1579
     },
     {
+      "id": "21.5",
+      "name": "Audio premium reconciliation acceptance",
+      "parent": "Work package 21: UX/accessibility",
+      "scope": "Review audio/radio hero and bottom sheets preserving player identity/timing/focus behavior. Premium native audio/reciter hierarchy with real source/progress, accessible expansion and selection sheets; preserve service/player/source timing state; no invented portrait/favorite. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
+      "state": "PARTIAL",
+      "dependencies": [
+        "21.9"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/media/AudioScreen.kt"
+      ],
+      "automated_tests": "Selector/source/paused state/rotation/reduced-motion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Review audio/radio hero and bottom sheets preserving player identity/timing/focus behavior. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "estimated_contribution_pp": 0.1579
+    },
+    {
+      "id": "21.13",
+      "name": "Upcoming premium reconciliation acceptance",
+      "parent": "Work package 21: UX/accessibility",
+      "scope": "Verify home/list/detail/live/cancelled/replay/offline hierarchy without stale-live play actions. Live/next-event hero from authoritative state; cached status stays labelled saved/offline; reminder/watch only when implemented. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
+      "state": "PARTIAL",
+      "dependencies": [
+        "21.5"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/learning/UpcomingHomeSection.kt",
+        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt"
+      ],
+      "automated_tests": "Real fixture event transitions/context/book/unavailable/cached live tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Verify home/list/detail/live/cancelled/replay/offline hierarchy without stale-live play actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "estimated_contribution_pp": 0.1579
+    },
+    {
+      "id": "21.7",
+      "name": "Adhkar premium reconciliation acceptance",
+      "parent": "Work package 21: UX/accessibility",
+      "scope": "Close current-dhikr/category/counter hierarchy and source readability without changing daily completion rules. Calm dawn/category hero with protected actual counter state and subtle original art; no worship gamification. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
+      "state": "PARTIAL",
+      "dependencies": [
+        "21.13"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
+      ],
+      "automated_tests": "Rapid counter/advance/NULL/unreadable/reduced-motion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Close current-dhikr/category/counter hierarchy and source readability without changing daily completion rules. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "estimated_contribution_pp": 0.1579
+    },
+    {
+      "id": "21.20",
+      "name": "Books immersive hero and editorial hierarchy",
+      "parent": "Work package21: UX/accessibility",
+      "scope": "Apply the shared hero/layered-content system using actual permitted book covers or original Athar books artwork. Preserve metadata/rights/download/reading/offline ownership and accessible catalog actions; no random stock, fake cover/title or new backend contracts.",
+      "state": "NOT STARTED",
+      "dependencies": [
+        "21.7",
+        "06.5"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/core/ui/",
+        "android/app/src/main/java/org/athar/app/books/",
+        "docs/design/"
+      ],
+      "automated_tests": "Compile shared component call sites; Compose semantics/reduced-motion tests; no data/backend diff. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Actual books screen hero, native scroll/motion/reduction, RTL/LTR/theme/accessibility/performance and existing download/offline journeys pass on device; docs, reviewed commit and verified normal push pass.",
+      "estimated_contribution_pp": 0.1,
+      "evidence": "47 JVM/build/lint/292 resources; API27 Arabic4 component +3 regression; English8 component/protected/reader/counter/watch; physical main API1; captures inspected; source protected modules unchanged."
+    },
+    {
+      "id": "21.21",
+      "name": "Knowledge immersive hero and continuation hierarchy",
+      "parent": "Work package21: UX/accessibility",
+      "scope": "Refine the existing learning destination with a scholarly original hero, real last-lesson/series context when available, real lesson/scholar/series/book navigation and editorial hierarchy. Preserve current API/pagination/progress/moderation; fallback to exploration instead of invented continuation.",
+      "state": "NOT STARTED",
+      "dependencies": [
+        "21.20",
+        "12.4"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/learning/",
+        "android/app/src/main/java/org/athar/app/core/ui/",
+        "docs/design/"
+      ],
+      "automated_tests": "Compile shared component call sites; Compose semantics/reduced-motion tests; no data/backend diff. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Native learning destination uses actual content/state and functional navigation with approved original artwork, scroll/motion/reduction, Arabic/English/theme/large-text/performance/device gates; docs, reviewed commit and verified normal push pass.",
+      "estimated_contribution_pp": 0.1,
+      "evidence": "47 JVM/build/lint/292 resources; API27 Arabic4 component +3 regression; English8 component/protected/reader/counter/watch; physical main API1; captures inspected; source protected modules unchanged."
+    },
+    {
+      "id": "21.3",
+      "name": "Auth and account premium reconciliation",
+      "parent": "Work package 21: UX/accessibility",
+      "scope": "Integrate reviewed hero/tool presentation preserving OTP/session/gates and account operations.",
+      "state": "PARTIAL",
+      "dependencies": [
+        "21.21"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt"
+      ],
+      "automated_tests": "Auth error/loading/verification/security and tool switching tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Integrate reviewed hero/tool presentation preserving OTP/session/gates and account operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "estimated_contribution_pp": 0.1579
+    },
+    {
+      "id": "21.6",
+      "name": "Tafsir premium reconciliation acceptance",
+      "parent": "Work package 21: UX/accessibility",
+      "scope": "Review source hierarchy/book sheet while retaining provider/paging/offline contracts. Inherit Quran compact reading/header language with sacred text static and real tafsir data. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.",
+      "state": "PARTIAL",
+      "dependencies": [
+        "21.3"
+      ],
+      "modules": [
+        "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt"
+      ],
+      "automated_tests": "Selection/paging/source/error/large-font cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+      "definition_of_done": "Review source hierarchy/book sheet while retaining provider/paging/offline contracts. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "estimated_contribution_pp": 0.1579
+    },
+    {
       "id": "21.10",
       "name": "Scholar premium reconciliation acceptance",
       "parent": "Work package 21: UX/accessibility",
       "scope": "Verify portrait/source/biography/series/standalone hierarchy and paginated profile interactions.",
       "state": "PARTIAL",
       "dependencies": [
-        "21.9"
+        "21.6"
       ],
       "modules": [
         "android/app/src/main/java/org/athar/app/learning/ScholarScreen.kt"
@@ -2261,31 +2370,13 @@
       "estimated_contribution_pp": 0.1579
     },
     {
-      "id": "21.13",
-      "name": "Upcoming premium reconciliation acceptance",
-      "parent": "Work package 21: UX/accessibility",
-      "scope": "Verify home/list/detail/live/cancelled/replay/offline hierarchy without stale-live play actions.",
-      "state": "PARTIAL",
-      "dependencies": [
-        "21.12"
-      ],
-      "modules": [
-        "android/app/src/main/java/org/athar/app/learning/UpcomingHomeSection.kt",
-        "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt"
-      ],
-      "automated_tests": "Real fixture event transitions/context/book/unavailable/cached live tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-      "definition_of_done": "Verify home/list/detail/live/cancelled/replay/offline hierarchy without stale-live play actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.1579
-    },
-    {
       "id": "21.14",
       "name": "Screen-aware loading states",
       "parent": "Work package 21: UX/accessibility",
       "scope": "Integrate list/grid/detail skeleton families against actual loading/error/offline machine; disable pulse for reduced motion.",
       "state": "PARTIAL",
       "dependencies": [
-        "21.13"
+        "21.12"
       ],
       "modules": [
         "android/app/src/main/java/org/athar/app/core/ui/LoadingSkeleton.kt",
@@ -2655,14 +2746,14 @@
     }
   ],
   "estimate_basis": {
-    "Android": 60,
+    "Android": 61,
     "Backend/API": 61,
     "Independent Admin": 0,
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,
-    "Testing/QA": 48,
-    "Documentation": 78,
+    "Testing/QA": 49,
+    "Documentation": 79,
     "weights_percent": [
       25,
       18,
@@ -2674,5 +2765,5 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses fixed task weights; other closure packages use COMPLETE task share. Phase21 closure is1/17 (6% rounded); phase2 is80%. The previous02.7 was split into02.7.1/02.7.2 and final02.7 acceptance, retaining its original10-point phase budget. These are remaining-package gates, not full-product area estimates."
+  "phase_completion_method": "Phase2 uses fixed task weights; other closure packages use COMPLETE task share. Phase2 is83%; UI closure is1/21 (5% rounded). The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining cross-screen closure, preserving the functional roadmap. These are remaining-package gates, not full-product area estimates."
 }

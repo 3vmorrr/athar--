@@ -94,7 +94,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                                     busy = true
                                                     scope.launch {
                                                         try {
-                                                            val next = graph.counters.tap(id, target)
+                                                            val next = graph.counters.tap(id, target,expectedOwner=owner)
                                                             if (next.count == target && (category ?: categories.firstOrNull()?.text("category")) == selected && page == originalPage && position == index) advance()
                                                         } catch (failure: CancellationException) { throw failure }
                                                         catch (_: Exception) { snackbar.showSnackbar(failed) }
@@ -104,9 +104,9 @@ fun AdhkarScreen(graph: AppGraph) {
                                                     Text(stringResource(if (counter.count >= target) R.string.completed else R.string.count_action))
                                                 }
                                                 if (counter.conflict) MessagePanel(stringResource(R.string.counter_conflict), true) {
-                                                    TextButton(onClick = { scope.launch { try { graph.counters.useServer(id, target) } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.use_server)) }
+                                                    TextButton(onClick = { scope.launch { try { graph.counters.useServer(id, target,owner) } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.use_server)) }
                                                 }
-                                                TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict) { Text(stringResource(R.string.reset_counter)) }
+                                                TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true,expectedOwner=owner); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict) { Text(stringResource(R.string.reset_counter)) }
                                                 }
                                             }
                                         }

@@ -32,6 +32,15 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     val state = mutableState.asStateFlow()
     val userId: Long? get() = stored?.user?.id
 
+    /** Private data actions need the captured actor and current verified access, including offline. */
+    fun requireVerifiedOwner(expectedUser:Long?):Long {
+        val credentials=stored
+        val signedIn=mutableState.value as? AuthState.SignedIn
+        if(expectedUser==null||credentials?.user?.id!=expectedUser||signedIn?.user?.id!=expectedUser||
+            credentials.credentials.scope!="full"||!credentials.user.emailVerified)throw ApiException(401,"session_changed","")
+        return expectedUser
+    }
+
     suspend fun restore() {
         val epoch = generation.get()
         val saved = store.load()
@@ -51,19 +60,19 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     private suspend fun beginAuthentication():Long=sessionMutex.withLock{generation.incrementAndGet()}
     suspend fun login(email: String, password: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/login", mapOf("email" to email.trim(), "password" to password), language = language()), epoch, true) }
     suspend fun register(name: String, username: String, email: String, password: String, confirmation: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/register", mapOf("display_name" to name.trim(), "username" to username.trim(), "email" to email.trim(), "password" to password, "password_confirmation" to confirmation), language = language()), epoch, true) }
-    suspend fun verify(code: String) { val epoch = generation.get(); accept(request("POST", "auth/verify-email", mapOf("code" to code)), epoch) }
-    suspend fun resend(): String = request("POST", "auth/resend").asJsonObject.get("delivery_status").asString
+    suspend fun verify(code: String,expectedUser:Long?=userId) { val epoch = generation.get(); accept(request("POST", "auth/verify-email", mapOf("code" to code),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun resend(expectedUser:Long?=userId): String = request("POST", "auth/resend",expectedUser=requireNotNull(expectedUser)).asJsonObject.get("delivery_status").asString
     suspend fun forgot(email: String) { transport.request("POST", "auth/forgot-password", mapOf("email" to email.trim()), language = language()) }
     suspend fun reset(email: String, code: String, password: String, confirmation: String) { transport.request("POST", "auth/reset-password", mapOf("email" to email.trim(), "code" to code, "password" to password, "password_confirmation" to confirmation), language = language()) }
 
     suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {
         val epoch = generation.get()
         var current = stored ?: throw ApiException(401, "unauthenticated", "")
-        checkActor(current,expectedUser)
+        checkAccess(path,current,expectedUser)
         if (now() >= current.expiresAt - 30_000) { refresh(current.credentials.accessToken); current = stored ?: throw ApiException(401, "unauthenticated", "") }
         checkGeneration(epoch)
-        checkActor(current,expectedUser)
-        return try { transport.request(method, path, body, query, current.credentials.accessToken, language()).also { checkGeneration(epoch) } }
+        checkAccess(path,current,expectedUser)
+        return try { transport.request(method, path, body, query, current.credentials.accessToken, language()).also { checkGeneration(epoch);checkAccess(path,current,expectedUser) } }
         catch (failure: ApiException) {
             if (failure.status == 403 && failure.code in listOf("email_verification_required", "account_suspended")) clear(epoch)
             if (failure.status != 401) throw failure
@@ -71,11 +80,16 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
             refresh(current.credentials.accessToken)
             checkGeneration(epoch)
             val updated = stored ?: throw ApiException(401, "unauthenticated", "")
-            checkActor(updated,expectedUser)
-            transport.request(method, path, body, query, updated.credentials.accessToken, language()).also { checkGeneration(epoch) }
+            checkAccess(path,updated,expectedUser)
+            transport.request(method, path, body, query, updated.credentials.accessToken, language()).also { checkGeneration(epoch);checkAccess(path,updated,expectedUser) }
         }
     }
     private fun checkActor(session:StoredSession,expectedUser:Long?){if(expectedUser!=null&&session.user.id!=expectedUser)throw ApiException(401,"session_changed","")}
+    private fun checkAccess(path:String,current:StoredSession,expectedUser:Long?){
+        checkActor(current,expectedUser)
+        // These are the only authenticated pending-account requests in the native API contract.
+        if(path!="auth/verify-email"&&path!="auth/resend")requireVerifiedOwner(current.user.id)
+    }
 
     private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {
         val epoch = generation.get()
@@ -85,14 +99,16 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         catch (failure: ApiException) { if (failure.status in listOf(401, 403)) clear(epoch); throw failure }
     }
 
-    suspend fun updateProfile(name: String, username: String) {
+    suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {
+        requireVerifiedOwner(expectedUser)
         val epoch = generation.get()
-        val user = gson.fromJson(request("PATCH", "me", mapOf("display_name" to name, "username" to username)), UserProfile::class.java)
+        val user = gson.fromJson(request("PATCH", "me", mapOf("display_name" to name, "username" to username),expectedUser=requireNotNull(expectedUser)), UserProfile::class.java)
         stored?.let { save(it.copy(user = user), epoch) }
     }
-    suspend fun changePassword(current: String, password: String, confirmation: String) { val epoch = generation.get(); accept(request("PUT", "me/password", mapOf("current_password" to current, "password" to password, "password_confirmation" to confirmation)), epoch) }
-    suspend fun delete(password: String) { val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password)); clear(epoch) }
-    suspend fun logout() {
+    suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); accept(request("PUT", "me/password", mapOf("current_password" to current, "password" to password, "password_confirmation" to confirmation),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun delete(password: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password),expectedUser=requireNotNull(expectedUser)); clear(epoch) }
+    suspend fun logout(expectedUser:Long?=userId) {
+        if(expectedUser!=userId)throw ApiException(401,"session_changed","")
         val token = stored?.credentials?.accessToken
         clear(generation.get())
         try { if (token != null) transport.request("POST", "auth/logout", bearer = token, language = language()) }
