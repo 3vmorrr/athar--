@@ -70,7 +70,12 @@ import java.time.format.FormatStyle
     var previewFailed by remember(event.youtubeId){mutableStateOf(false)}
     var previewLoading by remember(event.youtubeId){mutableStateOf(true)}
     val reduced=reducedMotion()
-    ElevatedCard(Modifier.fillMaxWidth().testTag("upcoming-event-${event.id}")) {
+    Surface(
+        modifier=Modifier.fillMaxWidth().testTag("upcoming-event-${event.id}"),
+        shape=MaterialTheme.shapes.large,
+        color=MaterialTheme.colorScheme.surfaceContainerLow,
+        border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant),
+    ) {
         Column(Modifier.padding(20.dp).animateContentSize(tween(if(reduced)0 else AtharMotion.Normal)),verticalArrangement=Arrangement.spacedBy(12.dp)) {
             if(detail&&event.youtubeId.matches(Regex("[A-Za-z0-9_-]{11}"))){
                 if(previewFailed)Row(Modifier.fillMaxWidth().padding(vertical=8.dp),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically){
@@ -82,17 +87,30 @@ import java.time.format.FormatStyle
                 }
             }
             val status=when(event.status){EventStatus.LIVE->if(offline)R.string.upcoming_last_live else R.string.upcoming_live;EventStatus.SCHEDULED->R.string.upcoming_scheduled;EventStatus.PUBLISHED->R.string.upcoming_published;EventStatus.CANCELLED->R.string.upcoming_cancelled;else->R.string.upcoming_draft}
-            Surface(shape=MaterialTheme.shapes.small,color=if(event.status==EventStatus.LIVE&&!offline)MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh){Text(stringResource(status),Modifier.padding(horizontal=12.dp,vertical=6.dp),style=MaterialTheme.typography.labelLarge)}
-            Text(event.title,style=MaterialTheme.typography.headlineSmall,maxLines=if(detail)6 else 3,overflow=TextOverflow.Ellipsis)
-            if(event.scholarName.isNotBlank())TextButton(onClick={event.scholarId?.let{open("scholars/$it")}},enabled=event.scholarId!=null,contentPadding=PaddingValues(0.dp)){Text(event.scholarName)}
-            if(event.seriesName.isNotBlank())TextButton(onClick={event.seriesId?.let{open("series/$it")}},enabled=event.seriesId!=null,contentPadding=PaddingValues(0.dp)){Text(event.seriesName)}
+            AtharStatusPill(stringResource(status),emphasized=event.status==EventStatus.LIVE&&!offline)
+            Text(
+                event.title,
+                style=if(detail)MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
+                maxLines=if(detail)6 else 2,
+                overflow=TextOverflow.Ellipsis,
+            )
+            if(event.scholarName.isNotBlank())TextButton(
+                onClick={event.scholarId?.let{open("scholars/$it")}},
+                enabled=event.scholarId!=null,
+                contentPadding=PaddingValues(0.dp),
+            ){Text(event.scholarName)}
+            if(detail&&event.seriesName.isNotBlank())TextButton(
+                onClick={event.seriesId?.let{open("series/$it")}},
+                enabled=event.seriesId!=null,
+                contentPadding=PaddingValues(0.dp),
+            ){Text(event.seriesName)}
             if(detail&&event.courseTitle.isNotBlank())Text(stringResource(R.string.upcoming_course,event.courseTitle),style=MaterialTheme.typography.titleMedium)
             if(detail&&event.topics.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
                 event.topics.forEach{topic->Surface(shape=MaterialTheme.shapes.small,color=MaterialTheme.colorScheme.secondaryContainer){Text(topic,Modifier.padding(horizontal=10.dp,vertical=6.dp),style=MaterialTheme.typography.labelMedium)}}
             }
             Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.CalendarMonth,null,Modifier.size(20.dp));Column{Text(date?:stringResource(R.string.upcoming_time_unset),style=MaterialTheme.typography.titleMedium);Text(stringResource(R.string.upcoming_device_time),style=MaterialTheme.typography.bodySmall)}}
             if(event.status==EventStatus.SCHEDULED&&event.start!=null)EventCountdownLabel(event.start,clockOffset)
-            event.durationMinutes?.let{Text(pluralStringResource(R.plurals.upcoming_duration,it,it),style=MaterialTheme.typography.bodySmall)}
+            if(detail)event.durationMinutes?.let{Text(pluralStringResource(R.plurals.upcoming_duration,it,it),style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}
             if(event.status==EventStatus.CANCELLED)MessagePanel(stringResource(R.string.upcoming_cancelled_body))
             if(detail&&event.status==EventStatus.PUBLISHED&&!event.canWatch)MessagePanel(stringResource(R.string.upcoming_replay_pending))
             if(detail&&event.description.isNotBlank()){
