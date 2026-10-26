@@ -70,7 +70,10 @@ class AdhkarReminderTest {
             "Body",
             2,
         )
-        assertEquals(2, incompletePlans.size)
+        assertEquals(1, incompletePlans.size)
+        val incompleteDate = Instant.ofEpochMilli(incompletePlans.single().scheduledAtMillis)
+            .atZone(java.time.ZoneId.of("Africa/Cairo")).toLocalDate()
+        assertEquals(java.time.LocalDate.parse("2026-10-26"), incompleteDate)
 
         val completePlans = AdhkarReminderPlanner.plan(
             rule(),
@@ -85,6 +88,9 @@ class AdhkarReminderTest {
             2,
         )
         assertEquals(1, completePlans.size)
+        val completeDate = Instant.ofEpochMilli(completePlans.single().scheduledAtMillis)
+            .atZone(java.time.ZoneId.of("Africa/Cairo")).toLocalDate()
+        assertEquals(java.time.LocalDate.parse("2026-10-27"), completeDate)
     }
 
     @Test fun nullRepeatItemsAreNotInventedAsRequirements() {

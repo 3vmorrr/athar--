@@ -31,7 +31,7 @@ When the category screen is revisited online, the enabled rule refreshes its pub
 
 ## Scheduling and suppression
 
-Each enabled category creates up to 14 days of one-shot owner-scoped reminders through the shared WP10 scheduler. Category names are hashed for WorkManager-safe opaque ids; the encrypted reminder body may still show the category locally.
+Each enabled category scans a 14-day horizon but retains only the next one-shot occurrence per enabled category through the shared WP10 scheduler. Category names are hashed for WorkManager-safe opaque ids; the encrypted reminder body may still show the category locally.
 
 CounterRepository invokes the reminder reconciler after each durable local counter write. When the final fixed requirement genuinely reaches its repeat target, today's pending category reminder is removed. Resetting a completed counter makes the category incomplete again and reconciliation can restore today's reminder while its TTL remains valid.
 

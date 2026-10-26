@@ -126,17 +126,17 @@ object QuranWirdPlanner {
         val zone = ZoneId.of(rule.timezone)
         val localNow = now.atZone(zone)
         val reminderTime = LocalTime.parse(rule.time)
-        return (0 until horizonDays).mapNotNull { offset ->
+        val next = (0 until horizonDays).firstNotNullOfOrNull { offset ->
             val date = localNow.toLocalDate().plusDays(offset.toLong())
-            if (date.dayOfWeek.value !in rule.days) return@mapNotNull null
-            if (progress?.date == date.toString() && progress.completed(rule)) return@mapNotNull null
+            if (date.dayOfWeek.value !in rule.days) return@firstNotNullOfOrNull null
+            if (progress?.date == date.toString() && progress.completed(rule)) return@firstNotNullOfOrNull null
 
             val due = ZonedDateTime.of(date, reminderTime, zone).toInstant()
             val expires = date.plusDays(1).atStartOfDay(zone).toInstant()
-            if (!expires.isAfter(now)) return@mapNotNull null
+            if (!expires.isAfter(now)) return@firstNotNullOfOrNull null
             if (!due.isAfter(now)) {
-                if (date != localNow.toLocalDate()) return@mapNotNull null
-                if (rule.activatedAtMillis >= due.toEpochMilli()) return@mapNotNull null
+                if (date != localNow.toLocalDate()) return@firstNotNullOfOrNull null
+                if (rule.activatedAtMillis >= due.toEpochMilli()) return@firstNotNullOfOrNull null
             }
 
             val dateKey = date.format(DateTimeFormatter.BASIC_ISO_DATE)
@@ -154,6 +154,7 @@ object QuranWirdPlanner {
                 timezone = if (rule.quietStart == null) null else rule.timezone,
             ).validated()
         }
+        return listOfNotNull(next)
     }
 }
 

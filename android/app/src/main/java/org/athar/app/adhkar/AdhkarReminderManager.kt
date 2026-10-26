@@ -116,16 +116,16 @@ object AdhkarReminderPlanner {
         val reminderTime = LocalTime.parse(rule.time)
         val digest = digest(rule.category)
 
-        return (0 until horizonDays).mapNotNull { offset ->
+        val next = (0 until horizonDays).firstNotNullOfOrNull { offset ->
             val date = localNow.toLocalDate().plusDays(offset.toLong())
-            if (date.dayOfWeek.value !in rule.days) return@mapNotNull null
-            if (offset == 0 && completion.complete) return@mapNotNull null
+            if (date.dayOfWeek.value !in rule.days) return@firstNotNullOfOrNull null
+            if (offset == 0 && completion.complete) return@firstNotNullOfOrNull null
 
             val due = ZonedDateTime.of(date, reminderTime, zone).toInstant()
             val expires = date.plusDays(1).atStartOfDay(zone).toInstant()
-            if (!expires.isAfter(now)) return@mapNotNull null
+            if (!expires.isAfter(now)) return@firstNotNullOfOrNull null
             if (!due.isAfter(now) && date == localNow.toLocalDate() && rule.activatedAtMillis >= due.toEpochMilli()) {
-                return@mapNotNull null
+                return@firstNotNullOfOrNull null
             }
 
             val dateKey = date.format(DateTimeFormatter.BASIC_ISO_DATE)
@@ -140,6 +140,7 @@ object AdhkarReminderPlanner {
                 idempotencyKey = "adhkar:" + digest + ":" + date,
             ).validated()
         }
+        return listOfNotNull(next)
     }
 
     private fun digest(value: String): String =
