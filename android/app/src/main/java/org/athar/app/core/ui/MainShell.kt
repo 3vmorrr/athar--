@@ -541,8 +541,9 @@ private fun AtharNavIcon(
                     },
                     enabled = !operation.busy &&
                         current.isNotBlank() &&
-                        password.length in 10..200 &&
-                        confirmation.isNotBlank(),
+                        AccountInput.validPassword(password) &&
+                        confirmation.isNotBlank() &&
+                        password == confirmation,
                     modifier = Modifier.heightIn(min = 52.dp),
                 ) {
                     Text(stringResource(R.string.save))
