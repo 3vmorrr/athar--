@@ -25,10 +25,15 @@ import org.athar.app.core.ui.*
 
 @Composable
 fun AdhkarScreen(graph: AppGraph) {
-    var category by rememberSaveable { mutableStateOf<String?>(null) }
-    var page by rememberSaveable(category) { mutableIntStateOf(1) }
-    var position by rememberSaveable(category) { mutableIntStateOf(0) }
-    var reachedEnd by rememberSaveable(category, page) { mutableStateOf(false) }
+    val allCategories = "__all__"
+    var category by rememberSaveable { mutableStateOf(allCategories) }
+    var searchInput by rememberSaveable { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var page by rememberSaveable(category, searchQuery) { mutableIntStateOf(1) }
+    var position by rememberSaveable(category, searchQuery) { mutableIntStateOf(0) }
+    var reachedEnd by rememberSaveable(category, searchQuery, page) {
+        mutableStateOf(false)
+    }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     val entriesScroll = rememberLazyListState()
@@ -36,16 +41,67 @@ fun AdhkarScreen(graph: AppGraph) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         DataScreen(graph, "adhkar/categories") { data, _ ->
             val categories = data.asJsonArray.toList()
-            val selected = category ?: categories.firstOrNull()?.text("category")
-            if (selected == null) QuietEmptyState(stringResource(R.string.empty_state))
-            else Column(Modifier.fillMaxSize()) {
-                LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(categories, key = { it.text("category") }, contentType = { "category" }) { row ->
-                        FilterChip(selected == row.text("category"), { category = row.text("category") }, label = { Text(row.text("category")) })
+            if (categories.isEmpty()) {
+                QuietEmptyState(stringResource(R.string.empty_state))
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = AtharSpacing.Lg),
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                    ) {
+                        item(key = allCategories, contentType = "category") {
+                            FilterChip(
+                                selected = category == allCategories,
+                                onClick = { category = allCategories },
+                                label = { Text(stringResource(R.string.all_categories)) },
+                            )
+                        }
+                        items(
+                            categories,
+                            key = { it.text("category") },
+                            contentType = { "category" },
+                        ) { row ->
+                            val value = row.text("category")
+                            FilterChip(
+                                selected = category == value,
+                                onClick = { category = value },
+                                label = { Text(value) },
+                            )
+                        }
                     }
-                }
-                Box(Modifier.weight(1f)) {
-                    DataScreen(graph, "adhkar", mapOf("category" to selected, "page" to "$page", "per_page" to "20")) { catalog, _ ->
+
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                    ) {
+                        OutlinedTextField(
+                            value = searchInput,
+                            onValueChange = { searchInput = it.take(100) },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true,
+                            label = { Text(stringResource(R.string.search)) },
+                        )
+                        TextButton(
+                            onClick = {
+                                searchQuery = searchInput.trim()
+                                reachedEnd = false
+                            },
+                        ) {
+                            Text(stringResource(R.string.search))
+                        }
+                    }
+
+                    Box(Modifier.weight(1f)) {
+                        val parameters = buildMap {
+                            put("page", "$page")
+                            put("per_page", "20")
+                            if (category != allCategories) put("category", category)
+                            if (searchQuery.isNotBlank()) put("q", searchQuery)
+                        }
+                        DataScreen(graph, "adhkar", parameters) { catalog, _ ->
                         val rows = catalog.array("items")
                         val more = catalog.asJsonObject["pagination"].text("has_more") == "true"
                         val index = position.coerceAtMost((rows.size - 1).coerceAtLeast(0))
@@ -61,7 +117,11 @@ fun AdhkarScreen(graph: AppGraph) {
                                     presentation = AtharHeroPresentation(
                                         artwork = AtharHeroArtwork.Adhkar,
                                         eyebrow = stringResource(R.string.adhkar),
-                                        title = selected,
+                                        title = if (category == allCategories) {
+                                            stringResource(R.string.all_categories)
+                                        } else {
+                                            category
+                                        },
                                         supportingText = stringResource(
                                             R.string.adhkar_item_position,
                                             (page - 1) * 20 + index + 1,
@@ -99,6 +159,9 @@ fun AdhkarScreen(graph: AppGraph) {
                                                 dhikr.text("title"),
                                                 style = MaterialTheme.typography.titleLarge,
                                             )
+                                            if (category == allCategories) {
+                                                AtharStatusPill(dhikr.text("category"))
+                                            }
                                             Text(
                                                 dhikr.text("formula"),
                                                 fontFamily = QuranFont,
@@ -161,7 +224,13 @@ fun AdhkarScreen(graph: AppGraph) {
                                                     scope.launch {
                                                         try {
                                                             val next = graph.counters.tap(id, target,expectedOwner=owner)
-                                                            if (next.count == target && (category ?: categories.firstOrNull()?.text("category")) == selected && page == originalPage && position == index) advance()
+                                                            if (
+                                                                next.count == target &&
+                                                                page == originalPage &&
+                                                                position == index
+                                                            ) {
+                                                                advance()
+                                                            }
                                                         } catch (failure: CancellationException) { throw failure }
                                                         catch (_: Exception) { snackbar.showSnackbar(failed) }
                                                         finally { busy = false }
