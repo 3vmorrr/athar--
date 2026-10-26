@@ -1,6 +1,7 @@
 package org.athar.app.media
 
 import android.content.ComponentName
+import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.media3.common.*
 import androidx.media3.session.MediaController
@@ -56,6 +57,15 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
     private val future = MediaController.Builder(application, SessionToken(application, ComponentName(application, PlaybackService::class.java))).buildAsync()
     private var controller: MediaController? = null
     private var request: Job? = null
+    private var requestGeneration: Long = 0L
+
+    private fun nextRequestGeneration(): Long {
+        requestGeneration += 1
+        return requestGeneration
+    }
+
+    private fun isCurrentRequest(generation: Long): Boolean =
+        generation == requestGeneration
     private val listener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             mutable.value = mutable.value.copy(playing = isPlaying)
@@ -128,48 +138,124 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
     }
     fun load(reciter: Int, edition: Int, surah: Int, ayah: Int? = null) {
         request?.cancel()
+        val generation = nextRequestGeneration()
         request = viewModelScope.launch {
-            mutable.value = AudioUiState(loading = true)
-            try {
-                val player = player(); player.stop(); player.clearMediaItems()
-                val query = mapOf("reciter" to "$reciter", "edition" to "$edition", "surah" to "$surah")
-                val audio = graph.content.get("quran/audio", query).data
-                val mediaKey = "$reciter:$edition:$surah:${ayah ?: 0}"
-                val item = MediaItem.Builder().setMediaId(mediaKey).setUri(audio.text("url"))
-                    .setMediaMetadata(MediaMetadata.Builder().setTitle(graph.quran.data().index.surahs[surah - 1].name).setArtist(audio.text("reciter_name")).build())
-                if (ayah == null) {
-                    mutable.value = AudioUiState(recording = audio, mediaKey = mediaKey)
-                    player.setMediaItem(item.build()); player.prepare(); player.play()
-                }
-                var timings = emptyList<AyahTiming>()
-                if (audio.text("tracking_available") == "true") {
-                    try { timings = graph.content.get("quran/timing", query).data.array("items").map { AyahTiming(it.text("ayah").toInt(), it.text("start_ms").toLong(), it.text("end_ms").toLong()) } }
-                    catch (failure: CancellationException) { throw failure } catch (_: Exception) { /* Whole-surah playback remains usable without timing. */ }
-                }
-                val selected = ayah?.let { number -> timings.firstOrNull { it.ayah == number } ?: throw IllegalArgumentException("Timing unavailable") }
-                if (selected != null) item.setClippingConfiguration(MediaItem.ClippingConfiguration.Builder().setStartPositionMs(selected.start).setEndPositionMs(selected.end).build())
-                mutable.value = mutable.value.copy(recording = audio, loading = false, timings = timings, clipStart = selected?.start ?: 0, mediaKey = mediaKey)
-                if (selected != null) { player.setMediaItem(item.build()); player.prepare(); player.play() }
-            } catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = mutable.value.copy(error = true, loading = false) }
-        }
-    }
-    fun radio(row: JsonElement) {
-        request?.cancel(); request = viewModelScope.launch {
-            mutable.value = AudioUiState(loading = true, radio = true)
+            mutable.value = mutable.value.copy(
+                loading = true,
+                error = false,
+                buffer = false,
+            )
             try {
                 val player = player()
+                val mediaKey = "${reciter}:${edition}:${surah}:${ayah ?: 0}"
+                if (player.currentMediaItem?.mediaId != mediaKey && player.isPlaying) {
+                    player.pause()
+                }
+                val query = mapOf(
+                    "reciter" to "$reciter",
+                    "edition" to "$edition",
+                    "surah" to "$surah",
+                )
+                val audio = graph.content.get("quran/audio", query).data
+                if (!isCurrentRequest(generation)) return@launch
+                val uri = Uri.parse(audio.text("url"))
+                require(PlaybackService.approvedMedia(uri))
+                val item = MediaItem.Builder()
+                    .setMediaId(mediaKey)
+                    .setUri(uri)
+                    .setMediaMetadata(
+                        MediaMetadata.Builder()
+                            .setTitle(graph.quran.data().index.surahs[surah - 1].name)
+                            .setArtist(audio.text("reciter_name"))
+                            .build(),
+                    )
+
+                var timings = emptyList<AyahTiming>()
+                if (audio.text("tracking_available") == "true") {
+                    try {
+                        val timingRows = graph.content
+                            .get("quran/timing", query)
+                            .data
+                            .array("items")
+                        if (!isCurrentRequest(generation)) return@launch
+                        timings = timingRows.map {
+                            AyahTiming(
+                                it.text("ayah").toInt(),
+                                it.text("start_ms").toLong(),
+                                it.text("end_ms").toLong(),
+                            )
+                        }
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        // Whole-surah playback remains usable without timing.
+                    }
+                }
+
+                val selected = ayah?.let { number ->
+                    timings.firstOrNull { it.ayah == number }
+                        ?: throw IllegalArgumentException("Timing unavailable")
+                }
+                if (selected != null) {
+                    item.setClippingConfiguration(
+                        MediaItem.ClippingConfiguration.Builder()
+                            .setStartPositionMs(selected.start)
+                            .setEndPositionMs(selected.end)
+                            .build(),
+                    )
+                }
+                if (!isCurrentRequest(generation)) return@launch
+
                 player.stop()
                 player.clearMediaItems()
-                val mediaId = "radio:${row.text("id")}"
+                player.setMediaItem(item.build())
+                player.prepare()
+                player.play()
+
                 mutable.value = AudioUiState(
-                    recording = row,
-                    mediaKey = mediaId,
-                    radio = true,
+                    recording = audio,
+                    loading = false,
+                    timings = timings,
+                    clipStart = selected?.start ?: 0,
+                    mediaKey = mediaKey,
+                    radio = false,
                 )
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                if (isCurrentRequest(generation)) {
+                    mutable.value = mutable.value.copy(
+                        error = true,
+                        loading = false,
+                        buffer = false,
+                    )
+                }
+            }
+        }
+    }
+
+    fun radio(row: JsonElement) {
+        request?.cancel()
+        val generation = nextRequestGeneration()
+        request = viewModelScope.launch {
+            mutable.value = mutable.value.copy(
+                loading = true,
+                error = false,
+                radio = true,
+            )
+            try {
+                val player = player()
+                val mediaId = "radio:${row.text("id")}"
+                val uri = Uri.parse(row.text("url"))
+                require(PlaybackService.approvedMedia(uri))
+                if (!isCurrentRequest(generation)) return@launch
+
+                player.stop()
+                player.clearMediaItems()
                 player.setMediaItem(
                     MediaItem.Builder()
                         .setMediaId(mediaId)
-                        .setUri(row.text("url"))
+                        .setUri(uri)
                         .setMediaMetadata(
                             MediaMetadata.Builder()
                                 .setTitle(row.text("name"))
@@ -179,12 +265,72 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
                 )
                 player.prepare()
                 player.play()
+                mutable.value = AudioUiState(
+                    recording = row,
+                    mediaKey = mediaId,
+                    radio = true,
+                )
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                if (isCurrentRequest(generation)) {
+                    mutable.value = mutable.value.copy(
+                        error = true,
+                        loading = false,
+                        buffer = false,
+                    )
+                }
             }
-            catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = AudioUiState(error = true) }
         }
     }
+
+    fun retry() {
+        if (mutable.value.loading) return
+        val selection = mutableSelection.value
+        if (!mutable.value.radio && selection.mediaKey != null) {
+            startSelection()
+            return
+        }
+
+        request?.cancel()
+        val generation = nextRequestGeneration()
+        request = viewModelScope.launch {
+            mutable.value = mutable.value.copy(loading = true, error = false)
+            try {
+                val player = player()
+                val item = player.currentMediaItem ?: throw IllegalStateException()
+                val uri = item.localConfiguration?.uri ?: throw IllegalStateException()
+                require(PlaybackService.approvedMedia(uri))
+                if (!isCurrentRequest(generation)) return@launch
+
+                player.prepare()
+                player.play()
+                mutable.value = mutable.value.copy(
+                    loading = false,
+                    error = false,
+                )
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                if (isCurrentRequest(generation)) {
+                    mutable.value = mutable.value.copy(
+                        loading = false,
+                        error = true,
+                        buffer = false,
+                    )
+                }
+            }
+        }
+    }
+
     fun toggle() { controller?.let { if (it.isPlaying) it.pause() else { if (it.playbackState == Player.STATE_ENDED) it.seekTo(0); it.play() } } }
-    fun stop() { request?.cancel(); controller?.stop(); mutable.value = AudioUiState() }
+    fun stop() {
+        request?.cancel()
+        nextRequestGeneration()
+        controller?.stop()
+        controller?.clearMediaItems()
+        mutable.value = AudioUiState()
+    }
     fun position(): Long = (controller?.currentPosition ?: 0) + mutable.value.clipStart
     override fun onCleared() { controller?.removeListener(listener); MediaController.releaseFuture(future) }
 }
