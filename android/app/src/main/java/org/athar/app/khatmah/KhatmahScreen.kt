@@ -143,7 +143,7 @@ private class KhatmahViewModel(
 
 @Composable
 fun KhatmahScreen(graph: AppGraph) {
-    val owner = remember { requireNotNull(graph.session.userId) }
+    val owner = requireNotNull(graph.session.userId)
     val vm: KhatmahViewModel = viewModel(
         key = "khatmah:$owner",
         factory = object : ViewModelProvider.Factory {
@@ -228,10 +228,12 @@ private fun KhatmahContent(
     val formValid = runCatching {
         val start = LocalDate.parse(startDate)
         val target = LocalDate.parse(targetDate)
+        val unchangedOverdueTarget = plan != null &&
+            targetDate == plan.targetDate
         completed != null &&
             completed in 0..604 &&
             !target.isBefore(start) &&
-            !target.isBefore(today) &&
+            (unchangedOverdueTarget || !target.isBefore(today)) &&
             !start.isBefore(today.minusYears(5)) &&
             !start.isAfter(today.plusYears(1)) &&
             !target.isAfter(start.plusYears(5))
