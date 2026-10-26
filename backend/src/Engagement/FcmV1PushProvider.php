@@ -83,21 +83,3 @@ final class FcmV1PushProvider implements PushProvider
         }catch(\Throwable $ignored){return null;}
     }
 }
-
-final class DisabledPushProvider implements PushProvider
-{
-    public function name(): string { return 'disabled'; }
-    public function send(PushMessage $message): PushSendResult { return PushSendResult::permanent('provider_disabled'); }
-}
-
-final class PushProviderFactory
-{
-    public static function fromConfig(PushProviderConfig $config): PushProvider
-    {
-        if($config->provider==='disabled')return new DisabledPushProvider();
-        $http=new CurlPushHttpTransport();
-        $credential=$config->credentialPath();
-        $tokens=new FcmServiceAccountTokenSource($credential,$http);
-        return new FcmV1PushProvider((string)$config->projectId,$tokens,$http);
-    }
-}

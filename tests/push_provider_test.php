@@ -61,8 +61,12 @@ pp_assert($invalid->send(message())->status==='invalid_token','unregistered toke
 $auth=new FcmV1PushProvider('athar-demo',new FixtureToken(),new FixtureHttp(new PushHttpResponse(401,'{"error":{"status":"UNAUTHENTICATED"}}')));
 pp_assert($auth->send(message())->errorCode==='provider_auth','provider credential failure is not confused with token failure');
 
-pp_assert(runCatching(fn()=>new PushMessage(
-    'short','lesson_reminders','T','B',[],new DateTimeImmutable('+1 hour'),'dedupe-key-123456'
-))->isFailure(),'invalid token rejected before transport');
+$rejected=false;
+try{
+    new PushMessage(
+        'short','lesson_reminders','T','B',[],new DateTimeImmutable('+1 hour'),'dedupe-key-123456'
+    );
+}catch(InvalidArgumentException $expected){$rejected=true;}
+pp_assert($rejected,'invalid token rejected before transport');
 
 echo 'PASS: '.$checks." push provider abstraction/fake transport/retry/token-classification assertions.\n";
