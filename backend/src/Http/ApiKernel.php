@@ -124,6 +124,10 @@ final class ApiKernel
             $id=$r->body['target_id']??null;if(!is_int($id)||$id<1)throw new ApiError('invalid_fields',422,['target_id'=>'invalid']);
             $this->progress->favorite($user,$r->string('target_type',12),$id,$r->method!=='DELETE');return [['saved'=>$r->method!=='DELETE'],200];
         }
+        if($path==='/me/activity-summary'){
+            $this->method($r,'GET');
+            return [$this->progress->activitySummary($user),200];
+        }
         if($path==='/me/adhkar-stats'){
             $this->method($r,'GET');
             return [$this->progress->adhkarStats($user),200];
