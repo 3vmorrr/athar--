@@ -27,8 +27,9 @@ These are **not COMPLETE receipts**. They prove code landed on `parallel/admin-f
 |15.3|—|BLOCKED — authorized FCM/device required|
 |16.1|65c5f5518452|PARTIAL|
 |16.2|d520fb169cc9|PARTIAL|
+|16.3|2c3c988733f9|PARTIAL|
 
-Next implementation: **16.3**.
+Next implementation: **16.4**.
 
 Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 

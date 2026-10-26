@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "16.3",
+  "current_task": "16.4",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -1630,7 +1630,7 @@
       "name": "Inbox offline badge and synchronization",
       "parent": "Work package 16: Inbox/policy",
       "scope": "Persist private inbox/read state and badge without duplicates across restart/account changes.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "16.2"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "d520fb169cc9f926acd77ad84cbfa30382330f20",
-    "last_landed_task": "16.2",
-    "next_task": "16.3",
+    "head": "2c3c988733f9fc090649b8dc601f4ff8137c17f8",
+    "last_landed_task": "16.3",
+    "next_task": "16.4",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2795,7 +2795,8 @@
       "15.1",
       "15.2",
       "16.1",
-      "16.2"
+      "16.2",
+      "16.3"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2876,6 +2877,9 @@
       ],
       "16.2": [
         "d520fb169cc9"
+      ],
+      "16.3": [
+        "2c3c988733f9"
       ]
     }
   }

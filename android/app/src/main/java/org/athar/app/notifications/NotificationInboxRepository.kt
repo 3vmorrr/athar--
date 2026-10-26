@@ -164,8 +164,8 @@ object NotificationInboxLocalCodec {
             addProperty("has_more", state.hasMore)
             addProperty("unread_count", state.unreadCount)
             addProperty("updated_at_ms", state.updatedAtMillis)
-            add("pending_reads", JsonArray().apply { state.pendingReads.sorted().forEach(::add) })
-            add("pending_deletes", JsonArray().apply { state.pendingDeletes.sorted().forEach(::add) })
+            add("pending_reads", JsonArray().apply { state.pendingReads.sorted().forEach { add(it) } })
+            add("pending_deletes", JsonArray().apply { state.pendingDeletes.sorted().forEach { add(it) } })
             add("items", JsonArray().apply {
                 state.items.forEach { add(encodeItem(it)) }
             })
