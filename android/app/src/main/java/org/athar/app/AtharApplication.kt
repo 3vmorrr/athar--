@@ -40,6 +40,13 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
         pushDeviceTokenStore,
     )
     val reminderGlobalPolicy = org.athar.app.notifications.ReminderGlobalPolicyRepository(database.dao(), session, cipher)
+    val notificationDiagnostics = org.athar.app.notifications.NotificationDiagnosticsRepository(
+        notificationPreferences,
+        reminderStore,
+        notificationPolicyLedger,
+        reminderGlobalPolicy,
+        notificationInbox,
+    )
     val reminders = org.athar.app.notifications.LocalReminderCoordinator(
         application,
         partition,

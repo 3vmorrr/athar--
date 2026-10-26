@@ -641,4 +641,18 @@
     <string name="load_more">Load more</string>
     <string name="inbox_pending_sync">Changes waiting to sync: %1$d</string>
     <string name="inbox_showing_saved">The inbox could not refresh; showing the saved inbox on this device.</string>
+    <string name="notification_diagnostics">Notification policy diagnostics</string>
+    <string name="notification_diagnostics_explainer">A privacy-safe local summary of policy and delivery state. It does not expose custom reminder names, worship notes/dates, or campaign audiences.</string>
+    <string name="notification_diagnostics_unreadable">Part of the local notification policy state is unreadable, so Athar will not show a partial diagnostic.</string>
+    <string name="notification_diagnostics_master">Global policy</string>
+    <string name="notification_diagnostics_allowed">Allowed</string>
+    <string name="notification_diagnostics_blocked">Blocked</string>
+    <string name="notification_diagnostics_quiet">Quiet hours</string>
+    <string name="notification_diagnostics_history">Local delivery history present?</string>
+    <string name="notification_diagnostics_yes">Yes</string>
+    <string name="notification_diagnostics_no">No</string>
+    <string name="notification_diagnostics_outcomes">Ready: %1$d · deferred: %2$d · policy-dropped: %3$d · consent-blocked: %4$d</string>
+    <string name="notification_diagnostics_inbox_pending">Inbox changes waiting to sync: %1$d</string>
+    <string name="notification_diagnostics_pending_count">Scheduled: %1$d</string>
+    <string name="following_updates">Following updates</string>
 </resources>
