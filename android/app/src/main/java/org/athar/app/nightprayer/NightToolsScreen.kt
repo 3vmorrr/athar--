@@ -45,11 +45,14 @@ import java.time.format.DateTimeFormatter
     var preferenceConflict by remember { mutableStateOf(false) }
     var preferenceSaved by remember { mutableStateOf(false) }
     var preferenceFormError by remember { mutableStateOf(false) }
-    var exemptStart by remember { mutableStateOf("") }; var exemptEnd by remember { mutableStateOf("") }; var exemptTotal by remember { mutableIntStateOf(0) }
-    var exemptAttempt by remember{mutableIntStateOf(0)}
-    var exemptReady by remember{mutableStateOf(false)}
-    var exemptUnreadable by remember{mutableStateOf(false)}
-    var exemptFormError by remember{mutableStateOf(false)}
+    var exemptStart by remember { mutableStateOf("") }
+    var exemptEnd by remember { mutableStateOf("") }
+    var exemptDates by remember(owner) { mutableStateOf<Set<LocalDate>>(emptySet()) }
+    var exemptAttempt by remember { mutableIntStateOf(0) }
+    var exemptReady by remember { mutableStateOf(false) }
+    var exemptUnreadable by remember { mutableStateOf(false) }
+    var exemptFormError by remember { mutableStateOf(false) }
+    var confirmClearExemptions by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(owner, preferenceAttempt) {
@@ -76,12 +79,22 @@ import java.time.format.DateTimeFormatter
             preferenceUnavailable = true
         }
     }
-    LaunchedEffect(graph.session.userId,exemptAttempt) {
-        exemptReady=false;exemptUnreadable=false
-        try{exemptTotal=graph.nightPrayer.localExemptions(owner).size;exemptReady=true}
-        catch(failure:CancellationException){throw failure}
-        catch(_:Exception){exemptUnreadable=true}
+    LaunchedEffect(owner, exemptAttempt) {
+        exemptReady = false
+        exemptUnreadable = false
+        try {
+            exemptDates = graph.nightPrayer.localExemptions(owner)
+            exemptReady = true
+        } catch (failure: CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            exemptUnreadable = true
+        }
     }
+    val exemptionRanges = remember(exemptDates) {
+        exemptionRanges(exemptDates)
+    }
+
     LazyColumn(modifier=Modifier.testTag("night-tools-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item(key = "verse-heading", contentType = "heading") { Text(stringResource(R.string.verse_calculator), style = MaterialTheme.typography.headlineSmall) }
         item(key = "verse-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -312,32 +325,260 @@ import java.time.format.DateTimeFormatter
                 )
             }
         } }
-        item(key = "exemption-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.local_exemptions), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.exemptions_notice)) }
-        item(key = "exemption-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            if(exemptReady)Text(stringResource(R.string.exemption_days, exemptTotal))
-            else if(exemptUnreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={exemptAttempt++}){Text(stringResource(R.string.retry))}}
-            else LinearProgressIndicator(Modifier.fillMaxWidth())
-            if(exemptFormError)MessagePanel(stringResource(R.string.invalid_input),true)
-            DateField(exemptStart, { exemptStart = it }, stringResource(R.string.start_date), latest = LocalDate.now())
-            DateField(exemptEnd, { exemptEnd = it }, stringResource(R.string.end_date), latest = LocalDate.now())
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(enabled=exemptReady,onClick = { scope.launch {
-                    try {
-                        val start = LocalDate.parse(exemptStart); val end = LocalDate.parse(exemptEnd)
-                        require(!end.isBefore(start) && end <= LocalDate.now() && java.time.temporal.ChronoUnit.DAYS.between(start, end) <= 365)
-                        try {
-                            val values = graph.nightPrayer.localExemptions(owner).toMutableSet()
-                            var day=start;while(day<=end){values.add(day);day=day.plusDays(1)}
-                            graph.nightPrayer.localExemptions(values,owner);exemptTotal=values.size;exemptFormError=false
-                        }catch(failure:CancellationException){throw failure}
-                        catch(_:Exception){exemptUnreadable=true;exemptReady=false}
+        item(key = "exemption-heading", contentType = "heading") {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.local_exemptions),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Text(stringResource(R.string.exemptions_notice))
+        }
+
+        item(key = "exemption-form", contentType = "form") {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                when {
+                    exemptReady -> {
+                        Text(
+                            stringResource(
+                                R.string.exemption_days,
+                                exemptDates.size,
+                            ),
+                        )
                     }
-                    catch (failure: CancellationException) { throw failure } catch (_: Exception) { exemptFormError = true }
-                } }) { Text(stringResource(R.string.save)) }
-                TextButton(enabled=exemptReady,onClick = { scope.launch { try{graph.nightPrayer.localExemptions(emptySet(),owner); exemptTotal = 0;exemptFormError=false}catch(failure:CancellationException){throw failure}catch(_:Exception){exemptUnreadable=true;exemptReady=false} } }) { Text(stringResource(R.string.clear_local_exemptions)) }
+                    exemptUnreadable -> {
+                        MessagePanel(
+                            stringResource(R.string.local_data_unreadable),
+                            true,
+                        ) {
+                            TextButton(onClick = { exemptAttempt++ }) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
+                    }
+                    else -> LinearProgressIndicator(Modifier.fillMaxWidth())
+                }
+
+                if (exemptFormError) {
+                    MessagePanel(stringResource(R.string.invalid_input), true)
+                }
+
+                DateField(
+                    exemptStart,
+                    {
+                        exemptStart = it
+                        exemptFormError = false
+                    },
+                    stringResource(R.string.start_date),
+                    latest = LocalDate.now(),
+                )
+                DateField(
+                    exemptEnd,
+                    {
+                        exemptEnd = it
+                        exemptFormError = false
+                    },
+                    stringResource(R.string.end_date),
+                    latest = LocalDate.now(),
+                )
+
+                OutlinedButton(
+                    enabled = exemptReady && !busy,
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val start = LocalDate.parse(exemptStart)
+                                val end = LocalDate.parse(exemptEnd)
+                                require(
+                                    !end.isBefore(start) &&
+                                        end <= LocalDate.now() &&
+                                        java.time.temporal.ChronoUnit.DAYS
+                                            .between(start, end) <= 365,
+                                )
+                                val values = exemptDates.toMutableSet()
+                                var day = start
+                                while (day <= end) {
+                                    values.add(day)
+                                    day = day.plusDays(1)
+                                }
+                                graph.nightPrayer.localExemptions(values, owner)
+                                exemptDates = values.toSet()
+                                exemptStart = ""
+                                exemptEnd = ""
+                                exemptFormError = false
+                            } catch (failure: CancellationException) {
+                                throw failure
+                            } catch (_: IllegalArgumentException) {
+                                exemptFormError = true
+                            } catch (_: Exception) {
+                                exemptUnreadable = true
+                                exemptReady = false
+                            }
+                        }
+                    },
+                    modifier = Modifier.heightIn(min = 52.dp),
+                ) {
+                    Text(stringResource(R.string.exemption_add_period))
+                }
+
+                if (exemptionRanges.isNotEmpty()) {
+                    HorizontalDivider()
+                    Text(
+                        stringResource(R.string.exemption_saved_periods),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    exemptionRanges.forEach { period ->
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement =
+                                    Arrangement.SpaceBetween,
+                                verticalAlignment =
+                                    androidx.compose.ui.Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    stringResource(
+                                        R.string.exemption_period,
+                                        period.start.toString(),
+                                        period.end.toString(),
+                                        period.days,
+                                    ),
+                                    modifier = Modifier.weight(1f),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                                TextButton(
+                                    enabled = exemptReady && !busy,
+                                    onClick = {
+                                        scope.launch {
+                                            try {
+                                                val next = exemptDates
+                                                    .filterNot { it in period.start..period.end }
+                                                    .toSet()
+                                                graph.nightPrayer.localExemptions(
+                                                    next,
+                                                    owner,
+                                                )
+                                                exemptDates = next
+                                            } catch (
+                                                failure: CancellationException
+                                            ) {
+                                                throw failure
+                                            } catch (_: Exception) {
+                                                exemptUnreadable = true
+                                                exemptReady = false
+                                            }
+                                        }
+                                    },
+                                ) {
+                                    Text(
+                                        stringResource(
+                                            R.string.exemption_remove_period,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    TextButton(
+                        enabled = exemptReady && !busy,
+                        onClick = { confirmClearExemptions = true },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            stringResource(R.string.clear_local_exemptions),
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                }
             }
-        } }
+        }
     }
+
+    if (confirmClearExemptions) {
+        AlertDialog(
+            onDismissRequest = { confirmClearExemptions = false },
+            title = {
+                Text(stringResource(R.string.clear_local_exemptions))
+            },
+            text = {
+                Text(stringResource(R.string.exemption_clear_confirm))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmClearExemptions = false
+                        scope.launch {
+                            try {
+                                graph.nightPrayer.localExemptions(
+                                    emptySet(),
+                                    owner,
+                                )
+                                exemptDates = emptySet()
+                                exemptFormError = false
+                            } catch (failure: CancellationException) {
+                                throw failure
+                            } catch (_: Exception) {
+                                exemptUnreadable = true
+                                exemptReady = false
+                            }
+                        }
+                    },
+                ) {
+                    Text(
+                        stringResource(R.string.clear_local_exemptions),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { confirmClearExemptions = false },
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+}
+
+private data class LocalExemptionRange(
+    val start: LocalDate,
+    val end: LocalDate,
+) {
+    val days: Int
+        get() = java.time.temporal.ChronoUnit.DAYS
+            .between(start, end)
+            .toInt() + 1
+}
+
+private fun exemptionRanges(
+    dates: Set<LocalDate>,
+): List<LocalExemptionRange> {
+    val sorted = dates.sorted()
+    if (sorted.isEmpty()) return emptyList()
+
+    val ranges = mutableListOf<LocalExemptionRange>()
+    var start = sorted.first()
+    var end = start
+
+    sorted.drop(1).forEach { date ->
+        if (date == end.plusDays(1)) {
+            end = date
+        } else {
+            ranges += LocalExemptionRange(start, end)
+            start = date
+            end = date
+        }
+    }
+    ranges += LocalExemptionRange(start, end)
+    return ranges.asReversed()
+}
 }
 @Composable private fun NumericInput(value: String, change: (String) -> Unit, label: Int, modifier: Modifier) { OutlinedTextField(value, { change(it.filter(Char::isDigit).take(6)) }, modifier, label = { Text(stringResource(label)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)) }
 @Composable private fun MethodSelector(value: String, change: (String) -> Unit, values: List<String>) {
