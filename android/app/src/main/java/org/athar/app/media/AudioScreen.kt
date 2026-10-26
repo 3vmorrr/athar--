@@ -171,8 +171,15 @@ import org.athar.app.quran.AyahText
             }
             if (!radio && selectedIsLoaded && state.recording != null && state.timings.isEmpty() && !state.loading) Text(stringResource(R.string.no_timing), style = MaterialTheme.typography.bodySmall)
         }
-        if (radio) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
-        else if (follow && selectedIsLoaded) Box(Modifier.weight(1f)) { FollowAlong(vm, state, verses) }
+        if (radio) {
+            Box(Modifier.weight(1f)) {
+                RadioCatalog(graph, vm, state)
+            }
+        } else if (follow && selectedIsLoaded) {
+            Box(Modifier.weight(1f)) {
+                FollowAlong(vm, state, verses)
+            }
+        }
       }
     }
     if (selector) ReaderDialog(graph, surah, { selector = false }) { reader -> update(selection.withReader(reader)); selector = false }
@@ -196,6 +203,162 @@ import org.athar.app.quran.AyahText
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text("${row.number}. ${row.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RadioCatalog(
+    graph: AppGraph,
+    vm: AudioViewModel,
+    state: AudioUiState,
+) {
+    var input by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
+    var page by rememberSaveable(query) { mutableIntStateOf(1) }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = AtharSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+        ) {
+            OutlinedTextField(
+                value = input,
+                onValueChange = { input = it.take(80) },
+                modifier = Modifier.weight(1f),
+                singleLine = true,
+                label = { Text(stringResource(R.string.search)) },
+            )
+            TextButton(
+                onClick = {
+                    query = input.trim()
+                    page = 1
+                },
+            ) {
+                Text(stringResource(R.string.search))
+            }
+        }
+
+        Box(Modifier.weight(1f)) {
+            DataScreen(
+                graph,
+                "quran/radios",
+                mapOf(
+                    "q" to query,
+                    "page" to "$page",
+                    "per_page" to "25",
+                ),
+            ) { data, _ ->
+                val stations = data.array("items")
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = AtharSpacing.Xl),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    item(key = "radio-source", contentType = "source") {
+                        val source = data.text("source")
+                        if (source.isNotBlank()) {
+                            Text(
+                                "${stringResource(R.string.source)} · $source",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+
+                    if (stations.isEmpty()) {
+                        item(key = "radio-empty", contentType = "state") {
+                            QuietEmptyState(stringResource(R.string.empty_state))
+                        }
+                    }
+
+                    items(
+                        stations,
+                        key = { it.text("id") },
+                        contentType = { "station" },
+                    ) { station ->
+                        val mediaId = "radio:${station.text("id")}"
+                        val selected = state.radio && state.mediaKey == mediaId
+                        Surface(
+                            onClick = { vm.radio(station) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("radio-station-${station.text("id")}"),
+                            shape = MaterialTheme.shapes.large,
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainerLow
+                            },
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (selected) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant
+                                },
+                            ),
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(AtharSpacing.Lg),
+                                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                            ) {
+                                Icon(
+                                    AtharIcons.PlayArrow,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        station.text("name"),
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    if (selected) {
+                                        Text(
+                                            stringResource(
+                                                if (state.playing) R.string.watch_playing
+                                                else R.string.watch_paused,
+                                            ),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    item(key = "radio-pages", contentType = "controls") {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            TextButton(
+                                onClick = { page-- },
+                                enabled = page > 1,
+                            ) {
+                                Text(stringResource(R.string.back))
+                            }
+                            TextButton(
+                                onClick = { page++ },
+                                enabled = data.asJsonObject["pagination"]
+                                    .text("has_more") == "true",
+                            ) {
+                                Text(stringResource(R.string.more))
+                            }
                         }
                     }
                 }
