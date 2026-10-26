@@ -38,7 +38,12 @@ fun ScholarScreen(graph: AppGraph, id: Int, open: (String) -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item(key = "profile", contentType = "profile") {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    AtharHeroSurface(Modifier.fillMaxWidth()) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        ) {
                         val image = scholar.text("image_url")
                         if (image.startsWith("/scholar-image?key=")) {
                             val origin = graph.apiBaseUrl.substringBefore("/api/")
@@ -49,7 +54,15 @@ fun ScholarScreen(graph: AppGraph, id: Int, open: (String) -> Unit) {
                                 contentScale = ContentScale.Crop
                             )
                         }
-                        Text(scholar.text("name"), style = MaterialTheme.typography.headlineMedium)
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(scholar.text("name"), style = MaterialTheme.typography.headlineMedium)
+                            Text(
+                                if (standalone) stringResource(R.string.scholar_standalone) else stringResource(R.string.series),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                        }
                         ExpandableDescription(scholar.text("biography"))
                         val source = scholar.text("source_url")
                         if (runCatching { java.net.URI(source).scheme == "https" && java.net.URI(source).host != null }.getOrDefault(false)) {
