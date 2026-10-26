@@ -27,6 +27,8 @@ import org.athar.app.R
 import org.athar.app.auth.AuthState
 import org.athar.app.auth.AccountInput
 import org.athar.app.core.data.cleanupDeletedAccount
+import org.athar.app.notifications.NotificationDestination
+import org.athar.app.notifications.NotificationLaunch
 import org.athar.app.quran.QuranScreen
 import org.athar.app.adhkar.AdhkarScreen
 import org.athar.app.books.BookDetailScreen
@@ -77,7 +79,12 @@ private fun AtharNavIcon(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun MainShell(vm: AppViewModel, auth: AuthState.SignedIn) {
+@Composable fun MainShell(
+    vm: AppViewModel,
+    auth: AuthState.SignedIn,
+    notificationLaunch: NotificationLaunch? = null,
+    onNotificationLaunchConsumed: (NotificationLaunch) -> Unit = {},
+) {
     var selected by rememberSaveable { mutableStateOf("home") }
     val navigation = rememberNavController()
     val currentEntry by navigation.currentBackStackEntryAsState()
@@ -117,6 +124,24 @@ private fun AtharNavIcon(
                 }
             }
         }
+    }
+    LaunchedEffect(notificationLaunch, auth.user.id) {
+        val launch = notificationLaunch ?: return@LaunchedEffect
+        if (launch.ownerId != auth.user.id) {
+            onNotificationLaunchConsumed(launch)
+            return@LaunchedEffect
+        }
+        when (val target = launch.destination) {
+            is NotificationDestination.Lesson -> open("lessons/" + target.id)
+            is NotificationDestination.Series -> open("series/" + target.id)
+            NotificationDestination.Quran -> navigateTab("quran")
+            NotificationDestination.Adhkar -> navigateTab("adhkar")
+            NotificationDestination.NightPrayer -> open("night-prayer")
+            NotificationDestination.Inbox -> {
+                // WP16 registers the private inbox destination. Never misroute it to another account/screen.
+            }
+        }
+        onNotificationLaunchConsumed(launch)
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wide = maxWidth >= 840.dp
