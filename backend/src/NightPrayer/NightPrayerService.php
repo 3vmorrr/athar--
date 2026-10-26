@@ -133,7 +133,15 @@ final class NightPrayerService
         foreach($nights as &$night){$night['verse_count']=(int)$night['verse_count'];$night['session_count']=(int)$night['session_count'];$night['milestone']=NightPrayer::milestone($night['verse_count']);$sum+=$night['verse_count'];$sessions+=$night['session_count'];if($best===null||$night['verse_count']>$best['verse_count'])$best=$night;}unset($night);
         $streaks=NightPrayer::streaks($nights,$currentNight??($nights?end($nights)['night_date']:gmdate('Y-m-d')),$nightInProgress);
         if($currentNight===null)foreach($streaks as &$streak)$streak['current']=null;unset($streak);
-        $q=$this->db->prepare('SELECT SUM(measured_seconds) measured_seconds,SUM(verse_count) measured_verses FROM night_prayer_sessions WHERE user_id=? AND is_deleted=0 AND measured_seconds>0');$q->execute([$user]);$pace=$q->fetch();$pace=(int)($pace['measured_verses']??0)>0?['measured_seconds'=>(int)$pace['measured_seconds'],'measured_verses'=>(int)$pace['measured_verses'],'seconds_per_verse'=>(int)$pace['measured_seconds']/(int)$pace['measured_verses']]:null;
+        $q=$this->db->prepare(
+            'SELECT verse_count,measured_seconds
+             FROM night_prayer_sessions
+             WHERE user_id=?
+               AND is_deleted=0
+               AND measured_seconds>0'
+        );
+        $q->execute([$user]);
+        $pace=$this->paceInsight($q->fetchAll());
         $q=$this->db->prepare("SELECT end_index FROM night_prayer_sessions WHERE user_id=? AND is_deleted=0 AND entry_type='range' ORDER BY COALESCE(ended_at,started_at,created_at) DESC,id DESC LIMIT 1");$q->execute([$user]);$end=$q->fetchColumn();$continuation=$end===false?null:((int)$end>=6236?['restart_required'=>true,'next'=>null]:['restart_required'=>false,'next'=>QuranIndex::standard()->position((int)$end+1)]);
         $tonight=null;if($currentNight!==null){$tonight=['night_date'=>$currentNight,'verse_count'=>0,'session_count'=>0];foreach($nights as $night)if($night['night_date']===$currentNight)$tonight=$night;$tonight['milestone']=NightPrayer::milestone($tonight['verse_count']);}
         return ['total_nights'=>count($nights),'total_sessions'=>$sessions,'total_verses'=>$sum,'average_verses_per_active_night'=>$nights?$sum/count($nights):0,'best_night'=>$best,'tonight'=>$tonight,'streaks'=>$streaks,'reading_pace'=>$pace,'continuation'=>$continuation,'nights'=>$nights,'night_context_required'=>$currentNight===null];
@@ -158,6 +166,65 @@ final class NightPrayerService
         foreach(['start_index','end_index','measured_seconds'] as $field)$result[$field]=$row[$field]===null?null:(int)$row[$field];$result['verse_count']=(int)$row['verse_count'];
         foreach(['maghrib_at','fajr_at','started_at','ended_at','created_at','updated_at'] as $field)$result[$field]=$row[$field]===null?null:str_replace(' ','T',$row[$field]).'Z';
         $result['note']=$row['note_cipher']===null?'':$this->open((int)$row['user_id'],$row['note_cipher']);return $result;
+    }
+
+    private function paceInsight(array $rows):?array
+    {
+        $valid=[];
+        foreach($rows as $row){
+            $verses=(int)($row['verse_count']??0);
+            $seconds=(int)($row['measured_seconds']??0);
+            if($verses<1||$verses>100000||$seconds<1||$seconds>86400)continue;
+            $valid[]=[
+                'verses'=>$verses,
+                'seconds'=>$seconds,
+                'rate'=>$seconds/$verses,
+            ];
+        }
+        $sampleCount=count($valid);
+        if($sampleCount<2)return null;
+
+        $used=$valid;
+        if($sampleCount>=5){
+            $rates=array_column($valid,'rate');
+            sort($rates,SORT_NUMERIC);
+            $percentile=static function(array $values,float $fraction):float{
+                $last=count($values)-1;
+                $index=$last*$fraction;
+                $lower=(int)floor($index);
+                $upper=(int)ceil($index);
+                if($lower===$upper)return (float)$values[$lower];
+                $weight=$index-$lower;
+                return (float)$values[$lower]*(1.0-$weight)
+                    +(float)$values[$upper]*$weight;
+            };
+            $q1=$percentile($rates,0.25);
+            $q3=$percentile($rates,0.75);
+            $iqr=max(0.0,$q3-$q1);
+            $low=$q1-1.5*$iqr;
+            $high=$q3+1.5*$iqr;
+            $filtered=array_values(array_filter(
+                $valid,
+                static fn(array $row):bool=>$row['rate']>=$low&&$row['rate']<=$high
+            ));
+            if(count($filtered)>=2)$used=$filtered;
+        }
+
+        $seconds=0;
+        $verses=0;
+        foreach($used as $row){
+            $seconds+=(int)$row['seconds'];
+            $verses+=(int)$row['verses'];
+        }
+        if($seconds<=0||$verses<=0)return null;
+
+        return [
+            'sample_count'=>$sampleCount,
+            'used_sample_count'=>count($used),
+            'measured_seconds'=>$seconds,
+            'measured_verses'=>$verses,
+            'seconds_per_verse'=>$seconds/$verses,
+        ];
     }
 
     private function validate(array $input): array
