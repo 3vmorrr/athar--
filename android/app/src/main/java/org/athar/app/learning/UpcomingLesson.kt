@@ -27,6 +27,7 @@ data class UpcomingLesson(
     val scholarId:Int?,val scholarName:String,val seriesId:Int?,val seriesName:String,
     val durationMinutes:Int?,val revision:Int,val canWatch:Boolean,
     val courseTitle:String="",val topics:List<String> = emptyList(),val relatedBook:EventBook?=null,val youtubeId:String="",
+    val eventId:Long?=null,val scheduleTimezone:String="UTC",val remindersEnabled:Boolean=false,
 ) {
     companion object {
         fun from(value:JsonElement):UpcomingLesson {
@@ -37,7 +38,8 @@ data class UpcomingLesson(
                 value.text("estimated_duration_minutes").toIntOrNull(),value.text("revision").toInt(),
                 value.text("can_watch")=="true"&&status in setOf(EventStatus.LIVE,EventStatus.PUBLISHED),
                 value.text("course_title"),value.asJsonObject["topics"]?.takeIf{it.isJsonArray}?.asJsonArray?.map{it.asString}.orEmpty(),
-                value.asJsonObject["related_book"]?.takeUnless{it.isJsonNull}?.let{EventBook(it.text("id").toInt(),it.text("title"),it.text("page_start").toIntOrNull(),it.text("page_end").toIntOrNull())},value.text("youtube_id"))
+                value.asJsonObject["related_book"]?.takeUnless{it.isJsonNull}?.let{EventBook(it.text("id").toInt(),it.text("title"),it.text("page_start").toIntOrNull(),it.text("page_end").toIntOrNull())},value.text("youtube_id"),
+                value.text("event_id").toLongOrNull(),value.text("schedule_timezone").ifBlank{"UTC"},value.text("reminders_enabled")=="true")
         }
     }
 }

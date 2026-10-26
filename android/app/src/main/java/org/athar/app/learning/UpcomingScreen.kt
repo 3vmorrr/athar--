@@ -40,7 +40,14 @@ import java.time.format.FormatStyle
     val state by vm.state.collectAsStateWithLifecycle()
     val lifecycle=LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(vm,lifecycle){lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){while(isActive){delay(60_000);vm.refresh(silent=true)}}}
-    UpcomingContent(state,lesson!=null,{vm.refresh()},vm::more,open)
+    UpcomingContent(
+        state = state,
+        detail = lesson != null,
+        refresh = { vm.refresh() },
+        more = vm::more,
+        open = open,
+        reminderControl = { event -> LessonReminderControl(graph, event) },
+    )
 }
 
 @Composable internal fun UpcomingContent(
@@ -49,6 +56,7 @@ import java.time.format.FormatStyle
     refresh: () -> Unit,
     more: () -> Unit,
     open: (String) -> Unit,
+    reminderControl: @Composable (UpcomingLesson) -> Unit = {},
 ) {
     val heroEvent = state.items.firstOrNull()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
@@ -155,6 +163,7 @@ import java.time.format.FormatStyle
                         state.clockOffsetMillis,
                         detail,
                         open,
+                        reminderControl,
                     )
                 }
             }
@@ -232,7 +241,14 @@ private fun UpcomingHero(
     )
 }
 
-@Composable private fun UpcomingCard(event:UpcomingLesson,offline:Boolean,clockOffset:Long,detail:Boolean,open:(String)->Unit) {
+@Composable private fun UpcomingCard(
+    event:UpcomingLesson,
+    offline:Boolean,
+    clockOffset:Long,
+    detail:Boolean,
+    open:(String)->Unit,
+    reminderControl:@Composable (UpcomingLesson)->Unit,
+) {
     val locale=LocalConfiguration.current.locales[0]
     val zone=ZoneId.systemDefault()
     val date=remember(event.start,locale,zone){event.start?.atZone(zone)?.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT).withLocale(locale))}
@@ -263,6 +279,7 @@ private fun UpcomingHero(
             Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.CalendarMonth,null,Modifier.size(20.dp));Column{Text(date?:stringResource(R.string.upcoming_time_unset),style=MaterialTheme.typography.titleMedium);Text(stringResource(R.string.upcoming_device_time),style=MaterialTheme.typography.bodySmall)}}
             if(event.status==EventStatus.SCHEDULED&&event.start!=null)EventCountdownLabel(event.start,clockOffset)
             event.durationMinutes?.let{Text(pluralStringResource(R.plurals.upcoming_duration,it,it),style=MaterialTheme.typography.bodySmall)}
+            if(detail) reminderControl(event)
             if(event.status==EventStatus.CANCELLED)MessagePanel(stringResource(R.string.upcoming_cancelled_body))
             if(detail&&event.status==EventStatus.PUBLISHED&&!event.canWatch)MessagePanel(stringResource(R.string.upcoming_replay_pending))
             if(detail&&event.description.isNotBlank()){

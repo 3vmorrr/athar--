@@ -440,4 +440,21 @@
     <string name="notification_channel_following_description">New content from scholars and series you follow.</string>
     <string name="notification_channel_campaigns">Athar announcements</string>
     <string name="notification_channel_campaigns_description">General messages sent only with separate campaign consent.</string>
+    <string name="lesson_reminder_title">This lesson reminder</string>
+    <string name="lesson_reminder_default">One reminder %1$d minutes before the lesson.</string>
+    <string name="lesson_reminder_enabled">You chose a reminder %1$d minutes before the lesson.</string>
+    <string name="lesson_reminder_unavailable">A reminder is not currently available for this lesson.</string>
+    <string name="lesson_reminder_enable">Remind me before the lesson</string>
+    <string name="lesson_reminder_turn_off">Turn off this lesson reminder</string>
+    <string name="lesson_reminder_saved_choice">Your reminder choice was saved on this device.</string>
+    <string name="lesson_reminder_disabled">This lesson reminder was turned off.</string>
+    <string name="lesson_reminder_save_failed">Your reminder choice could not be saved. Try again.</string>
+    <string name="lesson_reminder_preferences_unavailable">Notification settings could not be read right now.</string>
+    <string name="lesson_reminder_permission_denied">Notification permission was not granted, so this lesson reminder was not enabled.</string>
+    <string name="lesson_reminder_open_settings">Open notification settings</string>
+    <string name="lesson_reminder_consent_title">Enable lesson reminders?</string>
+    <string name="lesson_reminder_consent_body">Only the lesson-reminder category will be enabled when you choose it. This does not subscribe you to campaign or announcement messages, and each lesson reminder can be turned off at any time.</string>
+    <string name="lesson_reminder_consent_confirm">Enable lesson reminders</string>
+    <string name="lesson_reminder_permission_title">Notification permission required</string>
+    <string name="lesson_reminder_permission_settings_body">Notifications are disabled for this app in system settings. Open settings if you want to allow lesson reminders.</string>
 </resources>

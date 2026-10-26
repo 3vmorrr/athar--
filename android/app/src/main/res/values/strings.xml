@@ -468,4 +468,21 @@
     <string name="notification_channel_following_description">محتوى جديد من العلماء والسلاسل التي تتابعها.</string>
     <string name="notification_channel_campaigns">إعلانات أثر</string>
     <string name="notification_channel_campaigns_description">رسائل عامة لا تُرسل إلا عند موافقتك المنفصلة على الحملات.</string>
+    <string name="lesson_reminder_title">تذكير هذا الدرس</string>
+    <string name="lesson_reminder_default">تذكير واحد قبل الموعد بـ %1$d دقيقة.</string>
+    <string name="lesson_reminder_enabled">اخترت تذكيرًا قبل الموعد بـ %1$d دقيقة.</string>
+    <string name="lesson_reminder_unavailable">التذكير غير متاح لهذا الدرس حاليًا.</string>
+    <string name="lesson_reminder_enable">تذكيري قبل الدرس</string>
+    <string name="lesson_reminder_turn_off">إيقاف تذكير هذا الدرس</string>
+    <string name="lesson_reminder_saved_choice">تم حفظ اختيار التذكير على هذا الجهاز.</string>
+    <string name="lesson_reminder_disabled">تم إيقاف تذكير هذا الدرس.</string>
+    <string name="lesson_reminder_save_failed">تعذر حفظ اختيار التذكير. حاول مرة أخرى.</string>
+    <string name="lesson_reminder_preferences_unavailable">تعذر قراءة إعدادات الإشعارات الآن.</string>
+    <string name="lesson_reminder_permission_denied">لم يُمنح إذن الإشعارات، لذلك لم نفعّل تذكير هذا الدرس.</string>
+    <string name="lesson_reminder_open_settings">فتح إعدادات الإشعارات</string>
+    <string name="lesson_reminder_consent_title">تفعيل تذكيرات الدروس؟</string>
+    <string name="lesson_reminder_consent_body">سيُفعَّل نوع تذكيرات الدروس فقط عند اختيارك. هذا لا يشترك بك في رسائل الحملات أو الإعلانات، ويمكنك إيقاف تذكير كل درس في أي وقت.</string>
+    <string name="lesson_reminder_consent_confirm">تفعيل تذكيرات الدروس</string>
+    <string name="lesson_reminder_permission_title">إذن الإشعارات مطلوب</string>
+    <string name="lesson_reminder_permission_settings_body">الإشعارات موقوفة لهذا التطبيق من إعدادات النظام. افتح الإعدادات إذا أردت السماح بتذكيرات الدروس.</string>
 </resources>
