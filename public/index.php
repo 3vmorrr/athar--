@@ -996,13 +996,22 @@ if ($path === '/admin') {
                         [$seriesScholarId] = validated_lesson_scope((int) ($_POST['scholar_id'] ?? 0), 0);
                         db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$seriesScholarId, $title, trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'book') {
-                        $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? '')); $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        $author = trim((string) ($_POST['author'] ?? ''));
+                        $description = trim((string) ($_POST['description'] ?? ''));
+                        $keywords = trim((string) ($_POST['keywords'] ?? ''));
+                        $source = trim((string) ($_POST['source_url'] ?? ''));
+                        $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                        $rightsHolder = trim((string) ($_POST['rights_holder'] ?? ''));
+                        $downloadUrl = trim((string) ($_POST['download_url'] ?? ''));
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 240 || mb_strlen($author,'UTF-8') < 2 || mb_strlen($author,'UTF-8') > 180) throw new RuntimeException('عنوان الكتاب أو اسم المؤلف غير صالح.');
+                        if (mb_strlen($description,'UTF-8') > 12000 || mb_strlen($keywords,'UTF-8') > 1000 || mb_strlen($rights,'UTF-8') > 500 || mb_strlen($rightsHolder,'UTF-8') > 180) throw new RuntimeException('بيانات الكتاب أطول من الحد المسموح.');
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
-                        if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
+                        if ($downloadUrl !== '' && !is_https_url($downloadUrl)) throw new RuntimeException('رابط التنزيل المباشر يجب أن يبدأ بـ HTTPS عند توفيره.');
                         $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
                         if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
                         $legacyFileQuery = db()->prepare('SELECT file_key FROM books WHERE id=?'); $legacyFileQuery->execute([$id]); $legacyFileKey = $legacyFileQuery->fetchColumn();
-                        db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,download_url=?,rights_basis=?,file_key=NULL,file_size=NULL,can_download=1,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')), $source, $downloadUrl, $rights, $published, $id]);
+                        db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,download_url=NULLIF(?,\'\'),rights_basis=?,file_key=NULL,file_size=NULL,can_download=?,is_published=? WHERE id=?')->execute([$title,$author,$description,$keywords ?: null,$language,$year,$rightsHolder,$source,$downloadUrl,$rights,$downloadUrl !== '' ? 1 : 0,$published,$id]);
                         if (is_string($legacyFileKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $legacyFileKey)) { $legacyPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $legacyFileKey; if (is_file($legacyPath)) unlink($legacyPath); }
                     } elseif ($type === 'adhkar') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
@@ -1075,12 +1084,21 @@ if ($path === '/admin') {
                 [$lessonScholarId,$lessonSeriesId] = validated_lesson_scope((int)($_POST['scholar_id'] ?? 0),(int)($_POST['series_id'] ?? 0));
                 db()->prepare('INSERT INTO lessons (scholar_id,series_id,title,description,youtube_id,source_url,sort_order,is_published) VALUES (NULLIF(?,0),NULLIF(?,0),?,?,?,?,?,?)')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $id, $url, (int) ($_POST['sort_order'] ?? 0), isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'book') {
-                if (trim((string) $_POST['rights_basis']) === '' || !is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
-                $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
-                if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
+                $title = trim((string) ($_POST['title'] ?? ''));
+                $author = trim((string) ($_POST['author'] ?? ''));
+                $description = trim((string) ($_POST['description'] ?? ''));
+                $keywords = trim((string) ($_POST['keywords'] ?? ''));
+                $source = trim((string) ($_POST['source_url'] ?? ''));
+                $rights = trim((string) ($_POST['rights_basis'] ?? ''));
+                $rightsHolder = trim((string) ($_POST['rights_holder'] ?? ''));
+                $downloadUrl = trim((string) ($_POST['download_url'] ?? ''));
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 240 || mb_strlen($author,'UTF-8') < 2 || mb_strlen($author,'UTF-8') > 180) throw new RuntimeException('عنوان الكتاب أو اسم المؤلف غير صالح.');
+                if (mb_strlen($description,'UTF-8') > 12000 || mb_strlen($keywords,'UTF-8') > 1000 || mb_strlen($rights,'UTF-8') > 500 || mb_strlen($rightsHolder,'UTF-8') > 180) throw new RuntimeException('بيانات الكتاب أطول من الحد المسموح.');
+                if ($rights === '' || !is_https_url($source)) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
+                if ($downloadUrl !== '' && !is_https_url($downloadUrl)) throw new RuntimeException('رابط التنزيل المباشر يجب أن يبدأ بـ HTTPS عند توفيره.');
                 $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
                 if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
-                db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,NULL,1,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')) ?: null, trim((string) $_POST['source_url']), $downloadUrl, trim((string) $_POST['rights_basis']), isset($_POST['publish']) ? 1 : 0]);
+                db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,NULLIF(?,\'\'),?,NULL,NULL,?,?)')->execute([$title,$author,$description,$keywords ?: null,$language,$year,$rightsHolder ?: null,$source,$downloadUrl,$rights,$downloadUrl !== '' ? 1 : 0,isset($_POST['publish']) ? 1 : 0]);
             } elseif ($kind === 'adhkar') {
                 if (trim((string) $_POST['source_reference']) === '' || !is_https_url(trim((string) $_POST['source_url'])) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن نشر الذكر دون مصدر آمن ومراجعة موثقة.');
                 db()->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order) VALUES (?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), trim((string) $_POST['source_url']), ($_POST['repeat_count'] ?? '') === '' ? null : (int) $_POST['repeat_count'], trim((string) $_POST['category']), 1, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
