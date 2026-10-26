@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.athar.app.core.data.AppSettings
 import org.athar.app.core.network.ApiException
+import org.athar.app.auth.AccountInput
 
 data class OperationState(val busy: Boolean = false, val error: String? = null, val message: String? = null)
 class AppViewModel(val graph: AppGraph) : ViewModel() {
@@ -19,17 +20,74 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
     fun clearFeedback() { mutableOperation.value = OperationState() }
     fun invalid(code: String) { mutableOperation.value = OperationState(error = code) }
     fun login(email: String, password: String) = perform { graph.session.login(email, password) }
-    fun register(name: String, username: String, email: String, password: String, confirmation: String) {
-        if (password != confirmation) { invalid("password_mismatch"); return }
-        if (name.isBlank() || username.isBlank() || !email.contains('@') || password.length < 10) { invalid("invalid_input"); return }
-        perform { graph.session.register(name, username, email, password, confirmation) }
+    fun register(
+        name: String,
+        username: String,
+        email: String,
+        password: String,
+        confirmation: String,
+    ) {
+        if (password != confirmation) {
+            invalid("password_mismatch")
+            return
+        }
+        if (
+            !AccountInput.validProfile(name, username) ||
+            !AccountInput.validEmail(email) ||
+            !AccountInput.validPassword(password)
+        ) {
+            invalid("invalid_input")
+            return
+        }
+        perform {
+            graph.session.register(
+                name.trim(),
+                username.trim().lowercase(),
+                email.trim(),
+                password,
+                confirmation,
+            )
+        }
     }
     fun verify(code: String,expectedUser:Long?=graph.session.userId) = perform { graph.session.verify(code,expectedUser) }
     fun resend(expectedUser:Long?=graph.session.userId) = perform { mutableOperation.value = OperationState(message = if (graph.session.resend(expectedUser) == "accepted") "mail_accepted" else "mail_unavailable") }
-    fun forgot(email: String) = perform { graph.session.forgot(email); mutableOperation.value = OperationState(message = "reset_sent") }
-    fun reset(email: String, code: String, password: String, confirmation: String) {
-        if (password != confirmation) { invalid("password_mismatch"); return }
-        perform { graph.session.reset(email, code, password, confirmation); mutableOperation.value = OperationState(message = "password_updated") }
+    fun forgot(email: String) {
+        if (!AccountInput.validEmail(email)) {
+            invalid("invalid_input")
+            return
+        }
+        perform {
+            graph.session.forgot(email.trim())
+            mutableOperation.value = OperationState(message = "reset_sent")
+        }
+    }
+    fun reset(
+        email: String,
+        code: String,
+        password: String,
+        confirmation: String,
+    ) {
+        if (password != confirmation) {
+            invalid("password_mismatch")
+            return
+        }
+        if (
+            !AccountInput.validEmail(email) ||
+            code.length != 6 ||
+            !AccountInput.validPassword(password)
+        ) {
+            invalid("invalid_input")
+            return
+        }
+        perform {
+            graph.session.reset(
+                email.trim(),
+                code,
+                password,
+                confirmation,
+            )
+            mutableOperation.value = OperationState(message = "password_updated")
+        }
     }
     fun logout(expectedUser:Long?=graph.session.userId) = perform { graph.session.logout(expectedUser) }
     fun perform(
