@@ -100,6 +100,21 @@ final class AuthService
         $this->audit((int)$actor['id'],'api-logout');
     }
 
+    public function revokeOtherSessions(array $actor): int
+    {
+        $q=$this->db->prepare(
+            "UPDATE api_sessions
+             SET revoked_at=UTC_TIMESTAMP(),revoked_reason='user_revoked'
+             WHERE user_id=?
+               AND family_id<>?
+               AND revoked_at IS NULL"
+        );
+        $q->execute([(int)$actor['id'],(string)$actor['family_id']]);
+        $count=$q->rowCount();
+        $this->audit((int)$actor['id'],'api-other-sessions-revoked');
+        return $count;
+    }
+
     public function requestReset(string $email): void
     {
         $q=$this->db->prepare('SELECT id FROM users WHERE email=? AND suspended_at IS NULL LIMIT 1'); $q->execute([strtolower(trim($email))]); $id=$q->fetchColumn();
