@@ -202,7 +202,8 @@ class BookDownloadWorker(
                 break
             }
 
-            response.use { safeResponse ->
+            val finalResponse = response ?: return@withContext Result.failure()
+            finalResponse.use { safeResponse ->
                 if (!safeResponse.isSuccessful) return@withContext retryOrFail()
                 val body = safeResponse.body ?: return@withContext Result.failure()
                 val declared = body.contentLength()
