@@ -215,6 +215,28 @@ Do not mark complete until an authorized real inbox confirms receipt from the
 configured Gmail/App Password path. Never send to an arbitrary address during
 acceptance.
 
+## Additional Android offline hardening — task 02.7.2
+
+Implementation status: **IMPLEMENTED / RUNTIME ACCEPTANCE PENDING**
+
+The branch now also contains the additive Night Prayer permanent-operation
+rejection recovery required by task 02.7.2. It preserves original encrypted
+outbox bytes, separates durable 404/422 operation rejection from 409 conflicts
+and temporary 429/5xx failures, prevents one rejected session from starving
+healthy work, and adds explicit owner-bound retry / repair / use-account
+recovery in Arabic and English.
+
+The implementation deliberately uses encrypted private rejection markers in the
+existing `cached_documents` table, so this increment does not require a Room
+schema reset or destructive migration. Focused storage and dialog tests are
+included. Treat this work as acceptance-pending until the Codex workstation runs
+the normal Gradle, instrumentation and physical-device gates documented in
+`docs/features/NIGHT_PRAYER_REJECTIONS.md`.
+
+During integration, preserve any newer 02.7.x logic on
+`codex/android-ecosystem` and reconcile this task semantically rather than
+replacing the whole Night Prayer/offline files.
+
 ## Database changes on this branch
 
 - `016_admin_editorial_control.sql`

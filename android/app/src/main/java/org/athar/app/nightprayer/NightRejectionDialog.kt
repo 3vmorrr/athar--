@@ -133,7 +133,7 @@ private fun RejectionActions(
         ){Text(stringResource(R.string.night_rejection_retry))}
         TextButton(
             onClick=repair,
-            enabled=ready&&review?.rejection?.local?.deleted==false&&review.rejection.body!=null,
+            enabled=ready&&(review?.let{!it.rejection.local.deleted&&it.rejection.body!=null}==true),
             modifier=Modifier.testTag("night-rejection-repair"),
         ){Text(stringResource(R.string.night_rejection_repair))}
         TextButton(
