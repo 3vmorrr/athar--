@@ -176,9 +176,13 @@ final class CampaignService
 
     public function recoverQueue(): array
     {
+        $affected=[];
+        $q=$this->db->query("SELECT DISTINCT campaign_id FROM engagement_campaign_recipients WHERE status IN ('queued','processing','failed') AND expires_at<=UTC_TIMESTAMP()");
+        foreach($q->fetchAll(PDO::FETCH_COLUMN) as $campaignId)$affected[]=(int)$campaignId;
         $expired=$this->db->exec("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='ttl_expired',locked_at=NULL WHERE status IN ('queued','processing','failed') AND expires_at<=UTC_TIMESTAMP()");
         $stale=$this->db->exec("UPDATE engagement_campaign_recipients SET status='queued',last_error_code='stale_lock_recovered',locked_at=NULL,next_attempt_at=UTC_TIMESTAMP() WHERE status='processing' AND locked_at<DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) AND expires_at>UTC_TIMESTAMP()");
-        return ['expired'=>(int)$expired,'recovered'=>(int)$stale];
+        foreach(array_values(array_unique($affected)) as $campaignId)if($campaignId>0)$this->reconcileCampaignById($campaignId);
+        return ['expired'=>(int)$expired,'recovered'=>(int)$stale,'campaigns_reconciled'=>count(array_unique($affected))];
     }
 
     public function claimPushBatch(int $limit=50): array
@@ -294,12 +298,21 @@ final class CampaignService
         return strtotime($allowed.' UTC')>strtotime($scheduled.' UTC')?$allowed:$scheduled;
     }
 
+    private function reconcileCampaignById(int $id): void
+    {
+        $counts=$this->deliveryCounts($id);
+        $remaining=$counts['queued']+$counts['processing'];
+        if($remaining>0)$status='processing';
+        elseif($counts['failed']>0)$status='partially_failed';
+        else $status='completed';
+        $this->db->prepare("UPDATE engagement_campaigns SET status=IF(status='cancelled','cancelled',?),updated_at=UTC_TIMESTAMP() WHERE id=?")
+            ->execute([$status,$id]);
+    }
+
     private function reconcileCampaignForDelivery(int $deliveryId): void
     {
         $q=$this->db->prepare('SELECT campaign_id FROM engagement_campaign_recipients WHERE id=?');$q->execute([$deliveryId]);$id=(int)$q->fetchColumn();if($id<1)return;
-        $counts=$this->deliveryCounts($id);$remaining=$counts['queued']+$counts['processing'];
-        if($remaining>0)$status='processing';elseif($counts['failed']>0)$status='partially_failed';else $status='completed';
-        $this->db->prepare("UPDATE engagement_campaigns SET status=IF(status='cancelled','cancelled',?),updated_at=UTC_TIMESTAMP() WHERE id=?")->execute([$status,$id]);
+        $this->reconcileCampaignById($id);
     }
 
     private function deliveryAnalytics(int $id): array
