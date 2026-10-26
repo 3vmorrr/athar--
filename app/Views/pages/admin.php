@@ -49,15 +49,16 @@ $adminShellCopy = $adminLocale === 'en' ? [
                 <a href="#admin-create" aria-controls="admin-create"><?= e($adminShellCopy['create']) ?></a>
                 <a href="#admin-content" aria-controls="admin-content"><?= e($adminShellCopy['content']) ?></a>
                 <a href="#admin-comments" aria-controls="admin-comments"><?= e($adminShellCopy['comments']) ?> <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
-                <a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a>
-                <a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a>
-                <a href="#admin-users" aria-controls="admin-users"><?= e($adminShellCopy['users']) ?> <span><?= $managedUserTotal ?></span></a>
-                <?php if (($admin['role'] ?? '') === 'owner'): ?><a href="#admin-backups" aria-controls="admin-backups"><?= e($adminShellCopy['backups']) ?></a><?php endif; ?>
-                <a href="#admin-audit" aria-controls="admin-audit"><?= e($adminShellCopy['audit']) ?></a>
+                <?php if (admin_can($admin, 'campaigns')): ?><a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a><?php endif; ?>
+                <?php if (admin_can($admin, 'services')): ?><a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a><?php endif; ?>
+                <?php if (admin_can($admin, 'users')): ?><a href="#admin-users" aria-controls="admin-users"><?= e($adminShellCopy['users']) ?> <span><?= $managedUserTotal ?></span></a><?php endif; ?>
+                <?php if (admin_can($admin, 'recovery')): ?><a href="#admin-backups" aria-controls="admin-backups"><?= e($adminShellCopy['backups']) ?></a><?php endif; ?>
+                <?php if (admin_can($admin, 'audit')): ?><a href="#admin-audit" aria-controls="admin-audit"><?= e($adminShellCopy['audit']) ?></a><?php endif; ?>
             </nav>
             <p class="admin-sidebar-note"><?= e($adminShellCopy['note']) ?></p>
         </aside>
         <div class="admin-content">
+    <?php if (admin_can($admin, 'services')): ?>
     <section class="admin-inventory admin-panel" id="admin-services" data-admin-panel hidden>
         <div class="section-heading"><div><span class="eyebrow">خدمات المنصة</span><h2>إعدادات الخدمات</h2></div></div>
         <p class="source-note">يُنشئ الموقع مفتاح تشفير محليًا تلقائيًا داخل storage خارج مجلد الويب. في الإنتاج استخدم مخزن أسرار الخادم لمفتاح ATHAR_SETTINGS_KEY، واضبط ATHAR_BASE_URL على رابط الموقع العام حتى يظهر الشعار وتعمل روابط البريد؛ لا تضف المفاتيح إلى Git.</p>
@@ -72,6 +73,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
             <form class="form-stack" method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="dorar-settings"><label>رمز API المعتمد<input name="dorar_api_token" type="password" maxlength="500" autocomplete="new-password" placeholder="<?= $dorarTokenConfigured ? 'محفوظ؛ اتركه فارغًا للإبقاء عليه' : 'أدخل الرمز بعد موافقة الدرر' ?>"></label><?php if ($dorarTokenConfigured): ?><label class="check-label"><input type="checkbox" name="clear_dorar_token"> حذف الرمز المحفوظ</label><?php endif; ?><p class="source-note">حالة الربط: <?= $dorarTokenConfigured ? 'مُعدّ' : 'ينتظر رمز API رسميًا' ?>.</p><button class="button button-secondary" type="submit">حفظ إعدادات الدرر</button></form>
         </article>
     </section>
+    <?php endif; ?>
     <section class="admin-inventory admin-panel" id="admin-campaigns" data-admin-panel hidden>
         <div class="section-heading"><div><span class="eyebrow">التواصل مع المجتمع</span><h2>حملات البريد الإلكتروني</h2></div><span class="source-chip"><?= number_format($mailingOptInCount) ?> مشتركًا مؤكد البريد</span></div>
         <p class="source-note">تصل الحملة فقط لمن أكد بريده واختار الاشتراك. ابدأ الإرسال مرة واحدة وسيكمل الموقع تلقائيًا على دفعات من 3 رسائل، ويمكنك إيقافه بعد الدفعة الحالية. يتوقف عند 450 رسالة خلال 24 ساعة لترك مساحة لرسائل التحقق. كل رسالة تحمل شعار أثر ورابط إلغاء الاشتراك.</p>
