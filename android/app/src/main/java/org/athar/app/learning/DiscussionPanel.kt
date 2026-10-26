@@ -64,14 +64,20 @@ import org.athar.app.core.ui.*
             .atZoneSameInstant(java.time.ZoneId.systemDefault())
             .format(java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT).withLocale(locale))
     }.getOrDefault(created.take(16))}
-    Column(verticalArrangement=Arrangement.spacedBy(6.dp)) {
-        Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically) {
-            Surface(Modifier.size(36.dp),shape=MaterialTheme.shapes.medium,color=MaterialTheme.colorScheme.primaryContainer){Box(contentAlignment=Alignment.Center){Text(row.text("display_name").ifBlank{row.text("username")}.take(1))}}
-            Column(Modifier.weight(1f)){Text(row.text("display_name").ifBlank{row.text("username")},style=MaterialTheme.typography.labelLarge);Text(date,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}
+    Surface(
+        modifier=Modifier.fillMaxWidth(),
+        shape=MaterialTheme.shapes.large,
+        color=MaterialTheme.colorScheme.surfaceContainerLow,
+        border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant),
+    ) {
+        Column(Modifier.padding(14.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically) {
+                Surface(Modifier.size(36.dp),shape=MaterialTheme.shapes.medium,color=MaterialTheme.colorScheme.primaryContainer){Box(contentAlignment=Alignment.Center){Text(row.text("display_name").ifBlank{row.text("username")}.take(1))}}
+                Column(Modifier.weight(1f)){Text(row.text("display_name").ifBlank{row.text("username")},style=MaterialTheme.typography.labelLarge);Text(date,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}
+            }
+            Text(row.text("body"),style=MaterialTheme.typography.bodyMedium)
+            if(row.text("status")=="pending")AtharStatusPill(stringResource(R.string.watch_moderation_notice))
+            if(reply!=null)TextButton(onClick=reply,contentPadding=PaddingValues(0.dp)){Text(stringResource(R.string.watch_reply))}
         }
-        Text(row.text("body"),style=MaterialTheme.typography.bodyMedium)
-        if(row.text("status")=="pending")Text(stringResource(R.string.watch_moderation_notice),style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.primary)
-        if(reply!=null)TextButton(onClick=reply){Text(stringResource(R.string.watch_reply))}
-        HorizontalDivider(color=MaterialTheme.colorScheme.outlineVariant)
     }
 }
