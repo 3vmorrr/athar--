@@ -128,6 +128,9 @@
 <string name="night_totals">%1$d nights · %2$d verses</string>
 <string name="night_self_report">These are your personal records; they do not judge acceptance of worship or recitation quality.</string>
 <string name="night_measured_pace">Your measured pace: %1$.1f seconds per verse</string>
+<string name="night_measured_pace_samples">Measured average: %1$.1f seconds per verse · from %2$d measured sessions</string>
+<string name="night_measured_pace_insufficient">At least two measured sessions are needed before showing a pace average; one session is not treated as a trend.</string>
+<string name="night_measured_pace_outliers">%1$d outlier session was excluded from the average only; every session remains in your history.</string>
 <string name="night_add">Record a session</string>
 <string name="night_timer_title">Measured session</string>
 <string name="night_timer_intro">Start timing only when you actually begin reading. Timing pauses when the app goes to the background and does not count time away.</string>
