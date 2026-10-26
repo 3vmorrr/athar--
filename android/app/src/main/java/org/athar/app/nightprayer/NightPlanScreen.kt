@@ -42,8 +42,12 @@ private data class NightPlanSelection(
 }
 
 @Composable
-fun NightPlanScreen(graph: AppGraph) {
+fun NightPlanScreen(
+    graph: AppGraph,
+    vm: NightViewModel,
+) {
     val owner = remember { requireNotNull(graph.session.userId) }
+    val nightState by vm.state.collectAsStateWithLifecycle()
     val repository = remember(owner) {
         NightVersePlanRepository(
             dao = graph.database.dao(),
@@ -310,8 +314,46 @@ fun NightPlanScreen(graph: AppGraph) {
                     }
                 } else {
                     item(key = "saved-plan", contentType = "plan") {
+                        val completedRanges = remember(
+                            nightState.rows,
+                            plan.localVersion,
+                        ) {
+                            nightState.rows.mapNotNull { (_, body) ->
+                                if (body.text("entry_type") != "range") {
+                                    null
+                                } else {
+                                    val start = body["start_index"]?.asInt
+                                    val end = body["end_index"]?.asInt
+                                    if (
+                                        start != null &&
+                                        end != null &&
+                                        start in 1..6236 &&
+                                        end in start..6236
+                                    ) {
+                                        start..end
+                                    } else {
+                                        null
+                                    }
+                                }
+                            }
+                        }
+                        val continuationIndex = remember(
+                            plan.localVersion,
+                            completedRanges,
+                        ) {
+                            nightPlanContinuationIndex(plan, completedRanges)
+                        }
+                        val continuation = remember(continuationIndex) {
+                            continuationIndex?.let { index ->
+                                runCatching {
+                                    graph.quran.data().index.position(index)
+                                }.getOrNull()
+                            }
+                        }
                         NightSavedPlanCard(
                             plan = plan,
+                            continuationSurah = continuation?.surah,
+                            continuationAyah = continuation?.ayah,
                             busy = busy,
                             copy = {
                                 val clipboard = context.getSystemService(
@@ -396,6 +438,8 @@ fun NightPlanScreen(graph: AppGraph) {
 @Composable
 private fun NightSavedPlanCard(
     plan: NightVersePlan,
+    continuationSurah: Int?,
+    continuationAyah: Int?,
     busy: Boolean,
     copy: () -> Unit,
     record: () -> Unit,
@@ -424,6 +468,24 @@ private fun NightSavedPlanCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (continuationSurah != null && continuationAyah != null) {
+                AtharStatusPill(
+                    stringResource(
+                        R.string.night_plan_continue_at,
+                        continuationSurah,
+                        continuationAyah,
+                    ),
+                )
+                Text(
+                    stringResource(R.string.night_plan_continue_separate),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                AtharStatusPill(
+                    stringResource(R.string.night_plan_recorded_complete),
+                )
+            }
             Button(
                 onClick = record,
                 enabled = !busy,
