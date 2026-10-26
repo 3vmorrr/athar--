@@ -43,23 +43,193 @@ import java.time.format.FormatStyle
     UpcomingContent(state,lesson!=null,{vm.refresh()},vm::more,open)
 }
 
-@Composable internal fun UpcomingContent(state:UpcomingState,detail:Boolean,refresh:()->Unit,more:()->Unit,open:(String)->Unit) {
-    Box(Modifier.fillMaxSize(),contentAlignment=Alignment.TopCenter) {
-        LazyColumn(Modifier.widthIn(max=800.dp).fillMaxSize().testTag("upcoming-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
-            item(key="controls",contentType="controls") {
-                Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.End,verticalAlignment=Alignment.CenterVertically){
-                    TextButton(onClick=refresh,enabled=!state.loading){Text(stringResource(R.string.upcoming_refresh))}
+@Composable internal fun UpcomingContent(
+    state: UpcomingState,
+    detail: Boolean,
+    refresh: () -> Unit,
+    more: () -> Unit,
+    open: (String) -> Unit,
+) {
+    val heroEvent = state.items.firstOrNull()
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        LazyColumn(
+            Modifier
+                .widthIn(max = 800.dp)
+                .fillMaxSize()
+                .testTag("upcoming-list"),
+            contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+        ) {
+            if (
+                heroEvent != null &&
+                !state.loading &&
+                !state.error &&
+                !state.unavailable
+            ) {
+                item(key = "upcoming-hero", contentType = "hero") {
+                    UpcomingHero(
+                        event = heroEvent,
+                        offline = state.offline,
+                        clockOffset = state.clockOffsetMillis,
+                        detail = detail,
+                        open = open,
+                    )
                 }
             }
-            if(state.loading)item(key="loading",contentType="state"){LinearProgressIndicator(Modifier.fillMaxWidth())}
-            if(state.offline)item(key="offline",contentType="state"){MessagePanel(stringResource(R.string.offline_notice))}
-            if(state.error)item(key="error",contentType="state"){MessagePanel(stringResource(R.string.network_error),true){TextButton(onClick=refresh){Text(stringResource(R.string.retry))}}}
-            if(state.unavailable)item(key="unavailable",contentType="state"){QuietEmptyState(stringResource(R.string.upcoming_unavailable))}
-            if(!state.loading&&!state.error&&!state.unavailable&&state.items.isEmpty())item(key="empty",contentType="state"){QuietEmptyState(stringResource(R.string.upcoming_empty))}
-            items(state.items,key={it.id},contentType={"event"}){event->UpcomingCard(event,state.offline,state.clockOffsetMillis,detail,open)}
-            if(state.hasMore)item(key="more",contentType="controls"){OutlinedButton(onClick=more,enabled=!state.loading,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.more))}}
+
+            item(key = "controls", contentType = "controls") {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AtharSpacing.Lg),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextButton(onClick = refresh, enabled = !state.loading) {
+                        Text(stringResource(R.string.upcoming_refresh))
+                    }
+                }
+            }
+
+            if (state.loading) {
+                item(key = "loading", contentType = "state") {
+                    LinearProgressIndicator(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg),
+                    )
+                }
+            }
+            if (state.offline) {
+                item(key = "offline", contentType = "state") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        MessagePanel(stringResource(R.string.offline_notice))
+                    }
+                }
+            }
+            if (state.error) {
+                item(key = "error", contentType = "state") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        MessagePanel(stringResource(R.string.network_error), true) {
+                            TextButton(onClick = refresh) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
+                    }
+                }
+            }
+            if (state.unavailable) {
+                item(key = "unavailable", contentType = "state") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        QuietEmptyState(stringResource(R.string.upcoming_unavailable))
+                    }
+                }
+            }
+            if (
+                !state.loading &&
+                !state.error &&
+                !state.unavailable &&
+                state.items.isEmpty()
+            ) {
+                item(key = "empty", contentType = "state") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        QuietEmptyState(stringResource(R.string.upcoming_empty))
+                    }
+                }
+            }
+
+            val eventRows = if (!detail && heroEvent != null) {
+                state.items.drop(1)
+            } else {
+                state.items
+            }
+            items(
+                eventRows,
+                key = { it.id },
+                contentType = { "event" },
+            ) { event ->
+                Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                    UpcomingCard(
+                        event,
+                        state.offline,
+                        state.clockOffsetMillis,
+                        detail,
+                        open,
+                    )
+                }
+            }
+
+            if (state.hasMore) {
+                item(key = "more", contentType = "controls") {
+                    OutlinedButton(
+                        onClick = more,
+                        enabled = !state.loading,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg),
+                    ) {
+                        Text(stringResource(R.string.more))
+                    }
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun UpcomingHero(
+    event: UpcomingLesson,
+    offline: Boolean,
+    clockOffset: Long,
+    detail: Boolean,
+    open: (String) -> Unit,
+) {
+    val freshLive = event.status == EventStatus.LIVE && !offline
+    val statusResource = when (event.status) {
+        EventStatus.LIVE -> if (offline) {
+            R.string.upcoming_last_live
+        } else {
+            R.string.upcoming_live
+        }
+        EventStatus.SCHEDULED -> R.string.upcoming_scheduled
+        EventStatus.PUBLISHED -> R.string.upcoming_published
+        EventStatus.CANCELLED -> R.string.upcoming_cancelled
+        else -> R.string.upcoming_draft
+    }
+    val canOpenWatch = event.canWatch && !offline
+    val canOpenDetails = !detail
+
+    AtharImmersiveHero(
+        presentation = AtharHeroPresentation(
+            artwork = AtharHeroArtwork.Upcoming,
+            eyebrow = stringResource(R.string.upcoming_lessons),
+            title = event.title,
+            supportingText = event.scholarName.takeIf { it.isNotBlank() }
+                ?: event.seriesName.takeIf { it.isNotBlank() },
+            statusText = stringResource(statusResource),
+            statusTone = when {
+                freshLive -> AtharHeroStatusTone.Live
+                offline -> AtharHeroStatusTone.Offline
+                event.status == EventStatus.CANCELLED -> AtharHeroStatusTone.Warning
+                else -> AtharHeroStatusTone.Neutral
+            },
+            primaryActionLabel = when {
+                canOpenWatch -> stringResource(R.string.play)
+                canOpenDetails -> stringResource(R.string.upcoming_details)
+                else -> null
+            },
+        ),
+        onPrimaryAction = when {
+            canOpenWatch -> ({ open("lessons/${event.id}") })
+            canOpenDetails -> ({ open("upcoming/${event.id}") })
+            else -> null
+        },
+        trailing = {
+            if (event.status == EventStatus.SCHEDULED && event.start != null) {
+                EventCountdownLabel(event.start, clockOffset)
+            }
+        },
+    )
 }
 
 @Composable private fun UpcomingCard(event:UpcomingLesson,offline:Boolean,clockOffset:Long,detail:Boolean,open:(String)->Unit) {
