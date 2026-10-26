@@ -667,4 +667,6 @@
     <string name="inbox_detail_failed">تعذر تحديث حالة هذا الإشعار.</string>
     <string name="inbox_open_destination">فتح المحتوى المرتبط</string>
     <string name="load_more">تحميل المزيد</string>
+    <string name="inbox_pending_sync">تغييرات في انتظار المزامنة: %1$d</string>
+    <string name="inbox_showing_saved">تعذر التحديث الآن؛ يتم عرض صندوق الإشعارات المحفوظ على هذا الجهاز.</string>
 </resources>

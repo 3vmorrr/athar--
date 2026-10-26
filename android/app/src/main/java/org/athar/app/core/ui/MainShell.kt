@@ -364,6 +364,12 @@ private fun AtharNavIcon(
 
 @Composable private fun AccountScreen(vm: AppViewModel, auth: AuthState.SignedIn, open: (String) -> Unit) {
     var tool by rememberSaveable { mutableStateOf("profile") }
+    val inboxRead by remember(auth.user.id) {
+        vm.graph.notificationInbox.observe(auth.user.id)
+    }.collectAsStateWithLifecycle(initialValue = org.athar.app.core.data.ProtectedRead.Loading)
+    val inboxUnread = (
+        inboxRead as? org.athar.app.core.data.ProtectedRead.Ready<org.athar.app.notifications.NotificationInboxLocalState>
+    )?.value?.unreadCount ?: 0
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(
@@ -379,7 +385,16 @@ private fun AtharNavIcon(
                 FilterChip(
                     tool == key,
                     { tool = key },
-                    label = { Text(stringResource(label)) },
+                    label = {
+                        val text = stringResource(label)
+                        Text(
+                            if (key == "inbox" && inboxUnread > 0) {
+                                text + " (" + inboxUnread + ")"
+                            } else {
+                                text
+                            },
+                        )
+                    },
                 )
             }
         }

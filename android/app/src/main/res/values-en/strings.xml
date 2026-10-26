@@ -639,4 +639,6 @@
     <string name="inbox_detail_failed">This notification state could not be updated.</string>
     <string name="inbox_open_destination">Open related content</string>
     <string name="load_more">Load more</string>
+    <string name="inbox_pending_sync">Changes waiting to sync: %1$d</string>
+    <string name="inbox_showing_saved">The inbox could not refresh; showing the saved inbox on this device.</string>
 </resources>
