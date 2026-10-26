@@ -29,7 +29,7 @@ State lives only under \`private:quran-wird-state:v1\`. It is not uploaded to th
 
 ## Scheduling
 
-The manager creates up to 30 days of owner-scoped one-shot reminders using the WP10 encrypted scheduler. Each day has a stable idempotency key, so editing a rule cannot produce a second notification for a day already delivered.
+The manager creates up to 14 days of owner-scoped one-shot reminders using the WP10 encrypted scheduler. Each day has a stable idempotency key, so editing a rule cannot produce a second notification for a day already delivered.
 
 If the saved target is genuinely completed before the reminder, reconciliation removes that day's pending reminder. A periodic 24-hour maintenance worker extends the horizon; account switching cancels the previous owner's maintenance work.
 

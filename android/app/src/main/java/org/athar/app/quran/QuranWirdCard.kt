@@ -72,7 +72,7 @@ fun QuranWirdCard(graph: AppGraph) {
     var target by rememberSaveable(owner) { mutableIntStateOf(rule?.targetAyahs ?: 10) }
     var hour by rememberSaveable(owner) { mutableIntStateOf(rule?.let { LocalTime.parse(it.time).hour } ?: 20) }
     var minute by rememberSaveable(owner) { mutableIntStateOf(rule?.let { LocalTime.parse(it.time).minute } ?: 0) }
-    var days by rememberSaveable(owner) { mutableStateOf(rule?.days ?: (1..7).toSet()) }
+    var days by remember(owner) { mutableStateOf(rule?.days ?: (1..7).toSet()) }
     var showConsent by rememberSaveable(owner) { mutableStateOf(false) }
     var showSettings by rememberSaveable(owner) { mutableStateOf(false) }
     var message by rememberSaveable(owner) { mutableStateOf<Int?>(null) }
@@ -220,7 +220,7 @@ fun QuranWirdCard(graph: AppGraph) {
                         horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
                         verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
                     ) {
-                        DayOfWeek.entries.forEach { day ->
+                        DayOfWeek.values().forEach { day ->
                             FilterChip(
                                 selected = day.value in days,
                                 onClick = {

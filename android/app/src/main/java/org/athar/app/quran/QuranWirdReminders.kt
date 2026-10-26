@@ -118,7 +118,7 @@ object QuranWirdPlanner {
         now: Instant,
         title: String,
         body: String,
-        horizonDays: Int = 30,
+        horizonDays: Int = 14,
     ): List<LocalReminderSpec> {
         rule.validated()
         if (!rule.enabled) return emptyList()

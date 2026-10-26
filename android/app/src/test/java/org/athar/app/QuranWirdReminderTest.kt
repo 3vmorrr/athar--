@@ -78,7 +78,7 @@ class QuranWirdReminderTest {
     @Test fun plannerUsesIanaTimezoneAcrossDstAndSelectedDays() {
         val berlin = rule(timezone = "Europe/Berlin", days = setOf(7))
         val before = QuranWirdPlanner.plan(
-            berlin, null, Instant.parse("2026-10-24T10:00:00Z"), "W", "B", 2
+            berlin, null, Instant.parse("2026-10-18T10:00:00Z"), "W", "B", 1
         ).single()
         val after = QuranWirdPlanner.plan(
             berlin, null, Instant.parse("2026-10-25T10:00:00Z"), "W", "B", 1
