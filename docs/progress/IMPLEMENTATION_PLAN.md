@@ -26,7 +26,7 @@ Implementation tasks are tracked with evidence in [TASK_TRACKER](TASK_TRACKER.md
 
 ###26 October — phase2 execution
 
-Protected local reads (O01) are tested. O02 adds account/environment-scoped persistent work over the existing encrypted progress/outbox and API, bounded retries, logout cancellation and module-isolated failure handling. See [persistent synchronization](../features/PERSISTENT_SYNC.md). Keep actual worker HTTP, durable scheduling and real network-restoration/reboot acceptance distinct. Next: bounded disposable content caches, remaining conflict/recovery surfaces, then phase3 Quran tools. Do not evict private pending progress as if it were downloaded catalog content.
+Protected local reads (O01), owned persistent-work implementation (O02) and focused disposable-cache bounds (O03) now have executed gates. See [persistent synchronization](../features/PERSISTENT_SYNC.md) and [cache policy](../features/CONTENT_CACHE.md). Keep actual worker HTTP, durable scheduling and real network-restoration/reboot acceptance distinct. Continue session race/remaining conflict/recovery surfaces, then phase3 Quran tools. Do not evict private pending progress as if it were downloaded catalog content.
 
 ## Current P4 execution order — watch requirement incorporated2026-10-25
 

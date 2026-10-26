@@ -1,5 +1,9 @@
 # Verification report
 
+##26 October — disposable response-cache limits
+
+Final production/test APK,42 JVM cases and lint PASS (`content-cache-owner-build.log`,3m20s);292 paired resources PASS. Actual API27 cache/retained-storage/unique-scheduling15/15 PASS (17.095s, `content-cache-physical-final.log`): transaction bounds, expiry, corruption recovery, actor change during failed HTTP, prior upcoming-cache localization/encryption/404 behavior and private-data regressions. Arabic reader/counter2/2 PASS (22.534s, `content-cache-ui-ar.log`), English2/2 PASS (21.784s, content-cache-ui-en.log), including opening retained on-device schema1 after APK update. Initial candidate3/3 storage passed before the stronger owner-boundary assertion; final evidence supersedes that narrower pass. No database reset, key invalidation or real data deletion. Read-only development15 migration/34 table check and main API HTTP200 pass; unchanged backend suites were not rerun.
+
 ##26 October — owned persistent synchronization
 
 Production/test APK,38 JVM cases and lint PASS (`persistent-sync-final-build.log`,1m7s);292 paired resources PASS. Final network-aware test APK/lint PASS (`persistent-sync-network-aware-test-build.log`,1m5s). API27 worker/Room/Keystore/HTTP1/1 PASS (5.765s, `persistent-sync-physical-network-aware.log`); unique scheduling plus retained storage regression12/12 PASS (16.449s, `persistent-sync-physical-storage.log`). Arabic reader/counter regression2/2 PASS (22.655s), English2/2 PASS (21.22s; persistent-sync-ui-en.log). Dedicated generated sync actor only; exemptions remain local, wrong actor/environment rejected and unreadable pending ciphertext retained. Existing backend20,000 assertions and15-version/34-table result remain unchanged, not rerun for an unchanged backend.

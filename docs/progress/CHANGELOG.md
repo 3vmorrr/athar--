@@ -1,5 +1,11 @@
 # Engineering change log
 
+##2026-10-26 — Disposable content-cache bounds
+
+- Bounded encrypted Arabic/English HTTP responses to200 rows/8MiB per actor,1MiB per document and seven-day fallback age; metadata-only transactional pruning leaves private progress/outbox/cursors/exemptions untouched. Existing Room schema1 is preserved.
+- Corrupt disposable responses can be downloaded again; stale/invalid timestamps and authoritative404 cannot resurrect unavailable content. Actor checks protect both fresh and offline returns during account switching.
+-42 JVM/build/test APK/lint and292 paired resources pass; final hardware cache/storage/unique-work regression15/15 passes. Read-only development schema15/34 and API health pass. Real reboot/network-restoration and complete phase2 conflict/recovery acceptance remain open.
+
 ##2026-10-26 — Owned persistent synchronization
 
 - Added unique WorkManager jobs by environment/account, verified actor checks, logout cancellation, module-isolated failure handling, bounded retries/time budget and six-hour eventual maintenance. Existing encrypted progress/outbox and foreground behavior are retained; exemption data never enters work requests.

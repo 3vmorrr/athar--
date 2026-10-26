@@ -19,6 +19,16 @@ interface AtharDao {
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix") suspend fun caches(user: Long, prefix: String): List<CachedDocument>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun cache(document: CachedDocument)
     @Query("DELETE FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun removeCache(user: Long, key: String)
+    @Query("SELECT cacheKey,updatedAt,LENGTH(payloadCipher) AS bytes FROM cached_documents WHERE userId=:user AND (cacheKey LIKE 'ar:%' OR cacheKey LIKE 'en:%')") suspend fun contentCacheEntries(user:Long):List<ContentCacheEntry>
+    @Transaction suspend fun trimContentCache(user:Long,now:Long,policy:ContentCachePolicy){
+        policy.evictions(contentCacheEntries(user),now).forEach{removeCache(user,it)}
+    }
+    @Transaction suspend fun storeContent(document:CachedDocument,now:Long,policy:ContentCachePolicy){
+        require(policy.disposable(document.cacheKey))
+        if(document.payloadCipher.length.toLong()<=policy.maxEntryBytes)cache(document)
+        else removeCache(document.userId,document.cacheKey)
+        trimContentCache(document.userId,now,policy)
+    }
     @Query("SELECT * FROM night_sessions WHERE userId=:user AND deleted=0 ORDER BY nightDate DESC,updatedAt DESC") fun nights(user: Long): Flow<List<LocalNightSession>>
     @Query("SELECT * FROM night_sessions WHERE userId=:user") suspend fun allNights(user: Long): List<LocalNightSession>
     @Query("SELECT * FROM night_sessions WHERE userId=:user AND id=:id") suspend fun night(user: Long, id: String): LocalNightSession?
