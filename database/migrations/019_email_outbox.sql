@@ -5,6 +5,7 @@ CREATE TABLE email_outbox (
     user_id BIGINT UNSIGNED NULL,
     campaign_delivery_id BIGINT UNSIGNED NULL,
     recipient_email_cipher TEXT NULL,
+    locale ENUM('ar','en') NOT NULL DEFAULT 'ar',
     subject VARCHAR(180) NOT NULL,
     plain_body MEDIUMTEXT NOT NULL,
     html_body MEDIUMTEXT NULL,
