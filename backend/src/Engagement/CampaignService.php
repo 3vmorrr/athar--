@@ -224,7 +224,8 @@ final class CampaignService
         if($terminal)$this->db->prepare("UPDATE engagement_campaign_recipients SET status='failed',last_error_code=?,locked_at=NULL WHERE id=?")->execute([$code,$deliveryId]);
         else{
             $delay=min(3600,60*(2**max(0,(int)$row['attempt_count']-1)));
-            $this->db->prepare("UPDATE engagement_campaign_recipients SET status='queued',last_error_code=?,locked_at=NULL,next_attempt_at=DATE_ADD(UTC_TIMESTAMP(),INTERVAL ? SECOND) WHERE id=?")->execute([$code,$delay,$deliveryId]);
+            $nextAttempt=gmdate('Y-m-d H:i:s',time()+$delay);
+            $this->db->prepare("UPDATE engagement_campaign_recipients SET status='queued',last_error_code=?,locked_at=NULL,next_attempt_at=? WHERE id=?")->execute([$code,$nextAttempt,$deliveryId]);
         }
         $this->reconcileCampaignForDelivery($deliveryId);
     }
