@@ -52,7 +52,18 @@
 <string name="book_page_count">%1$d / %2$d</string>
 <string name="book_next_page">الصفحة التالية</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
     <string name="reset_counter">تصفير العدّاد</string><string name="next_dhikr">الذكر التالي</string><string name="count_action">سبّح وعدّ</string><string name="completed">اكتمل</string><string name="category">القسم</string><string name="progress_count">%1$d من %2$d</string>
-    <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
+    <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string>
+<string name="activity">نشاطي</string>
+<string name="activity_genuine_only">نعرض فقط ما تم تسجيله صراحةً كتقدّم أو إكمال. لا نعتبر فتح الشاشة قراءة أو استماعًا.</string>
+<string name="activity_lessons_started">دروس بدأتها</string>
+<string name="activity_watch_minutes">دقائق مشاهدة محفوظة</string>
+<string name="activity_tracking">توفر القياس</string>
+<string name="activity_reading_sessions">جلسات القراءة</string>
+<string name="activity_listening_history">سجل الاستماع</string>
+<string name="activity_tracking_available">متاح</string>
+<string name="activity_tracking_unavailable">غير متاح حاليًا</string>
+<string name="activity_recent">آخر 14 يومًا</string>
+<string name="activity_day_summary">%1$d درس مكتمل · %2$d ذكر مكتمل · %3$d تنزيل كتاب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
 <string name="revoke_other_sessions">تسجيل الخروج من الجلسات الأخرى</string>
 <string name="revoke_other_sessions_body">سيتم إلغاء جلسات الأجهزة والمتصفحات الأخرى فقط. ستظل هذه الجلسة الحالية مسجلة الدخول.</string>
 <string name="sessions_revoked">تم تسجيل الخروج من الجلسات الأخرى.</string>
