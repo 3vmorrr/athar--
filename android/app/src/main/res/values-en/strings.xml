@@ -12,7 +12,11 @@
 <string name="audio_current_playback">Current playback</string>
 <string name="audio_interrupted">Temporarily interrupted by another audio source</string><string name="tafsir">Tafsir</string><string name="recitation_review">Recitation review</string><string name="surah">Surah</string><string name="ayah">Ayah</string><string name="juz">Juz</string><string name="hizb">Hizb</string><string name="page">Page</string><string name="open_reader">Open in the Quran reader</string><string name="bookmark">Save bookmark</string><string name="bookmarks">My bookmarks</string><string name="resume_reading">Resume reading</string><string name="font_size">Quran font size</string><string name="quran_source">Text: Tanzil Project, version 1.1. Displayed verbatim from the source.</string><string name="source">Source</string><string name="reference">Reference</string>
     <string name="choose_reciter">Choose reciter</string><string name="play">Play</string><string name="pause">Pause</string><string name="stop">Stop</string><string name="full_surah">Entire surah</string><string name="one_ayah">One ayah</string><string name="radio">Radio</string><string name="no_timing">Ayah tracking is unavailable for this recording. Audio playback remains available.</string><string name="unavailable_review">Local Android recitation review is unavailable until device and model compatibility are verified. Your microphone audio stays on your device.</string>
-    <string name="favorites">Favorites</string><string name="add_favorite">Add to favorites</string><string name="remove_favorite">Remove favorite</string><string name="download_book">Download book</string>
+    <string name="favorites">Favorites</string>
+<string name="saved_items_total">Total: %1$d</string>
+<string name="saved_quran_reference">Surah %1$s · Ayah %2$s</string>
+<string name="bookmark_exact_open_pending">Exact ayah opening will be connected when the current Quran navigation work is integrated.</string>
+<string name="page_number">Page %1$d</string><string name="add_favorite">Add to favorites</string><string name="remove_favorite">Remove favorite</string><string name="download_book">Download book</string>
 <string name="book_download_allowed">Download permitted by the recorded rights basis</string>
 <string name="book_download_unavailable">Download is not available for this book</string>
 <string name="book_metadata">Book details</string>
