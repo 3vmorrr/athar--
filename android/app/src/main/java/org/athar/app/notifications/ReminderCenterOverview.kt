@@ -32,9 +32,10 @@ data class ReminderCenterCounts(
     val builtin: Int,
     val custom: Int,
     val khatmah: Int = 0,
+    val night: Int = 0,
 ) {
-    val total: Int get() = lessons + quran + adhkar + builtin + custom + khatmah
-    val activeTypes: Int get() = listOf(lessons,quran,adhkar,builtin,custom,khatmah).count { it > 0 }
+    val total: Int get() = lessons + quran + adhkar + builtin + custom + khatmah + night
+    val activeTypes: Int get() = listOf(lessons,quran,adhkar,builtin,custom,khatmah,night).count { it > 0 }
 }
 
 @Composable
@@ -55,6 +56,8 @@ fun ReminderCenterOverview(
     val custom by remember(owner) { graph.customRoutines.observe(owner) }
         .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
     val khatmah by remember(owner) { graph.khatmahReminders.observe(owner) }
+        .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
+    val night by remember(owner) { graph.nightReminders.observe(owner) }
         .collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
 
     val context = LocalContext.current
@@ -82,6 +85,7 @@ fun ReminderCenterOverview(
     val builtinState = (builtin as? ProtectedRead.Ready)?.value
     val customState = (custom as? ProtectedRead.Ready)?.value
     val khatmahRule = (khatmah as? ProtectedRead.Ready)?.value
+    val nightRule = (night as? ProtectedRead.Ready)?.value
     val counts = ReminderCenterCounts(
         lessons = lessonValues.size,
         quran = if (quranState?.rule?.enabled == true) 1 else 0,
@@ -89,8 +93,9 @@ fun ReminderCenterOverview(
         builtin = builtinState?.rules?.count { it.enabled } ?: 0,
         custom = customState?.rules?.count { it.enabled } ?: 0,
         khatmah = if (khatmahRule?.enabled == true) 1 else 0,
+        night = if (nightRule?.enabled == true) 1 else 0,
     )
-    val unreadable = listOf(choices,quran,adhkar,builtin,custom,khatmah,preferenceRead).any { it == ProtectedRead.Unreadable }
+    val unreadable = listOf(choices,quran,adhkar,builtin,custom,khatmah,night,preferenceRead).any { it == ProtectedRead.Unreadable }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         permissionRevision++
@@ -218,6 +223,31 @@ fun ReminderCenterOverview(
                             catch (_: Exception) { message = R.string.reminder_center_update_failed }
                         }
                     }) { Text(stringResource(R.string.khatmah_reminder_disable)) }
+                }
+            }
+            ReminderCountRow(R.string.night_prayer, counts.night) { open("night-prayer") }
+            if (nightRule?.enabled == true) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    Text(
+                        stringResource(
+                            R.string.reminder_night_active_detail,
+                            if (nightRule.mode == org.athar.app.nightprayer.NightReminderMode.LAST_THIRD)
+                                stringResource(R.string.last_third)
+                            else nightRule.fixedTime.orEmpty(),
+                        ),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    TextButton(onClick = {
+                        scope.launch {
+                            try { graph.nightReminders.disable(owner) }
+                            catch (failure: CancellationException) { throw failure }
+                            catch (_: Exception) { message = R.string.reminder_center_update_failed }
+                        }
+                    }) { Text(stringResource(R.string.night_reminder_disable)) }
                 }
             }
 

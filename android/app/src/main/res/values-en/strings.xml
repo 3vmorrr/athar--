@@ -621,4 +621,5 @@
     <string name="night_reminder_consent_confirm">Enable Night Prayer reminders</string>
     <string name="night_reminder_notification_title">Night Prayer</string>
     <string name="night_reminder_notification_body">The optional Night Prayer reminder you chose.</string>
+    <string name="reminder_night_active_detail">Night Prayer: %1$s</string>
 </resources>

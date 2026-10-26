@@ -649,4 +649,5 @@
     <string name="night_reminder_consent_confirm">تفعيل تذكيرات قيام الليل</string>
     <string name="night_reminder_notification_title">قيام الليل</string>
     <string name="night_reminder_notification_body">هذا هو التذكير الاختياري الذي اخترته لقيام الليل.</string>
+    <string name="reminder_night_active_detail">قيام الليل: %1$s</string>
 </resources>

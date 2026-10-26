@@ -19,9 +19,10 @@ class ReminderCenterModelTest {
             builtin=2,
             custom=4,
             khatmah=1,
+            night=1,
         )
-        assertEquals(13,counts.total)
-        assertEquals(6,counts.activeTypes)
+        assertEquals(14,counts.total)
+        assertEquals(7,counts.activeTypes)
     }
 
     @Test fun masterPauseBlocksEveryCategoryWithoutDeletingCategoryChoices() {
