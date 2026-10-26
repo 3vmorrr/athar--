@@ -64,6 +64,7 @@ import org.athar.app.quran.AyahText
                     },
                     statusText = when {
                         state.error -> stringResource(R.string.audio_failed)
+                        state.interrupted -> stringResource(R.string.audio_interrupted)
                         state.buffer -> stringResource(R.string.watch_buffering)
                         state.playing -> stringResource(R.string.watch_playing)
                         selectedIsLoaded && state.recording != null -> stringResource(R.string.watch_ready)
@@ -106,8 +107,11 @@ import org.athar.app.quran.AyahText
                             )
                             Text(
                                 stringResource(
-                                    if (state.playing) R.string.watch_playing
-                                    else R.string.watch_paused,
+                                    when {
+                                        state.interrupted -> R.string.audio_interrupted
+                                        state.playing -> R.string.watch_playing
+                                        else -> R.string.watch_paused
+                                    },
                                 ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
