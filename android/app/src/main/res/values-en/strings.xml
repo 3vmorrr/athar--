@@ -655,4 +655,9 @@
     <string name="notification_diagnostics_inbox_pending">Inbox changes waiting to sync: %1$d</string>
     <string name="notification_diagnostics_pending_count">Scheduled: %1$d</string>
     <string name="following_updates">Following updates</string>
+    <string name="books_catalog_intro">Explore real catalog books, then review rights, download and reading options on each book page.</string>
+    <string name="books_browse">Browse books</string>
+    <string name="books_catalog_empty">There are no published books right now.</string>
+    <string name="books_catalog_no_match">No books match your search.</string>
+    <string name="books_catalog_invalid">The book catalog data could not be read safely.</string>
 </resources>

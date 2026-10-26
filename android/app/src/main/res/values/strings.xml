@@ -683,4 +683,9 @@
     <string name="notification_diagnostics_inbox_pending">تغييرات صندوق الإشعارات في انتظار المزامنة: %1$d</string>
     <string name="notification_diagnostics_pending_count">مجدول: %1$d</string>
     <string name="following_updates">تحديثات المتابعة</string>
+    <string name="books_catalog_intro">اكتشف الكتب المتاحة من الكتالوج الحقيقي، ثم راجع الحقوق والتنزيل والقراءة من صفحة كل كتاب.</string>
+    <string name="books_browse">تصفح الكتب</string>
+    <string name="books_catalog_empty">لا توجد كتب منشورة حاليًا.</string>
+    <string name="books_catalog_no_match">لا توجد كتب مطابقة لبحثك.</string>
+    <string name="books_catalog_invalid">تعذر قراءة بيانات كتالوج الكتب بأمان.</string>
 </resources>

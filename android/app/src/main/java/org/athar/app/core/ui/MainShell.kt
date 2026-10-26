@@ -258,7 +258,21 @@ private fun AtharNavIcon(
                         composable("inbox") { org.athar.app.notifications.NotificationInboxScreen(vm.graph, open) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
-                        composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") }
+                        composable(
+                            "catalog/{kind}",
+                            arguments = listOf(navArgument("kind") { type = NavType.StringType }),
+                        ) { entry ->
+                            val kind = entry.arguments?.getString("kind")
+                                ?.takeIf { it in listOf("books","lessons","series","scholars") }
+                                ?: "lessons"
+                            if (kind == "books") {
+                                org.athar.app.books.BooksCatalogScreen(vm.graph) { id ->
+                                    open("books/" + id)
+                                }
+                            } else {
+                                KnowledgeScreen(vm.graph, open, kind)
+                            }
+                        }
                         composable("content/{kind}/{id}", arguments = listOf(navArgument("kind") { type = NavType.StringType }, navArgument("id") { type = NavType.IntType })) { entry -> CatalogDetail(vm.graph, "${entry.arguments?.getString("kind")}/${entry.arguments?.getInt("id")}", open) }
                         composable(
                             "book-reader/{id}",
@@ -293,7 +307,27 @@ private fun AtharNavIcon(
     var page by rememberSaveable { mutableIntStateOf(1) }
     Column(Modifier.fillMaxSize()) {
         TextButton(onClick={open("upcoming")},modifier=Modifier.padding(horizontal=16.dp)){Icon(AtharIcons.CalendarMonth,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.upcoming_lessons))}
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) { tabs.forEach { tab -> FilterChip(type == tab.first, { type = tab.first; page = 1; query = ""; input = "" }, label = { Text(stringResource(tab.second)) }) } }
+        FlowRow(
+            Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            tabs.forEach { tab ->
+                FilterChip(
+                    selected = type == tab.first,
+                    onClick = {
+                        if (tab.first == "books") {
+                            open("catalog-books")
+                        } else {
+                            type = tab.first
+                            page = 1
+                            query = ""
+                            input = ""
+                        }
+                    },
+                    label = { Text(stringResource(tab.second)) },
+                )
+            }
+        }
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(input, { input = it.take(100) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
             IconButton(onClick = { query = input.trim(); page = 1 }) { Icon(AtharIcons.Search, stringResource(R.string.search)) }
