@@ -2,6 +2,8 @@ package org.athar.app.quran
 
 import org.athar.app.core.ui.AtharIcons
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -79,33 +81,165 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
 }
 
 @Composable fun QuranScreen(graph: AppGraph, fontSize: Int) {
+    val vm: QuranViewModel = viewModel(
+        key = "reader:${graph.session.userId}",
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                QuranViewModel(graph) as T
+        },
+    )
+    val state by vm.state.collectAsStateWithLifecycle()
+    val storedReading by vm.reading.collectAsStateWithLifecycle()
+    val reading = (storedReading as? ProtectedRead.Ready)?.value
     var mode by rememberSaveable { mutableStateOf<String?>(null) }
+
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
+
     Column(Modifier.fillMaxSize()) {
         if (mode == null) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.quran), style = MaterialTheme.typography.headlineMedium)
-                listOf("read" to R.string.read, "listen" to R.string.listen, "tafsir" to R.string.tafsir, "radio" to R.string.radio).forEach { (key, label) ->
-                    OutlinedButton(onClick = { mode = key }, Modifier.fillMaxWidth().heightIn(min = 64.dp)) { Text(stringResource(label)) }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
+                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+            ) {
+                item(key = "quran-hero", contentType = "hero") {
+                    val positionText = reading?.let { position ->
+                        stringResource(
+                            R.string.reading_position_label,
+                            state.index?.surahs?.getOrNull(position.surah - 1)?.name
+                                ?: position.surah.toString(),
+                            position.ayah,
+                        )
+                    }
+                    AtharImmersiveHero(
+                        presentation = AtharHeroPresentation(
+                            artwork = AtharHeroArtwork.Quran,
+                            eyebrow = stringResource(R.string.quran),
+                            title = stringResource(R.string.quran),
+                            supportingText = when {
+                                storedReading == ProtectedRead.Unreadable ->
+                                    stringResource(R.string.local_data_unreadable)
+                                positionText != null -> positionText
+                                else -> stringResource(R.string.quran_source)
+                            },
+                            statusText = when {
+                                storedReading == ProtectedRead.Unreadable ->
+                                    stringResource(R.string.local_data_unreadable)
+                                reading?.conflict == true ->
+                                    stringResource(R.string.reading_conflict)
+                                reading?.pending == true ->
+                                    stringResource(R.string.reading_pending)
+                                else -> null
+                            },
+                            statusTone = if (
+                                storedReading == ProtectedRead.Unreadable ||
+                                    reading?.conflict == true
+                            ) {
+                                AtharHeroStatusTone.Warning
+                            } else {
+                                AtharHeroStatusTone.Neutral
+                            },
+                            primaryActionLabel = if (
+                                reading != null &&
+                                    !reading.conflict &&
+                                    storedReading is ProtectedRead.Ready
+                            ) {
+                                stringResource(R.string.resume_reading)
+                            } else {
+                                stringResource(R.string.read)
+                            },
+                        ),
+                        onPrimaryAction = {
+                            if (reading != null && !reading.conflict) {
+                                vm.select(reading.surah, reading.ayah)
+                            }
+                            mode = "read"
+                        },
+                    )
+                }
+
+                item(key = "quran-tools", contentType = "tools") {
+                    Column(
+                        Modifier.padding(horizontal = AtharSpacing.Lg),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        AtharSectionHeader(stringResource(R.string.quran_tools))
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.MenuBook,
+                                stringResource(R.string.read),
+                                { mode = "read" },
+                                Modifier.weight(1f),
+                                emphasized = true,
+                            )
+                            AtharQuickAction(
+                                AtharIcons.PlayArrow,
+                                stringResource(R.string.listen),
+                                { mode = "listen" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            AtharQuickAction(
+                                AtharIcons.School,
+                                stringResource(R.string.tafsir),
+                                { mode = "tafsir" },
+                                Modifier.weight(1f),
+                            )
+                            AtharQuickAction(
+                                AtharIcons.NightsStay,
+                                stringResource(R.string.radio),
+                                { mode = "radio" },
+                                Modifier.weight(1f),
+                            )
+                        }
+                    }
                 }
             }
         } else {
-            TextButton(onClick = { mode = null }, Modifier.padding(horizontal = 12.dp)) { Text(stringResource(R.string.quran_tools)) }
-            Box(Modifier.weight(1f)) { when(mode) { "read" -> QuranReaderScreen(graph, fontSize); "tafsir" -> TafsirScreen(graph, fontSize); else -> org.athar.app.media.AudioScreen(graph, mode == "radio") } }
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                tonalElevation = 0.dp,
+            ) {
+                TextButton(
+                    onClick = { mode = null },
+                    modifier = Modifier.padding(horizontal = AtharSpacing.Md),
+                ) {
+                    Icon(AtharIcons.ArrowBack, null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(AtharSpacing.Sm))
+                    Text(stringResource(R.string.quran_tools))
+                }
+            }
+            Box(Modifier.weight(1f)) {
+                when (mode) {
+                    "read" -> QuranReaderScreen(graph, fontSize, vm)
+                    "tafsir" -> TafsirScreen(graph, fontSize)
+                    else -> org.athar.app.media.AudioScreen(graph, mode == "radio")
+                }
+            }
         }
     }
 }
 
-@Composable private fun QuranReaderScreen(graph: AppGraph, fontSize: Int) {
-    val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun QuranReaderScreen(
+    graph: AppGraph,
+    fontSize: Int,
+    vm: QuranViewModel,
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
-    val listState = rememberLazyListState()
-    LaunchedEffect(state.scrollRequest) {
-        if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0))
-    }
+    val mushafScrollState = rememberScrollState()
+    var selectedAyah by remember { mutableStateOf<AyahText?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
     var selector by remember { mutableStateOf(false) }
     var searchMode by rememberSaveable { mutableStateOf(false) }
