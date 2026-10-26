@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "17.4",
+  "current_task": "17.5",
   "overall_estimate_percent": 48,
-  "overall_estimate_detail": 47.58,
+  "overall_estimate_detail": 48.18,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1725,7 +1725,7 @@
       "name": "Admin user management",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "17.3"
       ],
@@ -1736,7 +1736,8 @@
       "automated_tests": "Validation/owner/self protection/audit/session revoke tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.5963
+      "estimated_contribution_pp": 0.5963,
+      "acceptance_evidence": "docs/testing/ADMIN_USERS.md:62 user checks +120 prior HTTP,20,683 backend; actual access/refresh/public/Admin revocation, retained progress, fixture-only deletion/dependent cleanup,50/10 search paging and AR/EN desktop/phone feedback. No migration/native change; privacy analytics17.5 stays open."
     },
     {
       "id": "17.5",
@@ -2756,7 +2757,7 @@
   "estimate_basis": {
     "Android": 62,
     "Backend/API": 61,
-    "Independent Admin": 12,
+    "Independent Admin": 16,
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,

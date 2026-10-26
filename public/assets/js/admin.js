@@ -90,6 +90,18 @@
         }
     };
     show(window.location.hash, false);
+    const feedback = document.querySelector('[data-admin-form-error],.admin-global-flash');
+    if (feedback) {
+        feedback.tabIndex = -1;
+        // Initial fragment restoration can reset focus after deferred scripts.
+        // Wait for page load and the next frame so feedback stays authoritative.
+        const focusFeedback = () => window.requestAnimationFrame(() => {
+            feedback.focus({preventScroll: true});
+            feedback.scrollIntoView({block: 'center', behavior: 'auto'});
+        });
+        if (document.readyState === 'complete') focusFeedback();
+        else window.addEventListener('load', focusFeedback, {once: true});
+    }
     nav.addEventListener('click', (event) => {
         const link = event.target.closest('a[href^="#admin-"]');
         if (link) {

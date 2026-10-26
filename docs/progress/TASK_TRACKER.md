@@ -1,5 +1,9 @@
 # Implementation tracker
 
+## Parallel integration checkpoint — task17.4
+
+User lookup/profile/suspension/restoration/role/deletion accepted with literal global search,50/10 paging, centralized target controls, bilingual tools and focused feedback.182 actual HTTP and20,683 backend assertions PASS, including access/refresh/public/Admin revocation, retained progress and generated-user deletion/dependent cleanup. Actual AR/EN desktop/phone reviewed. [Evidence and retained failed-attempt notes](../testing/ADMIN_USERS.md). No migration/native change. Cursor834af23dbe9f01bcfc8ec1f0eeb943dc3028feed; next17.5 removes historical private Admin analytics/detail data. WP17 closure4/6 (67%); overall48% (48.18 weighted,±10pp);134 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task17.3
 
 Central action/target authorization integrated with fail-closed roles/operations, transactional target locks and durable rollback-denial audit.683 matrix/20,683 backend and120 HTTP assertions PASS, including a real concurrent promotion blocked by row locking and retained-session demotion. Owner/Admin browser controls checked. No migration/native change. [Evidence and limits](../testing/ADMIN_AUTHORIZATION.md). Source cursor81b2996522f869440c6b94c5dec270be8d1bdb48; next17.4. WP17 closure3/6 (50%); overall48% (47.58 weighted,±10pp);135 open. WP02.8 remains PARTIAL/deferred; later mapped parallel work is not accepted merely because code exists.

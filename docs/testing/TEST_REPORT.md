@@ -1,3 +1,7 @@
+## Task17.4 — user management
+
+182 actual HTTP and20,683 backend assertions PASS; token/cookie revocation, retained progress, fixture-only deletion and dependent cleanup,50/10 global search paging, literal wildcard/injection input, bilingual desktop/phone and focused error feedback. [Evidence and failed-run corrections](ADMIN_USERS.md). No migration/native change; privacy analysis17.5 follows immediately;02.8 stays deferred.
+
 ## Task17.3 — centralized Admin action and target authorization
 
 683 matrix/20,683 backend and120 HTTP assertions PASS, including actual concurrent promotion/row-lock wait, unchanged denied target, durable denial audit and revoked demoted session. Browser Admin/Owner controls accepted. No migration/native change. [Evidence, fixture rate-limit correction and limits](ADMIN_AUTHORIZATION.md). Next17.4;02.8 stays deferred.

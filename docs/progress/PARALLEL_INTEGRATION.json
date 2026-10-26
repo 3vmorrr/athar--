@@ -3,7 +3,7 @@
   "parallel_head": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "81b2996522f869440c6b94c5dec270be8d1bdb48",
+  "LAST_PARALLEL_INTEGRATED_SHA": "834af23dbe9f01bcfc8ec1f0eeb943dc3028feed",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -214,7 +214,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "No textual conflict; preserve main target row locks, denial rollback audit, central predicates and responsive shell. New locale/feedback/context fixes are manually layered.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -222,11 +222,13 @@
       "ui_impact": [
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "security_privacy": "Suspension/restoration reauthenticate and enforce owner/self/peer boundaries, revoke all old credentials and preserve progress. User-only marketing consent and fixture-only destructive acceptance. Historical private metrics are explicitly pending17.5.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "acceptance": "docs/testing/ADMIN_USERS.md;182 HTTP/20,683 backend and bilingual desktop/phone user tools; token revocation, retained progress, fixture deletion cleanup and global paging.",
+      "integration_base": "2d87b57de49981130675d35f5350495514d66c69"
     },
     {
       "task_or_group": "17.5",

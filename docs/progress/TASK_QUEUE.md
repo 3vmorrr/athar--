@@ -2,7 +2,7 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem integrates one logical task at a time from the recorded exact source cursor. Inspect both local worktrees, preserve newer security/offline logic and premium UI, integrate, fix, test, document, commit, push and verify the remote SHA before the next task. Never bulk merge or count source-only implementation as accepted. Keep the parallel worktree and classify every interleaved commit. WP02.8 remains PARTIAL and deferred until all available parallel work is integrated and stabilized, then complete it and audit WP1–WP24. External gates stay open while independent integration proceeds. No per-task permission is required.
 
-Snapshot: 2026-10-26. Current task: **17.4**. Open tasks: **135**. Overall estimate: **48%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **17.5**. Open tasks: **134**. Overall estimate: **48%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. The parallel branch leads implementation; this track accepts one integration task at a time under PARALLEL_INTEGRATION.json.
 
@@ -940,7 +940,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 17.4 — Admin user management
 
-- Parent: Work package 17: Independent Admin foundation; state: **PARTIAL**; dependencies: 17.3.
+- Parent: Work package 17: Independent Admin foundation; state: **COMPLETE**; dependencies: 17.3.
 - Exact scope: Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation.
 - Files/modules: admin/ (new); backend/src/Identity/.
 - Automated gates: Validation/owner/self protection/audit/session revoke tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

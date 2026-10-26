@@ -152,7 +152,7 @@ post_login_cookie = cookie("ATHARADMIN")
 check(post_login_cookie is not None and post_login_cookie.value != pre_login_cookie, "Admin login rotates session ID")
 
 # The shell must keep its own assets, navigation, language and theme state.
-check('/assets/css/admin.css?v=1' in page and '/assets/js/admin.js?v=1' in page, "Independent shell assets are loaded")
+check('/assets/css/admin.css?v=' in page and '/assets/js/admin.js?v=' in page, "Independent shell assets are loaded")
 check('/assets/js/app.js' not in page and 'class="site-header"' not in page, "Public chrome/scripts are absent from Admin")
 check('aria-controls="admin-primary-nav"' in page and 'id="admin-main"' in page, "Drawer and skip-link targets exist")
 check('href="#admin-backups"' not in page, "Non-owner shell omits recovery navigation")

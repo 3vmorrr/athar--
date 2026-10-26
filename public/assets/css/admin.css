@@ -18,3 +18,6 @@
 .inventory-grid>article{min-width:0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface2)}
 .inventory-row{display:grid;grid-template-columns:minmax(0,1fr) auto}.inventory-row p{overflow-wrap:anywhere}.inventory-actions{display:flex;gap:8px;flex-wrap:wrap}.text-button{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface3);color:var(--primary2);cursor:pointer}.inventory-edit{grid-column:1/-1;width:100%;min-width:0}.inventory-edit summary{min-height:44px;padding:8px}.inventory-edit[open] .form-stack{margin-block:12px}.scholar-portrait-admin{max-width:100px;height:auto}
 @media(max-width:680px){.inventory-row{grid-template-columns:1fr}.inventory-actions{width:100%}.inventory-edit{grid-column:1}.admin-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.admin-user-heading>div{min-width:0;overflow-wrap:anywhere}.admin-user-facts span{overflow-wrap:anywhere}.admin-user-actions{display:grid;gap:12px;margin-top:16px}.admin-user-actions details>summary,.admin-user-details>summary{min-height:44px;padding-block:10px}.admin-user-stats dd{margin-inline-start:0}.admin-user-stats dt{font-size:.9rem;color:var(--muted)}.admin-user-search-form{margin-block:18px}
+.admin-role-chip{align-self:flex-start}

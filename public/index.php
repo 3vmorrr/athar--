@@ -742,6 +742,36 @@ if ($path === '/admin') {
                 db()->prepare("UPDATE email_campaigns SET status='sending' WHERE id=?")->execute([$campaignId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-failures-requeued','email-campaign',(string)$campaignId]);
                 db()->commit(); flash('أُعيدت الرسائل الفاشلة إلى قائمة الإرسال.'); redirect('/admin#admin-campaigns');
+            } elseif ($kind === 'user-suspension') {
+                $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
+                $nextState = (string) ($_POST['state'] ?? '');
+                if (!$targetId || $targetId < 1 || !in_array($nextState, ['suspend','restore'], true)) throw new RuntimeException('اختيار الحساب أو الحالة غير صالح.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
+                $pdo = db();
+                $pdo->beginTransaction();
+                $targetQuery = $pdo->prepare('SELECT id,role,suspended_at FROM users WHERE id=? FOR UPDATE');
+                $targetQuery->execute([$targetId]);
+                $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'suspension');
+                if ($nextState === 'suspend') {
+                    if ($target['suspended_at'] !== null) { $pdo->rollBack(); flash('الحساب موقوف بالفعل.'); redirect('/admin#admin-users'); }
+                    $pdo->prepare('UPDATE users SET suspended_at=UTC_TIMESTAMP(),session_version=session_version+1 WHERE id=?')->execute([$targetId]);
+                    $pdo->prepare("UPDATE api_sessions SET revoked_at=COALESCE(revoked_at,UTC_TIMESTAMP()),revoked_reason=COALESCE(revoked_reason,'admin-suspended') WHERE user_id=?")->execute([$targetId]);
+                    $action = 'admin-user-suspended';
+                    $message = 'تم إيقاف الحساب وإبطال جلساته الحالية.';
+                } else {
+                    if ($target['suspended_at'] === null) { $pdo->rollBack(); flash('الحساب نشط بالفعل.'); redirect('/admin#admin-users'); }
+                    $pdo->prepare('UPDATE users SET suspended_at=NULL,session_version=session_version+1 WHERE id=?')->execute([$targetId]);
+                    $pdo->prepare("UPDATE api_sessions SET revoked_at=COALESCE(revoked_at,UTC_TIMESTAMP()),revoked_reason=COALESCE(revoked_reason,'admin-restored') WHERE user_id=?")->execute([$targetId]);
+                    $action = 'admin-user-restored';
+                    $message = 'تمت إعادة تفعيل الحساب. يجب تسجيل الدخول من جديد.';
+                }
+                $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],$action,'user',(string)$targetId]);
+                $pdo->commit();
+                flash($message);
+                redirect('/admin#admin-users');
             } elseif ($kind === 'user-profile-update') {
                 $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
                 $email = strtolower(trim((string) ($_POST['email'] ?? '')));
@@ -985,12 +1015,23 @@ if ($path === '/admin') {
     ];
     $activityTotals = db()->query('SELECT COALESCE(SUM(quran_sessions),0) AS quran_sessions,COALESCE(SUM(lesson_completions),0) AS lesson_completions,COALESCE(SUM(adhkar_completions),0) AS adhkar_completions,COALESCE(SUM(book_downloads),0) AS book_downloads FROM account_daily_stats')->fetch();
     foreach (['quran_sessions','lesson_completions','adhkar_completions','book_downloads'] as $activityMetric) $dashboardMetrics[$activityMetric] = (int) $activityTotals[$activityMetric];
-    $managedUserTotal = (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    $managedUserSearch = trim(mb_substr(is_string($_GET['users_q'] ?? null) ? $_GET['users_q'] : '', 0, 80, 'UTF-8'));
+    $managedUserWhere = '';
+    $managedUserParams = [];
+    if ($managedUserSearch !== '') {
+        $managedUserWhere = ' WHERE (u.email LIKE ? ESCAPE \'=\' OR COALESCE(u.display_name,\'\') LIKE ? ESCAPE \'=\' OR COALESCE(u.username,\'\') LIKE ? ESCAPE \'=\'' . (ctype_digit($managedUserSearch) ? ' OR u.id=?' : '') . ')';
+        $like = '%' . str_replace(['=', '%', '_'], ['==', '=%', '=_'], $managedUserSearch) . '%';
+        $managedUserParams = [$like, $like, $like];
+        if (ctype_digit($managedUserSearch)) $managedUserParams[] = (int) $managedUserSearch;
+    }
+    $managedUserCountQuery = db()->prepare('SELECT COUNT(*) FROM users u' . $managedUserWhere);
+    $managedUserCountQuery->execute($managedUserParams);
+    $managedUserTotal = (int) $managedUserCountQuery->fetchColumn();
     $managedUserPageSize = 50;
     $managedUserPageCount = max(1, (int) ceil($managedUserTotal / $managedUserPageSize));
     $managedUserPage = max(1, min($managedUserPageCount, (int) (filter_var($_GET['users_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $managedUserOffset = ($managedUserPage - 1) * $managedUserPageSize;
-    $managedUsers = db()->query("SELECT u.id,u.email,u.display_name,u.username,u.role,u.email_verified_at,u.email_marketing_opt_in,u.created_at,u.updated_at,
+    $managedUsersQuery = db()->prepare("SELECT u.id,u.email,u.display_name,u.username,u.role,u.email_verified_at,u.email_marketing_opt_in,u.suspended_at,u.session_version,u.created_at,u.updated_at,
         (SELECT COUNT(*) FROM quran_bookmarks b WHERE b.user_id=u.id) AS bookmark_count,
         (SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=u.id) AS favorite_count,
         (SELECT COUNT(*) FROM video_progress v WHERE v.user_id=u.id) AS lesson_progress_count,
@@ -999,10 +1040,12 @@ if ($path === '/admin') {
         (SELECT COALESCE(SUM(s.adhkar_completions),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS adhkar_completions,
         (SELECT COALESCE(SUM(s.book_downloads),0) FROM account_daily_stats s WHERE s.user_id=u.id) AS book_downloads,
         (SELECT MAX(s.activity_date) FROM account_daily_stats s WHERE s.user_id=u.id) AS last_active,
-        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action='account-login-succeeded') AS last_login,
+        (SELECT MAX(a.created_at) FROM audit_logs a WHERE a.actor_id=u.id AND a.action IN ('account-login-succeeded','admin-login-succeeded','api-login-succeeded')) AS last_login,
         (SELECT p.status FROM khatmah_plans p WHERE p.user_id=u.id LIMIT 1) AS khatmah_status,
         (SELECT CONCAT(q.surah,':',q.ayah) FROM quran_positions q WHERE q.user_id=u.id LIMIT 1) AS quran_position
-        FROM users u ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}")->fetchAll();
+        FROM users u" . $managedUserWhere . " ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}");
+    $managedUsersQuery->execute($managedUserParams);
+    $managedUsers = $managedUsersQuery->fetchAll();
     $smtpConfig = ['smtp_host'=>'','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>'','smtp_from_email'=>'','smtp_from_name'=>'أثر'];
     foreach ($smtpConfig as $key=>$fallback) $smtpConfig[$key] = platform_setting($key,$fallback);
     $smtpPasswordConfigured = platform_setting('smtp_password_cipher') !== '';

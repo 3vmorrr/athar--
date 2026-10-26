@@ -2,7 +2,13 @@
 declare(strict_types=1);
 $adminLocale = $adminLocale ?? admin_locale();
 $adminTheme = $adminTheme ?? admin_theme();
+$adminCssVersion = substr(hash_file('sha256', dirname(__DIR__, 2) . '/public/assets/css/admin.css'), 0, 12);
+$adminJsVersion = substr(hash_file('sha256', dirname(__DIR__, 2) . '/public/assets/js/admin.js'), 0, 12);
 $rtl = $adminLocale === 'ar';
+$userContext = [];
+if (($managedUserSearch ?? '') !== '' || ($managedUserPage ?? 1) > 1) {
+    $userContext = ['users_q' => $managedUserSearch ?? '', 'users_page' => $managedUserPage ?? 1];
+}
 $chrome = $rtl ? [
     'dashboard' => 'لوحة الإدارة',
     'site' => 'فتح أثر',
@@ -38,8 +44,8 @@ $chrome = $rtl ? [
     <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
     <title><?= e($chrome['dashboard']) ?> | أثر</title>
     <link rel="icon" type="image/png" href="/assets/images/athar-favicon.png">
-    <link rel="stylesheet" href="/assets/css/admin.css?v=1">
-    <script src="/assets/js/admin.js?v=1" defer></script>
+    <link rel="stylesheet" href="/assets/css/admin.css?v=<?= e($adminCssVersion) ?>">
+    <script src="/assets/js/admin.js?v=<?= e($adminJsVersion) ?>" defer></script>
     <script src="/assets/js/admin-campaign-legacy.js?v=1" defer></script>
 </head>
 <body class="admin-app" data-close-menu="<?= e($chrome['close_menu']) ?>">
@@ -62,8 +68,8 @@ $chrome = $rtl ? [
                 <small><?= e(($admin['role'] ?? '') === 'owner' ? $chrome['role_owner'] : $chrome['role_admin']) ?></small>
             </span>
             <a class="admin-topbar-link" href="/"><?= e($chrome['site']) ?></a>
-            <a class="admin-topbar-link" data-admin-preference href="/admin?lang=<?= e($chrome['language_code']) ?>"><?= e($chrome['language']) ?></a>
-            <a class="admin-topbar-link" data-admin-preference href="/admin?theme=<?= $adminTheme === 'dark' ? 'light' : 'dark' ?>"><?= e($chrome['theme']) ?></a>
+            <a class="admin-topbar-link" data-admin-preference href="/admin?<?= e(http_build_query($userContext + ['lang' => $chrome['language_code']])) ?>"><?= e($chrome['language']) ?></a>
+            <a class="admin-topbar-link" data-admin-preference href="/admin?<?= e(http_build_query($userContext + ['theme' => $adminTheme === 'dark' ? 'light' : 'dark'])) ?>"><?= e($chrome['theme']) ?></a>
             <form method="post" action="/admin/logout">
                 <?= csrf_field() ?>
                 <button class="admin-topbar-link admin-logout" type="submit"><?= e($chrome['logout']) ?></button>
