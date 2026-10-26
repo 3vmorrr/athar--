@@ -1,6 +1,5 @@
 package org.athar.app.books
 
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -200,7 +199,6 @@ fun BookDetailScreen(
                             graph = graph,
                             owner = owner,
                             bookId = bookId,
-                            title = item.text("title"),
                             canDownload = canDownload,
                             onOpenReader = { openReader(bookId) },
                         )
@@ -253,12 +251,5 @@ private fun BookMetadataLine(
     }
 }
 
-private fun safeExternalHttps(value: String): String? {
-    if (value.isBlank() || value.length > 2048 || value.contains('\r') || value.contains('\n')) {
-        return null
-    }
-    val uri = runCatching { Uri.parse(value) }.getOrNull() ?: return null
-    if (!uri.scheme.equals("https", ignoreCase = true)) return null
-    if (uri.host.isNullOrBlank() || uri.userInfo != null) return null
-    return value
-}
+private fun safeExternalHttps(value: String): String? =
+    value.takeIf(BookDownloadPolicy::safeHttps)
