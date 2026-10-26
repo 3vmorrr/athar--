@@ -1,5 +1,9 @@
 # Physical Android integration —2026-10-25
 
+##26 October — upcoming home continuation
+
+Current native build/test APK/lint passed;26 JVM cases and287 resources passed. Physical Arabic3/3 (21.487s) and English3/3 (20.883s) reruns passed for home discovery/navigation, event transitions, cached-live/unavailable/replay presentation, and real encrypted Room cache isolation/removal. Arabic/English home captures were inspected. An initial English isolated-Compose harness case failed because only its configuration/direction was localized; supplying the matching localized Context fixed the test surface, and both full reruns passed. The initial failure is preserved in the test report. This is fixture/API and presentation acceptance, not physical YouTube live playback, reminder delivery or independent Admin UI acceptance.
+
 ## Checkpoint revalidation25–26 October
 
 After safe service restart on26 October, the actual phone→8002 probe passed again (1 case,5.473s), then the main activity launched successfully. A process-scoped600-line logcat capture found zero matching fatal/ANR/SQLite/linkage/cleartext failures. Instrumentation had exited the process before this separate launch, so the capture was taken only after relaunch; logs were never globally cleared. This is a scoped smoke result, not full stability certification.

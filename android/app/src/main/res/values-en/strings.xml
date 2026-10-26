@@ -170,4 +170,6 @@
         <item quantity="one">Estimated duration: %1$d minute</item>
         <item quantity="other">Estimated duration: %1$d minutes</item>
     </plurals>
+    <string name="upcoming_unavailable">This lesson is no longer available. Return to the lesson list for the latest schedule.</string>
+    <string name="upcoming_replay_pending">The lesson has ended. Its recording is not currently available to watch.</string>
 </resources>

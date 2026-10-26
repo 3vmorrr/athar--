@@ -23,6 +23,7 @@ import com.google.gson.JsonElement
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.auth.AuthState
+import org.athar.app.learning.UpcomingHomeSection
 
 @Composable fun PremiumHomeScreen(graph: AppGraph, auth: AuthState.SignedIn, navigate: (String) -> Unit, open: (String) -> Unit) {
     DataScreen(graph, "home") { data, _ ->
@@ -42,6 +43,7 @@ import org.athar.app.auth.AuthState
                         }
                     }
                 }
+                item(key = "upcoming", span = { GridItemSpan(maxLineSpan) }, contentType = "upcoming") { UpcomingHomeSection(graph,open) }
                 item(key = "activity", span = { GridItemSpan(maxLineSpan) }, contentType = "activity") {
                     val activity = data.asJsonObject["activity"]
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

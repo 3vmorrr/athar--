@@ -198,4 +198,6 @@
         <item quantity="many">المدة المقدرة: %1$d دقيقة</item>
         <item quantity="other">المدة المقدرة: %1$d دقيقة</item>
     </plurals>
+    <string name="upcoming_unavailable">هذا الدرس لم يعد متاحًا. ارجع إلى قائمة الدروس للاطلاع على أحدث المواعيد.</string>
+    <string name="upcoming_replay_pending">انتهى الدرس، والتسجيل غير متاح للمشاهدة حاليًا.</string>
 </resources>

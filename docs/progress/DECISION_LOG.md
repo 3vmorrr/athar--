@@ -1,5 +1,7 @@
 # Engineering decision log
 
+26 October upcoming continuation: home discovery is bounded to three rows; current live status requires a fresh authoritative response, cached live is labelled as saved, and offline playback actions are withheld. Preserve cached context for connectivity failure, but discard displayed rows for explicit access denial/removal. Partition ViewModel identity by account and language. Test the same stateless presentation with a localized Context, not only a direction/configuration override.
+
 Formal checkpoint2026-10-25: audit actual source against all approved addenda; preserve native/API/legacy work and the damaged original database; verify tests/build/USB integration and scan candidate files plus reachable history before normal commit/push. No history rewrite or force-push. The24 remaining work packages refine P4–P8. Continue phase1 after checkpoint; legacy Admin is not independent Admin acceptance.
 
 | Date | Decision | Reason / consequence |

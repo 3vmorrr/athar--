@@ -51,8 +51,15 @@ class UpcomingJourneyTest {
             change(mapOf("status" to "scheduled","scheduled_at" to Instant.now().plusSeconds(900).truncatedTo(java.time.temporal.ChronoUnit.SECONDS).toString(),"is_live_event" to true,"replay_available" to false))
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 compose.waitUntil(25_000){compose.onAllNodesWithText(label(R.string.your_journey)).fetchSemanticsNodes().isNotEmpty()}
-                compose.onNodeWithText(label(R.string.knowledge)).performClick()
-                compose.onNodeWithText(label(R.string.upcoming_lessons)).performClick()
+                compose.onNodeWithTag("home-upcoming").performScrollTo()
+                compose.waitUntil(20_000){compose.onAllNodesWithTag("home-event-5").fetchSemanticsNodes().isNotEmpty()}
+                compose.onNodeWithTag("home-event-5").performScrollTo()
+                capture("home")
+                compose.onNodeWithTag("home-event-5").performClick()
+                compose.waitUntil(15_000){compose.onAllNodesWithTag("upcoming-event-5").fetchSemanticsNodes().isNotEmpty()}
+                compose.onNodeWithText(label(R.string.upcoming_scheduled)).assertIsDisplayed()
+                compose.onNodeWithContentDescription(label(R.string.back)).performClick()
+                compose.onNodeWithTag("home-upcoming-all").performScrollTo().performClick()
                 compose.waitUntil(20_000){compose.onAllNodesWithTag("upcoming-event-5").fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithText(label(R.string.upcoming_scheduled)).assertIsDisplayed()
                 compose.onNodeWithText(if(language=="en")"Upcoming interface fixture" else "درس اختباري قادم").assertIsDisplayed()

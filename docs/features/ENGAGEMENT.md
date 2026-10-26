@@ -1,5 +1,13 @@
 # Upcoming lessons and respectful engagement
 
+##26 October continuation — home and offline acceptance
+
+The checkpoint was pushed and verified before continuing. Native home now requests at most three upcoming/live rows, with server-confirmed live priority, an explicit view-all route, and a fresh live lesson watch action. Cached live content is labelled as last saved; offline UI never offers playback. Countdown reads stay in a leaf composable and polling is foreground/lifecycle-bound. Account and language are part of screen ViewModel identity. The section is a bounded non-scrolling group within the existing lazy home grid, not an unbounded nested list.
+
+Detail presentation explains unavailable lessons and ended lessons without a playable recording. Authoritative401/403/404 clears old controller rows;404 also invalidates the repository cache. Generic offline failure preserves readable cached context and retries retain the correct page. Four new controller tests execute these rules, including cancellation of old requests and the three-row query bound. Additional native tests exercise actual Room/Keystore cache isolation and cached-live/unavailable/replay presentation. Hardware results are recorded only after execution in the test report; these tests do not claim real broadcast playback or offline YouTube support.
+
+Course/topic/related-book/page metadata remains an optional content-model extension for phase1; reminders/follows/inbox and independent Admin controls remain separate later work. No fake reminder control or implied opt-in is displayed.
+
 Status: IN_PROGRESS. Upcoming/live migration014, protected API and native list/detail are functional; reminders, follows, push, inbox and independent Admin campaigns remain NOT STARTED. Full received requirements are preserved in [engagement requirements](../product/ENGAGEMENT_REQUIREMENTS.md). Existing Android/backend foundations are retained.
 
 Upcoming events use audited revision-checked transitions and explicit offset-qualified UTC instants. English metadata is optional content, not fabricated translation. The native foreground refresh lifecycle, countdown, cancellation/replay and no-inferred-live policy have unit and API/device tests.54 isolated backend assertions pass. Migration014 was applied to the healthy private development database and generated fixture only after logical backup/checksum/table coverage checks; the corrupt original is unchanged. Full backup restore acceptance remains open. Extended event metadata/home spotlight and complete offline UI acceptance remain phase1 work in the formal checkpoint roadmap.

@@ -30,25 +30,31 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable fun UpcomingScreen(graph:AppGraph,lesson:Int?=null,open:(String)->Unit) {
-    val vm:UpcomingViewModel=viewModel(key="upcoming:${graph.session.userId}:$lesson",factory=object:ViewModelProvider.Factory{
+    val language=LocalConfiguration.current.locales[0].language
+    val vm:UpcomingViewModel=viewModel(key="upcoming:${graph.session.userId}:$language:$lesson",factory=object:ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST") override fun <T:ViewModel> create(modelClass:Class<T>):T=UpcomingViewModel(graph,lesson) as T
     })
     val state by vm.state.collectAsStateWithLifecycle()
     val lifecycle=LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(vm,lifecycle){lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){while(isActive){delay(60_000);vm.refresh(silent=true)}}}
+    UpcomingContent(state,lesson!=null,{vm.refresh()},vm::more,open)
+}
+
+@Composable internal fun UpcomingContent(state:UpcomingState,detail:Boolean,refresh:()->Unit,more:()->Unit,open:(String)->Unit) {
     Box(Modifier.fillMaxSize(),contentAlignment=Alignment.TopCenter) {
         LazyColumn(Modifier.widthIn(max=800.dp).fillMaxSize().testTag("upcoming-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
             item(key="controls",contentType="controls") {
                 Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.End,verticalAlignment=Alignment.CenterVertically){
-                    TextButton(onClick={vm.refresh()},enabled=!state.loading){Text(stringResource(R.string.upcoming_refresh))}
+                    TextButton(onClick=refresh,enabled=!state.loading){Text(stringResource(R.string.upcoming_refresh))}
                 }
             }
             if(state.loading)item(key="loading",contentType="state"){LinearProgressIndicator(Modifier.fillMaxWidth())}
             if(state.offline)item(key="offline",contentType="state"){MessagePanel(stringResource(R.string.offline_notice))}
-            if(state.error)item(key="error",contentType="state"){MessagePanel(stringResource(R.string.network_error),true){TextButton(onClick={vm.refresh()}){Text(stringResource(R.string.retry))}}}
-            if(!state.loading&&!state.error&&state.items.isEmpty())item(key="empty",contentType="state"){QuietEmptyState(stringResource(R.string.upcoming_empty))}
-            items(state.items,key={it.id},contentType={"event"}){event->UpcomingCard(event,state.offline,state.clockOffsetMillis,lesson!=null,open)}
-            if(state.hasMore)item(key="more",contentType="controls"){OutlinedButton(onClick=vm::more,enabled=!state.loading,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.more))}}
+            if(state.error)item(key="error",contentType="state"){MessagePanel(stringResource(R.string.network_error),true){TextButton(onClick=refresh){Text(stringResource(R.string.retry))}}}
+            if(state.unavailable)item(key="unavailable",contentType="state"){QuietEmptyState(stringResource(R.string.upcoming_unavailable))}
+            if(!state.loading&&!state.error&&!state.unavailable&&state.items.isEmpty())item(key="empty",contentType="state"){QuietEmptyState(stringResource(R.string.upcoming_empty))}
+            items(state.items,key={it.id},contentType={"event"}){event->UpcomingCard(event,state.offline,state.clockOffsetMillis,detail,open)}
+            if(state.hasMore)item(key="more",contentType="controls"){OutlinedButton(onClick=more,enabled=!state.loading,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.more))}}
         }
     }
 }
@@ -70,17 +76,18 @@ import java.time.format.FormatStyle
             if(event.status==EventStatus.SCHEDULED&&event.start!=null)EventCountdownLabel(event.start,clockOffset)
             event.durationMinutes?.let{Text(pluralStringResource(R.plurals.upcoming_duration,it,it),style=MaterialTheme.typography.bodySmall)}
             if(event.status==EventStatus.CANCELLED)MessagePanel(stringResource(R.string.upcoming_cancelled_body))
+            if(detail&&event.status==EventStatus.PUBLISHED&&!event.canWatch)MessagePanel(stringResource(R.string.upcoming_replay_pending))
             if(detail&&event.description.isNotBlank()){
                 Text(event.description,maxLines=if(expanded)Int.MAX_VALUE else 5,overflow=TextOverflow.Ellipsis)
                 TextButton(onClick={expanded=!expanded}){Text(stringResource(if(expanded)R.string.watch_show_less else R.string.more))}
             }
             if(!detail)OutlinedButton(onClick={open("upcoming/${event.id}")},modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.upcoming_details))}
-            else if(event.canWatch&&(event.status!=EventStatus.LIVE||!offline))Button(onClick={open("lessons/${event.id}")},modifier=Modifier.fillMaxWidth()){Icon(AtharIcons.PlayArrow,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.play))}
+            else if(event.canWatch&&!offline)Button(onClick={open("lessons/${event.id}")},modifier=Modifier.fillMaxWidth()){Icon(AtharIcons.PlayArrow,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.play))}
         }
     }
 }
 
-@Composable private fun EventCountdownLabel(start:Instant,clockOffset:Long) {
+@Composable internal fun EventCountdownLabel(start:Instant,clockOffset:Long) {
     var now by remember(start,clockOffset){mutableStateOf(Instant.ofEpochMilli(System.currentTimeMillis()+clockOffset))}
     val lifecycle=LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(start,clockOffset,lifecycle){lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){while(isActive){now=Instant.ofEpochMilli(System.currentTimeMillis()+clockOffset);delay(30_000)}}}

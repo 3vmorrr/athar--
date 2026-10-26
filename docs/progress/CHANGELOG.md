@@ -1,5 +1,12 @@
 # Engineering change log
 
+##2026-10-26 — Upcoming home and offline-state acceptance
+
+- Added bounded three-row home discovery with authoritative live status, view-all/detail navigation and localized controller identity.
+- Clarified removed lessons and unpublished recordings; offline saved-live presentation never offers playback. Explicit401/403/404 clears stale displayed content; cached404 content is removed rather than resurrected offline.
+- Added4 controller tests, encrypted event-cache ownership/locale/removal acceptance and cached-state UI tests.26 JVM cases,287 resources, build/lint and physical Arabic3/3 +English3/3 reruns pass; both home captures inspected. Initial English test-context failure remains documented.
+- Preserved the verified GitHub checkpoint receipt and excluded generated Kotlin compiler state. Optional extended event metadata and independent Admin/reminder work remain open.
+
 ##2026-10-26 — Formal project checkpoint
 
 - Compared all approved requirements with actual native/backend/legacy source and additive migrations; recorded24 remaining work packages and weighted41% engineering estimate.
