@@ -142,6 +142,18 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
     private fun schedule() { changes.tryEmit(Unit) }
     override fun close() { scope.cancel() }
     suspend fun hasPending(user:Long):Boolean=withContext(Dispatchers.IO){dao.caches(user,"adhkar:%").any{val value=decode(it);!value.conflict&&(value.pending||value.events.isNotEmpty())}}
+    suspend fun pendingCompletionCount(
+        user:Long,
+        expectedOwner:Long?=session.userId,
+    ):Int=withContext(Dispatchers.IO){
+        session.requireVerifiedOwner(expectedOwner)
+        if(expectedOwner!=user)throw ApiException(401,"account_changed","")
+        dao.caches(user,"adhkar:%").sumOf { document ->
+            val value=decode(document)
+            if(value.conflict)0 else value.events.size
+        }
+    }
+
     suspend fun sync(expectedOwner:Long?=null) = syncing.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
         if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
