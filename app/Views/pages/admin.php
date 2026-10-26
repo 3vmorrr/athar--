@@ -11,7 +11,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'content' => 'Saved content',
     'events' => 'Upcoming & Live',
     'comments' => 'Comment moderation',
-    'campaigns' => 'Email campaigns',
+    'campaigns' => 'Campaigns',
     'services' => 'Service settings',
     'night_prayer' => 'Night Prayer defaults',
     'users' => 'User management',
@@ -29,7 +29,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'content' => 'المحتوى المحفوظ',
     'events' => 'القادم والمباشر',
     'comments' => 'مراجعة التعليقات',
-    'campaigns' => 'حملات البريد',
+    'campaigns' => 'الحملات',
     'services' => 'إعدادات الخدمات',
     'night_prayer' => 'إعدادات قيام الليل',
     'users' => 'إدارة المستخدمين',
@@ -126,12 +126,169 @@ $adminShellCopy = $adminLocale === 'en' ? [
     </section>
     <?php endif; ?>
     <section class="admin-inventory admin-panel" id="admin-campaigns" data-admin-panel hidden>
-        <div class="section-heading"><div><span class="eyebrow">التواصل مع المجتمع</span><h2>حملات البريد الإلكتروني</h2></div><span class="source-chip"><?= number_format($mailingOptInCount) ?> مشتركًا مؤكد البريد</span></div>
-        <p class="source-note">تصل الحملة فقط لمن أكد بريده واختار الاشتراك. ابدأ الإرسال مرة واحدة وسيكمل الموقع تلقائيًا على دفعات من 3 رسائل، ويمكنك إيقافه بعد الدفعة الحالية. يتوقف عند 450 رسالة خلال 24 ساعة لترك مساحة لرسائل التحقق. كل رسالة تحمل شعار أثر ورابط إلغاء الاشتراك.</p>
-        <article class="knowledge-card admin-campaign-composer"><h3>إنشاء حملة</h3><form class="form-stack" method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-create"><label>عنوان الرسالة<input name="subject" maxlength="180" minlength="3" required></label><label>نص الرسالة<textarea name="body" maxlength="4000" minlength="10" rows="7" required></textarea><small>نص عادي آمن؛ سيظهر داخل قالب أثر المتوافق مع Gmail والهواتف.</small></label><button class="button button-primary" type="submit" <?= !$mailingOptInCount || !$smtpPasswordConfigured ? 'disabled' : '' ?>>تجهيز الحملة للمشتركين</button></form><?php if (!$smtpPasswordConfigured): ?><p class="source-note">احفظ بريد Gmail وApp Password أولًا من إعدادات الخدمات.</p><?php elseif (!$mailingOptInCount): ?><p class="source-note">لا يوجد مشترك مؤكد البريد بعد. يمكن للمستخدم الاشتراك من بيانات الحساب.</p><?php endif; ?></article>
-        <p class="source-note admin-campaign-feedback" data-campaign-feedback role="status" aria-live="polite"></p>
-        <button class="button button-secondary" type="button" data-campaign-stop hidden>إيقاف بعد الدفعة الحالية</button>
-        <div class="admin-campaign-list"><h3>الحملات السابقة</h3><?php if (!$emailCampaigns): ?><p class="source-note">لم تُنشأ حملات بعد.</p><?php else: ?><?php foreach ($emailCampaigns as $campaign): $campaignStatus = ['draft'=>'جاهزة للإرسال','sending'=>'قيد الإرسال','paused'=>'متوقفة مؤقتًا','completed'=>'مكتملة'][$campaign['status']] ?? $campaign['status']; ?><article class="knowledge-card admin-campaign-row"><div class="admin-campaign-heading"><div><strong><?= e($campaign['subject']) ?></strong><p>أُنشئت <?= e($campaign['created_at']) ?> · بواسطة <?= e($campaign['creator_email'] ?: 'النظام') ?></p></div><span class="source-chip"><?= e($campaignStatus) ?></span></div><div class="admin-campaign-stats"><span><?= (int)$campaign['recipient_sent'] ?> أُرسلت</span><span><?= (int)$campaign['recipient_pending'] ?> متبقية</span><span><?= (int)$campaign['recipient_failed'] ?> فشلت</span><span><?= (int)$campaign['recipient_skipped'] ?> تم تخطيها</span></div><?php if (in_array($campaign['status'], ['draft','sending','paused'], true) && (int)$campaign['recipient_pending'] > 0): ?><form method="post" class="admin-campaign-action" data-campaign-batch><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-batch"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><button class="button button-primary" type="submit">بدء الإرسال (3 رسائل لكل دفعة)</button></form><?php endif; ?><?php if ((int)$campaign['recipient_failed'] > 0): ?><form method="post" class="admin-campaign-action" data-confirm="ستُعاد الرسائل الفاشلة فقط إلى قائمة الإرسال."><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-retry-failed"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><button class="button button-secondary" type="submit">إعادة محاولة الرسائل الفاشلة</button></form><?php endif; ?></article><?php endforeach; ?><?php endif; ?></div>
+        <div class="section-heading">
+            <div><span class="eyebrow">التواصل باحترام</span><h2>الحملات</h2></div>
+            <span class="source-chip"><?= count($engagementCampaigns) ?> حملة حديثة</span>
+        </div>
+        <p class="source-note">المسودة لا ترسل شيئًا. الإطلاق النهائي يتطلب معاينة ثم تأكيدًا صريحًا من المالك. الاستهداف يعتمد على الموافقة واللغة والمتابعات الصريحة فقط، ولا يستخدم القرآن أو الأذكار أو قيام الليل أو أي سجل عبادة شخصي.</p>
+        <?php if (!$engagementCampaignSchemaReady): ?>
+            <div class="notice notice-error">طبّق migrations الخاصة بنظام الحملات قبل استخدام هذا القسم.</div>
+        <?php else: ?>
+        <article class="knowledge-card admin-campaign-composer">
+            <h3>مسودة حملة جديدة</h3>
+            <form class="form-stack" method="post">
+                <?= csrf_field() ?><input type="hidden" name="kind" value="engagement-campaign-save">
+                <label>اسم الحملة الداخلي<input name="name" maxlength="160" minlength="2" required placeholder="مثال: إعلان درس الجمعة"></label>
+                <div class="admin-form-grid">
+                    <label>القناة<select name="channel" required><option value="push">Push</option><option value="email">Email</option><option value="push_email">Push + Email</option></select></label>
+                    <label>الجمهور<select name="audience_type" required>
+                        <option value="all_eligible">كل المستخدمين المؤهلين</option>
+                        <option value="locale">لغة محددة</option>
+                        <option value="scholar_followers">متابعو عالم</option>
+                        <option value="series_followers">متابعو سلسلة</option>
+                        <option value="lesson_reminders">من طلبوا تذكير درس</option>
+                        <option value="test_recipient">مستلم اختبار</option>
+                    </select></label>
+                    <label>اللغة عند استخدام جمهور اللغة<select name="audience_locale"><option value="">كل اللغات</option><option value="ar">العربية</option><option value="en">English</option></select></label>
+                    <label>رقم العالم/السلسلة/الدرس عند الحاجة<input type="number" name="audience_ref_id" min="1"></label>
+                </div>
+                <div class="admin-form-grid">
+                    <label>العنوان العربي<input name="title_ar" maxlength="180" minlength="2" required></label>
+                    <label>English title<input name="title_en" maxlength="180" minlength="2" required></label>
+                </div>
+                <div class="admin-form-grid">
+                    <label>النص العربي<textarea name="body_ar" maxlength="1000" minlength="2" rows="5" required></textarea></label>
+                    <label>English body<textarea name="body_en" maxlength="1000" minlength="2" rows="5" required></textarea></label>
+                </div>
+                <div class="admin-form-grid">
+                    <label>الوجهة / Deep link<input name="deep_link" maxlength="500" dir="ltr" placeholder="athar://lesson/12 أو /lessons?lesson=12"></label>
+                    <label>صورة HTTPS اختيارية<input type="url" name="image_url" maxlength="500" dir="ltr" placeholder="https://"></label>
+                </div>
+                <div class="admin-form-grid">
+                    <label>الموعد المحلي (اختياري)<input type="datetime-local" name="scheduled_local"></label>
+                    <label>المنطقة الزمنية<input name="schedule_timezone" maxlength="80" value="UTC" required></label>
+                    <label>مدة الصلاحية بالساعات<input type="number" name="ttl_hours" min="1" max="168" value="24" required></label>
+                    <label>أقل فاصل بين الحملات بالساعات<input type="number" name="min_frequency_hours" min="1" max="168" value="6" required></label>
+                </div>
+                <label class="check-label"><input type="checkbox" name="respect_quiet_hours" checked> احترام ساعات عدم الإزعاج للمستخدم</label>
+                <button class="button button-primary" type="submit">حفظ كمسودة فقط</button>
+            </form>
+        </article>
+
+        <?php if ($engagementCampaignPreview):
+            $previewCampaign=$engagementCampaignPreview['campaign'];
+            $previewDeps=(array)$engagementCampaignPreview['dependencies'];
+        ?>
+        <article class="knowledge-card admin-campaign-preview">
+            <div class="section-heading">
+                <div><span class="eyebrow">معاينة قبل الإطلاق</span><h3><?= e((string)$previewCampaign['name']) ?></h3></div>
+                <span class="source-chip"><?= e((string)$previewCampaign['status']) ?> · revision <?= (int)$previewCampaign['revision'] ?></span>
+            </div>
+            <div class="admin-preview-grid">
+                <section><strong>العربية</strong><h4><?= e((string)$engagementCampaignPreview['preview']['ar']['title']) ?></h4><p><?= nl2br(e((string)$engagementCampaignPreview['preview']['ar']['body'])) ?></p></section>
+                <section dir="ltr"><strong>English</strong><h4><?= e((string)$engagementCampaignPreview['preview']['en']['title']) ?></h4><p><?= nl2br(e((string)$engagementCampaignPreview['preview']['en']['body'])) ?></p></section>
+            </div>
+            <div class="admin-campaign-stats">
+                <?php foreach ((array)$engagementCampaignPreview['audience'] as $channel=>$audience): ?>
+                    <span><?= e(strtoupper((string)$channel)) ?>: <?= (int)$audience['eligible_count'] ?> مؤهل<?= !$audience['available'] ? ' · التبعية غير جاهزة' : '' ?></span>
+                <?php endforeach; ?>
+                <span>إجمالي channel-recipients: <?= (int)$engagementCampaignPreview['recipient_channel_total'] ?></span>
+            </div>
+            <?php if ($previewDeps): ?>
+                <div class="notice notice-error">
+                    لا يمكن اعتبار هذه القنوات جاهزة للإرسال بعد:
+                    <?php foreach ($previewDeps as $channel=>$reason): ?><strong><?= e((string)$channel) ?>: <?= e((string)$reason) ?></strong> <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php if (($previewCampaign['status'] ?? '')==='draft' && ($admin['role'] ?? '')==='owner'): ?>
+                <form class="form-stack admin-final-confirm" method="post">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="kind" value="engagement-campaign-confirm">
+                    <input type="hidden" name="campaign_id" value="<?= (int)$previewCampaign['id'] ?>">
+                    <input type="hidden" name="expected_revision" value="<?= (int)$previewCampaign['revision'] ?>">
+                    <p class="source-note">سيتم تثبيت الجمهور المؤهل في الطابور فقط بعد هذا التأكيد. لا يتم إرسال الشبكة داخل طلب الإدارة.</p>
+                    <label>اكتب العبارة حرفيًا<input name="confirmation" value="" placeholder="CONFIRM <?= (int)$previewCampaign['id'] ?>" autocomplete="off" required></label>
+                    <label>كلمة مرور المالك<input type="password" name="owner_password" autocomplete="current-password" required></label>
+                    <button class="button button-primary" type="submit"<?= $previewDeps ? ' disabled' : '' ?>>تأكيد وجدولة الحملة</button>
+                </form>
+            <?php elseif (($previewCampaign['status'] ?? '')==='draft'): ?>
+                <p class="source-note">يمكن للمدير إعداد ومراجعة المسودة، لكن المالك فقط يستطيع اعتماد الإطلاق النهائي.</p>
+            <?php endif; ?>
+        </article>
+        <?php endif; ?>
+
+        <div class="admin-campaign-list">
+            <h3>سجل الحملات</h3>
+            <?php if (!$engagementCampaigns): ?><p class="source-note">لا توجد حملات جديدة بعد.</p><?php endif; ?>
+            <?php foreach ($engagementCampaigns as $campaign):
+                $campaignLocal='';
+                if (!empty($campaign['scheduled_at'])) {
+                    try { $campaignLocal=(new DateTimeImmutable((string)$campaign['scheduled_at'],new DateTimeZone('UTC')))->setTimezone(new DateTimeZone((string)$campaign['schedule_timezone']))->format('Y-m-d\TH:i'); } catch (Throwable $ignoredCampaignTime) {}
+                }
+                $counts=(array)($campaign['delivery_counts']??[]);
+            ?>
+            <article class="knowledge-card admin-campaign-row">
+                <div class="section-heading">
+                    <div>
+                        <strong><?= e((string)$campaign['name']) ?></strong>
+                        <p class="source-note">#<?= (int)$campaign['id'] ?> · <?= e((string)$campaign['channel']) ?> · <?= e((string)$campaign['audience_type']) ?> · revision <?= (int)$campaign['revision'] ?></p>
+                    </div>
+                    <span class="source-chip"><?= e((string)$campaign['status']) ?></span>
+                </div>
+                <div class="admin-campaign-stats">
+                    <span>Queued <?= (int)($counts['queued']??0) ?></span>
+                    <span>Processing <?= (int)($counts['processing']??0) ?></span>
+                    <span>Sent <?= (int)($counts['sent']??0) ?></span>
+                    <span>Failed <?= (int)($counts['failed']??0) ?></span>
+                    <span>Skipped <?= (int)($counts['skipped']??0) ?></span>
+                </div>
+                <div class="hero-actions">
+                    <a class="button button-secondary" href="/admin?campaign_preview=<?= (int)$campaign['id'] ?>#admin-campaigns">معاينة</a>
+                    <?php if (in_array($campaign['status'],['draft','scheduled'],true)): ?>
+                    <form method="post" data-confirm="إلغاء هذه الحملة وكل عناصر الطابور غير المرسلة؟">
+                        <?= csrf_field() ?><input type="hidden" name="kind" value="engagement-campaign-cancel"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><input type="hidden" name="expected_revision" value="<?= (int)$campaign['revision'] ?>">
+                        <button class="button button-danger" type="submit">إلغاء الحملة</button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+                <?php if ($campaign['status']==='draft'): ?>
+                <details class="inventory-edit">
+                    <summary>تعديل المسودة</summary>
+                    <form class="form-stack" method="post">
+                        <?= csrf_field() ?><input type="hidden" name="kind" value="engagement-campaign-save"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><input type="hidden" name="expected_revision" value="<?= (int)$campaign['revision'] ?>">
+                        <label>اسم الحملة<input name="name" maxlength="160" value="<?= e((string)$campaign['name']) ?>" required></label>
+                        <div class="admin-form-grid">
+                            <label>القناة<select name="channel"><?php foreach(['push'=>'Push','email'=>'Email','push_email'=>'Push + Email'] as $value=>$label): ?><option value="<?= e($value) ?>"<?= $campaign['channel']===$value?' selected':'' ?>><?= e($label) ?></option><?php endforeach; ?></select></label>
+                            <label>الجمهور<select name="audience_type"><?php foreach(['all_eligible'=>'كل المؤهلين','locale'=>'لغة محددة','scholar_followers'=>'متابعو عالم','series_followers'=>'متابعو سلسلة','lesson_reminders'=>'تذكير درس','test_recipient'=>'اختبار'] as $value=>$label): ?><option value="<?= e($value) ?>"<?= $campaign['audience_type']===$value?' selected':'' ?>><?= e($label) ?></option><?php endforeach; ?></select></label>
+                            <label>لغة الجمهور<select name="audience_locale"><option value="">الكل</option><option value="ar"<?= $campaign['audience_locale']==='ar'?' selected':'' ?>>العربية</option><option value="en"<?= $campaign['audience_locale']==='en'?' selected':'' ?>>English</option></select></label>
+                            <label>مرجع الجمهور<input type="number" name="audience_ref_id" min="1" value="<?= e((string)($campaign['audience_ref_id']??'')) ?>"></label>
+                        </div>
+                        <div class="admin-form-grid">
+                            <label>العنوان العربي<input name="title_ar" maxlength="180" value="<?= e((string)$campaign['title_ar']) ?>" required></label>
+                            <label>English title<input name="title_en" maxlength="180" value="<?= e((string)$campaign['title_en']) ?>" required></label>
+                        </div>
+                        <div class="admin-form-grid">
+                            <label>النص العربي<textarea name="body_ar" maxlength="1000" rows="4" required><?= e((string)$campaign['body_ar']) ?></textarea></label>
+                            <label>English body<textarea name="body_en" maxlength="1000" rows="4" required><?= e((string)$campaign['body_en']) ?></textarea></label>
+                        </div>
+                        <div class="admin-form-grid">
+                            <label>Deep link<input name="deep_link" maxlength="500" dir="ltr" value="<?= e((string)($campaign['deep_link']??'')) ?>"></label>
+                            <label>صورة HTTPS<input type="url" name="image_url" maxlength="500" dir="ltr" value="<?= e((string)($campaign['image_url']??'')) ?>"></label>
+                            <label>الموعد المحلي<input type="datetime-local" name="scheduled_local" value="<?= e($campaignLocal) ?>"></label>
+                            <label>المنطقة الزمنية<input name="schedule_timezone" maxlength="80" value="<?= e((string)$campaign['schedule_timezone']) ?>" required></label>
+                            <label>TTL بالساعات<input type="number" name="ttl_hours" min="1" max="168" value="<?= max(1,(int)ceil((int)$campaign['ttl_seconds']/3600)) ?>"></label>
+                            <label>فاصل التكرار بالساعات<input type="number" name="min_frequency_hours" min="1" max="168" value="<?= (int)$campaign['min_frequency_hours'] ?>"></label>
+                        </div>
+                        <label class="check-label"><input type="checkbox" name="respect_quiet_hours"<?= $campaign['respect_quiet_hours']?' checked':'' ?>> احترام ساعات عدم الإزعاج</label>
+                        <button class="button button-primary" type="submit">حفظ تعديلات المسودة</button>
+                    </form>
+                </details>
+                <?php endif; ?>
+            </article>
+            <?php endforeach; ?>
+        </div>
+        <p class="source-note">النظام القديم لإرسال البريد على دفعات داخل المتصفح لم يعد معروضًا هنا؛ سيُستبدل بطابور بريد دائم في Work Package 20.</p>
+        <?php endif; ?>
     </section>
     <section class="admin-inventory admin-panel" id="admin-overview" data-admin-panel><div class="section-heading"><div><span class="eyebrow">مؤشرات المنصة</span><h2>نظرة عامة وتحليلات</h2></div></div><div class="inventory-grid admin-metric-grid"><article><h3>الحسابات <span><?= (int) $dashboardMetrics['users'] ?></span></h3></article><article><h3>العلماء المنشورون <span><?= (int) $dashboardMetrics['scholars'] ?></span></h3></article><article><h3>السلاسل المنشورة <span><?= (int) $dashboardMetrics['series'] ?></span></h3></article><article><h3>الدروس المنشورة <span><?= (int) $dashboardMetrics['lessons'] ?></span></h3></article><article><h3>الكتب المنشورة <span><?= (int) $dashboardMetrics['books'] ?></span></h3></article><article><h3>تعليقات تنتظر المراجعة <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></h3></article></div><div class="admin-analytics"><h3>إشارات تشغيلية آمنة</h3><div class="admin-analytics-grid"><article><span>مستخدمون نشطون خلال 30 يومًا</span><strong><?= (int) $dashboardMetrics['active_users_30d'] < 5 ? '&lt;5' : number_format((int) $dashboardMetrics['active_users_30d']) ?></strong></article><article><span>سجل العمليات</span><strong><?= number_format($auditCount) ?></strong></article></div><p class="source-note">لا تعرض لوحة الإدارة إحصاءات عبادة فردية أو مجمعة مثل جلسات القرآن والأذكار والختمة.</p></div></section>
     <?php if (admin_can($admin, 'recovery')): ?><section class="owner-operations admin-panel" id="admin-backups" data-admin-panel hidden><div class="section-heading"><div><span class="eyebrow">عمليات المالك</span><h2>نسخ احتياطية مشفرة</h2></div></div>
