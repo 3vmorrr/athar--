@@ -176,4 +176,5 @@
     <string name="upcoming_related_book">Related reading</string>
     <string name="upcoming_book_pages">Pages %1$d–%2$d</string>
     <string name="upcoming_preview_unavailable">Lesson preview unavailable</string>
+    <string name="local_data_unreadable">Some saved data on this device could not be read. It has been kept unchanged, and your progress has not been reset. Try again.</string>
 </resources>

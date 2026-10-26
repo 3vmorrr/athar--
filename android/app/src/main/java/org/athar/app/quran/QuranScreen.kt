@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.*
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.*
+import org.athar.app.core.data.ProtectedRead
+import org.athar.app.core.data.protectedReads
 
 data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val scrollTarget: Int? = null, val scrollRequest: Long = 0)
 class QuranViewModel(private val graph: AppGraph) : ViewModel() {
@@ -29,7 +31,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val state = mutable.asStateFlow()
     private val mutableBookmarks = MutableStateFlow<Set<Int>>(emptySet())
     val bookmarks = mutableBookmarks.asStateFlow()
-    val reading = graph.reading.observe(requireNotNull(graph.session.userId)).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    private val readingRetry=MutableStateFlow(0)
+    private val readerOwner=requireNotNull(graph.session.userId)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val reading = readingRetry.flatMapLatest { graph.reading.observe(readerOwner).protectedReads() }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProtectedRead.Loading)
+    fun retryReading(){readingRetry.value++}
     private var load: Job? = null
     init {
         select(1)
@@ -81,19 +87,13 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             ) {
                 item(key = "quran-hero") {
                     AtharHeroSurface(Modifier.fillMaxWidth()) {
-                        Text(
-                            stringResource(R.string.quran),
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
+                        Text(stringResource(R.string.quran), style = MaterialTheme.typography.headlineMedium)
                         Text(
                             stringResource(R.string.quran_source),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        Button(
-                            onClick = { mode = "read" },
-                            modifier = Modifier.heightIn(min = 52.dp),
-                        ) {
+                        Button(onClick = { mode = "read" }, modifier = Modifier.heightIn(min = 52.dp)) {
                             Icon(AtharIcons.MenuBook, null, Modifier.size(20.dp))
                             Spacer(Modifier.width(8.dp))
                             Text(stringResource(R.string.read))
@@ -103,53 +103,20 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 item(key = "quran-tools") {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         AtharSectionHeader(stringResource(R.string.quran_tools))
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            AtharQuickAction(
-                                AtharIcons.MenuBook,
-                                stringResource(R.string.read),
-                                { mode = "read" },
-                                Modifier.weight(1f),
-                                emphasized = true,
-                            )
-                            AtharQuickAction(
-                                AtharIcons.PlayArrow,
-                                stringResource(R.string.listen),
-                                { mode = "listen" },
-                                Modifier.weight(1f),
-                            )
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AtharQuickAction(AtharIcons.MenuBook, stringResource(R.string.read), { mode = "read" }, Modifier.weight(1f), emphasized = true)
+                            AtharQuickAction(AtharIcons.PlayArrow, stringResource(R.string.listen), { mode = "listen" }, Modifier.weight(1f))
                         }
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            AtharQuickAction(
-                                AtharIcons.School,
-                                stringResource(R.string.tafsir),
-                                { mode = "tafsir" },
-                                Modifier.weight(1f),
-                            )
-                            AtharQuickAction(
-                                AtharIcons.NightsStay,
-                                stringResource(R.string.radio),
-                                { mode = "radio" },
-                                Modifier.weight(1f),
-                            )
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AtharQuickAction(AtharIcons.School, stringResource(R.string.tafsir), { mode = "tafsir" }, Modifier.weight(1f))
+                            AtharQuickAction(AtharIcons.NightsStay, stringResource(R.string.radio), { mode = "radio" }, Modifier.weight(1f))
                         }
                     }
                 }
             }
         } else {
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                tonalElevation = 0.dp,
-            ) {
-                TextButton(
-                    onClick = { mode = null },
-                    Modifier.padding(horizontal = 12.dp),
-                ) {
+            Surface(color = MaterialTheme.colorScheme.surfaceContainerLow, tonalElevation = 0.dp) {
+                TextButton(onClick = { mode = null }, Modifier.padding(horizontal = 12.dp)) {
                     Icon(AtharIcons.ArrowBack, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(R.string.quran_tools))
@@ -171,7 +138,8 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
     val state by vm.state.collectAsStateWithLifecycle()
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
-    val reading by vm.reading.collectAsStateWithLifecycle()
+    val storedReading by vm.reading.collectAsStateWithLifecycle()
+    val reading=(storedReading as? ProtectedRead.Ready)?.value
     val listState = rememberLazyListState()
     LaunchedEffect(state.scrollRequest) {
         if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0))
@@ -233,13 +201,14 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 state.error -> FailurePanel(null) { vm.select(1) }
                 state.verses.isEmpty() -> Text(stringResource(R.string.empty_state), Modifier.padding(24.dp))
                 else -> LazyColumn(Modifier.fillMaxSize().testTag("quran-reader-list"), state = listState, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if(storedReading==ProtectedRead.Unreadable)item(key="unreadable-position",contentType="state"){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryReading){Text(stringResource(R.string.retry))}}}
                     items(state.verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { ayah ->
                         Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
                             if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                TextButton(onClick = { scope.launch { try { graph.reading.save(ayah.position.surah, ayah.position.ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
+                                TextButton(onClick = { scope.launch { try { graph.reading.save(ayah.position.surah, ayah.position.ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
                                 MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -253,28 +222,16 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     if (selector) {
         ModalBottomSheet(onDismissRequest = { selector = false }) {
             Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 20.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(stringResource(R.string.surah), style = MaterialTheme.typography.titleLarge)
                 LazyColumn(Modifier.heightIn(max = 460.dp)) {
-                    items(
-                        state.index?.surahs.orEmpty(),
-                        key = { it.number },
-                        contentType = { "surah" },
-                    ) { surah ->
+                    items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah ->
                         TextButton(
-                            onClick = {
-                                vm.select(surah.number)
-                                selector = false
-                            },
+                            onClick = { vm.select(surah.number); selector = false },
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text("${surah.number}. ${surah.name}")
-                        }
+                        ) { Text("${surah.number}. ${surah.name}") }
                     }
                 }
             }
@@ -284,23 +241,15 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
         ModalBottomSheet(onDismissRequest = { fontDialog = false }) {
             Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 24.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(stringResource(R.string.font_size), style = MaterialTheme.typography.titleLarge)
                 Slider(size, { size = it }, valueRange = 18f..48f)
                 Button(
-                    onClick = {
-                        scope.launch { graph.settings.quranFontSize(size.toInt()) }
-                        fontDialog = false
-                    },
+                    onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false },
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(R.string.save))
-                }
+                ) { Text(stringResource(R.string.save)) }
             }
         }
     }
@@ -309,20 +258,15 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
         val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; else -> 60 }
         ModalBottomSheet(onDismissRequest = { numberDialog = false }) {
             Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 24.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
-                    stringResource(
-                        when(state.sectionKind) {
-                            "page" -> R.string.page
-                            "juz" -> R.string.juz
-                            else -> R.string.hizb
-                        },
-                    ),
+                    stringResource(when(state.sectionKind) {
+                        "page" -> R.string.page
+                        "juz" -> R.string.juz
+                        else -> R.string.hizb
+                    }),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 OutlinedTextField(
@@ -336,14 +280,9 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 )
                 Button(
                     enabled = (number.toIntOrNull() ?: 0) in 1..maximum,
-                    onClick = {
-                        vm.section(state.sectionKind, number.toInt())
-                        numberDialog = false
-                    },
+                    onClick = { vm.section(state.sectionKind, number.toInt()); numberDialog = false },
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(R.string.read))
-                }
+                ) { Text(stringResource(R.string.read)) }
             }
         }
     }

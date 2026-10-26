@@ -31,7 +31,12 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         }
     }
     private fun key(item: Int) = "adhkar:$item"
-    private fun decode(row: CachedDocument) = gson.fromJson(cipher.open(row.payloadCipher), CounterState::class.java)
+    private fun decode(row: CachedDocument):CounterState {
+        val value=requireNotNull(gson.fromJson(cipher.open(row.payloadCipher), CounterState::class.java))
+        require(value.item>0&&row.cacheKey==key(value.item)&&value.target in 1..65535&&value.count in 0..value.target&&value.revision>=0&&value.localVersion>=0)
+        requireNotNull(value.events)
+        return value
+    }
     private suspend fun state(user: Long, item: Int, target: Int) = dao.cache(user, key(item))?.let(::decode) ?: CounterState(item, target)
     private suspend fun write(user: Long, state: CounterState) = dao.cache(CachedDocument(user, key(state.item), cipher.seal(gson.toJson(state)), System.currentTimeMillis()))
     fun observe(user: Long, item: Int, target: Int): Flow<CounterState> = dao.observeCache(user, key(item)).map { it?.let(::decode) ?: CounterState(item, target) }.flowOn(Dispatchers.Default)

@@ -204,4 +204,5 @@
     <string name="upcoming_related_book">القراءة المرتبطة بالدرس</string>
     <string name="upcoming_book_pages">من الصفحة %1$d إلى الصفحة %2$d</string>
     <string name="upcoming_preview_unavailable">صورة الدرس غير متاحة</string>
+    <string name="local_data_unreadable">تعذّرت قراءة بعض البيانات المحفوظة على هذا الجهاز. أبقيناها دون تغيير، ولم نعد ضبط تقدمك. أعد المحاولة.</string>
 </resources>
