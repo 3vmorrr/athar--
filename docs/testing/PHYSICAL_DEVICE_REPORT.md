@@ -1,5 +1,9 @@
 # Physical Android integration —2026-10-25
 
+##26 October — cross-module lost-response/storage reopen02.7
+
+API27 Arabic19/19 (76.557s), English19/19 (79.079s) PASS. Test-only transport loses committed responses from real fixture API; named Room disk files close/reopen, then each operation retries three times. Actual export totals increase exactly one lesson/one adhkar completion, with no reading activity; Night two-edit replay stays revision2 and deletion replay stays revision3. Existing storage/ownership and all four native module journeys pass.56 unchanged JVM/build/test APK/lint/316 resources and secret/diff review PASS. No production behavior changed. Device read-only connectivity is now validated active Wi-Fi;02.8 OS reconnect/process/reboot acceptance remains separate and in progress.
+
 ##26 October — permanent rejection recovery02.7.2
 
 Final API27 SM-M105G Arabic10/10 (40.074s), English29/29 (78.1s), main API1/1 (5.563s) PASS. New real Room/Keystore/storage tests retain422/404 rejection bytes, mixed429/503/401/408 results, reopen/stale/owner/corruption/malformed/healthy-queue outcomes; additive v1→v2 migration compares all private table rows and flags. Real fixture HTTP journey exercises422/cancel/recreation/unchanged retry/validated correction/landscape while another record synchronizes. Dark200-percent deletion/recovery actions remain reachable. Owned Arabic/English settled captures inspected. Full56 JVM/build/test APK/lint/316 resources pass. Initial migration-helper runtime incompatibility and Gradle-daemon loss retained in TEST_REPORT; neither is hidden by suppression. No data reset/uninstall/global settings change or real message send.

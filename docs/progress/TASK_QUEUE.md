@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. Parallel branch parallel/admin-foundation owns17.1–17.3 (issues1–3, Draft PR4); do not duplicate/change that branch or count source-only work as complete. Integrate only after recorded acceptance and reconciliation against this branch. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **02.7**. Open tasks: **139**. Overall estimate: **46%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.8**. Open tasks: **138**. Overall estimate: **46%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks within this track; reserved Admin work proceeds on its separate branch.
 
@@ -110,7 +110,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.7 — Cross-module lost-response and restart recovery
 
-- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.7.1, 02.7.2.
+- Parent: Work package 2; state: **COMPLETE**; dependencies: 02.7.1, 02.7.2.
 - Exact scope: Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/nightprayer/; tests/.
 - Automated gates: Dropped acknowledgement/repeated retry/restart/order/conflict tests across four modules; no duplicate activity. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -120,7 +120,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.8 — OS reconnect and process/reboot acceptance
 
-- Parent: Work package 2; state: **BLOCKED**; dependencies: 02.7.
+- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.7.
 - Exact scope: Verify real constrained dispatch after reconnect, process recreation and reboot without clearing app data or replacing direct Worker tests with scheduling claims.
 - Files/modules: android/app/src/main/java/org/athar/app/core/sync/; android/app/src/androidTest/; docs/testing/.
 - Automated gates: Persistent work state/retained actor/pending checks and scoped startup logs. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

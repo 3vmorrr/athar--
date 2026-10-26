@@ -9,3 +9,8 @@ Current implementation: [persistent progress work](../features/PERSISTENT_SYNC.m
 ## Captured-owner extension — task02.7.1
 
 Account-specific callbacks bind the intended actor before coroutine dispatch; private repository entry points capture default identity before IO/lock/index waits. Current verified/full SignedIn credentials are also required, including offline; matching an actor ID after reauthentication into Pending is insufficient. The native session request boundary preserves narrow verify/resend allowance and the dedicated owned logout flow. Pending data/ciphertext remain retained after stale/suspended actions, rather than being retargeted or acknowledged under a new account.53 JVM/build/lint/306 resources, Arabic10/English32 hardware cases and main API1 pass; see [owned mutation details](../features/OWNED_MUTATION_DISPATCH.md). No backend/schema contract changes or new UI motion.
+
+
+## Cross-module acceptance — task02.7
+
+[Actual lost-response/storage-reopen acceptance](../features/CROSS_MODULE_RECOVERY.md) covers all four private progress modules over real fixture HTTP, with deliberate post-commit response loss and three retries after actual Room file close/reopen. Exact server aggregate totals and Night revision/tombstone checks show no duplicate activity, inferred reading completion or lost newer lesson checkpoint. Arabic19/English19 storage/ownership/native journeys pass. This is distinct from OS process death, network restoration and reboot (02.8); the phone now has an active validated network, but those gates are not inferred from storage reopen.

@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "02.7",
+  "current_task": "02.8",
   "overall_estimate_percent": 46,
-  "overall_estimate_detail": 45.71,
+  "overall_estimate_detail": 45.78,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -233,7 +233,7 @@
       "name": "Cross-module lost-response and restart recovery",
       "parent": "Work package 2",
       "scope": "Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "02.7.1",
         "02.7.2"
@@ -255,7 +255,7 @@
       "name": "OS reconnect and process/reboot acceptance",
       "parent": "Work package 2",
       "scope": "Verify real constrained dispatch after reconnect, process recreation and reboot without clearing app data or replacing direct Worker tests with scheduling claims.",
-      "state": "BLOCKED",
+      "state": "PARTIAL",
       "dependencies": [
         "02.7"
       ],
@@ -2754,7 +2754,7 @@
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,
-    "Testing/QA": 49,
+    "Testing/QA": 50,
     "Documentation": 80,
     "weights_percent": [
       25,
@@ -2767,5 +2767,5 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses fixed task weights and is86%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
+  "phase_completion_method": "Phase2 uses fixed task weights and is90%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
 }

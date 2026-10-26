@@ -1,5 +1,11 @@
 # Engineering change log
 
+## Task02.7 — cross-module lost-response/storage reopen acceptance
+
+- Add test-only real HTTP post-commit response loss, actual Room disk close/reopen and repeated retry across reading, counters, lesson checkpoints and ordered Night edits/deletion. Exact exported activity totals and stable revisions/UUIDs prove no duplicate completion or lost pending/newer checkpoint.
+- Use fresh verified actors only in the explicitly validated generated fixture schema. Existing storage/conflict/owner/native journeys remain; production logic/UI/backend contracts unchanged.
+-56 JVM/build/test APK/lint/316 resources; API27 Arabic19/English19 PASS. Overall46% (weighted45.78), offline90%,138 open tasks. Begin02.8: read-only device connectivity now satisfies CONNECTED/INTERNET/VALIDATED; actual process/reboot/reconnect acceptance remains open.
+
 ## Task02.7.2 — retained permanent Night Prayer rejection recovery
 
 - Persist permanent operation rejection separately from409 conflict and temporary delivery failure; isolate the oldest eligible mutation per session and commit healthy acknowledgements in mixed batches.
