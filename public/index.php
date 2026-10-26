@@ -925,8 +925,10 @@ if ($path === '/admin') {
                         db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'series') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
-                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
+                        $title = trim((string) ($_POST['title'] ?? ''));
+                        if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 220 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا صالحًا ورابط مصدر HTTPS عند الحاجة.');
+                        [$seriesScholarId] = validated_lesson_scope((int) ($_POST['scholar_id'] ?? 0), 0);
+                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$seriesScholarId, $title, trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'book') {
                         $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? '')); $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
@@ -947,6 +949,18 @@ if ($path === '/admin') {
                     db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
                     $auditAction = 'toggle-publication';
                 } elseif (($_POST['content_action'] ?? '') === 'delete') {
+                    if ($type === 'series') {
+                        $dependency = db()->prepare('SELECT COUNT(*) FROM lessons WHERE series_id=?');
+                        $dependency->execute([$id]);
+                        if ((int) $dependency->fetchColumn() > 0) throw new RuntimeException('لا يمكن حذف السلسلة قبل نقل أو حذف دروسها المرتبطة.');
+                    }
+                    if ($type === 'scholar') {
+                        $seriesDependency = db()->prepare('SELECT COUNT(*) FROM series WHERE scholar_id=?');
+                        $seriesDependency->execute([$id]);
+                        $lessonDependency = db()->prepare('SELECT COUNT(*) FROM lessons WHERE scholar_id=?');
+                        $lessonDependency->execute([$id]);
+                        if ((int) $seriesDependency->fetchColumn() > 0 || (int) $lessonDependency->fetchColumn() > 0) throw new RuntimeException('لا يمكن حذف العالم قبل نقل السلاسل والدروس المرتبطة به.');
+                    }
                     $fileKey = null;
                     if (in_array($type, ['book','lesson'], true)) db()->prepare('DELETE FROM user_favorites WHERE target_type=? AND target_id=?')->execute([$type, $id]);
                     if ($table === 'books') {
@@ -985,8 +999,10 @@ if ($path === '/admin') {
                 }
             } elseif ($kind === 'series') {
                 $source = trim((string) ($_POST['source_url'] ?? ''));
-                if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
-                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
+                $title = trim((string) ($_POST['title'] ?? ''));
+                if (mb_strlen($title,'UTF-8') < 2 || mb_strlen($title,'UTF-8') > 220 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا صالحًا ورابط مصدر HTTPS عند الحاجة.');
+                [$seriesScholarId] = validated_lesson_scope((int) ($_POST['scholar_id'] ?? 0), 0);
+                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([$seriesScholarId, $title, trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
             } elseif ($kind === 'lesson') {
                 $url = trim((string) $_POST['source_url']); $id = youtube_video_id($url);
                 if (!$id || strlen(trim((string) $_POST['title'])) < 2) throw new RuntimeException('رابط الفيديو أو العنوان غير صالح.');
