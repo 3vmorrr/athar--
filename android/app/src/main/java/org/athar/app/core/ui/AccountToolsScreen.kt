@@ -268,24 +268,216 @@ import java.time.LocalDate
             }
         }
         else -> {
-            val path = if (tool == "bookmarks") "quran/bookmarks" else "me/favorites"
-            DataScreen(graph, path) { data, reload ->
-                if(!AccountPayloads.valid(tool,data)){AccountDataFailure(reload);return@DataScreen}
-                val rows = data.asJsonArray.toList()
-                LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state)) }
-                    items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
-                        Column {
-                            if (tool == "bookmarks") Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
-                            else TextButton(onClick = { val kind = row.text("target_type"); open((if (kind == "series") "series" else kind + "s") + "/" + row.text("target_id")) }) { Text(row.text("title")) }
-                            TextButton(onClick = { scope.launch {
-                                try { if (tool == "bookmarks") graph.session.request("DELETE", "$path/${row.text("id")}",expectedUser=requireNotNull(owner)) else graph.session.request("DELETE", path, mapOf("target_type" to row.text("target_type"), "target_id" to row.text("target_id").toInt()),expectedUser=requireNotNull(owner)); reload() }
-                                catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true }
-                            } }) { Text(stringResource(R.string.delete_action)) }
-                            HorizontalDivider()
+            val path = if (tool == "bookmarks") {
+                "quran/bookmarks"
+            } else {
+                "me/favorites"
+            }
+            var page by rememberSaveable(tool) { mutableIntStateOf(1) }
+            var hiddenKeys by remember(tool, page) {
+                mutableStateOf<Set<String>>(emptySet())
+            }
+            val query = mapOf(
+                "paged" to "1",
+                "page" to "$page",
+                "per_page" to "20",
+            )
+
+            DataScreen(graph, path, query) { data, reload ->
+                if (!AccountPayloads.validCollectionPage(tool, data)) {
+                    AccountDataFailure(reload)
+                    return@DataScreen
+                }
+
+                val allRows = data.array("items")
+                val pagination = data.asJsonObject["pagination"].asJsonObject
+                val hasMore = pagination["has_more"]?.asBoolean == true
+                val total = pagination["total"]?.asInt ?: 0
+                val rows = allRows.filterNot { row ->
+                    val key = if (tool == "bookmarks") {
+                        "bookmark:${row.text("id")}"
+                    } else {
+                        "favorite:${row.text("target_type")}:${row.text("target_id")}"
+                    }
+                    key in hiddenKeys
+                }
+
+                LazyColumn(
+                    contentPadding = PaddingValues(AtharSpacing.Xl),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    item(key = "collection-heading", contentType = "heading") {
+                        AtharSectionHeader(
+                            title = stringResource(
+                                if (tool == "bookmarks") {
+                                    R.string.bookmarks
+                                } else {
+                                    R.string.favorites
+                                },
+                            ),
+                        )
+                        Text(
+                            stringResource(R.string.saved_items_total, total),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
+                    if (rows.isEmpty()) {
+                        item(key = "empty", contentType = "state") {
+                            QuietEmptyState(stringResource(R.string.empty_state))
                         }
                     }
-                    if (failed) item { MessagePanel(stringResource(R.string.network_error), true) }
+
+                    items(
+                        rows,
+                        key = {
+                            if (tool == "bookmarks") {
+                                "bookmark:${it.text("id")}"
+                            } else {
+                                "favorite:${it.text("target_type")}:${it.text("target_id")}"
+                            }
+                        },
+                        contentType = { tool },
+                    ) { row ->
+                        val rowKey = if (tool == "bookmarks") {
+                            "bookmark:${row.text("id")}"
+                        } else {
+                            "favorite:${row.text("target_type")}:${row.text("target_id")}"
+                        }
+
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant,
+                            ),
+                        ) {
+                            Column(
+                                Modifier.padding(AtharSpacing.Lg),
+                                verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                            ) {
+                                if (tool == "bookmarks") {
+                                    Text(
+                                        stringResource(
+                                            R.string.saved_quran_reference,
+                                            row.text("surah"),
+                                            row.text("ayah"),
+                                        ),
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    row.text("label").takeIf { it.isNotBlank() }?.let {
+                                        Text(
+                                            it,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    Text(
+                                        stringResource(R.string.bookmark_exact_open_pending),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                } else {
+                                    TextButton(
+                                        onClick = {
+                                            val kind = row.text("target_type")
+                                            val destination = when (kind) {
+                                                "book" -> "books"
+                                                "lesson" -> "lessons"
+                                                "series" -> "series"
+                                                else -> null
+                                            }
+                                            if (destination != null) {
+                                                open("$destination/${row.text("target_id")}")
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Text(row.text("title"))
+                                    }
+                                }
+
+                                TextButton(
+                                    onClick = {
+                                        hiddenKeys = hiddenKeys + rowKey
+                                        failed = false
+                                        scope.launch {
+                                            try {
+                                                val user = requireNotNull(owner)
+                                                graph.session.requireVerifiedOwner(user)
+                                                if (tool == "bookmarks") {
+                                                    graph.session.request(
+                                                        "DELETE",
+                                                        "$path/${row.text("id")}",
+                                                        expectedUser = user,
+                                                    )
+                                                } else {
+                                                    graph.session.request(
+                                                        "DELETE",
+                                                        path,
+                                                        mapOf(
+                                                            "target_type" to row.text("target_type"),
+                                                            "target_id" to row.text("target_id").toInt(),
+                                                        ),
+                                                        expectedUser = user,
+                                                    )
+                                                }
+                                                if (rows.size == 1 && page > 1) {
+                                                    page--
+                                                } else {
+                                                    reload()
+                                                }
+                                            } catch (failure: CancellationException) {
+                                                hiddenKeys = hiddenKeys - rowKey
+                                                throw failure
+                                            } catch (_: Exception) {
+                                                hiddenKeys = hiddenKeys - rowKey
+                                                failed = true
+                                            }
+                                        }
+                                    },
+                                    enabled = rowKey !in hiddenKeys,
+                                    modifier = Modifier.heightIn(min = 48.dp),
+                                ) {
+                                    Text(stringResource(R.string.delete_action))
+                                }
+                            }
+                        }
+                    }
+
+                    item(key = "pagination", contentType = "controls") {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        ) {
+                            TextButton(
+                                onClick = { page-- },
+                                enabled = page > 1,
+                            ) {
+                                Text(stringResource(R.string.back))
+                            }
+                            Text(
+                                stringResource(R.string.page_number, page),
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                            TextButton(
+                                onClick = { page++ },
+                                enabled = hasMore,
+                            ) {
+                                Text(stringResource(R.string.more))
+                            }
+                        }
+                    }
+
+                    if (failed) {
+                        item(key = "failure", contentType = "state") {
+                            MessagePanel(stringResource(R.string.network_error), true)
+                        }
+                    }
                 }
             }
         }
