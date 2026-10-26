@@ -176,6 +176,17 @@
 <string name="verse_count">Verses read</string>
 <string name="private_note">Private note</string>
 <string name="night_history">My sessions</string>
+<string name="night_history_page">Page %1$d of %2$d</string>
+<string name="night_show_details">Show details</string>
+<string name="night_hide_details">Hide details</string>
+<string name="night_range_indices">Quran range: %1$s – %2$s</string>
+<string name="night_measured_duration_value">Measured duration: %1$d seconds</string>
+<string name="night_timezone_value">Timezone: %1$s</string>
+<string name="night_boundary_context">Boundary source: %1$s · calculation method: %2$s</string>
+<string name="night_boundary_calculated">Calculated from prayer settings</string>
+<string name="night_boundary_manual">Manual entry</string>
+<string name="night_started_at">Measurement started: %1$s</string>
+<string name="night_ended_at">Measurement ended: %1$s</string>
 <string name="night_tools">Prayer tools</string>
 <string name="verse_calculator">Verse calculator</string>
 <string name="target_count">Target verse count</string>
