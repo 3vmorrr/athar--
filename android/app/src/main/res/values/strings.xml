@@ -109,6 +109,14 @@
 <string name="rule_seventh">حد سُبع الليل</string>
 <string name="rule_angle">نسبة زاوية الشفق</string>
 <string name="export_explanation">اختر مكان حفظ نسخة بياناتك الشخصية. تتضمن جلسات الجهاز غير المتزامنة؛ الفترات المستثناة المحلية لا تُصدّر.</string>
+<string name="export_scope_title">محتوى النسخة</string>
+<string name="export_scope_account">بيانات الحساب المتزامنة: الملف الشخصي، العلامات، المفضلة، الخطط، التقدم والإحصائيات المسجلة.</string>
+<string name="export_scope_device">بيانات محتفظ بها على هذا الجهاز ولم تُفقد: تقدم الدروس وجلسات قيام الليل المحلية.</string>
+<string name="export_private_excluded">الفترات الخاصة المحلية مستبعدة من النسخة</string>
+<string name="export_requires_current_account">يحتاج إنشاء نسخة كاملة إلى الوصول للحساب الحالي. إذا تعذر جلب بيانات الحساب فلن نكتب ملفًا ناقصًا.</string>
+<string name="export_saved_complete">تم حفظ نسخة الحساب الكاملة في المكان الذي اخترته.</string>
+<string name="export_account_unavailable">تعذر جلب بيانات الحساب الحالية. تأكد من الاتصال وأن الجلسة ما زالت صالحة ثم حاول مرة أخرى. لم تتم كتابة نسخة ناقصة.</string>
+<string name="export_write_failed">تم تجهيز النسخة لكن تعذر الكتابة في المكان المختار. اختر مكانًا آخر وحاول مرة أخرى.</string>
 <string name="daily_pages">الورد اليومي الحالي: %1$s صفحة</string>
 <string name="counter_conflict">العدّاد معدّل من جهاز آخر. راجع نسخة الخادم قبل المتابعة.</string>
 <string name="show_ayah">عرض الآية</string>
