@@ -92,7 +92,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 }
 
 @Composable fun NightPrayerScreen(graph: AppGraph) {
-    var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("history") }
+    var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("tonight") }
     var addRequest by remember { mutableIntStateOf(0) }
     val vm: NightViewModel = viewModel(
         key = "night:${graph.session.userId}",
@@ -139,6 +139,11 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
         ) {
             FilterChip(
+                section == "tonight",
+                { section = "tonight" },
+                label = { Text(stringResource(R.string.night_tonight)) },
+            )
+            FilterChip(
                 section == "history",
                 { section = "history" },
                 label = { Text(stringResource(R.string.night_history)) },
@@ -157,6 +162,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 
         AtharPageTransition(section, Modifier.weight(1f)) {
             when (it) {
+                "tonight" -> NightTonightScreen(graph, vm)
                 "tools" -> NightToolsScreen(graph)
                 "calendar" -> NightCalendarScreen(vm)
                 else -> NightHistoryScreen(graph, vm, addRequest)
