@@ -9,6 +9,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'overview' => 'Overview & analytics',
     'create' => 'Create content',
     'content' => 'Saved content',
+    'events' => 'Upcoming & Live',
     'comments' => 'Comment moderation',
     'campaigns' => 'Email campaigns',
     'services' => 'Service settings',
@@ -25,6 +26,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'overview' => 'نظرة عامة وتحليلات',
     'create' => 'إضافة محتوى',
     'content' => 'المحتوى المحفوظ',
+    'events' => 'القادم والمباشر',
     'comments' => 'مراجعة التعليقات',
     'campaigns' => 'حملات البريد',
     'services' => 'إعدادات الخدمات',
@@ -48,6 +50,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
                 <a href="#admin-overview" aria-current="location" aria-controls="admin-overview"><?= e($adminShellCopy['overview']) ?></a>
                 <a href="#admin-create" aria-controls="admin-create"><?= e($adminShellCopy['create']) ?></a>
                 <a href="#admin-content" aria-controls="admin-content"><?= e($adminShellCopy['content']) ?></a>
+                <a href="#admin-events" aria-controls="admin-events"><?= e($adminShellCopy['events']) ?> <span><?= count($lessonEvents) ?></span></a>
                 <a href="#admin-comments" aria-controls="admin-comments"><?= e($adminShellCopy['comments']) ?> <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
                 <?php if (admin_can($admin, 'campaigns')): ?><a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a><?php endif; ?>
                 <?php if (admin_can($admin, 'services')): ?><a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a><?php endif; ?>
@@ -158,6 +161,93 @@ $adminShellCopy = $adminLocale === 'en' ? [
         <p class="source-note" data-admin-user-empty hidden>لا توجد حسابات تطابق بحثك.</p>
         </div>
         <?php if ($managedUserPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات المستخدمين"><?php if ($managedUserPage > 1): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['users_q'=>$managedUserSearch,'users_page'=>$managedUserPage-1])) ?>#admin-users">السابق</a><?php endif; ?><span>صفحة <?= $managedUserPage ?> من <?= $managedUserPageCount ?></span><?php if ($managedUserPage < $managedUserPageCount): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['users_q'=>$managedUserSearch,'users_page'=>$managedUserPage+1])) ?>#admin-users">التالي</a><?php endif; ?></nav><?php endif; ?>
+    </section>
+    <section class="admin-inventory admin-panel" id="admin-events" data-admin-panel hidden>
+        <div class="section-heading"><div><span class="eyebrow">الجدولة والبث</span><h2>القادم والمباشر</h2></div><span class="source-chip"><?= count($lessonEvents) ?> حدثًا</span></div>
+        <p class="source-note">يحفظ هذا المحرر نفس نموذج Upcoming/Live المستخدم في الـAPI والتطبيق. الوقت يُكتب محليًا مع اسم المنطقة الزمنية، ويحوّله الخادم إلى UTC. كل تعديل يستخدم revision لمنع الكتابة فوق تغيير أحدث.</p>
+        <?php $eventLessonIds = array_map(static fn(array $event): int => (int) $event['id'], $lessonEvents); ?>
+        <article class="knowledge-card admin-event-card">
+            <h3>إنشاء حدث لدرس</h3>
+            <form class="form-stack" method="post">
+                <?= csrf_field() ?><input type="hidden" name="kind" value="lesson-event"><input type="hidden" name="expected_revision" value="0">
+                <label>الدرس<select name="lesson_id" required><option value="">اختر درسًا</option><?php foreach ($lessons as $lesson): if (in_array((int)$lesson['id'],$eventLessonIds,true)) continue; ?><option value="<?= (int)$lesson['id'] ?>"><?= e((string)$lesson['title']) ?></option><?php endforeach; ?></select></label>
+                <label>العنوان العربي<input name="title_ar" maxlength="220" required></label>
+                <label>الوصف العربي<textarea name="description_ar" maxlength="20000" rows="3"></textarea></label>
+                <div class="admin-form-grid">
+                    <label>الحالة<select name="status"><option value="draft">مسودة</option><option value="scheduled">مجدول</option><option value="live">مباشر</option><option value="published">منشور/إعادة</option><option value="cancelled">ملغي</option></select></label>
+                    <label>الظهور<select name="visibility"><option value="public">عام</option><option value="private">خاص</option></select></label>
+                    <label>المنطقة الزمنية<input name="schedule_timezone" value="UTC" maxlength="80" required></label>
+                    <label>الموعد المحلي<input type="datetime-local" name="scheduled_local"></label>
+                    <label>المدة المتوقعة بالدقائق<input type="number" name="estimated_duration_minutes" min="1" max="1440"></label>
+                </div>
+                <div class="admin-check-grid">
+                    <label class="check-label"><input type="checkbox" name="is_live_event"> حدث مباشر</label>
+                    <label class="check-label"><input type="checkbox" name="reminders_enabled"> السماح بالتذكير</label>
+                    <label class="check-label"><input type="checkbox" name="replay_available"> إعادة المشاهدة متاحة</label>
+                </div>
+                <label>العنوان الإنجليزي<input name="title_en" maxlength="220"></label>
+                <label>الوصف الإنجليزي<textarea name="description_en" maxlength="20000" rows="3"></textarea></label>
+                <div class="admin-form-grid">
+                    <label>اسم الدورة بالعربية<input name="course_title_ar" maxlength="200"></label>
+                    <label>Course title<input name="course_title_en" maxlength="200"></label>
+                </div>
+                <label>الموضوعات العربية (سطر أو فاصلة بين كل موضوع)<textarea name="topics_ar" rows="3"></textarea></label>
+                <label>English topics<textarea name="topics_en" rows="3"></textarea></label>
+                <div class="admin-form-grid">
+                    <label>كتاب مرتبط<select name="related_book_id"><option value="">بدون</option><?php foreach ($books as $book): ?><option value="<?= (int)$book['id'] ?>"><?= e((string)$book['title']) ?></option><?php endforeach; ?></select></label>
+                    <label>من صفحة<input type="number" name="related_page_start" min="1"></label>
+                    <label>إلى صفحة<input type="number" name="related_page_end" min="1"></label>
+                </div>
+                <button class="button button-primary" type="submit">حفظ الحدث</button>
+            </form>
+        </article>
+
+        <div class="knowledge-results admin-event-list">
+        <?php foreach ($lessonEvents as $event):
+            $eventContext = is_array($event['editor_context'] ?? null) ? $event['editor_context'] : [];
+            $eventEnglish = is_array($event['translations']['en'] ?? null) ? $event['translations']['en'] : [];
+            $eventLocal = '';
+            if (!empty($event['scheduled_at'])) {
+                try { $eventLocal = (new DateTimeImmutable((string)$event['scheduled_at']))->setTimezone(new DateTimeZone((string)$event['schedule_timezone']))->format('Y-m-d\TH:i'); } catch (Throwable $ignored) { }
+            }
+        ?>
+            <article class="knowledge-card admin-event-card">
+                <div class="section-heading"><div><strong><?= e((string)$event['title']) ?></strong><p class="source-note">Event #<?= (int)$event['event_id'] ?> · revision <?= (int)$event['revision'] ?></p></div><span class="source-chip"><?= e((string)$event['status']) ?></span></div>
+                <form class="form-stack" method="post">
+                    <?= csrf_field() ?><input type="hidden" name="kind" value="lesson-event"><input type="hidden" name="lesson_id" value="<?= (int)$event['id'] ?>"><input type="hidden" name="expected_revision" value="<?= (int)$event['revision'] ?>">
+                    <label>العنوان العربي<input name="title_ar" maxlength="220" value="<?= e((string)$event['translations']['ar']['title']) ?>" required></label>
+                    <label>الوصف العربي<textarea name="description_ar" maxlength="20000" rows="3"><?= e((string)($event['translations']['ar']['description'] ?? '')) ?></textarea></label>
+                    <div class="admin-form-grid">
+                        <label>الحالة<select name="status"><?php foreach (['draft'=>'مسودة','scheduled'=>'مجدول','live'=>'مباشر','published'=>'منشور/إعادة','cancelled'=>'ملغي'] as $statusValue=>$statusLabel): ?><option value="<?= e($statusValue) ?>"<?= $event['status']===$statusValue?' selected':'' ?>><?= e($statusLabel) ?></option><?php endforeach; ?></select></label>
+                        <label>الظهور<select name="visibility"><option value="public"<?= $event['visibility']==='public'?' selected':'' ?>>عام</option><option value="private"<?= $event['visibility']==='private'?' selected':'' ?>>خاص</option></select></label>
+                        <label>المنطقة الزمنية<input name="schedule_timezone" maxlength="80" value="<?= e((string)$event['schedule_timezone']) ?>" required></label>
+                        <label>الموعد المحلي<input type="datetime-local" name="scheduled_local" value="<?= e($eventLocal) ?>"></label>
+                        <label>المدة المتوقعة بالدقائق<input type="number" name="estimated_duration_minutes" min="1" max="1440" value="<?= e((string)($event['estimated_duration_minutes'] ?? '')) ?>"></label>
+                    </div>
+                    <div class="admin-check-grid">
+                        <label class="check-label"><input type="checkbox" name="is_live_event"<?= $event['is_live_event']?' checked':'' ?>> حدث مباشر</label>
+                        <label class="check-label"><input type="checkbox" name="reminders_enabled"<?= $event['reminders_enabled']?' checked':'' ?>> السماح بالتذكير</label>
+                        <label class="check-label"><input type="checkbox" name="replay_available"<?= $event['replay_available']?' checked':'' ?>> إعادة المشاهدة متاحة</label>
+                    </div>
+                    <label>العنوان الإنجليزي<input name="title_en" maxlength="220" value="<?= e((string)($eventEnglish['title'] ?? '')) ?>"></label>
+                    <label>الوصف الإنجليزي<textarea name="description_en" maxlength="20000" rows="3"><?= e((string)($eventEnglish['description'] ?? '')) ?></textarea></label>
+                    <?php if ($eventEnglish): ?><label class="check-label"><input type="checkbox" name="clear_english_translation"> حذف الترجمة الإنجليزية</label><?php endif; ?>
+                    <div class="admin-form-grid">
+                        <label>اسم الدورة بالعربية<input name="course_title_ar" maxlength="200" value="<?= e((string)($eventContext['course_title_ar'] ?? '')) ?>"></label>
+                        <label>Course title<input name="course_title_en" maxlength="200" value="<?= e((string)($eventContext['course_title_en'] ?? '')) ?>"></label>
+                    </div>
+                    <label>الموضوعات العربية<textarea name="topics_ar" rows="3"><?= e(implode("\n",(array)($eventContext['topics_ar'] ?? []))) ?></textarea></label>
+                    <label>English topics<textarea name="topics_en" rows="3"><?= e(implode("\n",(array)($eventContext['topics_en'] ?? []))) ?></textarea></label>
+                    <div class="admin-form-grid">
+                        <label>كتاب مرتبط<select name="related_book_id"><option value="">بدون</option><?php foreach ($books as $book): ?><option value="<?= (int)$book['id'] ?>"<?= (int)($eventContext['related_book_id'] ?? 0)===(int)$book['id']?' selected':'' ?>><?= e((string)$book['title']) ?></option><?php endforeach; ?></select></label>
+                        <label>من صفحة<input type="number" name="related_page_start" min="1" value="<?= e((string)($eventContext['related_page_start'] ?? '')) ?>"></label>
+                        <label>إلى صفحة<input type="number" name="related_page_end" min="1" value="<?= e((string)($eventContext['related_page_end'] ?? '')) ?>"></label>
+                    </div>
+                    <button class="button button-primary" type="submit">حفظ التعديلات</button>
+                </form>
+            </article>
+        <?php endforeach; ?>
+        </div>
     </section>
     <section class="admin-inventory admin-panel" id="admin-comments" data-admin-panel hidden><h2>إدارة تعليقات الدروس</h2><?php if (!$pendingComments): ?><p class="source-note">لا توجد تعليقات.</p><?php else: ?><div class="knowledge-results"><?php foreach ($pendingComments as $comment): ?><article class="knowledge-card"><strong><?= e($comment['lesson_title']) ?></strong><p><?= e($comment['display_name'] ?: '@'.$comment['username']) ?> · <?= e($comment['created_at']) ?> · <?= $comment['status']==='pending'?'بانتظار المراجعة':($comment['status']==='visible'?'منشور':'مخفي') ?></p><p><?= nl2br(e($comment['body'])) ?></p><div class="hero-actions"><?php if ($comment['status'] !== 'visible'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="visible"><button class="button button-primary" type="submit">نشر التعليق</button></form><?php endif; ?><?php if ($comment['status'] !== 'hidden'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="hidden"><button class="button button-secondary" type="submit">إخفاء</button></form><?php endif; ?><form method="post" data-confirm="حذف التعليق نهائيًا؟"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-delete"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><button class="button button-danger" type="submit">حذف</button></form></div></article><?php endforeach; ?></div><?php endif; ?><?php if ($commentPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات التعليقات"><?php if ($commentPage > 1): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage - 1 ?>#admin-comments">الأحدث</a><?php endif; ?><span>صفحة <?= $commentPage ?> من <?= $commentPageCount ?> · <?= number_format($commentCount) ?> تعليق</span><?php if ($commentPage < $commentPageCount): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage + 1 ?>#admin-comments">الأقدم</a><?php endif; ?></nav><?php endif; ?></section>
     <section class="admin-inventory admin-panel" id="admin-audit" data-admin-panel hidden><div class="section-heading"><div><span class="eyebrow">الشفافية والأمان</span><h2>سجل العمليات</h2></div><span class="source-chip"><?= number_format($auditCount) ?> عملية مسجلة</span></div><p class="source-note">السجل تشغيلي ومختصر؛ البريد يظهر بصورة مخفية ولا تُعرض كلمات المرور أو الرموز أو بيانات العبادة الخاصة.</p><form class="form-stack" method="get" action="/admin#admin-audit"><label class="admin-filter-label">البحث بالإجراء أو نوع/رقم الهدف<input type="search" name="audit_q" value="<?= e($auditSearch) ?>" data-admin-audit-search placeholder="مثال: admin-user أو user أو 42" autocomplete="off"></label><div class="hero-actions"><button class="button button-primary" type="submit">بحث</button><?php if ($auditSearch !== ''): ?><a class="button button-secondary" href="/admin#admin-audit">مسح البحث</a><?php endif; ?></div></form><?php if (!$auditRows): ?><p class="source-note">لا توجد عمليات مطابقة.</p><?php else: ?><div class="knowledge-results admin-audit-list"><?php foreach ($auditRows as $audit): $auditLocalSearch = mb_strtolower(implode(' ', [(string) $audit['action'], (string) $audit['target_type'], (string) $audit['target_id']]), 'UTF-8'); ?><article class="knowledge-card admin-audit-row" data-admin-audit data-search="<?= e($auditLocalSearch) ?>"><strong><?= e(str_replace(['account-login-succeeded','account-registered','account-logout','admin-login-succeeded','admin-logout','admin-user-profile-updated','admin-user-deleted','admin-user-suspended','admin-user-restored','user-role-changed-to-admin','user-role-changed-to-user'], ['تسجيل دخول ناجح','إنشاء حساب','تسجيل خروج','دخول إدارة ناجح','خروج من الإدارة','تعديل بيانات مستخدم','حذف مستخدم','إيقاف مستخدم','إعادة تفعيل مستخدم','ترقية إلى مدير','تغيير إلى مستخدم'], (string) $audit['action'])) ?></strong><p><?= e($audit['target_type']) ?><?= $audit['target_email'] ? ' · الحساب: ' . e(admin_redact_email((string) $audit['target_email'])) : ($audit['target_id'] ? ' · رقم: ' . e((string) $audit['target_id']) : '') ?> · نفّذها <?= e($audit['actor_email'] ? admin_redact_email((string) $audit['actor_email']) : 'النظام') ?></p><time datetime="<?= e(date(DATE_ATOM, strtotime((string) $audit['created_at']))) ?>"><?= e((string) $audit['created_at']) ?></time></article><?php endforeach; ?></div><?php if ($auditPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات سجل العمليات"><?php if ($auditPage > 1): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['audit_q'=>$auditSearch,'audit_page'=>$auditPage-1])) ?>#admin-audit">الأحدث</a><?php endif; ?><span>صفحة <?= $auditPage ?> من <?= $auditPageCount ?></span><?php if ($auditPage < $auditPageCount): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['audit_q'=>$auditSearch,'audit_page'=>$auditPage+1])) ?>#admin-audit">الأقدم</a><?php endif; ?></nav><?php endif; ?><?php endif; ?></section>
