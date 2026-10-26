@@ -156,7 +156,7 @@ object NightRules {
 
         val currentRun = current?.let { currentNight ->
             var cursor = if (
-                nightInProgress &&
+                !nightInProgress ||
                 currentNight !in eligible
             ) {
                 currentNight.minusDays(1)
