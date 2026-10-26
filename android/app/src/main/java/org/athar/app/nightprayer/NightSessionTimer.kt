@@ -252,7 +252,14 @@ class NightTimerViewModel(
         if (current.phase != "running") return
         viewModelScope.launch {
             lock.withLock {
-                persistPause(reason, useCurrentElapsed = true)
+                val now = wallNow()
+                val fajr = Instant.parse(current.fajrAt)
+                val crossedBoundary = now >= fajr
+                persistPause(
+                    reason = if (crossedBoundary) "boundary" else reason,
+                    useCurrentElapsed = !crossedBoundary,
+                    activeAt = if (crossedBoundary) fajr else now,
+                )
             }
         }
     }
