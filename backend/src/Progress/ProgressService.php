@@ -26,7 +26,12 @@ final class ProgressService
             $this->db->prepare('INSERT INTO quran_positions (user_id,surah,ayah,revision,updated_at) VALUES (?,?,?,1,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE surah=VALUES(surah),ayah=VALUES(ayah),revision=revision+1,updated_at=UTC_TIMESTAMP()')->execute([$user,$surah,$ayah]);$this->db->commit();return (array)$this->position($user);
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
-    public function bookmarks(int $user): array{$q=$this->db->prepare('SELECT id,surah,ayah,label,created_at FROM quran_bookmarks WHERE user_id=? ORDER BY created_at DESC LIMIT 500');$q->execute([$user]);return $q->fetchAll();}
+    public function bookmarks(int $user,array $params=[]): array
+    {
+        $q=$this->db->prepare('SELECT id,surah,ayah,label,created_at FROM quran_bookmarks WHERE user_id=? ORDER BY created_at DESC,id DESC LIMIT 500');
+        $q->execute([$user]);
+        return $this->collectionResponse($q->fetchAll(),$params);
+    }
     public function addBookmark(int $user,array $data): array
     {
         $surah=$this->integer($data,'surah',1,114);$ayah=$this->integer($data,'ayah',1,286);QuranIndex::standard()->globalIndex($surah,$ayah);$label=$data['label']??'';if(!is_string($label)||mb_strlen($label,'UTF-8')>120)throw new ApiError('invalid_fields',422,['label'=>'invalid']);
@@ -38,9 +43,11 @@ final class ProgressService
         $surah=$this->integer($data,'surah',1,114);$ayah=$this->integer($data,'ayah',1,286);QuranIndex::standard()->globalIndex($surah,$ayah);
         $this->db->prepare('DELETE FROM quran_bookmarks WHERE user_id=? AND surah=? AND ayah=?')->execute([$user,$surah,$ayah]);
     }
-    public function favorites(int $user): array
+    public function favorites(int $user,array $params=[]): array
     {
-        $q=$this->db->prepare("SELECT f.target_type,f.target_id,COALESCE(b.title,l.title,r.title) title,f.created_at FROM user_favorites f LEFT JOIN books b ON f.target_type='book' AND b.id=f.target_id AND b.is_published=1 LEFT JOIN lessons l ON f.target_type='lesson' AND l.id=f.target_id AND l.is_published=1 LEFT JOIN series r ON f.target_type='series' AND r.id=f.target_id AND r.is_published=1 WHERE f.user_id=? AND (b.id IS NOT NULL OR (l.id IS NOT NULL AND (l.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=l.scholar_id AND s.is_published=1)) AND (l.series_id IS NULL OR EXISTS(SELECT 1 FROM series lr LEFT JOIN scholars rs ON rs.id=lr.scholar_id WHERE lr.id=l.series_id AND lr.is_published=1 AND (lr.scholar_id IS NULL OR rs.is_published=1)))) OR (r.id IS NOT NULL AND (r.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=r.scholar_id AND s.is_published=1)))) ORDER BY f.id DESC LIMIT 500");$q->execute([$user]);return $q->fetchAll();
+        $q=$this->db->prepare("SELECT f.target_type,f.target_id,COALESCE(b.title,l.title,r.title) title,f.created_at FROM user_favorites f LEFT JOIN books b ON f.target_type='book' AND b.id=f.target_id AND b.is_published=1 LEFT JOIN lessons l ON f.target_type='lesson' AND l.id=f.target_id AND l.is_published=1 LEFT JOIN series r ON f.target_type='series' AND r.id=f.target_id AND r.is_published=1 WHERE f.user_id=? AND (b.id IS NOT NULL OR (l.id IS NOT NULL AND (l.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=l.scholar_id AND s.is_published=1)) AND (l.series_id IS NULL OR EXISTS(SELECT 1 FROM series lr LEFT JOIN scholars rs ON rs.id=lr.scholar_id WHERE lr.id=l.series_id AND lr.is_published=1 AND (lr.scholar_id IS NULL OR rs.is_published=1)))) OR (r.id IS NOT NULL AND (r.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=r.scholar_id AND s.is_published=1)))) ORDER BY f.id DESC LIMIT 500");
+        $q->execute([$user]);
+        return $this->collectionResponse($q->fetchAll(),$params);
     }
     public function favorite(int $user,string $type,int $id,bool $saved): void
     {
@@ -258,6 +265,23 @@ final class ProgressService
         $minimum=gmdate('Y-m-d',time()-366*86400);
         if($date<$minimum||$date>$today)throw new ApiError('invalid_fields',422,['activity_date'=>'out_of_range']);
         return $date;
+    }
+
+    private function collectionResponse(array $rows,array $params):array
+    {
+        if(($params['paged']??'')!=='1')return $rows;
+        $page=max(1,min(10000,(int)($params['page']??1)));
+        $size=max(1,min(50,(int)($params['per_page']??20)));
+        $total=count($rows);
+        return [
+            'items'=>array_slice($rows,($page-1)*$size,$size),
+            'pagination'=>[
+                'page'=>$page,
+                'per_page'=>$size,
+                'total'=>$total,
+                'has_more'=>$page*$size<$total,
+            ],
+        ];
     }
 
     private function integer(array $data,string $key,int $min,int $max): int { $value=$data[$key]??null;if(!is_int($value)||$value<$min||$value>$max)throw new ApiError('invalid_fields',422,[$key=>'invalid']);return $value; }
