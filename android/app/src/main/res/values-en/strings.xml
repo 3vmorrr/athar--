@@ -206,6 +206,11 @@
 <string name="prayer_calculation_failed">A valid night could not be calculated for this location and date. Check the inputs or use reliable local times; no guessed time is displayed.</string>
 <string name="night_boundaries">Maghrib: %1$s\nLast third begins: %2$s\nNext Fajr: %3$s</string>
 <string name="local_exemptions">Local exempt periods</string>
+<string name="exemption_add_period">Add local period</string>
+<string name="exemption_saved_periods">Periods saved on this device</string>
+<string name="exemption_period">%1$s — %2$s · %3$d days</string>
+<string name="exemption_remove_period">Remove period</string>
+<string name="exemption_clear_confirm">All local exemption periods will be removed from this device only. No Night Prayer session or account data will be deleted.</string>
 <string name="exemptions_notice">Optional and encrypted on this device only. They are never synced, shown to administrators, or counted as worship nights.</string>
 <string name="exemption_days">%1$d days saved on this device</string>
 <string name="start_date">Start date YYYY-MM-DD</string>
