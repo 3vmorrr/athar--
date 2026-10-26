@@ -51,7 +51,42 @@
 <string name="activity_tracking_available">Available</string>
 <string name="activity_tracking_unavailable">Not available yet</string>
 <string name="activity_recent">Last 14 days</string>
-<string name="activity_day_summary">%1$d lessons completed · %2$d adhkar completed · %3$d book downloads</string><string name="security">Security and privacy</string><string name="language">Language</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">Appearance</string><string name="light">Light</string><string name="dark">Dark</string><string name="system_theme">Use device setting</string><string name="khatmah">Khatmah plan</string><string name="target_date">Completion date</string><string name="completed_pages">Completed pages</string><string name="paused">Paused</string><string name="active">Active</string><string name="finished">Finished</string><string name="export_data">Export my data</string><string name="delete_account">Delete my account</string><string name="delete_account_body">Your account and private data will be deleted. Confirm your password to continue.</string><string name="change_password">Change password</string>
+<string name="activity_day_summary">%1$d lessons completed · %2$d adhkar completed · %3$d book downloads</string><string name="security">Security and privacy</string><string name="language">Language</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">Appearance</string><string name="light">Light</string><string name="dark">Dark</string><string name="system_theme">Use device setting</string><string name="khatmah">Khatmah plan</string>
+<string name="khatmah_empty_intro">Create a realistic Khatmah plan with dates and pages. Edits can remain safely on this device until connectivity returns.</string>
+<string name="khatmah_finished_summary">This plan is finished. Start a new plan only through an explicit restart.</string>
+<string name="khatmah_paused_summary">This plan is paused. Its data is preserved without inventing progress.</string>
+<string name="khatmah_active_summary">Track only real progress; the daily workload is recalculated from completed pages and time remaining.</string>
+<string name="khatmah_pending">Saved on this device · awaiting sync</string>
+<string name="khatmah_conflict">A different account version exists</string>
+<string name="khatmah_create">Create Khatmah plan</string>
+<string name="khatmah_edit">Edit Khatmah plan</string>
+<string name="khatmah_completed_hint">0–604 pages. Night Prayer pages are never added automatically.</string>
+<string name="khatmah_no_night_transfer">Night Prayer progress is not automatically transferred into Khatmah. Change pages only when you intend to record them in this plan.</string>
+<string name="khatmah_progress">Khatmah progress</string>
+<string name="khatmah_pages_progress">%1$d of %2$d pages</string>
+<string name="khatmah_daily_pages">Today’s workload</string>
+<string name="khatmah_remaining_pages">Pages remaining</string>
+<string name="khatmah_days_remaining">Days remaining</string>
+<string name="khatmah_starts_in">Plan starts in %1$d days</string>
+<string name="khatmah_overdue">The target date has passed with pages remaining. Edit the target or explicitly restart the plan.</string>
+<string name="khatmah_behind">%1$d pages behind the calculated path</string>
+<string name="khatmah_ahead">%1$d pages ahead of the calculated path</string>
+<string name="khatmah_dates">From %1$s to %2$s</string>
+<string name="khatmah_pause">Pause plan</string>
+<string name="khatmah_resume">Resume plan</string>
+<string name="khatmah_restart">Restart plan</string>
+<string name="khatmah_restart_confirm">A new plan will start today and progress will return to 0 pages. Choose the new target date.</string>
+<string name="khatmah_finish">Finish plan</string>
+<string name="khatmah_finish_confirm">Confirm this plan is complete? It can only be finished after 604 pages are recorded.</string>
+<string name="khatmah_invalid">Check the start date, target date, and pages. The target cannot be in the past and pages must be 0–604.</string>
+<string name="khatmah_conflict_title">Review both Khatmah versions</string>
+<string name="khatmah_conflict_body">Neither version was replaced automatically. Compare the device and account versions, then choose which one to keep.</string>
+<string name="khatmah_device_version">Device version</string>
+<string name="khatmah_account_version">Account version</string>
+<string name="khatmah_account_missing">There is currently no Khatmah plan on the account.</string>
+<string name="khatmah_use_account">Use account version</string>
+<string name="khatmah_keep_device">Keep device version</string>
+<string name="khatmah_version_details">%1$d pages · %2$s to %3$s · %4$s · revision %5$d</string><string name="target_date">Completion date</string><string name="completed_pages">Completed pages</string><string name="paused">Paused</string><string name="active">Active</string><string name="finished">Finished</string><string name="export_data">Export my data</string><string name="delete_account">Delete my account</string><string name="delete_account_body">Your account and private data will be deleted. Confirm your password to continue.</string><string name="change_password">Change password</string>
 <string name="revoke_other_sessions">Sign out other sessions</string>
 <string name="revoke_other_sessions_body">Other device and browser sessions will be revoked. This current session will remain signed in.</string>
 <string name="sessions_revoked">Other sessions have been signed out.</string>
