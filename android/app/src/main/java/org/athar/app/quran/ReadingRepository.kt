@@ -32,7 +32,8 @@ class ReadingRepository(
     private val cipher: PrivateCipher,
     private val session: SessionRepository,
     private val index: suspend () -> QuranIndex,
-    automaticSync: Boolean = true
+    automaticSync: Boolean = true,
+    private val requestSync:(Long)->Unit={}
 ) : AutoCloseable {
     private val gson = Gson()
     private val local = Mutex()
@@ -70,6 +71,7 @@ class ReadingRepository(
             write(user, SavedReadingPosition(surah, ayah, old?.revision ?: 0, (old?.version ?: 0) + 1, pending = true))
         }
         changes.tryEmit(Unit)
+        requestSync(user)
     }
 
     private suspend fun fetch(user: Long): SavedReadingPosition? {
@@ -100,10 +102,13 @@ class ReadingRepository(
             }
         }
         changes.tryEmit(Unit)
+        if(hasPending(user))requestSync(user)
     } }
 
-    suspend fun sync() = remote.withLock { withContext(Dispatchers.IO) {
+    suspend fun hasPending(user:Long):Boolean=withContext(Dispatchers.IO){saved(user)?.let{it.pending&&!it.conflict}==true}
+    suspend fun sync(expectedOwner:Long?=null) = remote.withLock { withContext(Dispatchers.IO) {
         val user = session.userId ?: return@withContext
+        if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
         val snapshot = local.withLock { saved(user) } ?: return@withContext
         if (!snapshot.pending || snapshot.conflict) return@withContext
         val server = try {
@@ -139,6 +144,7 @@ class ReadingRepository(
             }
         }
         changes.tryEmit(Unit)
+        if(hasPending(user))requestSync(user)
     } }
 
     override fun close() { scope.cancel() }

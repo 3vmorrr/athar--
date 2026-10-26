@@ -17,7 +17,7 @@ import java.io.IOException
 
 /** Coalesced counter writes, but completion events remain a durable UUID queue. */
 @OptIn(FlowPreview::class)
-class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository, private val automaticSync: Boolean = true) : AutoCloseable {
+class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository, private val automaticSync: Boolean = true,private val requestSync:(Long)->Unit={}) : AutoCloseable {
     private val gson = Gson()
     private val local = Mutex()
     private val syncing = Mutex()
@@ -64,12 +64,15 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
             next
         }
         schedule()
+        if(updated.pending||updated.events.isNotEmpty())requestSync(user)
         updated
     }
     private fun schedule() { changes.tryEmit(Unit) }
     override fun close() { scope.cancel() }
-    suspend fun sync() = syncing.withLock { withContext(Dispatchers.IO) {
+    suspend fun hasPending(user:Long):Boolean=withContext(Dispatchers.IO){dao.caches(user,"adhkar:%").any{val value=decode(it);!value.conflict&&(value.pending||value.events.isNotEmpty())}}
+    suspend fun sync(expectedOwner:Long?=null) = syncing.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
+        if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
         for (document in dao.caches(user, "adhkar:%")) {
             val snapshot = local.withLock { decode(dao.cache(user, document.cacheKey) ?: document) }
             if ((!snapshot.pending && snapshot.events.isEmpty()) || snapshot.conflict) continue
@@ -114,6 +117,7 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
             else write(user,previous.copy(target=target,count=if(server?.target==target) server.count else 0,revision=server?.revision ?: 0,localVersion=previous.localVersion+1))
         }
         schedule()
+        if(hasPending(user))requestSync(user)
     } }
     suspend fun useServer(item: Int, target: Int) = syncing.withLock { withContext(Dispatchers.IO) {
         val user = requireNotNull(session.userId)
@@ -121,5 +125,6 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         check(session.userId == user)
         local.withLock { val previous = state(user, item, target); write(user, previous.copy(count = if(server?.target==target) server.count else 0, target = target, revision = server?.revision ?: 0, localVersion=previous.localVersion+1, pending = false, conflict = false)) }
         schedule()
+        if(hasPending(user))requestSync(user)
     } }
 }

@@ -22,6 +22,6 @@ class AtharTestApplication : AtharApplication() {
         val fixture = InstrumentationRegistry.getArguments().getString("nativeApiSmoke") == "true"
         val fixtureHost = InstrumentationRegistry.getArguments().getString("nativeFixtureHost") ?: "10.0.2.2"
         require(fixtureHost in setOf("10.0.2.2", "127.0.0.1")) { "Native fixtures must use an emulator bridge or explicit USB reverse." }
-        AppGraph(this, if (fixture) "http://$fixtureHost:8004/api/v1/" else BuildConfig.API_BASE_URL)
+        AppGraph(this, if (fixture) "http://$fixtureHost:8004/api/v1/" else BuildConfig.API_BASE_URL,enablePersistentSync=false)
     }
 }

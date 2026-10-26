@@ -12,13 +12,14 @@ import org.athar.app.auth.SessionRepository
 import org.athar.app.core.data.AtharDao
 import org.athar.app.core.data.CachedDocument
 import org.athar.app.core.security.PrivateCipher
+import org.athar.app.core.network.ApiException
 import java.util.UUID
 
 @Keep data class SavedLessonProgress(val lessonId: Int, val positionSeconds: Int, val durationSeconds: Int, val complete: Boolean, val eventId: String?, val pending: Boolean = true, val version: Long = 1)
 
 /** Private durable checkpoints; remote errors never discard the local resume position. */
 @OptIn(FlowPreview::class)
-class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository) : AutoCloseable {
+class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository,private val requestSync:(Long)->Unit={}) : AutoCloseable {
     private val gson = Gson(); private val local = Mutex(); private val remote = Mutex()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val changes = MutableSharedFlow<Unit>(replay = 1,onBufferOverflow=BufferOverflow.DROP_OLDEST)
@@ -28,7 +29,11 @@ class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCip
         scope.launch { session.state.collect { if (it is AuthState.SignedIn) changes.emit(Unit) } }
     }
     private fun key(id: Int) = "lesson-progress:$id"
-    private fun decode(row: CachedDocument) = gson.fromJson(cipher.open(row.payloadCipher), SavedLessonProgress::class.java)
+    private fun decode(row: CachedDocument):SavedLessonProgress {
+        val value=requireNotNull(gson.fromJson(cipher.open(row.payloadCipher), SavedLessonProgress::class.java))
+        require(value.lessonId>0&&row.cacheKey==key(value.lessonId)&&value.positionSeconds in 0..86400&&value.durationSeconds in 0..86400&&value.version>0)
+        return value
+    }
     suspend fun saved(user: Long, id: Int): SavedLessonProgress? = withContext(Dispatchers.IO) { dao.cache(user, key(id))?.let(::decode) }
     fun checkpoint(id:Int,position:Int,duration:Int,complete:Boolean) {
         val user=session.userId ?: return
@@ -45,9 +50,12 @@ class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCip
             dao.cache(CachedDocument(user, key(id), cipher.seal(gson.toJson(next)), System.currentTimeMillis()))
         }
         failed.value=null;changes.tryEmit(Unit)
+        requestSync(user)
     }
-    suspend fun sync() = remote.withLock { withContext(Dispatchers.IO) {
+    suspend fun hasPending(user:Long):Boolean=withContext(Dispatchers.IO){dao.caches(user,"lesson-progress:%").any{decode(it).pending}}
+    suspend fun sync(expectedOwner:Long?=null) = remote.withLock { withContext(Dispatchers.IO) {
         val user = session.userId ?: return@withContext
+        if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
         for (row in dao.caches(user, "lesson-progress:%")) {
             val snapshot = local.withLock { saved(user, decode(row).lessonId) } ?: continue
             if (!snapshot.pending) continue

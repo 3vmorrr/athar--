@@ -24,6 +24,10 @@ Scope follows the approved master plus mandatory Night Prayer addendum. Existing
 
 Implementation tasks are tracked with evidence in [TASK_TRACKER](TASK_TRACKER.md). Blocking one external service does not prevent independent domain/backend/UI work; unavailable states must remain truthful. No stage is skipped to produce a superficial demo.
 
+###26 October — phase2 execution
+
+Protected local reads (O01) are tested. O02 adds account/environment-scoped persistent work over the existing encrypted progress/outbox and API, bounded retries, logout cancellation and module-isolated failure handling. See [persistent synchronization](../features/PERSISTENT_SYNC.md). Keep actual worker HTTP, durable scheduling and real network-restoration/reboot acceptance distinct. Next: bounded disposable content caches, remaining conflict/recovery surfaces, then phase3 Quran tools. Do not evict private pending progress as if it were downloaded catalog content.
+
 ## Current P4 execution order — watch requirement incorporated2026-10-25
 
 1. Complete native watch/series/discussion and provider-safe player integration with focused tests.

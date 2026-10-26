@@ -1,5 +1,11 @@
 # Verification report
 
+##26 October — owned persistent synchronization
+
+Production/test APK,38 JVM cases and lint PASS (`persistent-sync-final-build.log`,1m7s);292 paired resources PASS. Final network-aware test APK/lint PASS (`persistent-sync-network-aware-test-build.log`,1m5s). API27 worker/Room/Keystore/HTTP1/1 PASS (5.765s, `persistent-sync-physical-network-aware.log`); unique scheduling plus retained storage regression12/12 PASS (16.449s, `persistent-sync-physical-storage.log`). Arabic reader/counter regression2/2 PASS (22.655s), English2/2 PASS (21.22s; persistent-sync-ui-en.log). Dedicated generated sync actor only; exemptions remain local, wrong actor/environment rejected and unreadable pending ciphertext retained. Existing backend20,000 assertions and15-version/34-table result remain unchanged, not rerun for an unchanged backend.
+
+Initial JVM candidate failed a cancellation-object identity assertion; type/message assertion passes under coroutine stack recovery. Initial physical unconditional scheduler wait timed out: phone Internet network is disconnected although USB reverse HTTP works. Final case verifies ENQUEUED state/unchanged pending data and separately invokes actual Worker HTTP. Automatic network restoration, reboot/process death and release acceptance are still open; manual Worker construction does not prove those. Merged WorkManager component permissions reviewed without widening custom IPC or dangerous permissions. See [policy/evidence](../features/PERSISTENT_SYNC.md).
+
 ##26 October — retained private-read protection
 
 Production/test APK,29 JVM cases and lint PASS (`protected-local-metadata-build.log`,3m2s);292 paired resources PASS. An earlier candidate11-case hardware storage suite passed, then the final production source was updated/installed and the stronger final11-case suite passed again (16.222s, `protected-local-final-storage.log`). Cases include malformed ciphertext, altered authentication tags, invalid Gson/domain records, mismatched prayer count/duration, no implicit overwrite, pending/outbox retention, explicit restoration of disposable fixtures and owner separation. The real installed encryption key was not deleted/invalidated.

@@ -27,4 +27,6 @@ Formal checkpoint2026-10-25: audit actual source against all approved addenda; p
 | 2026-10-25 | Normalize Arabic keyboard OTP input at the shared native input boundary | Verification and reset must accept the same digit sets; preserve leading zeroes, transmit bounded ASCII and leave passwords/server authorization untouched |
 | 2026-10-25 | Native identity feedback uses stable API codes, never remote message text | Map known codes to Arabic/English resources and hide unknown internal details; profile and identity screens share presentation behavior |
 
+| 2026-10-26 | Scope persistent work by API partition and verified actor, with bounded module-isolated retries | Keep encrypted records/outbox authoritative; cancel former-account work, never include private payloads in job input, and use six-hour eventual maintenance rather than an always-running service. USB reverse is not proof of Android network constraints; report direct worker and OS scheduling separately. |
+
 Further irreversible, recurring-cost or scope-changing decisions require explicit user authorization. Routine reversible implementation choices are documented and executed.

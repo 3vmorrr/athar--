@@ -1,5 +1,11 @@
 # Engineering change log
 
+##2026-10-26 — Owned persistent synchronization
+
+- Added unique WorkManager jobs by environment/account, verified actor checks, logout cancellation, module-isolated failure handling, bounded retries/time budget and six-hour eventual maintenance. Existing encrypted progress/outbox and foreground behavior are retained; exemption data never enters work requests.
+-38 JVM cases,292 paired resources, production/test APK/lint pass; physical Worker/HTTP1 case and unique scheduling/storage12 cases pass. No real account reset or notification/email send. Android network-restoration/reboot acceptance remains open because USB reverse does not satisfy CONNECTED on this disconnected phone. Failed initial harness assumptions remain documented.
+- Continue phase2 disposable cache bounds and broader recovery/conflict acceptance.
+
 ##2026-10-26 — Retained private-read protection
 
 - Added typed Loading/Ready/Unreadable observer states without exposing exception text or swallowing cancellation. Counter/reading payload validation prevents malformed defaults from becoming valid zero progress.

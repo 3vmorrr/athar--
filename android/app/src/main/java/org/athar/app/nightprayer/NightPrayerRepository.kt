@@ -12,13 +12,15 @@ import kotlinx.coroutines.withContext
 import org.athar.app.auth.SessionRepository
 import org.athar.app.core.data.*
 import org.athar.app.core.security.PrivateCipher
+import org.athar.app.core.network.ApiException
 import java.time.LocalDate
 import java.util.UUID
 
 /** Every method is scoped to the captured account. Exemptions never enter the outbox. */
-class NightPrayerRepository(private val database: AppDatabase, private val session: SessionRepository, private val cipher: PrivateCipher) {
+class NightPrayerRepository(private val database: AppDatabase, private val session: SessionRepository, private val cipher: PrivateCipher,private val requestSync:(Long)->Unit={}) {
     private val dao = database.dao()
     private val syncLock = Mutex()
+    @Volatile private var continuationOwner:Long?=null
     private fun user() = requireNotNull(session.userId) { "Unauthenticated" }
     private fun verseCount(payload:JsonObject):Int {
         val count=when(payload["entry_type"].asString){
@@ -54,6 +56,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
             dao.night(LocalNightSession(user, id, body["night_date"].asString, count, body["measured_seconds"]?.takeUnless { it.isJsonNull }?.asInt, cipher.seal(body.toString()), revision, previous?.serverRevision ?: 0, false, true, System.currentTimeMillis()))
             dao.enqueue(OutboxMutation(userId = user, mutationId = mutation, sessionId = id, operation = "put", expectedRevision = expected, payloadCipher = cipher.seal(outgoing.toString())))
         }
+        requestSync(user)
     }
 
     suspend fun delete(id: String) = withContext(Dispatchers.IO) {
@@ -65,10 +68,15 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
             dao.night(previous.copy(nightDate = "", verseCount = 0, measuredSeconds = null, payloadCipher = cipher.seal("{}"), localRevision = previous.localRevision + 1, deleted = true, dirty = true))
             dao.enqueue(OutboxMutation(userId = user, mutationId = mutation, sessionId = id, operation = "delete", expectedRevision = previous.localRevision, payloadCipher = cipher.seal(body.toString())))
         }
+        requestSync(user)
     }
 
-    suspend fun sync(): Int = syncLock.withLock { withContext(Dispatchers.IO) {
+    suspend fun hasPending(user:Long):Boolean=withContext(Dispatchers.IO){continuationOwner==user||dao.pending(user).any{!it.conflict}}
+    suspend fun sync(expectedOwner:Long?=null): Int = syncLock.withLock { withContext(Dispatchers.IO) {
         val user = user()
+        if(expectedOwner!=null&&expectedOwner!=user)throw ApiException(401,"account_changed","")
+        // A background pull must not silently replace an unreadable retained personal record.
+        dao.allNights(user).filter{!it.deleted}.forEach{read(it)}
         var conflicts = 0
         var more: Boolean
         var batches = 0
@@ -99,6 +107,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
             more = reply["has_more"].asBoolean || (eligible.isNotEmpty() && dao.pending(user).any { !it.conflict && it.sessionId !in blocked })
             batches++
         } while (more && batches < 20)
+        continuationOwner=if(more)user else null
         conflicts
     } }
 
@@ -107,6 +116,7 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         val user = user(); val remote = session.request("GET", "night-prayer/sessions/$id",expectedUser=user).asJsonObject
         check(session.userId == user)
         database.withTransaction { dao.removeSessionMutations(user, id); replaceRemote(user, remote) }
+        requestSync(user)
     }
 
     private suspend fun replaceRemote(user: Long, item: JsonObject) {
