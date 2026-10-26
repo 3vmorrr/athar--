@@ -579,7 +579,6 @@ private fun exemptionRanges(
     ranges += LocalExemptionRange(start, end)
     return ranges.asReversed()
 }
-}
 @Composable private fun NumericInput(value: String, change: (String) -> Unit, label: Int, modifier: Modifier) { OutlinedTextField(value, { change(it.filter(Char::isDigit).take(6)) }, modifier, label = { Text(stringResource(label)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)) }
 @Composable private fun MethodSelector(value: String, change: (String) -> Unit, values: List<String>) {
     var expanded by remember { mutableStateOf(false) }
