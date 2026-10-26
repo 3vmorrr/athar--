@@ -34,6 +34,44 @@ object AccountPayloads {
         true
     }.getOrDefault(false)
 
+    fun validActivitySummary(data:JsonElement):Boolean=runCatching {
+        val root=data.asJsonObject
+        LocalDate.parse(requireNotNull(root["generated_date"]).asString)
+        val availability=requireNotNull(root["availability"]).asJsonObject
+        listOf(
+            "reading_sessions",
+            "listening_history",
+            "adhkar_completions",
+            "lesson_progress",
+            "book_downloads",
+        ).forEach { key ->
+            require(availability[key]?.asJsonPrimitive?.isBoolean==true)
+        }
+        val recorded=requireNotNull(root["recorded"]).asJsonObject
+        listOf(
+            "adhkar_completions",
+            "lesson_completions",
+            "book_downloads",
+            "legacy_quran_sessions",
+            "active_days",
+            "lessons_started",
+            "lessons_complete",
+            "watched_seconds",
+        ).forEach { key ->
+            val value=requireNotNull(recorded[key]).asLong
+            require(value>=0)
+        }
+        require(root["recent"]?.isJsonArray==true)
+        root["recent"].asJsonArray.forEach { element ->
+            val row=element.asJsonObject
+            LocalDate.parse(requireNotNull(row["date"]).asString)
+            listOf("lesson_completions","adhkar_completions","book_downloads").forEach { key ->
+                require(requireNotNull(row[key]).asInt>=0)
+            }
+        }
+        true
+    }.getOrDefault(false)
+
     fun validCollectionPage(tool:String,data:JsonElement):Boolean=runCatching {
         require(tool in setOf("bookmarks","favorites"))
         val root=data.asJsonObject
