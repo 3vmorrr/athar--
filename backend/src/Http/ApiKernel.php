@@ -43,7 +43,16 @@ final class ApiKernel
         if($path==='/auth/forgot-password'){$this->method($r,'POST');$email=$r->string('email',190);$this->authRate($r,'forgot',strtolower(trim($email)),3,900);$this->auth->requestReset($email);return [['status'=>'if_registered_email_will_be_sent'],202];}
         if($path==='/auth/reset-password'){$this->method($r,'POST');$email=$r->string('email',190);$this->authRate($r,'reset',strtolower(trim($email)),5,900);$this->auth->reset($email,$r->string('code',6),$r->string('password',200),$r->string('password_confirmation',200));return [['status'=>'password_updated'],200];}
         $actor=$this->auth->authenticate($r->bearer(),false);
-        if($path==='/auth/logout'){$this->method($r,'POST');$this->auth->logout($actor);return [['status'=>'logged_out'],200];}
+        if($path==='/auth/logout'){
+            $this->method($r,'POST');
+            (new \Athar\Engagement\PushDeviceService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::privateData(),
+                \Athar\Engagement\PushEnvironment::current()
+            ))->revokeSessionFamily((int)$actor['id'],(string)$actor['family_id'],'logout');
+            $this->auth->logout($actor);
+            return [['status'=>'logged_out'],200];
+        }
         if($path==='/auth/verify-email'){$this->method($r,'POST');$this->authRate($r,'verify',(string)$actor['id'],5,900);return [$this->auth->verify((int)$actor['id'],$r->string('code',6)),200];}
         if($path==='/auth/resend'){$this->method($r,'POST');$this->authRate($r,'resend',(string)$actor['id'],3,900);return [['delivery_status'=>$this->auth->resend((int)$actor['id'])?'accepted':'unavailable'],202];}
         if($actor['scope']!=='full'||empty($actor['email_verified_at']))throw new ApiError('email_verification_required',403);
@@ -86,7 +95,16 @@ final class ApiKernel
         if(preg_match('#^/admin/comments/([1-9][0-9]*)$#',$path,$m)){$this->method($r,'PUT');return [(new \Athar\Learning\DiscussionService($this->db))->moderate($actor,(int)$m[1],$r->body),200];}
         if($path==='/me/sessions/revoke-others'){
             $this->method($r,'POST');
-            return [['revoked_count'=>$this->auth->revokeOtherSessions($actor)],200];
+            $devices=new \Athar\Engagement\PushDeviceService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::privateData(),
+                \Athar\Engagement\PushEnvironment::current()
+            );
+            $deviceCount=$devices->revokeOtherSessionFamilies((int)$actor['id'],(string)$actor['family_id']);
+            return [[
+                'revoked_count'=>$this->auth->revokeOtherSessions($actor),
+                'push_devices_revoked'=>$deviceCount,
+            ],200];
         }
         if($path==='/me'){
             if($r->method==='GET')return [$this->auth->profile((int)$actor['id']),200];
@@ -155,6 +173,24 @@ final class ApiKernel
         }
         if(preg_match('#^/me/lesson-reminders/([1-9][0-9]*)$#',$path,$m)){
             $this->method($r,'PUT');return [(new \Athar\Engagement\LessonReminderService($this->db))->set($user,(int)$m[1],$r->body),200];
+        }
+        if($path==='/me/push-devices'){
+            $this->method($r,'GET');
+            return [(new \Athar\Engagement\PushDeviceService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::privateData(),
+                \Athar\Engagement\PushEnvironment::current()
+            ))->list($user),200];
+        }
+        if(preg_match('#^/me/push-devices/([a-f0-9]{32})$#',$path,$m)){
+            $devices=new \Athar\Engagement\PushDeviceService(
+                $this->db,
+                \Athar\Infrastructure\SecretKey::privateData(),
+                \Athar\Engagement\PushEnvironment::current()
+            );
+            if($r->method==='PUT')return [$devices->register($user,(string)$actor['family_id'],$m[1],$r->body),200];
+            $this->method($r,'DELETE');
+            return [$devices->revokeInstallation($user,$m[1]),200];
         }
         if($path==='/me/follows'){
             $this->method($r,'GET');return [(new \Athar\Engagement\FollowService($this->db))->list($user,$r->query),200];
