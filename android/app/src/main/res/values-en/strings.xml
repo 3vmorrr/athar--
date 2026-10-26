@@ -497,4 +497,24 @@
     <string name="quran_wird_permission_settings_body">Notifications are disabled for this app in system settings. You can open settings to allow the wird reminder.</string>
     <string name="quran_wird_notification_title">Quran wird</string>
     <string name="quran_wird_notification_body">Your optional reminder for today’s %1$d-ayah saved-progress target.</string>
+    <string name="adhkar_reminder_title">Adhkar reminder: %1$s</string>
+    <string name="adhkar_reminder_explainer">An optional reminder suppressed for today only after every fixed-repeat dhikr in this category is genuinely completed. Opening the screen or partial counting never counts as completion.</string>
+    <string name="adhkar_reminder_requirements">Measurable requirements in this category: %1$d</string>
+    <string name="adhkar_reminder_time">Reminder time: %1$s</string>
+    <string name="adhkar_reminder_enable">Enable this category reminder</string>
+    <string name="adhkar_reminder_disable">Turn off this category reminder</string>
+    <string name="adhkar_reminder_saved">The reminder was saved and scheduled locally.</string>
+    <string name="adhkar_reminder_disabled">This category reminder was turned off.</string>
+    <string name="adhkar_reminder_save_failed">The reminder could not be saved. Try again.</string>
+    <string name="adhkar_reminder_days_required">Choose at least one day.</string>
+    <string name="adhkar_reminder_no_fixed">This category has no published fixed-repeat adhkar whose completion can be verified.</string>
+    <string name="adhkar_reminder_permission_denied">Notification permission was not granted, so the reminder was not enabled.</string>
+    <string name="adhkar_reminder_preferences_unavailable">Notification settings could not be read right now.</string>
+    <string name="adhkar_reminder_consent_title">Enable adhkar reminders?</string>
+    <string name="adhkar_reminder_consent_body">Only the adhkar-reminder category will be enabled. Your counters and completions remain private account data and are not used for campaign targeting.</string>
+    <string name="adhkar_reminder_consent_confirm">Enable adhkar reminders</string>
+    <string name="adhkar_reminder_permission_title">Notification permission required</string>
+    <string name="adhkar_reminder_permission_settings_body">Notifications are disabled for this app in system settings. Open settings if you want to allow the reminder.</string>
+    <string name="adhkar_reminder_notification_title">Adhkar reminder</string>
+    <string name="adhkar_reminder_notification_body">Your optional reminder for: %1$s</string>
 </resources>

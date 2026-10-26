@@ -30,7 +30,14 @@ import java.time.ZoneOffset
 
 /** Coalesced counter writes, but completion events remain a durable UUID queue. */
 @OptIn(FlowPreview::class)
-class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository, private val automaticSync: Boolean = true,private val requestSync:(Long)->Unit={}) : AutoCloseable {
+class CounterRepository(
+    private val dao: AtharDao,
+    private val cipher: PrivateCipher,
+    private val session: SessionRepository,
+    private val automaticSync: Boolean = true,
+    private val requestSync:(Long)->Unit={},
+    private val onStateChanged:(Long,CounterState)->Unit={_,_->},
+) : AutoCloseable {
     private val gson = Gson()
     private val local = Mutex()
     private val syncing = Mutex()
@@ -78,7 +85,7 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
         else currentDayState(decode(row),target)
     }
 
-    private suspend fun write(user: Long, state: CounterState) =
+    private suspend fun write(user: Long, state: CounterState) {
         dao.cache(
             CachedDocument(
                 user,
@@ -87,6 +94,8 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
                 System.currentTimeMillis(),
             ),
         )
+        onStateChanged(user,state)
+    }
 
     fun observe(user: Long, item: Int, target: Int): Flow<CounterState> =
         dao.observeCache(user,key(item))

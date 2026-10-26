@@ -525,4 +525,24 @@
     <string name="quran_wird_permission_settings_body">الإشعارات موقوفة للتطبيق من إعدادات النظام. يمكنك فتح الإعدادات للسماح بتذكير الورد.</string>
     <string name="quran_wird_notification_title">ورد القرآن</string>
     <string name="quran_wird_notification_body">تذكيرك الاختياري بهدف %1$d آيات من التقدم المحفوظ اليوم.</string>
+    <string name="adhkar_reminder_title">تذكير أذكار: %1$s</string>
+    <string name="adhkar_reminder_explainer">تذكير اختياري يُلغى لهذا اليوم فقط بعد إكمال كل الأذكار ذات العدد المحدد في هذا التصنيف. فتح الشاشة أو عدّ جزء من المطلوب لا يُحسب إكمالًا.</string>
+    <string name="adhkar_reminder_requirements">متطلبات قابلة للقياس في هذا التصنيف: %1$d</string>
+    <string name="adhkar_reminder_time">وقت التذكير: %1$s</string>
+    <string name="adhkar_reminder_enable">تفعيل تذكير هذا التصنيف</string>
+    <string name="adhkar_reminder_disable">إيقاف تذكير هذا التصنيف</string>
+    <string name="adhkar_reminder_saved">تم حفظ التذكير وجدولته محليًا.</string>
+    <string name="adhkar_reminder_disabled">تم إيقاف تذكير هذا التصنيف.</string>
+    <string name="adhkar_reminder_save_failed">تعذر حفظ التذكير. حاول مرة أخرى.</string>
+    <string name="adhkar_reminder_days_required">اختر يومًا واحدًا على الأقل.</string>
+    <string name="adhkar_reminder_no_fixed">لا توجد في هذا التصنيف أذكار منشورة ذات عدد تكرار ثابت يمكن التحقق من إكمالها.</string>
+    <string name="adhkar_reminder_permission_denied">لم يُمنح إذن الإشعارات، لذلك لم نفعّل التذكير.</string>
+    <string name="adhkar_reminder_preferences_unavailable">تعذر قراءة إعدادات الإشعارات الآن.</string>
+    <string name="adhkar_reminder_consent_title">تفعيل تذكيرات الأذكار؟</string>
+    <string name="adhkar_reminder_consent_body">سيُفعَّل نوع تذكيرات الأذكار فقط. العدادات وإكمالاتك تبقى ضمن بيانات حسابك الخاصة ولا تُستخدم لاستهداف الحملات.</string>
+    <string name="adhkar_reminder_consent_confirm">تفعيل تذكيرات الأذكار</string>
+    <string name="adhkar_reminder_permission_title">إذن الإشعارات مطلوب</string>
+    <string name="adhkar_reminder_permission_settings_body">الإشعارات موقوفة للتطبيق من إعدادات النظام. افتح الإعدادات إذا أردت السماح بالتذكير.</string>
+    <string name="adhkar_reminder_notification_title">تذكير الأذكار</string>
+    <string name="adhkar_reminder_notification_body">تذكيرك الاختياري لتصنيف: %1$s</string>
 </resources>

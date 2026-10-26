@@ -111,6 +111,12 @@ fun AdhkarScreen(graph: AppGraph) {
                         revision = statsRevision,
                     )
 
+                    if (category != allCategories) {
+                        Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                            AdhkarReminderCard(graph, category)
+                        }
+                    }
+
                     Box(Modifier.weight(1f)) {
                         val parameters = buildMap {
                             put("page", "$page")
