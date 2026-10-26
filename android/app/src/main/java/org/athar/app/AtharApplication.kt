@@ -17,6 +17,7 @@ open class AtharApplication : Application() {
             val manager=getSystemService(android.app.LocaleManager::class.java)
             if(manager.applicationLocales.isEmpty)manager.applicationLocales=android.os.LocaleList.forLanguageTags("ar")
         }
+        org.athar.app.notifications.NotificationChannels.ensure(this)
     }
 }
 class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.API_BASE_URL,enablePersistentSync:Boolean=true) {

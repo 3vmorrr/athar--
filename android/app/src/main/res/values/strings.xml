@@ -445,4 +445,12 @@
     <string name="night_account_missing">لا توجد نسخة حالية لهذه الجلسة في الحساب.</string>
     <string name="night_rejection_changed">تغيّرت حالة الجلسة أثناء المراجعة. أعد فتح المراجعة قبل المتابعة؛ بيانات الجهاز ما زالت محفوظة.</string>
     <string name="account_data_unavailable">تعذر قراءة بيانات الحساب. أعد المحاولة؛ لم نعتبر بياناتك فارغة ولم نغيّرها.</string>
+    <string name="notification_channel_lessons">تذكيرات الدروس</string>
+    <string name="notification_channel_lessons_description">تنبيهات الدروس التي اخترت تذكيرك بها.</string>
+    <string name="notification_channel_routines">التذكيرات الشخصية</string>
+    <string name="notification_channel_routines_description">تذكيرات الورد والأذكار والختمة وقيام الليل التي فعّلتها بنفسك.</string>
+    <string name="notification_channel_following">تحديثات المتابعة</string>
+    <string name="notification_channel_following_description">محتوى جديد من العلماء والسلاسل التي تتابعها.</string>
+    <string name="notification_channel_campaigns">إعلانات أثر</string>
+    <string name="notification_channel_campaigns_description">رسائل عامة لا تُرسل إلا عند موافقتك المنفصلة على الحملات.</string>
 </resources>

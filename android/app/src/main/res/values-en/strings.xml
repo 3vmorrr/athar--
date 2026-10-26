@@ -417,4 +417,12 @@
     <string name="night_account_missing">There is no current account copy of this session.</string>
     <string name="night_rejection_changed">The session changed during review. Reopen the review before continuing; the device data is still saved.</string>
     <string name="account_data_unavailable">Account data could not be read. Retry; your data has not been treated as empty or changed.</string>
+    <string name="notification_channel_lessons">Lesson reminders</string>
+    <string name="notification_channel_lessons_description">Reminders for lessons you explicitly chose to be reminded about.</string>
+    <string name="notification_channel_routines">Personal reminders</string>
+    <string name="notification_channel_routines_description">Quran, adhkar, Khatmah and Night Prayer reminders you enabled yourself.</string>
+    <string name="notification_channel_following">Following updates</string>
+    <string name="notification_channel_following_description">New content from scholars and series you follow.</string>
+    <string name="notification_channel_campaigns">Athar announcements</string>
+    <string name="notification_channel_campaigns_description">General messages sent only with separate campaign consent.</string>
 </resources>
