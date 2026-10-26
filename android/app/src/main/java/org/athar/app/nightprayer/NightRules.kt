@@ -7,6 +7,36 @@ data class NightContext(val date: LocalDate, val zone: ZoneId, val maghrib: Inst
     val lastThird: Instant get() = maghrib.plusSeconds(Duration.between(maghrib, fajr).seconds * 2 / 3)
     fun contains(instant: Instant) = instant >= maghrib && instant < fajr
 }
+
+data class NightIdentity(
+    val nightDate: LocalDate,
+    val inProgress: Boolean,
+    val context: NightContext,
+)
+
+/**
+ * Islamic-night identity is anchored to the local Maghrib date, not the civil date after midnight.
+ * During daytime the returned date is the upcoming local Maghrib date and [inProgress] is false.
+ */
+fun resolveNightIdentity(
+    now: Instant,
+    zone: ZoneId,
+    calculate: (LocalDate) -> NightContext,
+): NightIdentity {
+    val localDate = now.atZone(zone).toLocalDate()
+    val today = calculate(localDate)
+    if (today.contains(now)) {
+        return NightIdentity(localDate, true, today)
+    }
+
+    val previousDate = localDate.minusDays(1)
+    val previous = calculate(previousDate)
+    if (previous.contains(now)) {
+        return NightIdentity(previousDate, true, previous)
+    }
+
+    return NightIdentity(localDate, false, today)
+}
 object NightRules {
     fun serverTimezone(zone: ZoneId): String = if (zone.normalized() == ZoneOffset.UTC) "UTC" else zone.id
     fun milestone(count: Int): Int = when { count >= 1000 -> 1000; count >= 100 -> 100; count >= 10 -> 10; else -> 0 }
