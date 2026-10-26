@@ -36,7 +36,7 @@ class CounterRepository(
     private val session: SessionRepository,
     private val automaticSync: Boolean = true,
     private val requestSync:(Long)->Unit={},
-    private val onStateChanged:(Long,CounterState)->Unit={_,_->},
+    private val onStateChanged:suspend (Long,CounterState)->Unit={_,_->},
 ) : AutoCloseable {
     private val gson = Gson()
     private val local = Mutex()

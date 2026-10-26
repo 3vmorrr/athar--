@@ -42,7 +42,6 @@ import org.athar.app.core.data.CounterState
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.security.PrivateCipher
-import org.athar.app.core.ui.array
 import org.athar.app.core.ui.text
 import org.athar.app.notifications.LocalReminderCoordinator
 import org.athar.app.notifications.LocalReminderSpec
@@ -272,11 +271,16 @@ class AdhkarReminderManager(
         AdhkarRuleSaveResult.SAVED
     }
 
-    fun recordCounterState(owner: Long, state: CounterState) {
-        scope.launch {
-            try { reconcile(owner) }
-            catch (failure: CancellationException) { throw failure }
-            catch (_: Exception) { }
+    suspend fun recordCounterState(owner: Long, state: CounterState) = mutex.withLock {
+        session.requireVerifiedOwner(owner)
+        val rules = load(owner)
+        if (rules.rules.none { it.enabled && state.item in it.requirements }) return@withLock
+        try {
+            reconcileLocked(owner, rules)
+        } catch (failure: CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            // Counter persistence stays authoritative even if reminder maintenance needs a later retry.
         }
     }
 
@@ -343,7 +347,6 @@ class AdhkarReminderManager(
                 ),
                 expectedUser = owner,
             ).asJsonObject
-            data["items"].array("items").forEach { _ -> }
             val rows = data["items"]?.takeIf { it.isJsonArray }?.asJsonArray?.toList().orEmpty()
             rows.forEach { item ->
                 val id = item.text("id").toIntOrNull() ?: return@forEach
