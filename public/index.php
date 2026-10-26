@@ -42,7 +42,9 @@ if ($path === '/email-unsubscribe') {
     $unsubscribeInput = $method === 'POST' ? $_POST : $_GET;
     $userId = filter_var($unsubscribeInput['u'] ?? null, FILTER_VALIDATE_INT);
     $token = (string) ($unsubscribeInput['t'] ?? '');
-    $valid = $userId && $userId > 0 && preg_match('/^[a-f0-9]{64}$/i', $token) && hash_equals(email_campaign_unsubscribe_url((int) $userId), platform_email_base_url() . '/email-unsubscribe?u=' . (int) $userId . '&t=' . $token);
+    $version = filter_var($unsubscribeInput['v'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
+    $expires = isset($unsubscribeInput['e']) ? filter_var($unsubscribeInput['e'], FILTER_VALIDATE_INT) : null;
+    $valid = $userId && $userId > 0 && email_campaign_unsubscribe_valid((int)$userId,$token,$expires === false ? null : $expires,(int)$version);
     if (!$valid) { http_response_code(400); exit('رابط إلغاء الاشتراك غير صالح.'); }
     if ($method === 'POST') {
         require_csrf();
@@ -58,7 +60,7 @@ if ($path === '/email-unsubscribe') {
         echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><h1 style="color:#174f40">تم إلغاء الاشتراك</h1><p>لن تصلك رسائل تحديثات أثر بعد الآن. رسائل الحساب الضرورية ستظل مستمرة.</p><a href="/" style="color:#1e6753">العودة إلى أثر</a></main></body></html>'; exit;
     }
     header('Content-Type: text/html; charset=utf-8');
-    echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
+    echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><input type="hidden" name="v" value="' . (int) $version . '">' . ($expires ? '<input type="hidden" name="e" value="' . (int) $expires . '">' : '')<button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
 }
 if (
     in_array($path, ['/login','/register','/account','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)
