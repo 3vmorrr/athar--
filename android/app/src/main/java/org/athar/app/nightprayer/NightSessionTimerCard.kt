@@ -5,15 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.*
@@ -22,37 +16,16 @@ import org.athar.app.core.ui.*
 fun NightSessionTimerCard(
     graph: AppGraph,
     nightViewModel: NightViewModel,
+    timer: NightTimerViewModel,
     identity: NightIdentity?,
     calculationMethod: String?,
 ) {
-    val owner = requireNotNull(graph.session.userId)
-    val timer: NightTimerViewModel = viewModel(
-        key = "night-timer:$owner",
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                NightTimerViewModel(graph, owner) as T
-        },
-    )
     val state by timer.state.collectAsStateWithLifecycle()
     val nightState by nightViewModel.state.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     var confirmCancel by remember { mutableStateOf(false) }
     var confirmUnreadableDiscard by remember { mutableStateOf(false) }
     var recording by remember { mutableStateOf(false) }
-
-    DisposableEffect(lifecycleOwner, timer) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                timer.pauseForBackground()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -161,7 +134,7 @@ fun NightSessionTimerCard(
                                     enabled = !state.busy,
                                     modifier = Modifier.heightIn(min = 52.dp),
                                 ) {
-                                    Text(stringResource(R.string.pause))
+                                    Text(stringResource(R.string.night_timer_pause))
                                 }
                                 OutlinedButton(
                                     onClick = timer::finish,
