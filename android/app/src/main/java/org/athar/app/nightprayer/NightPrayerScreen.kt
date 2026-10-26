@@ -93,32 +93,101 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 
 @Composable fun NightPrayerScreen(graph: AppGraph) {
     var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("history") }
-    val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
+    var addRequest by remember { mutableIntStateOf(0) }
+    val vm: NightViewModel = viewModel(
+        key = "night:${graph.session.userId}",
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                NightViewModel(graph) as T
+        },
+    )
+    val state by vm.state.collectAsStateWithLifecycle()
+
     Column(Modifier.fillMaxSize()) {
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(section == "history", { section = "history" }, label = { Text(stringResource(R.string.night_history)) })
-            FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
-            FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
+        AtharImmersiveHero(
+            presentation = AtharHeroPresentation(
+                artwork = AtharHeroArtwork.NightPrayer,
+                eyebrow = stringResource(R.string.night_prayer),
+                title = stringResource(R.string.night_prayer),
+                supportingText = stringResource(R.string.night_intro),
+                statusText = when {
+                    state.unreadable -> stringResource(R.string.local_data_unreadable)
+                    state.conflicts > 0 -> stringResource(R.string.night_conflict)
+                    state.rows.any { it.first.dirty } -> stringResource(R.string.night_pending)
+                    else -> null
+                },
+                statusTone = if (state.unreadable || state.conflicts > 0) {
+                    AtharHeroStatusTone.Warning
+                } else {
+                    AtharHeroStatusTone.Neutral
+                },
+                primaryActionLabel = if (!state.loading && !state.unreadable) {
+                    stringResource(R.string.night_add)
+                } else {
+                    null
+                },
+            ),
+            onPrimaryAction = {
+                section = "history"
+                addRequest++
+            },
+        )
+
+        FlowRow(
+            Modifier.padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+        ) {
+            FilterChip(
+                section == "history",
+                { section = "history" },
+                label = { Text(stringResource(R.string.night_history)) },
+            )
+            FilterChip(
+                section == "calendar",
+                { section = "calendar" },
+                label = { Text(stringResource(R.string.night_calendar)) },
+            )
+            FilterChip(
+                section == "tools",
+                { section = "tools" },
+                label = { Text(stringResource(R.string.night_tools)) },
+            )
         }
-        AtharPageTransition(section,Modifier.weight(1f)){when(it){"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph)}}
+
+        AtharPageTransition(section, Modifier.weight(1f)) {
+            when (it) {
+                "tools" -> NightToolsScreen(graph)
+                "calendar" -> NightCalendarScreen(vm)
+                else -> NightHistoryScreen(graph, vm, addRequest)
+            }
+        }
     }
 }
 
-@Composable private fun NightHistoryScreen(graph: AppGraph) {
-    val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
+@Composable private fun NightHistoryScreen(
+    graph: AppGraph,
+    vm: NightViewModel,
+    addRequest: Int,
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     if(state.loading){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
     if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
     var editing by remember { mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null) }
     var form by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(addRequest) {
+        if (addRequest > 0 && !state.loading && !state.unreadable) {
+            editing = null
+            form = true
+        }
+    }
     val totals = remember(state.rows) { state.rows.groupBy { it.first.nightDate }.mapValues { (_, list) -> list.sumOf { it.first.verseCount } } }
     val conflictedIds=remember(state.conflictRows){state.conflictRows.map{it.local.id}.toSet()}
     LazyColumn(Modifier.testTag("night-history-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "heading", contentType = "heading") { AtharHeroSurface(Modifier.fillMaxWidth()){
-            Text(stringResource(R.string.night_prayer),style=MaterialTheme.typography.headlineMedium)
-            Text(stringResource(R.string.night_intro),style=MaterialTheme.typography.bodyMedium)
-        } }
+        item(key = "heading", contentType = "heading") {
+            AtharSectionHeader(stringResource(R.string.night_history))
+        }
         item(key = "summary", contentType = "summary") { Surface(Modifier.fillMaxWidth(),shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.surfaceContainerLow,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.night_totals, totals.size, totals.values.sum()), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.night_self_report), style = MaterialTheme.typography.bodySmall)
@@ -145,7 +214,10 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 Text(stringResource(R.string.night_session_count, local.verseCount))
                 if (body.text("entry_type") == "range") Text("${body.text("start_index")} – ${body.text("end_index")}", style = MaterialTheme.typography.labelMedium)
                 if (body.text("note").isNotBlank()) Text(body.text("note"))
-                Text(stringResource(if (local.dirty) R.string.night_pending else R.string.night_synced), style = MaterialTheme.typography.bodySmall)
+                AtharStatusPill(
+                    stringResource(if (local.dirty) R.string.night_pending else R.string.night_synced),
+                    emphasized = local.dirty,
+                )
                 val conflicted=local.id in conflictedIds
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = { editing = local to body; form = true }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.edit)) }
