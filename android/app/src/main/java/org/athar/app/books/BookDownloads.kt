@@ -110,6 +110,24 @@ internal object BookDownloadPolicy {
         if (!uri.scheme.equals("https", ignoreCase = true)) return false
         if (uri.host.isNullOrBlank() || uri.userInfo != null) return false
         if (uri.port !in listOf(-1, 443)) return false
+
+        val host = uri.host.orEmpty().lowercase()
+        if (
+            host == "localhost" ||
+            host.endsWith(".localhost") ||
+            host.endsWith(".local")
+        ) {
+            return false
+        }
+
+        val literal = host.removePrefix("[").removeSuffix("]")
+        val looksIpv4 = literal.matches(Regex("""\d{1,3}(?:\.\d{1,3}){3}"""))
+        val looksIpv6 = literal.contains(':')
+        if (looksIpv4 || looksIpv6) {
+            val address = runCatching { InetAddress.getByName(literal) }.getOrNull()
+                ?: return false
+            if (!publicAddress(address)) return false
+        }
         return true
     }
 
@@ -204,7 +222,17 @@ class BookDownloadWorker(
 
             val finalResponse = response ?: return@withContext Result.failure()
             finalResponse.use { safeResponse ->
-                if (!safeResponse.isSuccessful) return@withContext retryOrFail()
+                if (!safeResponse.isSuccessful) {
+                    return@withContext if (
+                        safeResponse.code == 408 ||
+                        safeResponse.code == 429 ||
+                        safeResponse.code >= 500
+                    ) {
+                        retryOrFail()
+                    } else {
+                        Result.failure()
+                    }
+                }
                 val body = safeResponse.body ?: return@withContext Result.failure()
                 val declared = body.contentLength()
                 if (declared > BookDownloadPolicy.MAX_BYTES) {
@@ -332,7 +360,6 @@ internal fun BookDownloadActions(
     graph: AppGraph,
     owner: Long,
     bookId: Int,
-    title: String,
     canDownload: Boolean,
     onOpenReader: () -> Unit,
 ) {
