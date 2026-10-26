@@ -245,10 +245,30 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     if (deleting != null) AlertDialog(onDismissRequest = { deleting = null }, title = { Text(stringResource(R.string.delete_action)) }, text = { Text(stringResource(R.string.night_delete_confirmation)) }, confirmButton = { TextButton(onClick = { deleting?.let(vm::delete); deleting = null }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } })
 }
 
-@Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
+@Composable internal fun NightEntryDialog(
+    graph: AppGraph,
+    editing: Pair<LocalNightSession, JsonObject>?,
+    busy: Boolean,
+    conflicted: Boolean,
+    dismiss: () -> Unit,
+    save: (JsonObject) -> Unit,
+    measuredTimer: NightTimerSnapshot? = null,
+) {
     val initial = editing?.second
-    var date by remember { mutableStateOf(initial?.text("night_date") ?: LocalDate.now().toString()) }
-    var zone by remember { mutableStateOf(initial?.text("timezone") ?: NightRules.serverTimezone(ZoneId.systemDefault())) }
+    var date by remember(initial, measuredTimer) {
+        mutableStateOf(
+            measuredTimer?.nightDate
+                ?: initial?.text("night_date")
+                ?: LocalDate.now().toString(),
+        )
+    }
+    var zone by remember(initial, measuredTimer) {
+        mutableStateOf(
+            measuredTimer?.timezone
+                ?: initial?.text("timezone")
+                ?: NightRules.serverTimezone(ZoneId.systemDefault()),
+        )
+    }
     var range by remember { mutableStateOf(initial?.text("entry_type") == "range") }
     var count by remember { mutableStateOf(initial?.text("verse_count").orEmpty()) }
     var startSurah by remember { mutableStateOf("1") }; var startAyah by remember { mutableStateOf("1") }
@@ -264,8 +284,60 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(if (editing == null) R.string.night_add else R.string.edit)) }, text = {
         LazyColumn(Modifier.testTag("night-entry-fields"),verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if(conflicted)item{Text(stringResource(R.string.night_edit_conflict),color=MaterialTheme.colorScheme.error)}
-            item { Text(stringResource(R.string.night_date_explanation)); DateField(date, { date = it }, stringResource(R.string.night_date), latest = LocalDate.now()) }
-            item { OutlinedTextField(zone, { zone = it.take(80) }, label = { Text(stringResource(R.string.timezone)) }, singleLine = true) }
+            if (measuredTimer != null) {
+                item {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ) {
+                        Column(
+                            Modifier.padding(AtharSpacing.Md),
+                            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                        ) {
+                            Text(
+                                stringResource(R.string.night_measured_context),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.night_measured_context_details,
+                                    measuredTimer.nightDate,
+                                    measuredTimer.timezone,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.night_timer_recorded_duration,
+                                    measuredTimer.accumulatedMillis / 1000L,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            } else {
+                item {
+                    Text(stringResource(R.string.night_date_explanation))
+                    DateField(
+                        date,
+                        { date = it },
+                        stringResource(R.string.night_date),
+                        latest = LocalDate.now(),
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        zone,
+                        { zone = it.take(80) },
+                        label = { Text(stringResource(R.string.timezone)) },
+                        singleLine = true,
+                    )
+                }
+            }
             item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(!range, { range = false }, label = { Text(stringResource(R.string.night_manual_count)) }); FilterChip(range, { range = true }, label = { Text(stringResource(R.string.night_range)) }) } }
             if (range) {
                 item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { NumberField(startSurah, { startSurah = it }, stringResource(R.string.start_surah), Modifier.weight(1f)); NumberField(startAyah, { startAyah = it }, stringResource(R.string.start_ayah), Modifier.weight(1f)) } }
@@ -279,9 +351,70 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             try {
                 val parsed = LocalDate.parse(date); val tz = ZoneId.of(zone); require(parsed <= LocalDate.now(tz) && parsed.year >= 1900)
                 val body = JsonObject().apply {
-                    addProperty("night_date", parsed.toString()); addProperty("timezone", tz.id); addProperty("boundary_source", "manual"); addProperty("entry_type", if (range) "range" else "manual"); addProperty("note", note)
-                    if (range) { val index = graph.quran.data().index; val selected = index.range(startSurah.toInt(), startAyah.toInt(), endSurah.toInt(), endAyah.toInt()); addProperty("start_index", selected.start.globalIndex); addProperty("end_index", selected.end.globalIndex) }
-                    else { val total = count.toInt(); require(total in 1..100000); addProperty("verse_count", total) }
+                    addProperty("night_date", parsed.toString())
+                    addProperty("timezone", tz.id)
+
+                    val preservedSource = initial?.text("boundary_source")
+                        ?.takeIf { it in setOf("manual", "calculated") }
+                    addProperty(
+                        "boundary_source",
+                        when {
+                            measuredTimer != null -> "calculated"
+                            preservedSource != null -> preservedSource
+                            else -> "manual"
+                        },
+                    )
+
+                    if (measuredTimer != null) {
+                        addProperty(
+                            "calculation_method",
+                            measuredTimer.calculationMethod,
+                        )
+                        addProperty("maghrib_at", measuredTimer.maghribAt)
+                        addProperty("fajr_at", measuredTimer.fajrAt)
+                        addProperty("started_at", measuredTimer.startedAt)
+                        addProperty(
+                            "ended_at",
+                            requireNotNull(measuredTimer.endedAt),
+                        )
+                        addProperty(
+                            "measured_seconds",
+                            (measuredTimer.accumulatedMillis / 1000L)
+                                .toInt()
+                                .coerceAtLeast(1),
+                        )
+                    } else if (initial != null) {
+                        listOf(
+                            "calculation_method",
+                            "maghrib_at",
+                            "fajr_at",
+                            "started_at",
+                            "ended_at",
+                            "measured_seconds",
+                        ).forEach { field ->
+                            initial[field]?.takeUnless { it.isJsonNull }?.let {
+                                add(field, it.deepCopy())
+                            }
+                        }
+                    }
+
+                    addProperty("entry_type", if (range) "range" else "manual")
+                    addProperty("note", note)
+                    if (range) {
+                        val index = graph.quran.data().index
+                        val selected = index.range(
+                            startSurah.toInt(),
+                            startAyah.toInt(),
+                            endSurah.toInt(),
+                            endAyah.toInt(),
+                        )
+                        addProperty("start_index", selected.start.globalIndex)
+                        addProperty("end_index", selected.end.globalIndex)
+                    } else {
+                        val total = count.toInt()
+                        require(total in 1..100000)
+                        addProperty("verse_count", total)
+                    }
                 }
                 save(body)
             } catch (failure: CancellationException) { throw failure } catch (_: Exception) { error = true } finally { submitting = false }
