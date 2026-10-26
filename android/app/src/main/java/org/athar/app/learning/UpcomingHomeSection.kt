@@ -31,10 +31,12 @@ import org.athar.app.core.ui.*
         while(isActive){delay(60_000);vm.refresh(silent=true)}
     }}
     Column(Modifier.fillMaxWidth().testTag("home-upcoming"),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-        Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){
-            Text(stringResource(R.string.upcoming_lessons),Modifier.weight(1f),style=MaterialTheme.typography.titleLarge)
-            TextButton(onClick={open("upcoming")},modifier=Modifier.testTag("home-upcoming-all")){Text(stringResource(R.string.view_all))}
-        }
+        AtharSectionHeader(
+            title=stringResource(R.string.upcoming_lessons),
+            actionLabel=stringResource(R.string.view_all),
+            onAction={open("upcoming")},
+            modifier=Modifier.testTag("home-upcoming-all"),
+        )
         if(state.loading)LinearProgressIndicator(Modifier.fillMaxWidth())
         if(state.offline)Text(stringResource(R.string.offline_notice),style=MaterialTheme.typography.bodySmall)
         if(state.error)MessagePanel(stringResource(R.string.network_error),true){TextButton(onClick={vm.refresh()}){Text(stringResource(R.string.retry))}}
@@ -42,9 +44,21 @@ import org.athar.app.core.ui.*
         // The server limits this response to three rows; a nested lazy scrolling container is unnecessary.
         state.items.take(3).forEach { event ->
             val live=event.status==EventStatus.LIVE&&!state.offline
-            Surface(onClick={open(if(live&&event.canWatch)"lessons/${event.id}" else "upcoming/${event.id}")},modifier=Modifier.fillMaxWidth().testTag("home-event-${event.id}"),shape=MaterialTheme.shapes.medium,color=if(live)MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerLow) {
+            Surface(
+                onClick={open(if(live&&event.canWatch)"lessons/${event.id}" else "upcoming/${event.id}")},
+                modifier=Modifier.fillMaxWidth().testTag("home-event-${event.id}"),
+                shape=MaterialTheme.shapes.large,
+                color=if(live)MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+                border=androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if(live)MaterialTheme.colorScheme.tertiary.copy(alpha=0.28f) else MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
                 Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(if(live)R.string.upcoming_live else if(event.status==EventStatus.LIVE)R.string.upcoming_last_live else R.string.upcoming_scheduled),style=MaterialTheme.typography.labelLarge,color=MaterialTheme.colorScheme.primary)
+                    AtharStatusPill(
+                        stringResource(if(live)R.string.upcoming_live else if(event.status==EventStatus.LIVE)R.string.upcoming_last_live else R.string.upcoming_scheduled),
+                        emphasized=live,
+                    )
                     Text(event.title,style=MaterialTheme.typography.titleMedium,maxLines=2,overflow=TextOverflow.Ellipsis)
                     if(event.scholarName.isNotBlank())Text(event.scholarName,style=MaterialTheme.typography.bodyMedium,maxLines=1,overflow=TextOverflow.Ellipsis)
                     if(event.status==EventStatus.SCHEDULED&&event.start!=null)EventCountdownLabel(event.start,state.clockOffsetMillis)
