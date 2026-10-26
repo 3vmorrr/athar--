@@ -81,7 +81,6 @@ import java.time.LocalDate
                 } }) { Text(stringResource(R.string.save)) } }
                 if (saved) item { MessagePanel(stringResource(R.string.saved)) }
                 if (failed) item { MessagePanel(stringResource(R.string.invalid_input), true) }
-                if (data.text("daily_pages").isNotBlank()) item { Spacer(Modifier.height(1.dp)) }
             }
         }
         else -> {
