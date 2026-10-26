@@ -890,6 +890,72 @@ if ($path === '/admin') {
                 $_SESSION['backup_grant_id'] = (int) db()->lastInsertId(); $_SESSION['backup_grant_token'] = $token;
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'backup-download-grant-issued', 'backup', (string) $backupId]);
                 flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin');
+            } elseif ($kind === 'lesson-event') {
+                $lessonId = filter_var($_POST['lesson_id'] ?? null, FILTER_VALIDATE_INT);
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$lessonId || $lessonId < 1 || $expectedRevision === false || $expectedRevision < 0) throw new RuntimeException('الدرس أو نسخة الحدث غير صالحة.');
+                $timezone = trim((string) ($_POST['schedule_timezone'] ?? 'UTC'));
+                $scheduledLocal = trim((string) ($_POST['scheduled_local'] ?? ''));
+                $scheduledAt = null;
+                if ($scheduledLocal !== '') {
+                    try {
+                        $localTime = new DateTimeImmutable($scheduledLocal, new DateTimeZone($timezone));
+                        $scheduledAt = $localTime->format('Y-m-d\TH:i:sP');
+                    } catch (Throwable $dateError) {
+                        throw new RuntimeException('موعد الدرس أو المنطقة الزمنية غير صالح.');
+                    }
+                }
+                $durationRaw = trim((string) ($_POST['estimated_duration_minutes'] ?? ''));
+                $duration = $durationRaw === '' ? null : filter_var($durationRaw, FILTER_VALIDATE_INT);
+                if ($durationRaw !== '' && ($duration === false || $duration < 1 || $duration > 1440)) throw new RuntimeException('مدة الدرس غير صالحة.');
+                $bookRaw = trim((string) ($_POST['related_book_id'] ?? ''));
+                $bookId = $bookRaw === '' ? null : filter_var($bookRaw, FILTER_VALIDATE_INT);
+                $pageStartRaw = trim((string) ($_POST['related_page_start'] ?? ''));
+                $pageEndRaw = trim((string) ($_POST['related_page_end'] ?? ''));
+                $pageStart = $pageStartRaw === '' ? null : filter_var($pageStartRaw, FILTER_VALIDATE_INT);
+                $pageEnd = $pageEndRaw === '' ? null : filter_var($pageEndRaw, FILTER_VALIDATE_INT);
+                if (($bookRaw !== '' && (!$bookId || $bookId < 1)) || ($pageStartRaw !== '' && (!$pageStart || $pageStart < 1)) || ($pageEndRaw !== '' && (!$pageEnd || $pageEnd < 1))) throw new RuntimeException('مرجع الكتاب أو الصفحات غير صالح.');
+                $topics = static function (string $value): array {
+                    $items = preg_split('/[\r\n,]+/u', $value) ?: [];
+                    $items = array_values(array_filter(array_map('trim', $items), static fn(string $item): bool => $item !== ''));
+                    return array_slice($items, 0, 12);
+                };
+                $input = [
+                    'expected_revision' => (int) $expectedRevision,
+                    'status' => (string) ($_POST['status'] ?? 'draft'),
+                    'scheduled_at' => $scheduledAt,
+                    'schedule_timezone' => $timezone,
+                    'estimated_duration_minutes' => $duration,
+                    'is_live_event' => isset($_POST['is_live_event']),
+                    'reminders_enabled' => isset($_POST['reminders_enabled']),
+                    'replay_available' => isset($_POST['replay_available']),
+                    'visibility' => (string) ($_POST['visibility'] ?? 'public'),
+                    'title_ar' => trim((string) ($_POST['title_ar'] ?? '')),
+                    'description_ar' => trim((string) ($_POST['description_ar'] ?? '')) ?: null,
+                    'course_title_ar' => trim((string) ($_POST['course_title_ar'] ?? '')) ?: null,
+                    'course_title_en' => trim((string) ($_POST['course_title_en'] ?? '')) ?: null,
+                    'topics_ar' => $topics((string) ($_POST['topics_ar'] ?? '')),
+                    'topics_en' => $topics((string) ($_POST['topics_en'] ?? '')),
+                    'related_book_id' => $bookId ?: null,
+                    'related_page_start' => $pageStart ?: null,
+                    'related_page_end' => $pageEnd ?: null,
+                ];
+                $englishTitle = trim((string) ($_POST['title_en'] ?? ''));
+                $englishDescription = trim((string) ($_POST['description_en'] ?? ''));
+                if ($englishTitle !== '') {
+                    $input['title_en'] = $englishTitle;
+                    $input['description_en'] = $englishDescription !== '' ? $englishDescription : null;
+                } elseif (isset($_POST['clear_english_translation'])) {
+                    $input['title_en'] = null;
+                }
+                try {
+                    (new \Athar\Learning\UpcomingLessonService(db()))->save($admin, (int) $lessonId, $input);
+                } catch (\Athar\Http\ApiError $eventError) {
+                    if ($eventError->getMessage() === 'conflict') throw new RuntimeException('تم تعديل الحدث من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر حفظ الحدث: ' . $eventError->getMessage());
+                }
+                flash('تم حفظ حالة الدرس القادم/المباشر وتسجيل التغيير.');
+                redirect('/admin#admin-events');
             } elseif ($kind === 'content') {
                 $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
@@ -1032,6 +1098,13 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
+    $lessonEventService = new \Athar\Learning\UpcomingLessonService(db());
+    $lessonEventPage = $lessonEventService->page(['page'=>1,'per_page'=>50], 'ar', $admin);
+    $lessonEvents = [];
+    foreach ($lessonEventPage['items'] as $eventSummary) {
+        try { $lessonEvents[] = $lessonEventService->detail((int) $eventSummary['id'], 'ar', $admin); }
+        catch (Throwable $ignoredEvent) { }
+    }
     $auditSearch = trim(mb_substr((string) ($_GET['audit_q'] ?? ''), 0, 80, 'UTF-8'));
     $auditWhere = '';
     $auditParams = [];
