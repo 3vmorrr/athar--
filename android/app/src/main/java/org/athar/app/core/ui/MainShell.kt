@@ -317,7 +317,20 @@ private fun AtharNavIcon(
     var tool by rememberSaveable { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
+            listOf(
+                "profile" to R.string.profile,
+                "activity" to R.string.activity,
+                "khatmah" to R.string.khatmah,
+                "bookmarks" to R.string.bookmarks,
+                "favorites" to R.string.favorites,
+                "export" to R.string.export_data,
+            ).forEach { (key,label) ->
+                FilterChip(
+                    tool == key,
+                    { tool = key },
+                    label = { Text(stringResource(label)) },
+                )
+            }
         }
         Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else AccountToolsScreen(vm.graph, tool, open) }
     }
