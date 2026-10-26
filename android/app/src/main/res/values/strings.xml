@@ -63,7 +63,42 @@
 <string name="activity_tracking_available">متاح</string>
 <string name="activity_tracking_unavailable">غير متاح حاليًا</string>
 <string name="activity_recent">آخر 14 يومًا</string>
-<string name="activity_day_summary">%1$d درس مكتمل · %2$d ذكر مكتمل · %3$d تنزيل كتاب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
+<string name="activity_day_summary">%1$d درس مكتمل · %2$d ذكر مكتمل · %3$d تنزيل كتاب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string>
+<string name="khatmah_empty_intro">أنشئ خطة ختمة واقعية بالتاريخ والصفحات، ويمكن حفظ تعديلك على الجهاز حتى تعود الشبكة.</string>
+<string name="khatmah_finished_summary">اكتملت هذه الخطة. ابدأ خطة جديدة فقط عبر إعادة البدء الصريحة.</string>
+<string name="khatmah_paused_summary">الخطة متوقفة مؤقتًا، وبياناتها محفوظة دون احتساب تقدم تلقائي.</string>
+<string name="khatmah_active_summary">تابع تقدمك الحقيقي؛ يعاد حساب الورد اليومي حسب ما أنجزته والوقت المتبقي.</string>
+<string name="khatmah_pending">محفوظة على الجهاز · بانتظار المزامنة</string>
+<string name="khatmah_conflict">توجد نسخة مختلفة على الحساب</string>
+<string name="khatmah_create">إنشاء خطة ختمة</string>
+<string name="khatmah_edit">تعديل خطة الختمة</string>
+<string name="khatmah_completed_hint">من 0 إلى 604 صفحة. لا نضيف صفحات تلقائيًا من قيام الليل.</string>
+<string name="khatmah_no_night_transfer">تقدم قيام الليل لا يُنقل تلقائيًا إلى الختمة. عدّل الصفحات فقط عندما تريد تسجيلها ضمن الخطة.</string>
+<string name="khatmah_progress">تقدم الختمة</string>
+<string name="khatmah_pages_progress">%1$d من %2$d صفحة</string>
+<string name="khatmah_daily_pages">ورد اليوم</string>
+<string name="khatmah_remaining_pages">صفحات متبقية</string>
+<string name="khatmah_days_remaining">أيام متبقية</string>
+<string name="khatmah_starts_in">تبدأ الخطة بعد %1$d يوم</string>
+<string name="khatmah_overdue">انتهى التاريخ المستهدف وما زالت صفحات متبقية. عدّل الموعد أو أعد بدء الخطة.</string>
+<string name="khatmah_behind">متأخر عن المسار المحسوب بـ %1$d صفحة</string>
+<string name="khatmah_ahead">متقدم عن المسار المحسوب بـ %1$d صفحة</string>
+<string name="khatmah_dates">من %1$s إلى %2$s</string>
+<string name="khatmah_pause">إيقاف الخطة مؤقتًا</string>
+<string name="khatmah_resume">استئناف الخطة</string>
+<string name="khatmah_restart">إعادة بدء الخطة</string>
+<string name="khatmah_restart_confirm">ستبدأ خطة جديدة من اليوم ويعود التقدم إلى 0 صفحة. اختر التاريخ المستهدف الجديد.</string>
+<string name="khatmah_finish">إنهاء الخطة</string>
+<string name="khatmah_finish_confirm">تأكيد أن الخطة مكتملة؟ لا يمكن إنهاؤها إلا بعد تسجيل 604 صفحة.</string>
+<string name="khatmah_invalid">راجع تاريخ البداية والنهاية والصفحات. التاريخ المستهدف لا يكون في الماضي، والعدد بين 0 و604.</string>
+<string name="khatmah_conflict_title">راجع نسختي الختمة</string>
+<string name="khatmah_conflict_body">لم نستبدل أي نسخة تلقائيًا. قارن نسخة الجهاز بنسخة الحساب ثم اختر النسخة التي تريد الاحتفاظ بها.</string>
+<string name="khatmah_device_version">نسخة الجهاز</string>
+<string name="khatmah_account_version">نسخة الحساب</string>
+<string name="khatmah_account_missing">لا توجد خطة على الحساب حاليًا.</string>
+<string name="khatmah_use_account">استخدام نسخة الحساب</string>
+<string name="khatmah_keep_device">الاحتفاظ بنسخة الجهاز</string>
+<string name="khatmah_version_details">%1$d صفحة · من %2$s إلى %3$s · %4$s · مراجعة %5$d</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
 <string name="revoke_other_sessions">تسجيل الخروج من الجلسات الأخرى</string>
 <string name="revoke_other_sessions_body">سيتم إلغاء جلسات الأجهزة والمتصفحات الأخرى فقط. ستظل هذه الجلسة الحالية مسجلة الدخول.</string>
 <string name="sessions_revoked">تم تسجيل الخروج من الجلسات الأخرى.</string>
