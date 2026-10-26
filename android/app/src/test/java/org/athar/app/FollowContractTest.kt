@@ -32,6 +32,17 @@ class FollowContractTest {
         assertTrue(runCatching { FollowContract.validateTarget("scholar", 0) }.isFailure)
     }
 
+    @Test fun seriesStateUsesTheSameStrictContractWithoutBecomingFavoriteState() {
+        val parsed = FollowContract.parse(
+            JsonParser.parseString("""{"target_type":"series","target_id":9,"following":false,"followed_at":null}"""),
+            "series",
+            9,
+        )
+        assertFalse(parsed.following)
+        assertEquals("series", parsed.targetType)
+        assertEquals(9, parsed.targetId)
+    }
+
     @Test fun optimisticSnapshotDoesNotInventFollowTimestamp() {
         val value = FollowSnapshot("scholar", 5, true, null)
         assertNull(value.followedAt)
