@@ -22,6 +22,7 @@ data class NightPreferencesEnvelope(
 
 class NightPreferencesRepository(
     private val session: SessionRepository,
+    private val onChanged: suspend (Long, NightPrayerPreferences?) -> Unit = { _, _ -> },
 ) {
     suspend fun get(
         expectedOwner: Long? = session.userId,
@@ -33,7 +34,9 @@ class NightPreferencesRepository(
             expectedUser = owner,
         )
         session.requireVerifiedOwner(owner)
-        return parse(response)
+        val parsed = parse(response)
+        onChanged(owner, parsed.values)
+        return parsed
     }
 
     suspend fun save(
@@ -43,7 +46,7 @@ class NightPreferencesRepository(
     ): NightPreferencesEnvelope {
         val owner = session.requireVerifiedOwner(expectedOwner)
         require(expectedRevision >= 0)
-        validate(values)
+        values.validated()
 
         val response = session.request(
             method = "PUT",
@@ -61,7 +64,9 @@ class NightPreferencesRepository(
             expectedUser = owner,
         )
         session.requireVerifiedOwner(owner)
-        return parse(response)
+        val parsed = parse(response)
+        onChanged(owner, parsed.values)
+        return parsed
     }
 
     private fun parse(data: JsonElement): NightPreferencesEnvelope {
@@ -90,8 +95,7 @@ class NightPreferencesRepository(
                     highLatitudeRule = row["high_latitude_rule"]?.asString
                         ?: throw IOException("Missing high latitude rule"),
                 )
-                validate(parsed)
-                parsed
+                parsed.validated()
             }
 
         return NightPreferencesEnvelope(
@@ -100,20 +104,23 @@ class NightPreferencesRepository(
         )
     }
 
-    private fun validate(values: NightPrayerPreferences) {
-        require(values.city.length <= 80)
-        require(values.latitude.isFinite() && values.latitude in -90.0..90.0)
-        require(values.longitude.isFinite() && values.longitude in -180.0..180.0)
-        require(values.timezone.length <= 80)
-        ZoneId.of(values.timezone)
-        require(values.calculationMethod in PrayerCalculator.methods)
-        require(values.madhab in setOf("SHAFI", "HANAFI"))
-        require(
-            values.highLatitudeRule in setOf(
-                "MIDDLE_OF_THE_NIGHT",
-                "SEVENTH_OF_THE_NIGHT",
-                "TWILIGHT_ANGLE",
-            ),
-        )
-    }
+}
+
+
+fun NightPrayerPreferences.validated(): NightPrayerPreferences {
+    require(city.length <= 80)
+    require(latitude.isFinite() && latitude in -90.0..90.0)
+    require(longitude.isFinite() && longitude in -180.0..180.0)
+    require(timezone.length <= 80)
+    ZoneId.of(timezone)
+    require(calculationMethod in PrayerCalculator.methods)
+    require(madhab in setOf("SHAFI", "HANAFI"))
+    require(
+        highLatitudeRule in setOf(
+            "MIDDLE_OF_THE_NIGHT",
+            "SEVENTH_OF_THE_NIGHT",
+            "TWILIGHT_ANGLE",
+        ),
+    )
+    return this
 }

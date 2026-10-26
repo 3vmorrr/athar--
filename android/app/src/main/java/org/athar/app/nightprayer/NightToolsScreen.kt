@@ -35,9 +35,7 @@ import java.time.format.DateTimeFormatter
     var method by remember { mutableStateOf("EGYPTIAN") }; var hanafi by remember { mutableStateOf(false) }
     var highLatitude by remember { mutableStateOf("MIDDLE_OF_THE_NIGHT") }
     var night by remember { mutableStateOf<NightContext?>(null) }; var timeError by remember { mutableStateOf(false) }
-    val preferences = remember(graph.session) {
-        NightPreferencesRepository(graph.session)
-    }
+    val preferences = graph.nightPreferences
     var preferenceRevision by remember { mutableIntStateOf(0) }
     var preferenceAttempt by remember { mutableIntStateOf(0) }
     var preferenceReady by remember { mutableStateOf(false) }
