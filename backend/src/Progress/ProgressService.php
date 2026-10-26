@@ -102,6 +102,85 @@ final class ProgressService
         if($update!==null){$allowed=['language','theme','quran_font_size'];foreach($update as $key=>$value){if(!in_array($key,$allowed,true))throw new ApiError('invalid_fields',422,[$key=>'unsupported']);if(($key==='language'&&!in_array($value,['ar','en'],true))||($key==='theme'&&!in_array($value,['light','dark','system'],true))||($key==='quran_font_size'&&(!is_int($value)||$value<18||$value>48)))throw new ApiError('invalid_fields',422,[$key=>'invalid']);$current[$key]=$value;}$this->db->prepare('UPDATE users SET preferences_json=? WHERE id=?')->execute([json_encode($current,JSON_THROW_ON_ERROR),$user]);}
         return $current;
     }
+    public function adhkarStats(int $user):array
+    {
+        $summary=$this->db->prepare(
+            'SELECT COALESCE(SUM(adhkar_completions),0) total_completions,
+                    COALESCE(SUM(CASE WHEN activity_date=UTC_DATE() THEN adhkar_completions ELSE 0 END),0) today_completions,
+                    COALESCE(SUM(CASE WHEN adhkar_completions>0 THEN 1 ELSE 0 END),0) active_days
+             FROM account_daily_stats
+             WHERE user_id=?'
+        );
+        $summary->execute([$user]);
+        $totals=$summary->fetch()?:[
+            'total_completions'=>0,
+            'today_completions'=>0,
+            'active_days'=>0,
+        ];
+
+        $categories=$this->db->prepare(
+            'SELECT a.category,
+                    COUNT(*) item_count,
+                    SUM(CASE
+                        WHEN p.user_id IS NOT NULL
+                         AND DATE(p.updated_at)=UTC_DATE()
+                         AND p.current_count>=p.repeat_count
+                        THEN 1 ELSE 0 END) completed_items,
+                    SUM(CASE
+                        WHEN p.user_id IS NOT NULL
+                         AND DATE(p.updated_at)=UTC_DATE()
+                        THEN LEAST(p.current_count,p.repeat_count)
+                        ELSE 0 END) current_count,
+                    SUM(CASE
+                        WHEN a.repeat_count IS NOT NULL AND a.repeat_count>0
+                        THEN a.repeat_count ELSE 0 END) target_count
+             FROM adhkar_items a
+             LEFT JOIN adhkar_progress p
+               ON p.user_id=?
+              AND p.item_key=CONCAT("curated:",a.id)
+             WHERE a.is_published=1
+               AND a.is_reviewed=1
+               AND a.repeat_count IS NOT NULL
+               AND a.repeat_count>0
+             GROUP BY a.category
+             ORDER BY a.category'
+        );
+        $categories->execute([$user]);
+
+        $recent=$this->db->prepare(
+            'SELECT activity_date,adhkar_completions
+             FROM account_daily_stats
+             WHERE user_id=?
+               AND activity_date>=DATE_SUB(UTC_DATE(),INTERVAL 6 DAY)
+             ORDER BY activity_date'
+        );
+        $recent->execute([$user]);
+
+        return [
+            'date'=>gmdate('Y-m-d'),
+            'today_completions'=>(int)$totals['today_completions'],
+            'total_completions'=>(int)$totals['total_completions'],
+            'active_days'=>(int)$totals['active_days'],
+            'categories'=>array_map(
+                static fn(array $row):array=>[
+                    'category'=>(string)$row['category'],
+                    'item_count'=>(int)$row['item_count'],
+                    'completed_items'=>(int)$row['completed_items'],
+                    'current_count'=>(int)$row['current_count'],
+                    'target_count'=>(int)$row['target_count'],
+                ],
+                $categories->fetchAll(),
+            ),
+            'recent'=>array_map(
+                static fn(array $row):array=>[
+                    'date'=>(string)$row['activity_date'],
+                    'completions'=>(int)$row['adhkar_completions'],
+                ],
+                $recent->fetchAll(),
+            ),
+        ];
+    }
+
     public function adhkar(int $user,array $params=[]):array
     {
         $projection="item_key,CASE WHEN DATE(updated_at)=UTC_DATE() THEN current_count ELSE 0 END current_count,repeat_count,revision,UTC_DATE() progress_date,updated_at";
