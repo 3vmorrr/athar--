@@ -48,7 +48,7 @@ function admin_can(array $actor, string $capability): bool
 function admin_kind_capability(string $kind): ?string
 {
     return match ($kind) {
-        'scholar', 'series', 'lesson', 'book', 'adhkar', 'content' => 'content',
+        'scholar', 'series', 'lesson', 'book', 'adhkar', 'content', 'lesson-event' => 'content',
         'comment-review', 'comment-delete' => 'moderation',
         'campaign-create', 'campaign-batch', 'campaign-retry-failed',
         'push-campaign-create', 'push-campaign-update', 'push-campaign-cancel',
