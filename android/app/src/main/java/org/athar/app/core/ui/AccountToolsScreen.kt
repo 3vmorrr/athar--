@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import org.athar.app.core.data.retainedAccountData
+import org.athar.app.core.data.accountExportEnvelope
 import org.athar.app.core.data.AccountPayloads
 import org.athar.app.AppGraph
 import org.athar.app.R
@@ -22,36 +23,184 @@ import java.time.LocalDate
     val scope = rememberCoroutineScope()
     val owner=graph.session.userId
     var localFailure by remember(owner,tool){mutableStateOf(false)}
+    var remoteFailure by remember(owner,tool){mutableStateOf(false)}
+    var payloadFailure by remember(owner,tool){mutableStateOf(false)}
+    var writeFailure by remember(owner,tool){mutableStateOf(false)}
     var failed by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        if (uri != null) scope.launch {
-            busy = true;localFailure=false;saved=false
-            try {
-                val user = requireNotNull(owner)
-                check(graph.session.userId==user)
-                val local=try{retainedAccountData(user,graph.session,graph.lessons,graph.nightPrayer)}catch(failure:CancellationException){throw failure}catch(_:Exception){localFailure=true;throw IllegalStateException("Retained data unreadable")}
-                val data = graph.session.request("GET", "me/export",expectedUser=user).asJsonObject
-                withContext(Dispatchers.IO) {
-                    check(graph.session.userId == user)
-                    local.entrySet().forEach{data.add(it.key,it.value)}
-                    check(graph.session.userId==user)
-                    context.contentResolver.openOutputStream(uri, "wt")?.bufferedWriter(Charsets.UTF_8)?.use { it.write(data.toString()) } ?: throw java.io.IOException("Export unavailable")
+    val exporter = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        if (uri != null) {
+            scope.launch {
+                busy = true
+                localFailure = false
+                remoteFailure = false
+                payloadFailure = false
+                writeFailure = false
+                failed = false
+                saved = false
+
+                try {
+                    val user = requireNotNull(owner)
+                    graph.session.requireVerifiedOwner(user)
+
+                    val local = try {
+                        retainedAccountData(
+                            user,
+                            graph.session,
+                            graph.lessons,
+                            graph.nightPrayer,
+                        )
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        localFailure = true
+                        return@launch
+                    }
+
+                    val account = try {
+                        graph.session.request(
+                            "GET",
+                            "me/export",
+                            expectedUser = user,
+                        ).asJsonObject
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        remoteFailure = true
+                        return@launch
+                    }
+
+                    graph.session.requireVerifiedOwner(user)
+                    if (!AccountPayloads.validExport(user, account)) {
+                        payloadFailure = true
+                        return@launch
+                    }
+
+                    val envelope = try {
+                        accountExportEnvelope(
+                            owner = user,
+                            account = account,
+                            device = local,
+                        )
+                    } catch (_: Exception) {
+                        payloadFailure = true
+                        return@launch
+                    }
+
+                    try {
+                        withContext(Dispatchers.IO) {
+                            graph.session.requireVerifiedOwner(user)
+                            val output = context.contentResolver
+                                .openOutputStream(uri, "wt")
+                                ?: throw java.io.IOException("Export unavailable")
+                            output.bufferedWriter(Charsets.UTF_8).use { writer ->
+                                writer.write(envelope.toString())
+                                writer.flush()
+                            }
+                        }
+                    } catch (failure: CancellationException) {
+                        throw failure
+                    } catch (_: Exception) {
+                        writeFailure = true
+                        return@launch
+                    }
+
+                    graph.session.requireVerifiedOwner(user)
+                    saved = true
+                } catch (failure: CancellationException) {
+                    throw failure
+                } catch (_: Exception) {
+                    failed = true
+                } finally {
+                    busy = false
                 }
-                saved = true; failed = false
-            } catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true } finally { busy = false }
+            }
         }
     }
     when(tool) {
-        "export" -> Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.export_data), style = MaterialTheme.typography.headlineSmall)
-            Text(stringResource(R.string.export_explanation))
-            Button(onClick = { exporter.launch("athar-data-${LocalDate.now()}.json") }, enabled = !busy) { Text(stringResource(R.string.export_data)) }
-            if (saved) MessagePanel(stringResource(R.string.saved))
-            if (localFailure) MessagePanel(stringResource(R.string.local_data_unreadable),true)
-            else if (failed) MessagePanel(stringResource(R.string.network_error), true)
+        "export" -> Column(
+            Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            AtharHeroSurface(Modifier.fillMaxWidth()) {
+                Text(
+                    stringResource(R.string.export_data),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    stringResource(R.string.export_explanation),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column(
+                    Modifier.padding(AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    Text(
+                        stringResource(R.string.export_scope_title),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(stringResource(R.string.export_scope_account))
+                    Text(stringResource(R.string.export_scope_device))
+                    AtharStatusPill(
+                        stringResource(R.string.export_private_excluded),
+                    )
+                    Text(
+                        stringResource(R.string.export_requires_current_account),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Button(
+                onClick = {
+                    exporter.launch("athar-data-${LocalDate.now()}.json")
+                },
+                enabled = !busy,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 52.dp),
+            ) {
+                Text(stringResource(R.string.export_data))
+            }
+
+            if (saved) {
+                MessagePanel(stringResource(R.string.export_saved_complete))
+            }
+            when {
+                localFailure -> MessagePanel(
+                    stringResource(R.string.local_data_unreadable),
+                    true,
+                )
+                remoteFailure -> MessagePanel(
+                    stringResource(R.string.export_account_unavailable),
+                    true,
+                )
+                payloadFailure -> MessagePanel(
+                    stringResource(R.string.account_data_unavailable),
+                    true,
+                )
+                writeFailure -> MessagePanel(
+                    stringResource(R.string.export_write_failed),
+                    true,
+                )
+                failed -> MessagePanel(
+                    stringResource(R.string.network_error),
+                    true,
+                )
+            }
             if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
         "khatmah" -> DataScreen(graph, "me/khatmah") { data, reload ->
