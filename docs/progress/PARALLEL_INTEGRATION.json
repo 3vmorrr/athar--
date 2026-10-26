@@ -3,7 +3,7 @@
   "parallel_head": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "834af23dbe9f01bcfc8ec1f0eeb943dc3028feed",
+  "LAST_PARALLEL_INTEGRATED_SHA": "5ad55efbb9d06d5c89395cf663c70da015b90257",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -254,7 +254,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Manual helper/query conflict reconciliation preserves main target locks, deny audits, literal user lookup, localized user flows and API sign-in metadata. Source5ad55ef view changes manually reconciled into localized partials.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -262,11 +262,13 @@
       "ui_impact": [
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "security_privacy": "Remove private individual/aggregate worship queries. SQL operational action/type allowlist, masked-email/bounded-target projection and literal global audit lookup; preserve original journal and private authoritative data.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "acceptance": "docs/testing/ADMIN_PRIVACY.md;218 HTTP/20,691 backend, private canary retention, operational journal redaction/filter/paging and actual bilingual browser.",
+      "integration_base": "e42c891e46790f7219b5ec323f56d0d9722e9676"
     },
     {
       "task_or_group": "17.6",

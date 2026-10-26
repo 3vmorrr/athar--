@@ -9,6 +9,9 @@ $userContext = [];
 if (($managedUserSearch ?? '') !== '' || ($managedUserPage ?? 1) > 1) {
     $userContext = ['users_q' => $managedUserSearch ?? '', 'users_page' => $managedUserPage ?? 1];
 }
+if (($auditSearch ?? '') !== '' || ($auditPage ?? 1) > 1) {
+    $userContext += ['audit_q' => $auditSearch ?? '', 'audit_page' => $auditPage ?? 1];
+}
 $chrome = $rtl ? [
     'dashboard' => 'لوحة الإدارة',
     'site' => 'فتح أثر',

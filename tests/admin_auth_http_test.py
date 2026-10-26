@@ -63,6 +63,12 @@ def service(statement):
         text=True,
     )
     if result.returncode:
+        # Keep a safe diagnostic without recording fixture credentials or tokens.
+        (ROOT / 'storage/engineering/admin-fixture-probe-failure.json').write_text(json.dumps({
+            'returncode': result.returncode,
+            'memory_allocation_failure': 'Memory allocation error' in result.stderr or 'Out of memory' in result.stderr,
+            'category': next((name for name in ['PDOException', 'ValueError', 'RuntimeException'] if name in result.stderr), 'unknown'),
+        }), encoding='utf-8')
         raise RuntimeError("Admin fixture service probe failed; inspect locally without publishing credentials.")
     return json.loads(result.stdout)
 

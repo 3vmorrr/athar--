@@ -1,5 +1,9 @@
 # Implementation tracker
 
+## Parallel integration checkpoint — task17.5
+
+Privacy-bounded Admin overview/account detail and operational journal accepted. Removed private individual/aggregate worship queries; canonical audit allowlist and pre-view projection exclude raw email/opaque private target data while preserving original rows.218 HTTP and20,691 backend assertions PASS, including unchanged private self export and205 records paged100/100/5. Actual AR/EN phone/desktop reviewed. [Evidence, conflicts and resource-run notes](../testing/ADMIN_PRIVACY.md). No migration/native change. Cursor5ad55efbb9d06d5c89395cf663c70da015b90257; next17.6 owner recovery. WP17 closure5/6 (83%); overall49% (48.78 weighted,±10pp);133 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task17.4
 
 User lookup/profile/suspension/restoration/role/deletion accepted with literal global search,50/10 paging, centralized target controls, bilingual tools and focused feedback.182 actual HTTP and20,683 backend assertions PASS, including access/refresh/public/Admin revocation, retained progress and generated-user deletion/dependent cleanup. Actual AR/EN desktop/phone reviewed. [Evidence and retained failed-attempt notes](../testing/ADMIN_USERS.md). No migration/native change. Cursor834af23dbe9f01bcfc8ec1f0eeb943dc3028feed; next17.5 removes historical private Admin analytics/detail data. WP17 closure4/6 (67%); overall48% (48.18 weighted,±10pp);134 open. WP02.8 remains deferred.

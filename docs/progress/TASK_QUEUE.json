@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "17.5",
-  "overall_estimate_percent": 48,
-  "overall_estimate_detail": 48.18,
+  "current_task": "17.6",
+  "overall_estimate_percent": 49,
+  "overall_estimate_detail": 48.78,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1744,7 +1744,7 @@
       "name": "Admin audit and analysis",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "17.4"
       ],
@@ -1755,7 +1755,8 @@
       "automated_tests": "RBAC/paging/redaction/filter/no private payload tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.5963
+      "estimated_contribution_pp": 0.5963,
+      "acceptance_evidence": "docs/testing/ADMIN_PRIVACY.md:218 HTTP including private-data canaries/unchanged self export/205 journal entries100/100/5;20,691 backend; actual bilingual phone/desktop operational UI and masked detail. No migration/native change."
     },
     {
       "id": "17.6",
@@ -2757,7 +2758,7 @@
   "estimate_basis": {
     "Android": 62,
     "Backend/API": 61,
-    "Independent Admin": 16,
+    "Independent Admin": 20,
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,

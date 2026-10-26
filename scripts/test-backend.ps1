@@ -25,7 +25,7 @@ $env:ATHAR_LOAD_DOTENV='0'; $env:ATHAR_DB_HOST='127.0.0.1'; $env:ATHAR_DB_PORT="
 $ownedServer = $null
 Push-Location $repo
 try {
-    $ownedServer = Start-Process -FilePath (Join-Path $mysqlBin 'mysqld.exe') -ArgumentList @("--defaults-file=`"$(Join-Path $testData 'my.ini')`"",'--bind-address=127.0.0.1',"--port=$Port",'--console') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $testData 'runner.stdout.log') -RedirectStandardError (Join-Path $testData 'runner.stderr.log')
+    $ownedServer = Start-Process -FilePath (Join-Path $mysqlBin 'mysqld.exe') -ArgumentList @("--defaults-file=`"$(Join-Path $testData 'my.ini')`"",'--bind-address=127.0.0.1',"--port=$Port",'--innodb-buffer-pool-size=33554432','--aria-pagecache-buffer-size=16777216','--key-buffer-size=8388608','--max-connections=16','--console') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $testData 'runner.stdout.log') -RedirectStandardError (Join-Path $testData 'runner.stderr.log')
     $ready = $false
     for ($attempt=0; $attempt -lt 40; $attempt++) {
         if ($ownedServer.HasExited) { throw 'Dedicated MariaDB exited; inspect storage/engineering/integration-mariadb/runner.stderr.log.' }

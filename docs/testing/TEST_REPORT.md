@@ -1,3 +1,7 @@
+## Task17.5 — privacy-bounded Admin analysis and journal
+
+218 HTTP/20,691 backend PASS. Private reading/activity canaries absent from Admin HTML and preserved in owner export;205 canonical events paged100/100/5, opaque targets/email redacted before view, raw rows retained. Bilingual phone/desktop journal/details/overview accepted. [Full evidence, conflict reconciliation and owned-runner memory bounds](ADMIN_PRIVACY.md). No migration/native change;17.6 follows;02.8 remains deferred.
+
 ## Task17.4 — user management
 
 182 actual HTTP and20,683 backend assertions PASS; token/cookie revocation, retained progress, fixture-only deletion and dependent cleanup,50/10 global search paging, literal wildcard/injection input, bilingual desktop/phone and focused error feedback. [Evidence and failed-run corrections](ADMIN_USERS.md). No migration/native change; privacy analysis17.5 follows immediately;02.8 stays deferred.
