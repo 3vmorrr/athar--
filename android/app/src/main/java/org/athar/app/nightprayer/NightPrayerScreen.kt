@@ -210,96 +210,465 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     addRequest: Int,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
-    if(state.loading){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
-    if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
-    var editing by remember { mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null) }
+    if (state.loading) {
+        Box(Modifier.padding(20.dp)) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+        }
+        return
+    }
+    if (state.unreadable) {
+        Box(Modifier.padding(20.dp)) {
+            MessagePanel(
+                stringResource(R.string.local_data_unreadable),
+                true,
+            ) {
+                TextButton(onClick = vm::retryLocal) {
+                    Text(stringResource(R.string.retry))
+                }
+            }
+        }
+        return
+    }
+
+    var editing by remember {
+        mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null)
+    }
     var form by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<String?>(null) }
+    var expandedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var page by rememberSaveable { mutableIntStateOf(1) }
+    val pageSize = 20
+    val pageCount = maxOf(1, (state.rows.size + pageSize - 1) / pageSize)
+
+    LaunchedEffect(pageCount) {
+        if (page > pageCount) page = pageCount
+    }
     LaunchedEffect(addRequest) {
         if (addRequest > 0 && !state.loading && !state.unreadable) {
             editing = null
             form = true
         }
     }
-    val totals = remember(state.rows) { state.rows.groupBy { it.first.nightDate }.mapValues { (_, list) -> list.sumOf { it.first.verseCount } } }
-    val conflictedIds=remember(state.conflictRows){state.conflictRows.map{it.local.id}.toSet()}
-    LazyColumn(Modifier.testTag("night-history-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+
+    val totals = remember(state.rows) {
+        state.rows
+            .groupBy { it.first.nightDate }
+            .mapValues { (_, list) -> list.sumOf { it.first.verseCount } }
+    }
+    val conflictedIds = remember(state.conflictRows) {
+        state.conflictRows.map { it.local.id }.toSet()
+    }
+    val visibleRows = remember(state.rows, page) {
+        state.rows
+            .drop((page - 1) * pageSize)
+            .take(pageSize)
+    }
+
+    LazyColumn(
+        Modifier.testTag("night-history-list"),
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         item(key = "heading", contentType = "heading") {
             AtharSectionHeader(stringResource(R.string.night_history))
         }
-        item(key = "summary", contentType = "summary") { Surface(Modifier.fillMaxWidth(),shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.surfaceContainerLow,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.night_totals, totals.size, totals.values.sum()), style = MaterialTheme.typography.titleLarge)
-            Text(stringResource(R.string.night_self_report), style = MaterialTheme.typography.bodySmall)
-            val pace = NightRules.paceInsight(
-                state.rows.mapNotNull { row ->
-                    row.first.measuredSeconds?.let {
-                        row.first.verseCount to it
-                    }
-                },
-            )
-            if (pace != null) {
-                Text(
-                    stringResource(
-                        R.string.night_measured_pace_samples,
-                        pace.secondsPerVerse,
-                        pace.usedSampleCount,
-                    ),
-                )
-                if (pace.usedSampleCount < pace.sampleCount) {
+
+        item(key = "summary", contentType = "summary") {
+            Surface(
+                Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
+                Column(
+                    Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     Text(
                         stringResource(
-                            R.string.night_measured_pace_outliers,
-                            pace.sampleCount - pace.usedSampleCount,
+                            R.string.night_totals,
+                            totals.size,
+                            totals.values.sum(),
                         ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleLarge,
                     )
+                    Text(
+                        stringResource(R.string.night_self_report),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    val pace = NightRules.paceInsight(
+                        state.rows.mapNotNull { row ->
+                            row.first.measuredSeconds?.let {
+                                row.first.verseCount to it
+                            }
+                        },
+                    )
+                    if (pace != null) {
+                        Text(
+                            stringResource(
+                                R.string.night_measured_pace_samples,
+                                pace.secondsPerVerse,
+                                pace.usedSampleCount,
+                            ),
+                        )
+                        if (pace.usedSampleCount < pace.sampleCount) {
+                            Text(
+                                stringResource(
+                                    R.string.night_measured_pace_outliers,
+                                    pace.sampleCount - pace.usedSampleCount,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    } else {
+                        Text(
+                            stringResource(R.string.night_measured_pace_insufficient),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Button(
+                            onClick = {
+                                editing = null
+                                form = true
+                            },
+                            enabled = !state.busy,
+                        ) {
+                            Text(stringResource(R.string.night_add))
+                        }
+                        OutlinedButton(
+                            onClick = vm::sync,
+                            enabled = !state.busy,
+                        ) {
+                            Text(stringResource(R.string.sync))
+                        }
+                    }
                 }
-            } else {
-                Text(
-                    stringResource(R.string.night_measured_pace_insufficient),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { editing = null; form = true }, enabled = !state.busy) { Text(stringResource(R.string.night_add)) }
-                OutlinedButton(onClick = vm::sync, enabled = !state.busy) { Text(stringResource(R.string.sync)) }
-            }
-        } } }
-        if (state.busy) item(key = "busy", contentType = "progress") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-        if (state.error) item(key = "error", contentType = "feedback") { FailurePanel(null, vm::sync) }
-        if (state.conflicts > 0) item(key = "conflict", contentType = "feedback") { MessagePanel(stringResource(R.string.night_conflict), true) }
-        items(state.conflictRows.filter{it.local.deleted},key={"deleted-conflict:${it.local.id}"},contentType={"deleted-conflict"}){conflict->
-            OutlinedCard(Modifier.fillMaxWidth()){Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
-                Text(stringResource(R.string.night_pending_delete),style=MaterialTheme.typography.titleMedium)
-                TextButton(onClick={vm.review(conflict.local.id)},enabled=!state.busy,modifier=Modifier.testTag("night-conflict-${conflict.local.id}")){Text(stringResource(R.string.night_review_conflict))}
-            }}
         }
-        if (state.rows.isEmpty()) item(key = "empty", contentType = "empty") { Text(stringResource(R.string.night_empty)) }
-        items(state.rows, key = { it.first.id }, contentType = { "session" }) { (local, body) ->
-            OutlinedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(local.nightDate, style = MaterialTheme.typography.titleMedium)
-                Text(stringResource(R.string.night_session_count, local.verseCount))
-                if (body.text("entry_type") == "range") Text("${body.text("start_index")} – ${body.text("end_index")}", style = MaterialTheme.typography.labelMedium)
-                if (body.text("note").isNotBlank()) Text(body.text("note"))
-                AtharStatusPill(
-                    stringResource(if (local.dirty) R.string.night_pending else R.string.night_synced),
-                    emphasized = local.dirty,
-                )
-                val conflicted=local.id in conflictedIds
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = { editing = local to body; form = true }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.edit)) }
-                    TextButton(onClick = { deleting = local.id }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.delete_action), color = MaterialTheme.colorScheme.error) }
-                    if(conflicted)TextButton(onClick={vm.review(local.id)},enabled=!state.busy,modifier=Modifier.testTag("night-conflict-${local.id}")){Text(stringResource(R.string.night_review_conflict))}
+
+        if (state.busy) {
+            item(key = "busy", contentType = "progress") {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+        }
+        if (state.error) {
+            item(key = "error", contentType = "feedback") {
+                FailurePanel(null, vm::sync)
+            }
+        }
+        if (state.conflicts > 0) {
+            item(key = "conflict", contentType = "feedback") {
+                MessagePanel(stringResource(R.string.night_conflict), true)
+            }
+        }
+
+        items(
+            state.conflictRows.filter { it.local.deleted },
+            key = { "deleted-conflict:${it.local.id}" },
+            contentType = { "deleted-conflict" },
+        ) { conflict ->
+            OutlinedCard(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.night_pending_delete),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    TextButton(
+                        onClick = { vm.review(conflict.local.id) },
+                        enabled = !state.busy,
+                        modifier = Modifier.testTag(
+                            "night-conflict-${conflict.local.id}",
+                        ),
+                    ) {
+                        Text(stringResource(R.string.night_review_conflict))
+                    }
                 }
-            } }
+            }
         }
-        item(key = "source", contentType = "source") { Text(stringResource(R.string.night_source), style = MaterialTheme.typography.bodySmall) }
+
+        if (state.rows.isEmpty()) {
+            item(key = "empty", contentType = "empty") {
+                QuietEmptyState(stringResource(R.string.night_empty))
+            }
+        }
+
+        items(
+            visibleRows,
+            key = { it.first.id },
+            contentType = { "session" },
+        ) { (local, body) ->
+            val conflicted = local.id in conflictedIds
+            val expanded = expandedId == local.id
+
+            OutlinedCard(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                local.nightDate,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.night_session_count,
+                                    local.verseCount,
+                                ),
+                            )
+                        }
+                        AtharStatusPill(
+                            stringResource(
+                                if (local.dirty) {
+                                    R.string.night_pending
+                                } else {
+                                    R.string.night_synced
+                                },
+                            ),
+                            emphasized = local.dirty,
+                        )
+                    }
+
+                    body.text("entry_type")
+                        .takeIf { it == "range" }
+                        ?.let {
+                            Text(
+                                stringResource(
+                                    R.string.night_range_indices,
+                                    body.text("start_index"),
+                                    body.text("end_index"),
+                                ),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+
+                    local.measuredSeconds?.let { seconds ->
+                        AtharStatusPill(
+                            stringResource(
+                                R.string.night_measured_duration_value,
+                                seconds,
+                            ),
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            expandedId = if (expanded) null else local.id
+                        },
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Text(
+                            stringResource(
+                                if (expanded) {
+                                    R.string.night_hide_details
+                                } else {
+                                    R.string.night_show_details
+                                },
+                            ),
+                        )
+                    }
+
+                    if (expanded) {
+                        NightSessionDetailFields(body)
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        TextButton(
+                            onClick = {
+                                editing = local to body
+                                form = true
+                            },
+                            enabled = !state.busy && !conflicted,
+                        ) {
+                            Text(stringResource(R.string.edit))
+                        }
+                        TextButton(
+                            onClick = { deleting = local.id },
+                            enabled = !state.busy && !conflicted,
+                        ) {
+                            Text(
+                                stringResource(R.string.delete_action),
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                        if (conflicted) {
+                            TextButton(
+                                onClick = { vm.review(local.id) },
+                                enabled = !state.busy,
+                                modifier = Modifier.testTag(
+                                    "night-conflict-${local.id}",
+                                ),
+                            ) {
+                                Text(stringResource(R.string.night_review_conflict))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (state.rows.isNotEmpty()) {
+            item(key = "history-pagination", contentType = "controls") {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                ) {
+                    TextButton(
+                        onClick = {
+                            page--
+                            expandedId = null
+                        },
+                        enabled = page > 1,
+                    ) {
+                        Text(stringResource(R.string.back))
+                    }
+                    Text(
+                        stringResource(
+                            R.string.night_history_page,
+                            page,
+                            pageCount,
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    TextButton(
+                        onClick = {
+                            page++
+                            expandedId = null
+                        },
+                        enabled = page < pageCount,
+                    ) {
+                        Text(stringResource(R.string.more))
+                    }
+                }
+            }
+        }
+
+        item(key = "source", contentType = "source") {
+            Text(
+                stringResource(R.string.night_source),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
-    if (form) NightEntryDialog(graph, editing, state.busy, editing?.first?.id in conflictedIds, { form = false }) { payload -> vm.save(payload, editing?.first?.id) { form = false } }
-    if(state.reviewId!=null)NightConflictDialog(state,vm::closeReview,{state.reviewId?.let(vm::review)},vm::resolve)
-    if (deleting != null) AlertDialog(onDismissRequest = { deleting = null }, title = { Text(stringResource(R.string.delete_action)) }, text = { Text(stringResource(R.string.night_delete_confirmation)) }, confirmButton = { TextButton(onClick = { deleting?.let(vm::delete); deleting = null }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } })
+
+    if (form) {
+        NightEntryDialog(
+            graph = graph,
+            editing = editing,
+            busy = state.busy,
+            conflicted = editing?.first?.id in conflictedIds,
+            dismiss = { form = false },
+            save = { payload ->
+                vm.save(payload, editing?.first?.id) {
+                    form = false
+                }
+            },
+        )
+    }
+    if (state.reviewId != null) {
+        NightConflictDialog(
+            state,
+            vm::closeReview,
+            { state.reviewId?.let(vm::review) },
+            vm::resolve,
+        )
+    }
+    if (deleting != null) {
+        AlertDialog(
+            onDismissRequest = { deleting = null },
+            title = { Text(stringResource(R.string.delete_action)) },
+            text = { Text(stringResource(R.string.night_delete_confirmation)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        deleting?.let(vm::delete)
+                        deleting = null
+                    },
+                ) {
+                    Text(stringResource(R.string.delete_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { deleting = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun NightSessionDetailFields(body: JsonObject) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+    ) {
+        body.text("timezone").takeIf { it.isNotBlank() }?.let {
+            Text(
+                stringResource(R.string.night_timezone_value, it),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+
+        body.text("boundary_source").takeIf { it.isNotBlank() }?.let { source ->
+            val method = body.text("calculation_method")
+            Text(
+                stringResource(
+                    R.string.night_boundary_context,
+                    source,
+                    method.ifBlank { "—" },
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        body.text("started_at").takeIf { it.isNotBlank() }?.let {
+            Text(
+                stringResource(R.string.night_started_at, it),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        body.text("ended_at").takeIf { it.isNotBlank() }?.let {
+            Text(
+                stringResource(R.string.night_ended_at, it),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        body.text("note").takeIf { it.isNotBlank() }?.let {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.private_note),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(it, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
 }
 
 @Composable internal fun NightEntryDialog(
