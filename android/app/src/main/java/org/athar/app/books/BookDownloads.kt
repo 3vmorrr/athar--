@@ -33,9 +33,48 @@ import kotlin.coroutines.coroutineContext
 
 internal object BookStorage {
     private const val BOOKS = "books"
+    const val READER_PREFERENCES = "athar-book-reader"
 
-    fun directory(context: Context, owner: Long): File =
-        File(context.filesDir, "$BOOKS/u-$owner").apply { mkdirs() }
+    private fun ownerRoot(context: Context, owner: Long): File =
+        File(context.filesDir, "$BOOKS/u-$owner")
+
+    private fun revokedMarker(context: Context, owner: Long): File =
+        File(context.filesDir, "$BOOKS/revoked-u-$owner")
+
+    fun ownerRevoked(context: Context, owner: Long): Boolean =
+        revokedMarker(context, owner).exists()
+
+    fun revokeOwner(context: Context, owner: Long) {
+        require(owner > 0L)
+        val root = File(context.filesDir, BOOKS).apply { mkdirs() }
+        val marker = File(root, "revoked-u-$owner")
+        if (!marker.exists()) {
+            marker.writeText("revoked")
+        }
+    }
+
+    fun deleteOwnerFiles(context: Context, owner: Long) {
+        require(owner > 0L)
+        val root = ownerRoot(context, owner)
+        if (root.exists() && !root.deleteRecursively()) {
+            throw java.io.IOException("Unable to remove owned book files")
+        }
+        val preferences = context.getSharedPreferences(
+            READER_PREFERENCES,
+            Context.MODE_PRIVATE,
+        )
+        val prefix = "page:$owner:"
+        preferences.edit().apply {
+            preferences.all.keys
+                .filter { it.startsWith(prefix) }
+                .forEach(::remove)
+        }.commit()
+    }
+
+    fun directory(context: Context, owner: Long): File {
+        require(owner > 0L && !ownerRevoked(context, owner))
+        return ownerRoot(context, owner).apply { mkdirs() }
+    }
 
     fun pdf(context: Context, owner: Long, bookId: Int): File =
         File(directory(context, owner), "book-$bookId.pdf")
@@ -168,7 +207,12 @@ class BookDownloadWorker(
         val bookId = inputData.getInt(KEY_BOOK_ID, -1)
         val source = inputData.getString(KEY_URL).orEmpty()
 
-        if (owner < 1L || bookId < 1 || !BookDownloadPolicy.safeHttps(source)) {
+        if (
+            owner < 1L ||
+            bookId < 1 ||
+            !BookDownloadPolicy.safeHttps(source) ||
+            BookStorage.ownerRevoked(applicationContext, owner)
+        ) {
             return@withContext Result.failure()
         }
 
@@ -246,6 +290,9 @@ class BookDownloadWorker(
                         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
                         while (true) {
                             coroutineContext.ensureActive()
+                            if (BookStorage.ownerRevoked(applicationContext, owner)) {
+                                throw CancellationException("book_owner_revoked")
+                            }
                             val read = input.read(buffer)
                             if (read < 0) break
                             if (read == 0) continue
