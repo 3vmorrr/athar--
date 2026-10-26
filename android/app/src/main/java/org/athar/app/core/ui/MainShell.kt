@@ -186,8 +186,34 @@ private fun AtharNavIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, 
     var query by rememberSaveable { mutableStateOf("") }
     var page by rememberSaveable { mutableIntStateOf(1) }
     Column(Modifier.fillMaxSize()) {
-        TextButton(onClick={open("upcoming")},modifier=Modifier.padding(horizontal=16.dp)){Icon(AtharIcons.CalendarMonth,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.upcoming_lessons))}
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) { tabs.forEach { tab -> FilterChip(type == tab.first, { type = tab.first; page = 1; query = ""; input = "" }, label = { Text(stringResource(tab.second)) }) } }
+        AtharHeroSurface(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Text(stringResource(R.string.knowledge), style = MaterialTheme.typography.headlineSmall)
+            TextButton(
+                onClick = { open("upcoming") },
+                contentPadding = PaddingValues(0.dp),
+            ) {
+                Icon(AtharIcons.CalendarMonth, null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.upcoming_lessons))
+            }
+        }
+        FlowRow(
+            Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            tabs.forEach { tab ->
+                FilterChip(
+                    type == tab.first,
+                    { type = tab.first; page = 1; query = ""; input = "" },
+                    label = { Text(stringResource(tab.second)) },
+                )
+            }
+        }
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(input, { input = it.take(100) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
             IconButton(onClick = { query = input.trim(); page = 1 }) { Icon(AtharIcons.Search, stringResource(R.string.search)) }
@@ -249,10 +275,34 @@ private fun AtharNavIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, 
 @Composable private fun AccountScreen(vm: AppViewModel, auth: AuthState.SignedIn, open: (String) -> Unit) {
     var tool by rememberSaveable { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
+        AtharHeroSurface(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Text(
+                auth.user.displayName ?: auth.user.username ?: stringResource(R.string.profile),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Text(
+                auth.user.email,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
-        Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else AccountToolsScreen(vm.graph, tool, open) }
+        FlowRow(
+            Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"export" to R.string.export_data).forEach { (key,label) ->
+                FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) })
+            }
+        }
+        AtharPageTransition(tool, Modifier.weight(1f)) { selectedTool ->
+            if (selectedTool == "profile") AccountProfileScreen(vm, auth)
+            else AccountToolsScreen(vm.graph, selectedTool, open)
+        }
     }
 }
 
