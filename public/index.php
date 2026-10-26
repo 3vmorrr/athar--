@@ -819,7 +819,11 @@ if ($path === '/admin') {
                 $campaignId = filter_var($_POST['campaign_id'] ?? null,FILTER_VALIDATE_INT);
                 $locale = (string)($_POST['test_locale'] ?? 'ar');
                 if(!$campaignId||$campaignId<1||!in_array($locale,['ar','en'],true)) throw new RuntimeException('بيانات اختبار الحملة غير صالحة.');
-                if(!$smtpTestRecipientConfigured) throw new RuntimeException('حدد مستلم اختبار مصرحًا به من إعدادات الخدمات أولًا.');
+                $testRecipientCipher=platform_setting('smtp_test_recipient_cipher');
+                $testRecipientAuthorizedAt=platform_setting('smtp_test_recipient_authorized_at');
+                if($testRecipientCipher===''||$testRecipientAuthorizedAt==='') throw new RuntimeException('حدد مستلم اختبار مصرحًا به من إعدادات الخدمات أولًا.');
+                try{$testRecipientMasked=admin_redact_email(open_platform_secret($testRecipientCipher));}
+                catch(Throwable $testRecipientError){throw new RuntimeException('تعذر قراءة مستلم الاختبار المشفر. راجع إعدادات الخدمات.');}
                 if(!allow_session_rate('campaign_test_email',3,3600)) throw new RuntimeException('تمت جدولة عدة اختبارات مؤخرًا. حاول لاحقًا.');
                 $campaignService = new \Athar\Engagement\CampaignService(db());
                 try {$preview=$campaignService->preview($admin,(int)$campaignId);}
@@ -829,9 +833,8 @@ if ($path === '/admin') {
                 if(!in_array((string)$campaign['channel'],['email','push_email'],true)) throw new RuntimeException('اختبار البريد متاح للحملات التي تتضمن Email فقط.');
                 $message=$preview['preview'][$locale];
                 $htmlBody='<p style="margin:0;white-space:pre-line">'.nl2br(e((string)$message['body']),false).'</p>';
-                $recipientCipher=platform_setting('smtp_test_recipient_cipher');
                 $queued=(new \Athar\Engagement\EmailOutboxService(db()))->enqueueAuthorizedTest(
-                    $recipientCipher,
+                    $testRecipientCipher,
                     (string)$message['title'],
                     (string)$message['body'],
                     $locale,
@@ -841,7 +844,7 @@ if ($path === '/admin') {
                 if(!$queued) throw new RuntimeException('تعذر وضع رسالة الاختبار في الطابور.');
                 db()->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
                     ->execute([$admin['id'],'engagement-campaign-test-email-queued','engagement-campaign',(string)$campaignId]);
-                flash('تم وضع معاينة البريد في طابور الاختبار للمستلم المصرح فقط: '.$smtpTestRecipientMasked);
+                flash('تم وضع معاينة البريد في طابور الاختبار للمستلم المصرح فقط: '.$testRecipientMasked);
                 redirect('/admin?campaign_preview='.(int)$campaignId.'#admin-campaigns');
             } elseif ($kind === 'engagement-campaign-confirm') {
                 $campaignService = new \Athar\Engagement\CampaignService(db());
