@@ -750,6 +750,91 @@ if ($path === '/admin') {
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'dorar-api-settings-updated','platform',null]);
                 db()->commit();
                 flash('تم حفظ إعدادات بحث الدرر السنية.'); redirect('/admin#admin-services');
+            } elseif ($kind === 'engagement-campaign-save') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                $campaignIdRaw = trim((string) ($_POST['campaign_id'] ?? ''));
+                $campaignId = $campaignIdRaw === '' ? null : filter_var($campaignIdRaw, FILTER_VALIDATE_INT);
+                if ($campaignIdRaw !== '' && (!$campaignId || $campaignId < 1)) throw new RuntimeException('رقم الحملة غير صالح.');
+                $refRaw = trim((string) ($_POST['audience_ref_id'] ?? ''));
+                $audienceRef = $refRaw === '' ? null : filter_var($refRaw, FILTER_VALIDATE_INT);
+                if ($refRaw !== '' && (!$audienceRef || $audienceRef < 1)) throw new RuntimeException('مرجع الجمهور غير صالح.');
+                $ttlHours = filter_var($_POST['ttl_hours'] ?? 24, FILTER_VALIDATE_INT);
+                $frequencyHours = filter_var($_POST['min_frequency_hours'] ?? 6, FILTER_VALIDATE_INT);
+                if ($ttlHours === false || $ttlHours < 1 || $ttlHours > 168) throw new RuntimeException('مدة صلاحية الحملة يجب أن تكون من ساعة إلى 168 ساعة.');
+                if ($frequencyHours === false || $frequencyHours < 1 || $frequencyHours > 168) throw new RuntimeException('فاصل التكرار يجب أن يكون من ساعة إلى 168 ساعة.');
+                $audienceLocale = trim((string) ($_POST['audience_locale'] ?? ''));
+                $input = [
+                    'name'=>trim((string) ($_POST['name'] ?? '')),
+                    'channel'=>(string) ($_POST['channel'] ?? 'push'),
+                    'audience_type'=>(string) ($_POST['audience_type'] ?? 'all_eligible'),
+                    'audience_ref_id'=>$audienceRef ? (int)$audienceRef : null,
+                    'audience_locale'=>$audienceLocale === '' ? null : $audienceLocale,
+                    'title_ar'=>trim((string) ($_POST['title_ar'] ?? '')),
+                    'body_ar'=>trim((string) ($_POST['body_ar'] ?? '')),
+                    'title_en'=>trim((string) ($_POST['title_en'] ?? '')),
+                    'body_en'=>trim((string) ($_POST['body_en'] ?? '')),
+                    'deep_link'=>trim((string) ($_POST['deep_link'] ?? '')) ?: null,
+                    'image_url'=>trim((string) ($_POST['image_url'] ?? '')) ?: null,
+                    'scheduled_at'=>trim((string) ($_POST['scheduled_local'] ?? '')) ?: null,
+                    'schedule_timezone'=>trim((string) ($_POST['schedule_timezone'] ?? 'UTC')),
+                    'ttl_seconds'=>(int)$ttlHours * 3600,
+                    'min_frequency_hours'=>(int)$frequencyHours,
+                    'respect_quiet_hours'=>isset($_POST['respect_quiet_hours']),
+                ];
+                try {
+                    if ($campaignId === null) {
+                        $savedCampaign = $campaignService->createDraft($admin,$input);
+                    } else {
+                        $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                        if ($expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('نسخة الحملة غير صالحة.');
+                        $input['expected_revision']=(int)$expectedRevision;
+                        $savedCampaign = $campaignService->updateDraft($admin,(int)$campaignId,$input);
+                    }
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') throw new RuntimeException('تم تعديل الحملة أو تغيير حالتها من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('لا تملك صلاحية تعديل هذه الحملة.');
+                    throw new RuntimeException('تعذر حفظ الحملة: '.$campaignError->getMessage());
+                }
+                flash('تم حفظ الحملة كمسودة فقط. لم تُرسل أي رسالة.');
+                redirect('/admin?campaign_preview='.(int)$savedCampaign['id'].'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-confirm') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$campaignId || $campaignId < 1 || $expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('بيانات تأكيد الحملة غير صالحة.');
+                $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?');
+                $passwordCheck->execute([$admin['id']]);
+                if (!password_verify((string) ($_POST['owner_password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
+                try {
+                    $campaignService->confirmAndSchedule($admin,(int)$campaignId,(int)$expectedRevision,trim((string)($_POST['confirmation'] ?? '')));
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') {
+                        $fields=$campaignError->fields;
+                        if (isset($fields['dependencies'])) {
+                            $dependencyNames=is_array($fields['dependencies'])?implode('، ',array_values($fields['dependencies'])):'dependency unavailable';
+                            throw new RuntimeException('لا يمكن إطلاق الحملة حتى تكتمل تبعيات القناة: '.$dependencyNames);
+                        }
+                        throw new RuntimeException('تغيرت حالة الحملة أو بياناتها. راجع المعاينة ثم أعد التأكيد.');
+                    }
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('الإطلاق النهائي للحملات متاح لمالك المنصة فقط.');
+                    throw new RuntimeException('تعذر جدولة الحملة: '.$campaignError->getMessage());
+                }
+                flash('تم تأكيد الحملة وجدولتها. لم يتم تنفيذ إرسال داخل طلب الإدارة نفسه.');
+                redirect('/admin?campaign_preview='.(int)$campaignId.'#admin-campaigns');
+            } elseif ($kind === 'engagement-campaign-cancel') {
+                $campaignService = new \Athar\Engagement\CampaignService(db());
+                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
+                $expectedRevision = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if (!$campaignId || $campaignId < 1 || $expectedRevision === false || $expectedRevision < 1) throw new RuntimeException('بيانات إلغاء الحملة غير صالحة.');
+                try {
+                    $campaignService->cancel($admin,(int)$campaignId,(int)$expectedRevision);
+                } catch (\Athar\Http\ApiError $campaignError) {
+                    if ($campaignError->getMessage()==='conflict') throw new RuntimeException('لا يمكن إلغاء الحملة بعد بدء المعالجة أو بعد تغير نسختها.');
+                    if ($campaignError->getMessage()==='forbidden') throw new RuntimeException('لا تملك صلاحية إلغاء هذه الحملة.');
+                    throw new RuntimeException('تعذر إلغاء الحملة.');
+                }
+                flash('تم إلغاء الحملة وإلغاء كل عناصر الطابور التي لم تُرسل.');
+                redirect('/admin#admin-campaigns');
             } elseif ($kind === 'campaign-create') {
                 $subject = trim((string) ($_POST['subject'] ?? ''));
                 $body = trim((string) ($_POST['body'] ?? ''));
@@ -1350,6 +1435,18 @@ if ($path === '/admin') {
         'dorar_token' => platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '',
     ];
     $mailingOptInCount = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
+    $engagementCampaigns = [];
+    $engagementCampaignPreview = null;
+    $engagementCampaignSchemaReady = true;
+    try {
+        $engagementCampaignService = new \Athar\Engagement\CampaignService(db());
+        $engagementCampaigns = $engagementCampaignService->page($admin,1,30)['items'];
+        $previewId = filter_var($_GET['campaign_preview'] ?? null, FILTER_VALIDATE_INT);
+        if ($previewId && $previewId > 0) $engagementCampaignPreview = $engagementCampaignService->preview($admin,(int)$previewId);
+    } catch (Throwable $engagementLoadError) {
+        $engagementCampaignSchemaReady = false;
+        if ($adminError === '') $adminError = 'نظام الحملات الجديد ينتظر تطبيق migrations الخاصة به قبل الاستخدام.';
+    }
     $emailCampaigns = db()->query("SELECT c.*,u.email AS creator_email,
         (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id) AS recipient_total,
         (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='sent') AS recipient_sent,
