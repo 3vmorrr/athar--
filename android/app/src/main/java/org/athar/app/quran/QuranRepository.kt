@@ -38,8 +38,18 @@ class QuranRepository(private val context: Context) {
 }
 class QuranData(val index: QuranIndex, val verses: List<AyahText>) {
     private val searchText = verses.map { normalize(it.text) }
-    fun surah(number: Int): List<AyahText> { val start = index.global(number, 1); return verses.subList(start - 1, start - 1 + index.surahs[number - 1].ayahCount) }
-    fun section(kind: String, number: Int): List<AyahText> { val range = index.section(kind, number); return verses.subList(range.first - 1, range.last) }
+    fun surah(number: Int): List<AyahText> {
+        val range = index.section("surah", number)
+        return verses.subList(range.first - 1, range.last)
+    }
+    fun section(kind: String, number: Int): List<AyahText> {
+        val range = index.section(kind, number)
+        return verses.subList(range.first - 1, range.last)
+    }
+    fun range(range: QuranRange): List<AyahText> =
+        verses.subList(range.start.globalIndex - 1, range.end.globalIndex)
+    fun range(startSurah: Int, startAyah: Int, endSurah: Int, endAyah: Int): List<AyahText> =
+        range(index.range(startSurah, startAyah, endSurah, endAyah))
     fun search(query: String): List<AyahText> { val normalized = normalize(query); require(normalized.length >= 2); return verses.filterIndexed { offset, _ -> searchText[offset].contains(normalized) } }
     companion object {
         private val marks = Regex("[\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06ED\\u0640]")

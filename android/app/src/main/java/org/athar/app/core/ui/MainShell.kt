@@ -105,6 +105,12 @@ private fun AtharNavIcon(
         } else {
             val parts = path.split('/')
             when {
+                parts.size == 3 &&
+                    parts[0] == "quran" &&
+                    (parts[1].toIntOrNull() ?: 0) in 1..114 &&
+                    (parts[2].toIntOrNull() ?: 0) > 0 -> {
+                    navigation.navigate(path) { launchSingleTop = true }
+                }
                 parts.size == 2 &&
                     parts[0] == "upcoming" &&
                     (parts[1].toIntOrNull() ?: 0) > 0 -> {
@@ -179,6 +185,7 @@ private fun AtharNavIcon(
                                 stringResource(
                                     when {
                                         route == "night-prayer" -> R.string.night_prayer
+                                        route.startsWith("quran/") -> R.string.quran
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
                                         route.startsWith("book-reader/") -> R.string.books
                                         currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
@@ -228,6 +235,20 @@ private fun AtharNavIcon(
                     NavHost(navigation, startDestination = "home", enterTransition = { fadeIn(tween(if (reduced) 0 else AtharMotion.Normal, easing = AtharMotion.Enter)) }, exitTransition = { fadeOut(tween(if (reduced) 0 else AtharMotion.Fast, easing = AtharMotion.Exit)) }) {
                         composable("home") { HomeScreen(vm.graph, auth, navigateTab, open) }
                         composable("quran") { QuranScreen(vm.graph, settings?.quranFontSize ?: 28) }
+                        composable(
+                            "quran/{surah}/{ayah}",
+                            arguments = listOf(
+                                navArgument("surah") { type = NavType.IntType },
+                                navArgument("ayah") { type = NavType.IntType },
+                            ),
+                        ) { entry ->
+                            QuranScreen(
+                                graph = vm.graph,
+                                fontSize = settings?.quranFontSize ?: 28,
+                                initialSurah = entry.arguments?.getInt("surah"),
+                                initialAyah = entry.arguments?.getInt("ayah"),
+                            )
+                        }
                         composable("knowledge") { KnowledgeScreen(vm.graph, open) }
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }

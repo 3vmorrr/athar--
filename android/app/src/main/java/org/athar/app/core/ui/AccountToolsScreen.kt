@@ -499,11 +499,20 @@ import java.time.LocalDate
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
-                                    Text(
-                                        stringResource(R.string.bookmark_exact_open_pending),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
+                                    val bookmarkSurah = row.text("surah").toIntOrNull()
+                                    val bookmarkAyah = row.text("ayah").toIntOrNull()
+                                    TextButton(
+                                        onClick = {
+                                            if (bookmarkSurah != null && bookmarkAyah != null) {
+                                                open("quran/$bookmarkSurah/$bookmarkAyah")
+                                            }
+                                        },
+                                        enabled = (bookmarkSurah ?: 0) in 1..114 &&
+                                            (bookmarkAyah ?: 0) > 0,
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                                    ) {
+                                        Text(stringResource(R.string.open_reader))
+                                    }
                                 } else {
                                     TextButton(
                                         onClick = {
