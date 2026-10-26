@@ -249,7 +249,65 @@ $adminShellCopy = $adminLocale === 'en' ? [
         <?php endforeach; ?>
         </div>
     </section>
-    <section class="admin-inventory admin-panel" id="admin-comments" data-admin-panel hidden><h2>إدارة تعليقات الدروس</h2><?php if (!$pendingComments): ?><p class="source-note">لا توجد تعليقات.</p><?php else: ?><div class="knowledge-results"><?php foreach ($pendingComments as $comment): ?><article class="knowledge-card"><strong><?= e($comment['lesson_title']) ?></strong><p><?= e($comment['display_name'] ?: '@'.$comment['username']) ?> · <?= e($comment['created_at']) ?> · <?= $comment['status']==='pending'?'بانتظار المراجعة':($comment['status']==='visible'?'منشور':'مخفي') ?></p><p><?= nl2br(e($comment['body'])) ?></p><div class="hero-actions"><?php if ($comment['status'] !== 'visible'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="visible"><button class="button button-primary" type="submit">نشر التعليق</button></form><?php endif; ?><?php if ($comment['status'] !== 'hidden'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="hidden"><button class="button button-secondary" type="submit">إخفاء</button></form><?php endif; ?><form method="post" data-confirm="حذف التعليق نهائيًا؟"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-delete"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><button class="button button-danger" type="submit">حذف</button></form></div></article><?php endforeach; ?></div><?php endif; ?><?php if ($commentPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات التعليقات"><?php if ($commentPage > 1): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage - 1 ?>#admin-comments">الأحدث</a><?php endif; ?><span>صفحة <?= $commentPage ?> من <?= $commentPageCount ?> · <?= number_format($commentCount) ?> تعليق</span><?php if ($commentPage < $commentPageCount): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage + 1 ?>#admin-comments">الأقدم</a><?php endif; ?></nav><?php endif; ?></section>
+    <section class="admin-inventory admin-panel" id="admin-comments" data-admin-panel hidden>
+        <div class="section-heading"><div><span class="eyebrow">المجتمع</span><h2>مراجعة تعليقات الدروس</h2></div><span class="source-chip"><?= number_format($commentCount) ?> تعليق</span></div>
+        <p class="source-note">كل قرار نشر أو إخفاء أو حذف يتطلب سببًا ويستخدم revision لمنع الكتابة فوق مراجعة أحدث. حذف تعليق رئيسي يحذف ردوده التابعة وفق علاقة قاعدة البيانات، لذلك استخدمه فقط عند الحاجة.</p>
+        <?php if (!$pendingComments): ?><p class="source-note">لا توجد تعليقات.</p><?php else: ?>
+        <div class="knowledge-results admin-comment-list">
+        <?php foreach ($pendingComments as $comment): ?>
+            <article class="knowledge-card admin-comment-card">
+                <div class="section-heading">
+                    <div>
+                        <strong><?= e($comment['lesson_title']) ?></strong>
+                        <p class="source-note">
+                            <?= $comment['parent_id'] === null ? 'تعليق رئيسي' : 'رد على تعليق #' . (int)$comment['parent_id'] ?>
+                            · #<?= (int)$comment['id'] ?>
+                            · revision <?= (int)$comment['revision'] ?>
+                        </p>
+                    </div>
+                    <span class="source-chip"><?= $comment['status']==='pending'?'بانتظار المراجعة':($comment['status']==='visible'?'منشور':'مخفي') ?></span>
+                </div>
+                <p><?= e($comment['display_name'] ?: '@'.$comment['username']) ?> · <?= e($comment['created_at']) ?></p>
+                <blockquote class="admin-comment-body"><?= nl2br(e($comment['body'])) ?></blockquote>
+                <?php if (!empty($comment['moderation_reason'])): ?><p class="source-note">آخر سبب مراجعة: <?= e((string)$comment['moderation_reason']) ?></p><?php endif; ?>
+                <div class="admin-comment-actions">
+                    <?php if ($comment['status'] !== 'visible'): ?>
+                    <form class="form-stack" method="post">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="kind" value="comment-review">
+                        <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                        <input type="hidden" name="expected_revision" value="<?= (int)$comment['revision'] ?>">
+                        <input type="hidden" name="status" value="visible">
+                        <label>سبب النشر<input name="reason" maxlength="500" minlength="2" placeholder="مثال: تمت المراجعة ولا توجد مخالفة" required></label>
+                        <button class="button button-primary" type="submit">نشر التعليق</button>
+                    </form>
+                    <?php endif; ?>
+                    <?php if ($comment['status'] !== 'hidden'): ?>
+                    <form class="form-stack" method="post">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="kind" value="comment-review">
+                        <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                        <input type="hidden" name="expected_revision" value="<?= (int)$comment['revision'] ?>">
+                        <input type="hidden" name="status" value="hidden">
+                        <label>سبب الإخفاء<input name="reason" maxlength="500" minlength="2" placeholder="سبب واضح ومختصر" required></label>
+                        <button class="button button-secondary" type="submit">إخفاء</button>
+                    </form>
+                    <?php endif; ?>
+                    <form class="form-stack" method="post" data-confirm="حذف التعليق نهائيًا؟ سيتم الاحتفاظ بسجل قرار المراجعة فقط.">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="kind" value="comment-delete">
+                        <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                        <input type="hidden" name="expected_revision" value="<?= (int)$comment['revision'] ?>">
+                        <label>سبب الحذف<input name="reason" maxlength="500" minlength="2" placeholder="سبب الحذف" required></label>
+                        <button class="button button-danger" type="submit">حذف</button>
+                    </form>
+                </div>
+            </article>
+        <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($commentPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات التعليقات"><?php if ($commentPage > 1): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage - 1 ?>#admin-comments">الأحدث</a><?php endif; ?><span>صفحة <?= $commentPage ?> من <?= $commentPageCount ?></span><?php if ($commentPage < $commentPageCount): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage + 1 ?>#admin-comments">الأقدم</a><?php endif; ?></nav><?php endif; ?>
+    </section>
     <section class="admin-inventory admin-panel" id="admin-audit" data-admin-panel hidden><div class="section-heading"><div><span class="eyebrow">الشفافية والأمان</span><h2>سجل العمليات</h2></div><span class="source-chip"><?= number_format($auditCount) ?> عملية مسجلة</span></div><p class="source-note">السجل تشغيلي ومختصر؛ البريد يظهر بصورة مخفية ولا تُعرض كلمات المرور أو الرموز أو بيانات العبادة الخاصة.</p><form class="form-stack" method="get" action="/admin#admin-audit"><label class="admin-filter-label">البحث بالإجراء أو نوع/رقم الهدف<input type="search" name="audit_q" value="<?= e($auditSearch) ?>" data-admin-audit-search placeholder="مثال: admin-user أو user أو 42" autocomplete="off"></label><div class="hero-actions"><button class="button button-primary" type="submit">بحث</button><?php if ($auditSearch !== ''): ?><a class="button button-secondary" href="/admin#admin-audit">مسح البحث</a><?php endif; ?></div></form><?php if (!$auditRows): ?><p class="source-note">لا توجد عمليات مطابقة.</p><?php else: ?><div class="knowledge-results admin-audit-list"><?php foreach ($auditRows as $audit): $auditLocalSearch = mb_strtolower(implode(' ', [(string) $audit['action'], (string) $audit['target_type'], (string) $audit['target_id']]), 'UTF-8'); ?><article class="knowledge-card admin-audit-row" data-admin-audit data-search="<?= e($auditLocalSearch) ?>"><strong><?= e(str_replace(['account-login-succeeded','account-registered','account-logout','admin-login-succeeded','admin-logout','admin-user-profile-updated','admin-user-deleted','admin-user-suspended','admin-user-restored','user-role-changed-to-admin','user-role-changed-to-user'], ['تسجيل دخول ناجح','إنشاء حساب','تسجيل خروج','دخول إدارة ناجح','خروج من الإدارة','تعديل بيانات مستخدم','حذف مستخدم','إيقاف مستخدم','إعادة تفعيل مستخدم','ترقية إلى مدير','تغيير إلى مستخدم'], (string) $audit['action'])) ?></strong><p><?= e($audit['target_type']) ?><?= $audit['target_email'] ? ' · الحساب: ' . e(admin_redact_email((string) $audit['target_email'])) : ($audit['target_id'] ? ' · رقم: ' . e((string) $audit['target_id']) : '') ?> · نفّذها <?= e($audit['actor_email'] ? admin_redact_email((string) $audit['actor_email']) : 'النظام') ?></p><time datetime="<?= e(date(DATE_ATOM, strtotime((string) $audit['created_at']))) ?>"><?= e((string) $audit['created_at']) ?></time></article><?php endforeach; ?></div><?php if ($auditPageCount > 1): ?><nav class="admin-pagination" aria-label="صفحات سجل العمليات"><?php if ($auditPage > 1): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['audit_q'=>$auditSearch,'audit_page'=>$auditPage-1])) ?>#admin-audit">الأحدث</a><?php endif; ?><span>صفحة <?= $auditPage ?> من <?= $auditPageCount ?></span><?php if ($auditPage < $auditPageCount): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['audit_q'=>$auditSearch,'audit_page'=>$auditPage+1])) ?>#admin-audit">الأقدم</a><?php endif; ?></nav><?php endif; ?><?php endif; ?></section>
         </div>
     </div>
