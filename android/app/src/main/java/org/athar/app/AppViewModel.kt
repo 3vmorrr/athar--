@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import org.athar.app.core.data.AppSettings
 import org.athar.app.core.network.ApiException
 import org.athar.app.auth.AccountInput
+import org.athar.app.auth.OtpInput
 
 data class OperationState(val busy: Boolean = false, val error: String? = null, val message: String? = null)
 class AppViewModel(val graph: AppGraph) : ViewModel() {
@@ -49,7 +50,17 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
             )
         }
     }
-    fun verify(code: String,expectedUser:Long?=graph.session.userId) = perform { graph.session.verify(code,expectedUser) }
+    fun verify(
+        code: String,
+        expectedUser: Long? = graph.session.userId,
+    ) {
+        val normalized = OtpInput.normalize(code)
+        if (normalized.length != 6) {
+            invalid("invalid_input")
+            return
+        }
+        perform { graph.session.verify(normalized, expectedUser) }
+    }
     fun resend(expectedUser:Long?=graph.session.userId) = perform { mutableOperation.value = OperationState(message = if (graph.session.resend(expectedUser) == "accepted") "mail_accepted" else "mail_unavailable") }
     fun forgot(email: String) {
         if (!AccountInput.validEmail(email)) {
@@ -71,9 +82,10 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
             invalid("password_mismatch")
             return
         }
+        val normalizedCode = OtpInput.normalize(code)
         if (
             !AccountInput.validEmail(email) ||
-            code.length != 6 ||
+            normalizedCode.length != 6 ||
             !AccountInput.validPassword(password)
         ) {
             invalid("invalid_input")
@@ -82,7 +94,7 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
         perform {
             graph.session.reset(
                 email.trim(),
-                code,
+                normalizedCode,
                 password,
                 confirmation,
             )
