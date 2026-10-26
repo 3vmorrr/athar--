@@ -1,3 +1,7 @@
+## Task17.3 — centralized Admin action and target authorization
+
+683 matrix/20,683 backend and120 HTTP assertions PASS, including actual concurrent promotion/row-lock wait, unchanged denied target, durable denial audit and revoked demoted session. Browser Admin/Owner controls accepted. No migration/native change. [Evidence, fixture rate-limit correction and limits](ADMIN_AUTHORIZATION.md). Next17.4;02.8 stays deferred.
+
 ## Task17.2 — independent bilingual Admin shell
 
 60 HTTP and20,000 isolated backend assertions PASS; actual1440/1024/768/360/320 browser acceptance, RTL/LTR, light/dark, focus trap/Escape/breakpoint and selected-panel retention. Corrected source RTL, accessibility, dark contrast, lost legacy batch adapter and320px overflow. No migration/native change. See [full evidence and boundaries](ADMIN_SHELL.md). Next17.3;02.8 remains deferred.

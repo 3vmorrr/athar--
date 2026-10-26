@@ -3,7 +3,7 @@
   "parallel_head": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "6d74f375ab6634de38f83e78cb081d81d9269e8f",
+  "LAST_PARALLEL_INTEGRATED_SHA": "81b2996522f869440c6b94c5dec270be8d1bdb48",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -190,8 +190,10 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "acceptance": "docs/testing/ADMIN_AUTHORIZATION.md;683 matrix/20,683 backend;120 HTTP including real row lock/role revocation/rollback audit; actual owner/admin navigation.",
+      "integration_base": "9f72ec3f7247edb3ecd271c8e1b86247c503d6b7"
     },
     {
       "task_or_group": "17.4",

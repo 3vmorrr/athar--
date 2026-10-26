@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|17.2 Independent bilingual Admin shell|9f72ec3f7247edb3ecd271c8e1b86247c503d6b7|60 HTTP;20,000 backend;1440/1024/768/360/320 browser AR/EN/light/dark/keyboard/breakpoint; normal push and exact remote SHA verified|
 |17.1 Independent Admin authentication|37a24cd6b3b0078e1aa2d2952ef02e73ec056e13|49 HTTP;20,000 backend; AR/EN browser; source/security review; normal push and exact remote SHA verified|
 |02.7 Cross-module lost-response/storage reopen|795cd3939725fe84732412b4d0e60a401ea20cdd|56 JVM/build/test APK/lint/316 resources; API27 Arabic19/English19/main API1; real HTTP post-commit losses/actual Room file reopen/exact activity totals; normal push/exact remote SHA verified |
 |02.7.2 Permanent Night Prayer rejection recovery|3968a7de621de9eaeb1a8fec2a8e243d22317541|56 JVM/build/test APK/lint/316 resources; API27 Arabic10/English29/main API1; retained rejection/migration/reopen/actual422 repair/captures/no-secret review; normal push/exact remote SHA verified |

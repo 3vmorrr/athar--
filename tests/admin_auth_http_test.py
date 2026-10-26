@@ -66,6 +66,11 @@ def service(statement):
         raise RuntimeError("Admin fixture service probe failed; inspect locally without publishing credentials.")
     return json.loads(result.stdout)
 
+# Repeated suites share the generated fixture's loopback IP. Reset only its
+# known IP bucket at setup, never identity buckets or any development/real DB.
+# The helper above revalidates the generated schema and server datadir first.
+service("$hash=hash_hmac('sha256',\"admin-login:ip\\0\".'127.0.0.1',\\Athar\\Infrastructure\\SecretKey::authentication());$db->prepare('DELETE FROM auth_rate_buckets WHERE bucket_hash=?')->execute([$hash]);echo json_encode(true);")
+
 admin = service(
     "$email=getenv('ATHAR_ADMIN_EMAIL');"
     "$id=$auth->createAccount(['email'=>$email,'username'=>'admin" + suffix + "','display_name'=>'Admin Fixture','password'=>getenv('ATHAR_ADMIN_PASSWORD'),'password_confirmation'=>getenv('ATHAR_ADMIN_PASSWORD')]);"

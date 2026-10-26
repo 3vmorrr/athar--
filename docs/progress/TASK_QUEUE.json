@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "17.3",
-  "overall_estimate_percent": 47,
-  "overall_estimate_detail": 46.98,
+  "current_task": "17.4",
+  "overall_estimate_percent": 48,
+  "overall_estimate_detail": 47.58,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1706,7 +1706,7 @@
       "name": "Admin authorization matrix",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Enforce action-level roles/owner boundaries server-side and reflect permitted navigation.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "17.2"
       ],
@@ -1717,7 +1717,8 @@
       "automated_tests": "Every role/action, bypass, owner/self-lockout and CSRF matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Enforce action-level roles/owner boundaries server-side and reflect permitted navigation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.5963
+      "estimated_contribution_pp": 0.5963,
+      "acceptance_evidence": "docs/testing/ADMIN_AUTHORIZATION.md:683 authorization/20,683 full backend;60 action/target HTTP +60 auth/shell; actual row-lock promotion race, rollback audit, role revocation, browser role-aware controls. No migration/native change."
     },
     {
       "id": "17.4",
@@ -2755,7 +2756,7 @@
   "estimate_basis": {
     "Android": 62,
     "Backend/API": 61,
-    "Independent Admin": 8,
+    "Independent Admin": 12,
     "Database": 74,
     "Notifications/reminders": 5,
     "UI/UX polish": 54,

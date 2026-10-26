@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
 require_once dirname(__DIR__) . '/admin/auth.php';
+require_once dirname(__DIR__) . '/admin/authorization.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -279,8 +280,8 @@ if ($path === '/book-download' && $method === 'GET') {
 
 if ($path === '/admin/backup-download' && $method === 'POST') {
     $owner = admin_require_auth();
-    if (($owner['role'] ?? '') !== 'owner') { http_response_code(403); exit('Owner access required.'); }
     require_csrf();
+    if (!admin_can($owner, 'recovery')) admin_deny_action($owner, 'admin-action', 'backup-download');
     $grantId = (int) ($_SESSION['backup_grant_id'] ?? 0);
     $rawToken = (string) ($_SESSION['backup_grant_token'] ?? '');
     unset($_SESSION['backup_grant_id'], $_SESSION['backup_grant_token']);
@@ -537,7 +538,8 @@ if ($path === '/account') {
     $statement = db()->prepare("SELECT b.id,b.title,b.author,'book' AS target_type FROM user_favorites f JOIN books b ON f.target_id=b.id WHERE f.user_id=? AND f.target_type='book' AND b.is_published=1 UNION ALL SELECT l.id,l.title,s.name AS author,'lesson' AS target_type FROM user_favorites f JOIN lessons l ON f.target_id=l.id LEFT JOIN scholars s ON s.id=l.scholar_id WHERE f.user_id=? AND f.target_type='lesson' AND l.is_published=1 ORDER BY title");
     $statement->execute([$user['id'], $user['id']]); $favorites = $statement->fetchAll();
     $userPreferences = json_decode((string) ($user['preferences_json'] ?? '{}'), true); if (!is_array($userPreferences)) $userPreferences = [];
-    $themePreference = in_array(($userPreferences['theme'] ?? 'light'), ['light','dark'], true) ? $userPreferences['theme'] : 'light';
+    $requestedTheme = (string) ($userPreferences['theme'] ?? 'light');
+    $themePreference = in_array($requestedTheme, ['light','dark'], true) ? $requestedTheme : 'light';
     $statsQuery = db()->prepare('SELECT COALESCE(SUM(quran_sessions),0) AS quran_sessions,COALESCE(SUM(lesson_completions),0) AS lesson_completions,COALESCE(SUM(adhkar_completions),0) AS adhkar_completions,COALESCE(SUM(book_downloads),0) AS book_downloads,COUNT(*) AS active_days FROM account_daily_stats WHERE user_id=?');
     $statsQuery->execute([$user['id']]); $accountStats = $statsQuery->fetch();
     $title = 'حسابي'; $activePath = $path; $viewPath = dirname(__DIR__) . '/app/Views/pages/account.php';
@@ -632,6 +634,7 @@ if ($path === '/admin') {
         require_csrf();
         $kind = (string) ($_POST['kind'] ?? '');
         try {
+            admin_authorize_kind($admin, $kind);
             if ($kind === 'comment-review') {
                 $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
                 if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
@@ -747,9 +750,10 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190 || mb_strlen($displayName, 'UTF-8') < 2 || mb_strlen($displayName, 'UTF-8') > 80 || !preg_match('/^[a-z0-9_]{3,24}$/', $username) || in_array($username, ['admin','administrator','root','support','athar','api','www','owner'], true)) throw new RuntimeException('راجع البريد والاسم واسم المستخدم (3–24 حرفًا إنجليزيًا أو رقمًا أو _).');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
-                $targetQuery = db()->prepare('SELECT role,email FROM users WHERE id=?'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || $targetId === (int) $admin['id']) throw new RuntimeException('لا يمكن تعديل هذا الحساب من لوحة المستخدمين.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير تعديل حساب مدير آخر.');
+                db()->beginTransaction();
+                $targetQuery = db()->prepare('SELECT id,role,email FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'profile');
                 $duplicateEmail = db()->prepare('SELECT 1 FROM users WHERE email=? AND id<>? LIMIT 1'); $duplicateEmail->execute([$email, $targetId]);
                 if ($duplicateEmail->fetchColumn()) throw new RuntimeException('البريد الإلكتروني مستخدم بالفعل.');
                 $duplicate = db()->prepare('SELECT 1 FROM users WHERE username=? AND id<>? LIMIT 1'); $duplicate->execute([$username, $targetId]);
@@ -761,16 +765,18 @@ if ($path === '/admin') {
                 }
                 else db()->prepare('UPDATE users SET display_name=?,username=? WHERE id=?')->execute([$displayName,$username,$targetId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $emailChanged ? 'admin-user-email-updated' : 'admin-user-profile-updated', 'user', (string) $targetId]);
+                db()->commit();
                 flash('تم تحديث بيانات المستخدم.'); redirect('/admin#admin-users');
             } elseif ($kind === 'user-delete') {
                 $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$targetId || $targetId < 1 || $targetId === (int) $admin['id']) throw new RuntimeException('اختيار المستخدم غير صالح؛ لا يمكنك حذف حسابك الحالي.');
+                if (!$targetId || $targetId < 1) throw new RuntimeException('اختيار المستخدم غير صالح.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المدير الحالية غير صحيحة.');
                 $pdo = db(); $pdo->beginTransaction();
-                $targetQuery = $pdo->prepare('SELECT email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
-                if (!$target || $target['role'] === 'owner' || !hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('الحساب غير موجود، أو محمي، أو أن تأكيد البريد لا يطابق.');
-                if (($admin['role'] ?? '') !== 'owner' && $target['role'] !== 'user') throw new RuntimeException('لا يمكن للمدير حذف حساب مدير آخر.');
+                $targetQuery = $pdo->prepare('SELECT id,email,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'delete');
+                if (!hash_equals((string) $target['email'], trim((string) ($_POST['email_confirmation'] ?? '')))) throw new RuntimeException('تأكيد البريد لا يطابق الحساب المحدد.');
                 $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'admin-user-deleted', 'user', (string) $targetId]);
                 $pdo->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='الحساب حُذف.' WHERE user_id=?")->execute([$targetId]);
                 $pdo->prepare('DELETE FROM users WHERE id=?')->execute([$targetId]);
@@ -782,11 +788,15 @@ if ($path === '/admin') {
                 if (!$targetId || $targetId < 1 || !in_array($nextRole, ['user','admin'], true)) throw new RuntimeException('اختيار المستخدم أو الصلاحية غير صالح.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
-                $target = db()->prepare('SELECT role FROM users WHERE id=?'); $target->execute([$targetId]); $currentRole = $target->fetchColumn();
-                if (!is_string($currentRole) || $currentRole === 'owner') throw new RuntimeException('الحساب غير موجود أو أن دور المالك لا يتغير من هذه الشاشة.');
-                if ($currentRole === $nextRole) { flash('الصلاحية المحددة مطبقة بالفعل.'); redirect('/admin'); }
+                db()->beginTransaction();
+                $targetQuery = db()->prepare('SELECT id,role FROM users WHERE id=? FOR UPDATE'); $targetQuery->execute([$targetId]); $target = $targetQuery->fetch();
+                if (!$target) throw new RuntimeException('الحساب غير موجود.');
+                admin_authorize_user_target($admin, $target, 'role');
+                $currentRole = (string) $target['role'];
+                if ($currentRole === $nextRole) { db()->commit(); flash('الصلاحية المحددة مطبقة بالفعل.'); redirect('/admin'); }
                 db()->prepare("UPDATE users SET role=?,session_version=session_version+1 WHERE id=? AND role<>'owner'")->execute([$nextRole, $targetId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'user-role-changed-to-' . $nextRole, 'user', (string) $targetId]);
+                db()->commit();
                 flash('تم تحديث الصلاحية وإبطال جلسات الحساب.'); redirect('/admin');
             } elseif ($kind === 'backup-create') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إنشاء النسخ متاح لمالك المنصة فقط.');

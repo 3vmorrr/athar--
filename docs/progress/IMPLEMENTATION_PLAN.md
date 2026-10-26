@@ -1,5 +1,9 @@
 # Implementation plan
 
+## Parallel integration checkpoint — task17.3
+
+Central action/target authorization integrated with fail-closed roles/operations, transactional target locks and durable rollback-denial audit.683 matrix/20,683 backend and120 HTTP assertions PASS, including a real concurrent promotion blocked by row locking and retained-session demotion. Owner/Admin browser controls checked. No migration/native change. [Evidence and limits](../testing/ADMIN_AUTHORIZATION.md). Source cursor81b2996522f869440c6b94c5dec270be8d1bdb48; next17.4. WP17 closure3/6 (50%); overall48% (47.58 weighted,±10pp);135 open. WP02.8 remains PARTIAL/deferred; later mapped parallel work is not accepted merely because code exists.
+
 ## Parallel integration checkpoint — task17.2
 
 Independent bilingual Admin shell integrated with corrections;60 HTTP and20,000 disposable backend assertions PASS. Actual1440/1024 desktop,768 tablet,360/320 phone,AR/EN light/dark,keyboard/modal/breakpoint/panel persistence accepted; details in [Admin shell acceptance](../testing/ADMIN_SHELL.md). No migration/API/native change. Source cursor6d74f375ab6634de38f83e78cb081d81d9269e8f; next17.3 action matrix. New source delta through ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee mapped separately and retained locally, not accepted. WP17 closure2/6 (33%); overall47% (46.98 weighted,±10pp);136 open. WP02.8 stays PARTIAL/deferred. Legacy editor localization/privacy/campaign replacement remains with its own later task; shell acceptance does not close those gates.
