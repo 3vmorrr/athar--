@@ -17,7 +17,18 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 data class AyahTiming(val ayah: Int, val start: Long, val end: Long)
-data class AudioUiState(val loading: Boolean = false, val error: Boolean = false, val recording: JsonElement? = null, val timings: List<AyahTiming> = emptyList(), val playing: Boolean = false, val buffer: Boolean = false, val clipStart: Long = 0, val mediaKey: String? = null, val radio: Boolean = false)
+data class AudioUiState(
+    val loading: Boolean = false,
+    val error: Boolean = false,
+    val recording: JsonElement? = null,
+    val timings: List<AyahTiming> = emptyList(),
+    val playing: Boolean = false,
+    val buffer: Boolean = false,
+    val interrupted: Boolean = false,
+    val clipStart: Long = 0,
+    val mediaKey: String? = null,
+    val radio: Boolean = false,
+)
 
 class AudioViewModel(private val graph: AppGraph, application: android.app.Application) : AndroidViewModel(application) {
     private val mutable = MutableStateFlow(AudioUiState())
@@ -52,6 +63,12 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
         override fun onPlaybackStateChanged(playbackState: Int) {
             mutable.value = mutable.value.copy(
                 buffer = playbackState == Player.STATE_BUFFERING,
+            )
+        }
+        override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
+            mutable.value = mutable.value.copy(
+                interrupted = playbackSuppressionReason !=
+                    Player.PLAYBACK_SUPPRESSION_REASON_NONE,
             )
         }
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -103,6 +120,8 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
             recording = recording,
             playing = player.isPlaying,
             buffer = player.playbackState == Player.STATE_BUFFERING,
+            interrupted = player.playbackSuppressionReason !=
+                Player.PLAYBACK_SUPPRESSION_REASON_NONE,
             mediaKey = mediaId,
             radio = radioItem,
         )
