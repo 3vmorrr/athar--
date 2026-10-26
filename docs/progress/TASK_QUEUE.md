@@ -1,8 +1,8 @@
 # Ordered execution queue
 
-Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
+Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-26. Current task: **02.7.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **16.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -680,7 +680,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 11.1 — Lesson reminder consent and controls
 
-- Parent: Work package 11: Lesson reminders; state: **NOT STARTED**; dependencies: 10.6.
+- Parent: Work package 11: Lesson reminders; state: **PARTIAL**; dependencies: 10.6.
 - Exact scope: Add explicit lesson reminder choice/default single15-minute preference and visible opt-out.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Consent/no implicit subscription/UI persistence tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -690,7 +690,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 11.2 — Local lesson reminder schedule
 
-- Parent: Work package 11: Lesson reminders; state: **NOT STARTED**; dependencies: 11.1.
+- Parent: Work package 11: Lesson reminders; state: **PARTIAL**; dependencies: 11.1.
 - Exact scope: Schedule actual lesson reminder from UTC/source timezone and reconcile per event revision.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: UTC/DST/past/duplicate/offline actual delivery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -700,7 +700,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 11.3 — Lesson change and cancellation reconciliation
 
-- Parent: Work package 11: Lesson reminders; state: **NOT STARTED**; dependencies: 11.2.
+- Parent: Work package 11: Lesson reminders; state: **PARTIAL**; dependencies: 11.2.
 - Exact scope: Cancel/reschedule reminders for event changes/unavailability/replay and display clear change feedback.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/notifications/ (new); backend/src/Learning/.
 - Automated gates: Revision/cancel/live/published/reschedule/TTL tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -710,7 +710,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 11.4 — Server lesson reminder jobs
 
-- Parent: Work package 11: Lesson reminders; state: **NOT STARTED**; dependencies: 11.3.
+- Parent: Work package 11: Lesson reminders; state: **PARTIAL**; dependencies: 11.3.
 - Exact scope: Persist consent-aware server jobs/device reconciliation with quotas/cancel/retries and no send-on-save.
 - Files/modules: backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Audience consent/dedup/retry/cancel/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -720,7 +720,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 12.1 — Follow persistence and API
 
-- Parent: Work package 12: Following; state: **NOT STARTED**; dependencies: 11.4.
+- Parent: Work package 12: Following; state: **PARTIAL**; dependencies: 11.4.
 - Exact scope: Implement explicit scholar/series follows/unfollows with unique ownership and content visibility.
 - Files/modules: backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Follow/unfollow/idempotency/hidden/deleted/owner tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -730,7 +730,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 12.2 — Scholar follow journey
 
-- Parent: Work package 12: Following; state: **NOT STARTED**; dependencies: 12.1.
+- Parent: Work package 12: Following; state: **PARTIAL**; dependencies: 12.1.
 - Exact scope: Add native follow state/error/offline/rollback and reconcile scholar premium identity surface.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/ScholarScreen.kt.
 - Automated gates: Rapid tap/retry/owner/pagination/native follow tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -740,7 +740,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 12.3 — Series follow journey
 
-- Parent: Work package 12: Following; state: **NOT STARTED**; dependencies: 12.2.
+- Parent: Work package 12: Following; state: **PARTIAL**; dependencies: 12.2.
 - Exact scope: Add series follow controls distinct from favorite/save and reconcile premium series surface.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/SeriesScreen.kt.
 - Automated gates: Consent/distinct favorite/unfollow/owner/native tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -750,7 +750,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 12.4 — New content subscription facts
 
-- Parent: Work package 12: Following; state: **NOT STARTED**; dependencies: 12.3.
+- Parent: Work package 12: Following; state: **PARTIAL**; dependencies: 12.3.
 - Exact scope: Produce safe new-lesson/series facts and opt-in recipients without worship-data segmentation.
 - Files/modules: backend/src/Engagement/ (new); backend/src/Learning/.
 - Automated gates: Publication/replay/dedup/unfollow/hidden content audience tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -760,7 +760,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 13.1 — Quran wird reminders
 
-- Parent: Work package 13: Personal routines; state: **NOT STARTED**; dependencies: 12.4.
+- Parent: Work package 13: Personal routines; state: **PARTIAL**; dependencies: 12.4.
 - Exact scope: Implement optional personal reading target/time/day reminders from genuine progress only.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/quran/.
 - Automated gates: Opening vs completion/day/DST/quiet/withdrawal tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -770,7 +770,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 13.2 — Completion-aware adhkar reminders
 
-- Parent: Work package 13: Personal routines; state: **NOT STARTED**; dependencies: 13.1.
+- Parent: Work package 13: Personal routines; state: **PARTIAL**; dependencies: 13.1.
 - Exact scope: Implement optional category/day reminders suppressed only after genuine completed repeat requirements.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/adhkar/.
 - Automated gates: Skipped/repeated/NULL/offline completion/reset/date tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -780,7 +780,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 13.3 — Salawat and Friday reminders
 
-- Parent: Work package 13: Personal routines; state: **NOT STARTED**; dependencies: 13.2.
+- Parent: Work package 13: Personal routines; state: **PARTIAL**; dependencies: 13.2.
 - Exact scope: Implement optional localized salawat/Friday routines and timezone/day boundaries without guilt or inferred worship.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Day/timezone/quiet/TTL/dedup/consent tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -790,7 +790,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 13.4 — Custom routine reminders
 
-- Parent: Work package 13: Personal routines; state: **NOT STARTED**; dependencies: 13.3.
+- Parent: Work package 13: Personal routines; state: **PARTIAL**; dependencies: 13.3.
 - Exact scope: Add bounded user-controlled custom days/times/edit/pause/delete with local privacy.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Validation/multiple schedules/offline/restart/delete tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -800,7 +800,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 13.5 — Unified reminder center
 
-- Parent: Work package 13: Personal routines; state: **NOT STARTED**; dependencies: 13.4.
+- Parent: Work package 13: Personal routines; state: **PARTIAL**; dependencies: 13.4.
 - Exact scope: Expose all active reminder types, permission health, pause and per-rule controls accessibly.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/core/ui/.
 - Automated gates: Cross-type preference consistency/deep-link/error/empty tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -810,7 +810,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 14.1 — Khatmah workload reminders
 
-- Parent: Work package 14: Khatmah/Night reminders; state: **NOT STARTED**; dependencies: 13.5.
+- Parent: Work package 14: Khatmah/Night reminders; state: **PARTIAL**; dependencies: 13.5.
 - Exact scope: Schedule user-consented remaining daily workload with paused/finished-plan suppression.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/khatmah/ (new or extracted).
 - Automated gates: Plan edit/pause/finish/date/offline/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -820,7 +820,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 14.2 — Night Prayer and last-third reminders
 
-- Parent: Work package 14: Khatmah/Night reminders; state: **NOT STARTED**; dependencies: 14.1.
+- Parent: Work package 14: Khatmah/Night reminders; state: **PARTIAL**; dependencies: 14.1.
 - Exact scope: Implement optional sourced last-third/selected-time routine with city/method/polar unavailable states.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: DST/exempt/local privacy/permission/actual delivery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -830,7 +830,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 14.3 — Cross-routine suppression and user control
 
-- Parent: Work package 14: Khatmah/Night reminders; state: **NOT STARTED**; dependencies: 14.2.
+- Parent: Work package 14: Khatmah/Night reminders; state: **PARTIAL**; dependencies: 14.2.
 - Exact scope: Verify quiet hours/frequency/expiry/completed state across overlapping routines without exposing private activity to campaigns.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Cross-rule dedup/privacy/pause/revocation/boundary tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -840,7 +840,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 15.1 — Free push provider abstraction
 
-- Parent: Work package 15: Free push; state: **NOT STARTED**; dependencies: 14.3.
+- Parent: Work package 15: Free push; state: **PARTIAL**; dependencies: 14.3.
 - Exact scope: Implement provider interface/configuration boundary and test transport with no paid dependency or secret in APK.
 - Files/modules: backend/src/Engagement/ (new); android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Fake send/config/credential isolation/provider retry tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -850,7 +850,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 15.2 — Device token lifecycle
 
-- Parent: Work package 15: Free push; state: **NOT STARTED**; dependencies: 15.1.
+- Parent: Work package 15: Free push; state: **PARTIAL**; dependencies: 15.1.
 - Exact scope: Implement multi-device token register/rotate/logout/revoke and owner/environment separation.
 - Files/modules: backend/src/Engagement/ (new); android/app/src/main/java/org/athar/app/notifications/ (new); database/migrations/.
 - Automated gates: Token uniqueness/rotation/invalid/owner/logout/retry tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -870,7 +870,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 16.1 — Private notification inbox API
 
-- Parent: Work package 16: Inbox/policy; state: **NOT STARTED**; dependencies: 15.2.
+- Parent: Work package 16: Inbox/policy; state: **PARTIAL**; dependencies: 15.2.
 - Exact scope: Implement paginated owner-scoped inbox/read/delete/expiry contract and additive schema.
 - Files/modules: backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Isolation/cursor/read/idempotency/expiry tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

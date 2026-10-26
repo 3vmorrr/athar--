@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-26",
-  "current_task": "02.7.2",
+  "updated": "2026-10-27",
+  "current_task": "16.2",
   "overall_estimate_percent": 45,
-  "overall_estimate_detail": 45.46,
+  "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -16,7 +16,7 @@
     "02.7.1": 3,
     "02.7.2": 3
   },
-  "policy": "Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.",
+  "policy": "Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.",
   "reviewed_ui_branch": {
     "ref": "origin/uiux/athar-premium-v2",
     "sha": "0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32",
@@ -1254,7 +1254,7 @@
       "name": "Lesson reminder consent and controls",
       "parent": "Work package 11: Lesson reminders",
       "scope": "Add explicit lesson reminder choice/default single15-minute preference and visible opt-out.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.6"
       ],
@@ -1272,7 +1272,7 @@
       "name": "Local lesson reminder schedule",
       "parent": "Work package 11: Lesson reminders",
       "scope": "Schedule actual lesson reminder from UTC/source timezone and reconcile per event revision.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "11.1"
       ],
@@ -1290,7 +1290,7 @@
       "name": "Lesson change and cancellation reconciliation",
       "parent": "Work package 11: Lesson reminders",
       "scope": "Cancel/reschedule reminders for event changes/unavailability/replay and display clear change feedback.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "11.2"
       ],
@@ -1309,7 +1309,7 @@
       "name": "Server lesson reminder jobs",
       "parent": "Work package 11: Lesson reminders",
       "scope": "Persist consent-aware server jobs/device reconciliation with quotas/cancel/retries and no send-on-save.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "11.3"
       ],
@@ -1327,7 +1327,7 @@
       "name": "Follow persistence and API",
       "parent": "Work package 12: Following",
       "scope": "Implement explicit scholar/series follows/unfollows with unique ownership and content visibility.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "11.4"
       ],
@@ -1345,7 +1345,7 @@
       "name": "Scholar follow journey",
       "parent": "Work package 12: Following",
       "scope": "Add native follow state/error/offline/rollback and reconcile scholar premium identity surface.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "12.1"
       ],
@@ -1362,7 +1362,7 @@
       "name": "Series follow journey",
       "parent": "Work package 12: Following",
       "scope": "Add series follow controls distinct from favorite/save and reconcile premium series surface.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "12.2"
       ],
@@ -1379,7 +1379,7 @@
       "name": "New content subscription facts",
       "parent": "Work package 12: Following",
       "scope": "Produce safe new-lesson/series facts and opt-in recipients without worship-data segmentation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "12.3"
       ],
@@ -1397,7 +1397,7 @@
       "name": "Quran wird reminders",
       "parent": "Work package 13: Personal routines",
       "scope": "Implement optional personal reading target/time/day reminders from genuine progress only.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "12.4"
       ],
@@ -1415,7 +1415,7 @@
       "name": "Completion-aware adhkar reminders",
       "parent": "Work package 13: Personal routines",
       "scope": "Implement optional category/day reminders suppressed only after genuine completed repeat requirements.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "13.1"
       ],
@@ -1433,7 +1433,7 @@
       "name": "Salawat and Friday reminders",
       "parent": "Work package 13: Personal routines",
       "scope": "Implement optional localized salawat/Friday routines and timezone/day boundaries without guilt or inferred worship.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "13.2"
       ],
@@ -1450,7 +1450,7 @@
       "name": "Custom routine reminders",
       "parent": "Work package 13: Personal routines",
       "scope": "Add bounded user-controlled custom days/times/edit/pause/delete with local privacy.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "13.3"
       ],
@@ -1467,7 +1467,7 @@
       "name": "Unified reminder center",
       "parent": "Work package 13: Personal routines",
       "scope": "Expose all active reminder types, permission health, pause and per-rule controls accessibly.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "13.4"
       ],
@@ -1485,7 +1485,7 @@
       "name": "Khatmah workload reminders",
       "parent": "Work package 14: Khatmah/Night reminders",
       "scope": "Schedule user-consented remaining daily workload with paused/finished-plan suppression.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "13.5"
       ],
@@ -1503,7 +1503,7 @@
       "name": "Night Prayer and last-third reminders",
       "parent": "Work package 14: Khatmah/Night reminders",
       "scope": "Implement optional sourced last-third/selected-time routine with city/method/polar unavailable states.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "14.1"
       ],
@@ -1521,7 +1521,7 @@
       "name": "Cross-routine suppression and user control",
       "parent": "Work package 14: Khatmah/Night reminders",
       "scope": "Verify quiet hours/frequency/expiry/completed state across overlapping routines without exposing private activity to campaigns.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "14.2"
       ],
@@ -1538,7 +1538,7 @@
       "name": "Free push provider abstraction",
       "parent": "Work package 15: Free push",
       "scope": "Implement provider interface/configuration boundary and test transport with no paid dependency or secret in APK.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "14.3"
       ],
@@ -1556,7 +1556,7 @@
       "name": "Device token lifecycle",
       "parent": "Work package 15: Free push",
       "scope": "Implement multi-device token register/rotate/logout/revoke and owner/environment separation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "15.1"
       ],
@@ -1594,7 +1594,7 @@
       "name": "Private notification inbox API",
       "parent": "Work package 16: Inbox/policy",
       "scope": "Implement paginated owner-scoped inbox/read/delete/expiry contract and additive schema.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "15.2"
       ],
@@ -2767,5 +2767,112 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses fixed task weights and is83%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
+  "phase_completion_method": "Phase2 uses fixed task weights and is83%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance.",
+  "implementation_checkpoint": {
+    "date": "2026-10-27",
+    "branch": "parallel/admin-foundation",
+    "head": "65c5f551845227a9be55926ee92750031021bb01",
+    "last_landed_task": "16.1",
+    "next_task": "16.2",
+    "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
+    "implemented_acceptance_pending": [
+      "11.1",
+      "11.2",
+      "11.3",
+      "11.4",
+      "12.1",
+      "12.2",
+      "12.3",
+      "12.4",
+      "13.1",
+      "13.2",
+      "13.3",
+      "13.4",
+      "13.5",
+      "14.1",
+      "14.2",
+      "14.3",
+      "15.1",
+      "15.2",
+      "16.1"
+    ],
+    "blocked_external": {
+      "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
+    },
+    "commit_receipts": {
+      "11.1": [
+        "747951e7005c"
+      ],
+      "11.2": [
+        "876365777b35"
+      ],
+      "11.3": [
+        "510a9d4e7b2e"
+      ],
+      "11.4": [
+        "c896d50a9f55",
+        "44f6b5ee78ca"
+      ],
+      "12.1": [
+        "bf350f9031a1"
+      ],
+      "12.2": [
+        "062257422a46"
+      ],
+      "12.3": [
+        "f645a2cf6684"
+      ],
+      "12.4": [
+        "1f9fb3a22dda"
+      ],
+      "13.1": [
+        "24bce77e00f1",
+        "69684c9b70f2"
+      ],
+      "13.2": [
+        "3b9836007ce1",
+        "5d2007811579",
+        "93f574d162c1"
+      ],
+      "13.3": [
+        "e7c02b3b7b42",
+        "246b3ecf73e9"
+      ],
+      "13.4": [
+        "39394e26f9da",
+        "f537b55636da"
+      ],
+      "13.5": [
+        "4b23614f2c33",
+        "c6c845421bb7",
+        "ae01993f78ee"
+      ],
+      "14.1": [
+        "fccbd6111d65",
+        "d020c7a4f1e9",
+        "4cba177c1d38",
+        "209accc622d2"
+      ],
+      "14.2": [
+        "4e34ee7f43d4",
+        "34acf58f5b48",
+        "eb75a1b1d50c"
+      ],
+      "14.3": [
+        "66d6b4a15039",
+        "3f624579903f"
+      ],
+      "15.1": [
+        "4a0816f359af",
+        "e7c3176e311b"
+      ],
+      "15.2": [
+        "f46caa549306",
+        "3f9580754f5e"
+      ],
+      "16.1": [
+        "65c5f5518452"
+      ]
+    }
+  }
 }

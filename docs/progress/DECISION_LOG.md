@@ -1,5 +1,7 @@
 # Engineering decision log
 
+2026-10-27 execution-state reconciliation: branch commits, not stale queue labels, determine whether implementation already landed. Mark 11.1–16.1 as PARTIAL until acceptance, keep 15.3 BLOCKED, and continue at 16.2. PARTIAL implementation dependencies may be used downstream; COMPLETE still requires the original queue gates. Never fabricate FCM/device evidence.
+
 Task21.18: document the additive immersive direction before implementing it; use the references for composition/interaction, not assets, sacred text, identity or fake data. Keep original local artwork/fallbacks, bounded native motion, actual status/actions and provider/private-state constraints. Return to functional02.7.2 after docs; later shared/screen tasks own code/device acceptance. Weight phase21 closure by task contribution budgets so a small specification is not treated as a full screen.
 
 Task02.7.1: capture the actor at the UI/ViewModel boundary and before repository IO/lock suspension; reject rather than retarget a queued action. A matching ID alone is insufficient after same-actor authentication becomes Pending, so private actions require current verified/full SignedIn credentials. OTP/resend/logout retain their explicit pending-account allowance. Preserve pending rows/retained ciphertext and current presentation; no actor/global reset.

@@ -1,5 +1,34 @@
 # Task completion receipts
 
+## Implementation receipts awaiting acceptance — 2026-10-27
+
+These are **not COMPLETE receipts**. They prove code landed on `parallel/admin-foundation`; queue-defined automated/device/integration gates still control promotion to COMPLETE.
+
+| Task | Landed commit(s) | Queue state |
+|---|---|---|
+|11.1|747951e7005c|PARTIAL|
+|11.2|876365777b35|PARTIAL|
+|11.3|510a9d4e7b2e|PARTIAL|
+|11.4|c896d50a9f55, 44f6b5ee78ca|PARTIAL|
+|12.1|bf350f9031a1|PARTIAL|
+|12.2|062257422a46|PARTIAL|
+|12.3|f645a2cf6684|PARTIAL|
+|12.4|1f9fb3a22dda|PARTIAL|
+|13.1|24bce77e00f1, 69684c9b70f2|PARTIAL|
+|13.2|3b9836007ce1, 5d2007811579, 93f574d162c1|PARTIAL|
+|13.3|e7c02b3b7b42, 246b3ecf73e9|PARTIAL|
+|13.4|39394e26f9da, f537b55636da|PARTIAL|
+|13.5|4b23614f2c33, c6c845421bb7, ae01993f78ee|PARTIAL|
+|14.1|fccbd6111d65, d020c7a4f1e9, 4cba177c1d38, 209accc622d2|PARTIAL|
+|14.2|4e34ee7f43d4, 34acf58f5b48, eb75a1b1d50c|PARTIAL|
+|14.3|66d6b4a15039, 3f624579903f|PARTIAL|
+|15.1|4a0816f359af, e7c3176e311b|PARTIAL|
+|15.2|f46caa549306, 3f9580754f5e|PARTIAL|
+|15.3|—|BLOCKED — authorized FCM/device required|
+|16.1|65c5f5518452|PARTIAL|
+
+Next implementation: **16.2**.
+
 Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 
 | Task | Implementation commit | Verification |

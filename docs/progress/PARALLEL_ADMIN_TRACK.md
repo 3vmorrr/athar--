@@ -1,5 +1,15 @@
 # Parallel Admin / Engagement handoff
 
+## 2026-10-27 — execution handoff checkpoint
+
+- Source of truth branch: `parallel/admin-foundation`; verified head before this documentation commit: `65c5f551845227a9be55926ee92750031021bb01`.
+- Last landed implementation task: **16.1 — Private notification inbox API**.
+- Next implementation task: **16.2 — Native notification inbox**.
+- Tasks **11.1 through 16.1** listed in `TASK_QUEUE.json > implementation_checkpoint` have landed implementation and are marked **PARTIAL**, not COMPLETE, until their queue-defined build/test/device/integration gates pass.
+- **15.3** remains **BLOCKED** on an authorized free FCM project/configuration and approved physical test device. Never fabricate provider/device proof.
+- Downstream implementation may continue from landed PARTIAL code dependencies; acceptance closure remains a separate gate.
+- The earlier queue pointer to 02.7.2 was stale for this branch and must not cause an agent to restart already-landed engagement/reminder/push/inbox work.
+
 Date: 2026-10-26  
 Implementation branch: `parallel/admin-foundation`  
 Integration target: `codex/android-ecosystem`  
@@ -14,8 +24,7 @@ lane, but it did not execute the repository's PHP/MySQL/Android acceptance
 suite. Treat the tasks below as **IMPLEMENTED / ACCEPTANCE PENDING** until the
 normal disposable fixture, HTTP, browser, worker and physical-device gates pass.
 
-The main task queue remains owned by the Codex track and was intentionally not
-edited here to reduce merge conflicts.
+The main task queue has now been reconciled on 2026-10-27 to this branch's actual execution head. `TASK_QUEUE.json`/`.md` mark landed-but-unaccepted tasks as PARTIAL, keep 15.3 externally BLOCKED, and set 16.2 as the next implementation task.
 
 ## Work Package 17 — Independent Admin foundation
 

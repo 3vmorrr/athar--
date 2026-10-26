@@ -1,6 +1,10 @@
 # Implementation tracker
 
-Execution source of truth: [exact ordered queue](TASK_QUEUE.md), [editable task records](TASK_QUEUE.json). Queue states are NOT STARTED / PARTIAL / BLOCKED / COMPLETE; the legacy evidence/status table below remains historical/module-level. Current task is02.7.2 after the completed21.18 immersive design specification. Previously tested O01/O02/O03 map to02.1/02.2/02.3;02.2 is the implemented foundation only, with real OS lifecycle acceptance separately required by02.8. No whole-phase completion follows from a foundation or documentation task.
+## 2026-10-27 branch execution checkpoint
+
+Verified implementation head before the progress-doc commit: `65c5f551845227a9be55926ee92750031021bb01` on `parallel/admin-foundation`. The executable queue now points to **16.2**. Tasks 11.1–16.1 in the checkpoint are **PARTIAL / implementation landed / acceptance pending**; 15.3 remains externally BLOCKED. Do not restart these implementations or call them COMPLETE without the missing gates.
+
+Execution source of truth: [exact ordered queue](TASK_QUEUE.md), [editable task records](TASK_QUEUE.json). Queue states are NOT STARTED / PARTIAL / BLOCKED / COMPLETE; the legacy evidence/status table below remains historical/module-level. Current implementation task is 16.2; the prior 02.7.2 pointer was stale for this branch.18 immersive design specification. Previously tested O01/O02/O03 map to02.1/02.2/02.3;02.2 is the implemented foundation only, with real OS lifecycle acceptance separately required by02.8. No whole-phase completion follows from a foundation or documentation task.
 Last updated: 2026-10-26. Status vocabulary: TODO, IN_PROGRESS, BLOCKED, IMPLEMENTED, TESTED, VERIFIED. Evidence is mandatory for VERIFIED. Source-based audit/estimates and original24 work packages: [formal checkpoint](../audit/CHECKPOINT_2026-10-25.md). Phase1 is tested; phase2 remains IN_PROGRESS. Current common verification:unchanged20,000 backend assertion baseline;53 JVM cases; focused task02.7.1 Arabic10/English32 physical cases plus main API1; build/test APK/lint;306 resources. Earlier per-task counts below retain the evidence from their original increments.
 
 | ID | Module / task | Priority | Dependencies | Status | Files / evidence | Tests / blockers |

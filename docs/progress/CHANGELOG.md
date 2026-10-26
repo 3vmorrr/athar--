@@ -1,5 +1,13 @@
 # Engineering change log
 
+## 2026-10-27 — engagement/reminder/push/inbox execution reconciliation
+
+- Reconciled progress metadata to verified branch head `65c5f551845227a9be55926ee92750031021bb01`.
+- Marked landed implementations 11.1–16.1 as PARTIAL/acceptance-pending instead of stale NOT STARTED.
+- Preserved 15.3 as BLOCKED on authorized FCM configuration/device proof.
+- Set 16.2 Native notification inbox as the next implementation task.
+- Added commit receipts so another agent can continue without restarting landed work or confusing implementation with acceptance.
+
 ## Task21.18 — immersive hero specification
 
 - Documented original layered heroes, section-specific data/actions, compact reading/adaptive behavior, bounded scroll/shared-art/sheet motion, reduced motion, accessibility, original asset provenance/fallbacks and performance budgets from the six user inspiration references.
