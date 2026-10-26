@@ -181,7 +181,7 @@
 <string name="export_explanation">Choose where to save your personal data copy. Unsynced device sessions are included; local exempt periods are excluded.</string>
 <string name="export_scope_title">What the export contains</string>
 <string name="export_scope_account">Synced account data: profile, bookmarks, favorites, plans, recorded progress and activity statistics.</string>
-<string name="export_scope_device">Retained device data that has not been discarded: lesson progress and local Night Prayer sessions.</string>
+<string name="export_scope_device">Retained device data that has not been discarded: lesson progress, local Night Prayer sessions, and the pending local Khatmah plan.</string>
 <string name="export_private_excluded">Local private exemption periods are excluded</string>
 <string name="export_security_excluded">Passwords, sign-in tokens, refresh tokens, and local encryption keys are not included.</string>
 <string name="export_confirm_title">Create a copy of your data?</string>
