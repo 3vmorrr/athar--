@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import org.athar.app.AppViewModel
 import org.athar.app.R
 import org.athar.app.auth.AuthState
 import org.athar.app.auth.AccountInput
+import org.athar.app.core.data.cleanupDeletedAccount
 import org.athar.app.quran.QuranScreen
 import org.athar.app.adhkar.AdhkarScreen
 import org.athar.app.books.BookDetailScreen
@@ -328,6 +330,7 @@ private fun AtharNavIcon(
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current.applicationContext
     var name by remember(auth.user) {
         mutableStateOf(auth.user.displayName.orEmpty())
     }
@@ -604,7 +607,11 @@ private fun AtharNavIcon(
                         vm.perform {
                             val id = auth.user.id
                             vm.graph.session.delete(deletePassword, id)
-                            vm.graph.database.dao().deleteUser(id)
+                            cleanupDeletedAccount(
+                                context = context,
+                                graph = vm.graph,
+                                owner = id,
+                            )
                         }
                         delete = false
                         deletePassword = ""
