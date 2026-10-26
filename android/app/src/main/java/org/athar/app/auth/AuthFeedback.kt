@@ -19,5 +19,6 @@ import org.athar.app.R
     "reset_sent" -> R.string.reset_sent
     "password_updated" -> R.string.password_updated
     "saved" -> R.string.saved
+    "sessions_revoked" -> R.string.sessions_revoked
     else -> R.string.network_error
 }
