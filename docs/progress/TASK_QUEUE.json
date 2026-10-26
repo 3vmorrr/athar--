@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "21.18",
+  "current_task": "02.7.2",
   "overall_estimate_percent": 45,
-  "overall_estimate_detail": 45.43,
+  "overall_estimate_detail": 45.46,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -187,7 +187,7 @@
       "name": "Document immersive section heroes and original artwork",
       "parent": "Work package 21: UI/UX closure",
       "scope": "Define the additive Athar Immersive Section Hero system, section visual language, hero motion/scroll, state/ownership rules and original artwork/fallback specification from six user-supplied inspiration images. Reconcile the premium branch and route future implementation without pausing feature work or claiming static mocks as completed UI.",
-      "state": "NOT STARTED",
+      "state": "COMPLETE",
       "dependencies": [
         "02.7.1",
         "21.1"
@@ -198,6 +198,8 @@
         "docs/design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md",
         "docs/design/ARTWORK_LIBRARY.md",
         "docs/design/UI_UX_PREMIUM_V2_CHANGELOG.md",
+        "docs/design/HERO_IMPLEMENTATION_PLAN.md",
+        "docs/design/HERO_ASSET_SPEC.json",
         "docs/progress/"
       ],
       "automated_tests": "Check internal Markdown links, required sections/asset specifications, queue dependencies/render and documentation-only diff; verify cited Android/provider guidance. No new Android/runtime/backend gate is claimed for documentation only.",
@@ -2753,7 +2755,7 @@
     "Notifications/reminders": 5,
     "UI/UX polish": 54,
     "Testing/QA": 49,
-    "Documentation": 79,
+    "Documentation": 80,
     "weights_percent": [
       25,
       18,
@@ -2765,5 +2767,5 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses fixed task weights; other closure packages use COMPLETE task share. Phase2 is83%; UI closure is1/21 (5% rounded). The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining cross-screen closure, preserving the functional roadmap. These are remaining-package gates, not full-product area estimates."
+  "phase_completion_method": "Phase2 uses fixed task weights and is83%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance."
 }

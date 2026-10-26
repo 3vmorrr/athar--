@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|02.7.1 Captured-owner mutation dispatch|d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f|53 JVM/build/lint/306 resources; Arabic10/English32/main API1 hardware PASS; no-secret review; normal push/exact remote SHA verified |
 |02.1 Protected authoritative reads|6989a8a42ece5438972df13c186ea37c076b9874|29 JVM;11 hardware storage; Arabic/English protected/normal journeys; push verified |
 |02.2 Owned persistent-work foundation|309efa59da9e3bae5921d727831e0085d9a3b874|38 JVM; Worker/HTTP1; scheduling/storage12; Arabic/English2 each; push verified. OS lifecycle gate remains02.8 |
 |02.3 Disposable response cache|13402f60981a9b93dd1c14e998eaec23663747c3|42 JVM; hardware storage/cache15; Arabic/English2 each; push verified |

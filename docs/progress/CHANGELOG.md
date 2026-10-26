@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task21.18 — immersive hero specification
+
+- Documented original layered heroes, section-specific data/actions, compact reading/adaptive behavior, bounded scroll/shared-art/sheet motion, reduced motion, accessibility, original asset provenance/fallbacks and performance budgets from the six user inspiration references.
+- Added five linked specifications and a nine-ID planned asset specification; reconciled existing brand/premium/motion/research guidance and exact future21.* task order. No reference images, new art resources, native code, runtime/dependency or backend contract is added.
+-5 specifications/25 local links/9 planned IDs,149-task graph/render and documentation-only scope PASS. No Android/device rerun is claimed for docs; last native baseline remains53 JVM, Arabic10/English32 and main API1 throughd9edd6f.
+- Overall45%, phase2 83%, weighted UI closure6%,140 open tasks. Continue functional02.7.2; real hero implementation/acceptance remains21.19 and screen tasks.
+
 ## Task02.7.1 — captured-owner mutation dispatch
 
 - Capture the intended actor before local IO/lock/index waits and at account/reading/counter/Night exemption/bookmark/favorite/discussion call sites; stale actions cannot retarget another account or consume retained pending rows.

@@ -1,5 +1,9 @@
 # Premium v2 reconciliation ledger
 
+## Immersive refinement specification —21.18
+
+The [immersive hero specification](IMMERSIVE_SECTION_HERO.md) and [execution map](HERO_IMPLEMENTATION_PLAN.md) extend the approved direction without merging new UI/resources. Current data/ownership protections throughd9edd6f remain intact. User images are inspiration only; task21.19/shared primitives and later screen tasks preserve the reviewed premium layer while adding original atmosphere. Documentation is not native visual acceptance.
+
 Reviewed26 October2026. Remote branch fetched read-only: `origin/uiux/athar-premium-v2` at `0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32`. Common ancestor with the active Codex branch: `6989a8a42ece5438972df13c186ea37c076b9874`. Read its `UI_UX_PREMIUM_V2_CHANGELOG.md` and `MOTION_SYSTEM.md`, including the static-only validation disclaimer and protected-local-read synchronization notes.
 
 The branch-only diff from the common ancestor has20 Compose presentation files plus two design documents. No backend, migration, repository, provider or Room replacement is justified. Direct comparison of the current Codex branch to the UI tip also shows newer Codex data/sync files: those differences are deliberately retained, never reverted to make the diff look smaller. The uncommitted/current session task touches SessionRepository/tests; the UI branch has no competing change in that repository. AuthScreens presentation is separately queued.

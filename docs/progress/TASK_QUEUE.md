@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **21.18**. Open tasks: **141**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.7.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -90,9 +90,9 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 21.18 — Document immersive section heroes and original artwork
 
-- Parent: Work package 21: UI/UX closure; state: **NOT STARTED**; dependencies: 02.7.1, 21.1.
+- Parent: Work package 21: UI/UX closure; state: **COMPLETE**; dependencies: 02.7.1, 21.1.
 - Exact scope: Define the additive Athar Immersive Section Hero system, section visual language, hero motion/scroll, state/ownership rules and original artwork/fallback specification from six user-supplied inspiration images. Reconcile the premium branch and route future implementation without pausing feature work or claiming static mocks as completed UI.
-- Files/modules: docs/design/IMMERSIVE_SECTION_HERO.md; docs/design/SECTION_VISUAL_LANGUAGE.md; docs/design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md; docs/design/ARTWORK_LIBRARY.md; docs/design/UI_UX_PREMIUM_V2_CHANGELOG.md; docs/progress/.
+- Files/modules: docs/design/IMMERSIVE_SECTION_HERO.md; docs/design/SECTION_VISUAL_LANGUAGE.md; docs/design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md; docs/design/ARTWORK_LIBRARY.md; docs/design/UI_UX_PREMIUM_V2_CHANGELOG.md; docs/design/HERO_IMPLEMENTATION_PLAN.md; docs/design/HERO_ASSET_SPEC.json; docs/progress/.
 - Automated gates: Check internal Markdown links, required sections/asset specifications, queue dependencies/render and documentation-only diff; verify cited Android/provider guidance. No new Android/runtime/backend gate is claimed for documentation only.
 - Physical-device gate: Not applicable to this documentation-only task. Every implementing screen/component task still requires actual-device Arabic/English, state/motion/performance acceptance.
 - Definition of Done: All required design/asset/scroll documents cover purpose, affected screens, visual/behavior/motion do/donot, performance/accessibility/reduced-motion, truthful data/CTA and existing branch integration. Exact subsequent tasks are recorded; links/queue/diff reviewed; logical documentation commit normally pushed and remote SHA verified. This is not native screen completion.

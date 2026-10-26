@@ -1,5 +1,9 @@
 # Third-party visual asset register
 
+## Hero references and original assets — planned
+
+Task21.18 adds only the [original artwork/fallback specification](ARTWORK_LIBRARY.md) and planned [asset specification](HERO_ASSET_SPEC.json). No new visual resources, stock images or reference-image copies are added. User inspiration images do not establish portrait identity, artwork redistribution rights or canonical Quran text. Actual future original/permitted assets need recorded source/provenance/rights/hash/dimensions and device budgets before shipping. Existing supplied-logo/font/icon provenance remains authoritative.
+
 | Asset family | Author/source | License / cost | Implementation |
 |---|---|---|---|
 | Official Athar logo | User-provided attachment, preserved at design/assets/athar-official.png | User supplied project identity | Original bytes unchanged; native Brand displays alpha-safe bounds x446/y261/width628/height580. No replacement logo or traced mark. |

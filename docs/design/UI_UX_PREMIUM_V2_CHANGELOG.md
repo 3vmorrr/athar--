@@ -1,5 +1,14 @@
 # Athar Premium UI/UX v2 — change log and review
 
+## Task21.18 — additive immersive hero specification
+
+Functional baseline: pushed Codex `d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f`; premium source remains0e6f4ba. Added IMMERSIVE_SECTION_HERO, SECTION_VISUAL_LANGUAGE, HERO_MOTION_AND_SCROLL_BEHAVIOR, ARTWORK_LIBRARY, HERO_IMPLEMENTATION_PLAN and a machine-readable planned HERO_ASSET_SPEC. Reconciled the six inspiration references with existing palette/logo/fonts, protected data/verified actor state and official media requirements.
+
+- Defined original layered art/scrim/context/primary action plus rounded content, bounded scroll/reveal/parallax/native sheet behavior, adaptive compact reading/large-font modes, reduced motion, accessibility and local artwork/performance budgets.
+- Explicit exclusions: no copied reference assets/layout/portraits, generated Quran glyphs, fake counts/controls, provider overlays, auth exit animation, dependency upgrade, new backend contract or whole-app redesign.
+- No native UI/artwork/runtime change in this task. Existing premium slices/current functionality stay intact;21.19 and individual screen tasks implement and verify the design. A planned asset/static reference is not an accepted screen.
+- Queue preserves functional work after this documentation task; later visuals follow Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge, followed by remaining refinements/closure. Validation PASS:5 specifications/25 local links/9 planned asset IDs,149-task graph/render and documentation-only scope. No new Android/device result is claimed. The next receipt records the documentation commit SHA; actual native visual acceptance stays open.
+
 ## Codex incremental reconciliation — task21.1,26 October2026
 
 Pinned source: UI tip `0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32`, common ancestor6989a8a. Newer Codex functional checkpoints309efa5 (owned WorkManager),13402f6 (bounded cache) andc5062b6 (authentication races) are retained. This section describes the current integration slice; the original branch review below remains historical and does not certify all screens as merged/tested.

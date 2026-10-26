@@ -1,4 +1,8 @@
 # Athar design system
+
+## Additive immersive direction — task21.18
+
+The [Immersive Section Hero](IMMERSIVE_SECTION_HERO.md), [section language](SECTION_VISUAL_LANGUAGE.md), [hero motion/scroll](HERO_MOTION_AND_SCROLL_BEHAVIOR.md), [artwork specification](ARTWORK_LIBRARY.md) and [integration plan](HERO_IMPLEMENTATION_PLAN.md) extend the accepted system. They do not replace the logo/fonts/tokens or newer functional/ownership/protected-data logic. These are specifications; native implementation and physical acceptance remain21.19 and each screen task. Default Arabic RTL/Light and immediate private-auth gating are unchanged.
 Source of truth: CSS tokens in `public/assets/css/app.css`. Light: primary `#24694F`, strong `#19563F`, page `#F4F3ED`, surface `#FBFCF8`, raised `#FFFFFF`, text `#202923`, border `#D9E2D9`, copper `#A85F25`. Dark: page `#101815`, surface `#17231E`, raised `#1E2D26`, secondary `#283A31`, primary `#8ADBAF`, text `#F2F6F1`, border `#40564A`, accent `#F0BD78`. Danger/warning remain semantic, not spiritual judgments.
 
 Use a 4/8 dp spacing rhythm, 16 dp mobile margins, 24 dp section gaps, 48 dp touch targets, readable 16 sp body and distinct medium/bold hierarchy. Cards use restrained borders/radii/elevation. Quran uses licensed Amiri Quran with generous line height, no letter spacing, clipped diacritics or width placeholders that leave giant gaps. UI uses licensed Arabic family; system Latin fallback is permitted.
