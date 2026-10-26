@@ -1,10 +1,10 @@
 # Night Prayer Privacy
-Status: initial approved specification. Existing behavior below is static-code evidence; native replacement is not yet verified.
+Status: approved privacy requirements plus tested encrypted local-read foundation. Task02.5 adds explicit per-session conflict review; full module/release privacy acceptance remains open.
 
 ## Purpose
 Protect personal worship history and optional exempt-night information.
 ## Existing implementation and known defects
-Missing; existing admin sees only general aggregates, not a dedicated privacy-reviewed module. See the audit defect register and migration matrix; no undocumented success is assumed.
+Baseline lacked this module. Native sessions/outbox and local-only exemptions now use owned encrypted storage with retained-unreadable recovery. Conflict review never uploads exemptions, never logs private notes, and changes only the chosen session. Independent Admin/privacy export/delete/release acceptance remains separately queued; existing legacy aggregates are not independent Admin acceptance.
 ## Required behavior
 Exempt feature disabled by default, generic reason-free selection, local-only encrypted storage, explicit continuity rule and deletion. No upload, admin access, public ranking or inferred sex/identity.
 ## Android screens

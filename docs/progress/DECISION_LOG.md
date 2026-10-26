@@ -1,5 +1,7 @@
 # Engineering decision log
 
+Task02.5: persist409 conflict identity in the owned outbox and exclude blocked session IDs before the50-operation batch limit. Review fresh account/device versions; confirmation must recheck both before a target-only transaction. A remote deletion can only become a deliberately chosen new UUID, never resurrection. Only409 is a conflict; other rejected statuses retain their retry/action classification and bytes. Preserve retained unreadable rows/outbox, actor isolation and local-only exemptions. Reconcile the premium hero inside lazy history; large-text/landscape conflict review uses a native full-height scrollable dialog.
+
 26 October upcoming continuation: home discovery is bounded to three rows; current live status requires a fresh authoritative response, cached live is labelled as saved, and offline playback actions are withheld. Preserve cached context for connectivity failure, but discard displayed rows for explicit access denial/removal. Partition ViewModel identity by account and language. Test the same stateless presentation with a localized Context, not only a direction/configuration override.
 
 Formal checkpoint2026-10-25: audit actual source against all approved addenda; preserve native/API/legacy work and the damaged original database; verify tests/build/USB integration and scan candidate files plus reachable history before normal commit/push. No history rewrite or force-push. The24 remaining work packages refine P4–P8. Continue phase1 after checkpoint; legacy Admin is not independent Admin acceptance.

@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **02.5**. Open tasks: **138**. Overall estimate: **44%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.6**. Open tasks: **137**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -60,7 +60,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.5 — Night Prayer conflict resolution
 
-- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.1, 02.4, 21.1.
+- Parent: Work package 2; state: **COMPLETE**; dependencies: 02.1, 02.4, 21.1.
 - Exact scope: Expose durable per-record conflict state and intentional server/local choice including deletion; retain pending edits until successful resolution. Reconcile the premium Night Prayer surface only where touched.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/core/data/; backend/src/NightPrayer/.
 - Automated gates: CAS/lost-ack/retry/tombstone/owner tests; native conflict choice/error/offline UI cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -81,7 +81,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 ## 02.7 — Cross-module lost-response and restart recovery
 
 - Parent: Work package 2; state: **PARTIAL**; dependencies: 02.5, 02.6.
-- Exact scope: Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects.
+- Exact scope: Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects. Include actionable permanent non409 validation-rejection recovery and captured-owner checks before dispatching local mutations, including exemptions.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/nightprayer/; tests/.
 - Automated gates: Dropped acknowledgement/repeated retry/restart/order/conflict tests across four modules; no duplicate activity. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
 - Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
@@ -511,9 +511,9 @@ Contribution values are approximate remaining scope budgets in percentage points
 ## 08.10 — Prayer history edit and delete journeys
 
 - Parent: Work package 8: Night Prayer; state: **PARTIAL**; dependencies: 08.9.
-- Exact scope: Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy.
+- Exact scope: Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy. Preserve measured duration and prayer context when editing notes; the existing form currently reconstructs only a subset of fields.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/; backend/src/NightPrayer/.
-- Automated gates: Validation/tombstone/CAS/offline/error/owner native tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
+- Automated gates: Validation/tombstone/CAS/offline/error/owner native tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable. Include note-only edits preserving measured_seconds and boundary/timing context.
 - Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
 - Definition of Done: Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.45 overall percentage points.

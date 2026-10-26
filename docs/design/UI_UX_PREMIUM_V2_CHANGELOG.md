@@ -12,6 +12,12 @@ Pinned source: UI tip `0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32`, common ancesto
 
 The user's current incremental-integration policy supersedes the original suggestion to merge the entire branch at once. Every accepted slice still requires its applicable build, safety, device, language/theme and reduced-motion gates.
 
+### Task02.5 — Night Prayer conflict surface, verified slice
+
+Validation:47 JVM/build/lint/305 resources PASS; final API27 Arabic10/10, English15/15 and main API1/1 PASS; Arabic/English portrait/landscape fixture captures reviewed. Native review adapts at180-percent text/short height; dark150–200-percent, loading/error and retained-editor gates pass. Earlier footer/lint/lazy-node/resource harness failures remain in TEST_REPORT. UI tip0e6f4ba rechecked unchanged before commit. The resulting commit SHA is recorded in the next checkpoint receipt; no full-branch merge.
+
+Shared foundation commit: `981a9e1293b4270b5e9d2accc8f0a50174bd0763` (pushed/verified). Re-read the current Night Prayer file and pinned premium diff before editing. Reconciled the premium history surface/hero and section transition with new durable per-record conflict observation/review; preserved ProtectedRead/retry/gates and the newer owned sync/cache/auth logic. The hero is inside the history LazyColumn rather than a tall fixed wrapper above every section, preserving space on small/landscape screens. Calendar/tools presentation and all other premium screens remain separate queued slices. No older ViewModel/repository was copied over newer logic. Final build/device evidence is recorded immediately above; broader Night Prayer tools/editor/tablet/TalkBack/release acceptance remains open.
+
 Date: 2026-10-26  
 Branch: `uiux/athar-premium-v2`  
 Base branch: `codex/android-ecosystem`  

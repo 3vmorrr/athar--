@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-26",
-  "current_task": "02.5",
-  "overall_estimate_percent": 44,
-  "overall_estimate_detail": 43.93,
+  "current_task": "02.6",
+  "overall_estimate_percent": 45,
+  "overall_estimate_detail": 44.73,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -119,7 +119,7 @@
       "name": "Night Prayer conflict resolution",
       "parent": "Work package 2",
       "scope": "Expose durable per-record conflict state and intentional server/local choice including deletion; retain pending edits until successful resolution. Reconcile the premium Night Prayer surface only where touched.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "02.1",
         "02.4",
@@ -159,7 +159,7 @@
       "id": "02.7",
       "name": "Cross-module lost-response and restart recovery",
       "parent": "Work package 2",
-      "scope": "Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects.",
+      "scope": "Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects. Include actionable permanent non409 validation-rejection recovery and captured-owner checks before dispatching local mutations, including exemptions.",
       "state": "PARTIAL",
       "dependencies": [
         "02.5",
@@ -927,7 +927,7 @@
       "id": "08.10",
       "name": "Prayer history edit and delete journeys",
       "parent": "Work package 8: Night Prayer",
-      "scope": "Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy.",
+      "scope": "Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy. Preserve measured duration and prayer context when editing notes; the existing form currently reconstructs only a subset of fields.",
       "state": "PARTIAL",
       "dependencies": [
         "08.9"
@@ -936,7 +936,7 @@
         "android/app/src/main/java/org/athar/app/nightprayer/",
         "backend/src/NightPrayer/"
       ],
-      "automated_tests": "Validation/tombstone/CAS/offline/error/owner native tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "automated_tests": "Validation/tombstone/CAS/offline/error/owner native tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable. Include note-only edits preserving measured_seconds and boundary/timing context.",
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Complete ordered pagination/detail/edit/delete/restore-conflict feedback with premium hierarchy. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472
@@ -2611,14 +2611,14 @@
     }
   ],
   "estimate_basis": {
-    "Android": 57,
+    "Android": 59,
     "Backend/API": 61,
     "Independent Admin": 0,
     "Database": 74,
     "Notifications/reminders": 5,
-    "UI/UX polish": 52,
-    "Testing/QA": 46,
-    "Documentation": 76,
+    "UI/UX polish": 54,
+    "Testing/QA": 47,
+    "Documentation": 77,
     "weights_percent": [
       25,
       18,
@@ -2630,5 +2630,5 @@
       3
     ]
   },
-  "phase_completion_method": "Phase2 uses its fixed task weights; other closure packages use COMPLETE task share. Current phase21 closure is1/17 (6% rounded); phase2 remains55%. These are remaining-package gates, not full-product area estimates."
+  "phase_completion_method": "Phase2 uses its fixed task weights; other closure packages use COMPLETE task share. Current phase21 closure is1/17 (6% rounded); phase2 is70%. These are remaining-package gates, not full-product area estimates."
 }

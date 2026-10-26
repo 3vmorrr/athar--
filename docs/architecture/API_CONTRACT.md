@@ -34,6 +34,8 @@ Base `/api/v1`. JSON UTF-8, TLS in production. Success `{ "data": ..., "meta": {
 | GET/PUT /night-prayer/preferences | verified bearer | allowlisted nonsensitive preferences; no exemption fields |
 | POST /night-prayer/sync | verified bearer | bounded mutation batch/cursor pull; transaction/idempotency/tombstones |
 
+Native conflict review uses the existing owned GET session endpoint (including minimal deletion DTOs), then the existing sync operations. A reviewed local choice uses a fresh mutation UUID at the fetched account revision; copying an account-deleted record uses a new session UUID with expected revision0. No resurrection or privileged override endpoint is added. The client treats only per-operation409 as a version conflict; other statuses retain retry/validation semantics and queued data. Confirmation must reject stale review state rather than silently overwrite.
+
 Admin web routes use their own cookie/CSRF/role boundary and shared services; any admin JSON endpoint applies the same role policy independently. No API for private exemption upload or admin viewing private prayer logs is designed. Rows explicitly marked planned are not implemented. Identity, canonical Quran, catalog/progress and Night Prayer routes have isolated service/kernel tests; MP3Quran uses injected fixture tests and separate live catalog inspection. Full HTTP/native acceptance remains incomplete.
 
 

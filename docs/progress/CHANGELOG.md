@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task02.5 — durable Night Prayer conflict resolution
+
+- Persist owned409 conflicts across recreation, including pending deletions; exclude blocked session IDs before the batch limit so healthy work remains eligible. Other statuses preserve pending/retry classification.
+- Fresh account/device review with cancellation, stale confirmation checks, target-only queue replacement, new mutation identity and explicit new-copy behavior for server-deleted sessions. Unreadable retained bytes and account boundaries remain protected. Draft Save is blocked if conflict arrives during editing.
+- Reconcile only the history premium surface and section motion, with a scrolling hero and native adaptive review at large text/landscape. No backend/schema/exemption-upload change.
+-47 JVM/build/lint/305 resources PASS; English15/15 actual-phone task/regression cases PASS; final Arabic10/10 and main API1/1 PASS, with current evidence recorded in TEST_REPORT. Earlier footer/lint/lazy/localization failures retained. Remaining editor completeness and general lifecycle gates stay separately queued.
+
 ## Task21.1 — premium shared UI foundation
 
 - Reconciled only reviewed premium spacing/hero/section/action/status/metric primitives and motion tokens from UI tip0e6f4ba. Added real disabled-action semantics, accessible headings/button role, large-font section stacking and explicit foreground contrast. No data/backend/auth/permissions/dependency changes.

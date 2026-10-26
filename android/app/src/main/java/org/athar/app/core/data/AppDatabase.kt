@@ -35,6 +35,11 @@ interface AtharDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun night(session: LocalNightSession)
     @Insert suspend fun enqueue(mutation: OutboxMutation)
     @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence LIMIT 50") suspend fun pending(user: Long): List<OutboxMutation>
+    @Query("SELECT o.* FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND c.conflict=1) ORDER BY o.sequence LIMIT 50") suspend fun eligiblePending(user:Long):List<OutboxMutation>
+    @Query("SELECT EXISTS (SELECT 1 FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND c.conflict=1))") suspend fun hasEligiblePending(user:Long):Boolean
+    @Query("SELECT o.sessionId FROM outbox o LEFT JOIN night_sessions n ON n.userId=o.userId AND n.id=o.sessionId WHERE o.userId=:user AND o.conflict=1 GROUP BY o.sessionId ORDER BY MIN(o.sequence)") fun observeNightConflictIds(user:Long):Flow<List<String>>
+    @Query("SELECT EXISTS (SELECT 1 FROM outbox WHERE userId=:user AND sessionId=:id AND conflict=1)") suspend fun hasNightConflict(user:Long,id:String):Boolean
+    @Query("SELECT * FROM outbox WHERE userId=:user AND sessionId=:id ORDER BY sequence") suspend fun sessionMutations(user:Long,id:String):List<OutboxMutation>
     @Query("SELECT COUNT(*) FROM outbox WHERE userId=:user AND sessionId=:id") suspend fun pendingCount(user: Long, id: String): Int
     @Query("DELETE FROM outbox WHERE userId=:user AND mutationId=:id") suspend fun acknowledge(user: Long, id: String)
     @Query("DELETE FROM outbox WHERE userId=:user AND sessionId=:id") suspend fun removeSessionMutations(user: Long, id: String)

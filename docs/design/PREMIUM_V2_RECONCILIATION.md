@@ -7,7 +7,7 @@ The branch-only diff from the common ancestor has20 Compose presentation files p
 | Area | Queue task | Reconciliation decision / validation |
 |---|---|---|
 | Shared premium primitives/motion/docs |21.1|Scoped implementation accepted:47 JVM/build/lint; Arabic7/English8 component+regression and physical main API1; caller/system reduction/draft/contrast/large-font checks. Target commit recorded in next receipt |
-| Night conflict/recovery surface |02.5,21.8|Preserve ProtectedRead, ciphertext/pending records and new conflict logic before presentation |
+| Night conflict/recovery surface |02.5,21.8|02.5 verified:47 JVM/build/lint/305 resources; Arabic10/English15 and main API1 physical PASS; reviewed captures. Reconciles history hero/surface and section motion with durable409 review; retain ProtectedRead and pending ciphertext. Hero scrolls rather than occupying a tall fixed header. Large/short-height review adapts to one scrollable native full-height surface; broader21.8 remains open |
 | Watch/account unreadable state |02.6|Preserve current checkpoint and owner guards; do not replace whole older files |
 | Home/navigation |21.2|Retain current routes/owner bindings/three-item upcoming query |
 | Auth/account |07.1,21.3|Retain02.4 generation boundaries, OTP normalization and immediate verified-access removal |

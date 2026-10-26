@@ -1,3 +1,9 @@
+## Task02.5 — durable Night Prayer conflict review
+
+Final gate `night-conflict-lazy-editor-build.log` PASS (3m9s):47 JVM cases (zero failures/errors), production/test APK and lint.305 paired resources; healthy/fixture development schema read-only15 migrations/34 tables PASS. Final API27 Arabic10/10 PASS (40.129s), English15/15 PASS (56.948s), main8002 API1/1 PASS (5.333s). Real Room/Keystore, actual fixture HTTP/cancel/stale review/device/account/delete/recreation/landscape, dark150–200-percent error/review, retained editor and protected reader/counter/storage/worker regressions. Owned Arabic/English review/landscape captures inspected. No account/application reset, real-key invalidation or real email send.
+
+Earlier failures remain evidence: initial200-percent action-footer defect fixed with adaptive full-height native review; indentation lint failure fixed without suppression; first English14-case candidate2 failures (lazy-row scroll/resource localization), focused correction2/2 passed. Later English15-case candidate1 failure because warning insertion moved the note outside lazy composition; direct child scroll also failed. Final test scrolls the lazy parent to compose its note and proves retained text/disabled Save. The interrupted direct-scroll run is not a completed regression pass. Backend source/schema unchanged; previous20,000 assertion baseline is not represented as rerun. Secret/history review found no findings. Full OS network restoration/reboot, tablet/TalkBack/release-jank and complete timer/editor/privacy lifecycle remain separate gates.
+
 # Verification report
 
 ## Task21.1 — premium shared primitives and motion

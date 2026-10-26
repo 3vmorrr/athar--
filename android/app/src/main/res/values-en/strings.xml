@@ -177,4 +177,17 @@
     <string name="upcoming_book_pages">Pages %1$d–%2$d</string>
     <string name="upcoming_preview_unavailable">Lesson preview unavailable</string>
     <string name="local_data_unreadable">Some saved data on this device could not be read. It has been kept unchanged, and your progress has not been reset. Try again.</string>
+<string name="night_review_conflict">Review pending change</string>
+<string name="night_pending_delete">Session deletion awaiting review</string>
+<string name="night_device_version">Device version</string>
+<string name="night_account_version">Account version</string>
+<string name="night_keep_device">Keep device change</string>
+<string name="night_keep_account">Use account version</string>
+<string name="night_save_copy">Save device version as a new session</string>
+<string name="night_deleted_version">This session is deleted in this version.</string>
+<string name="night_review_notice">Review both versions before choosing. Only this session’s pending changes will be replaced; other sessions stay unchanged.</string>
+<string name="night_copy_explanation">The session was deleted from your account. You can keep the device change as a new session without restoring the deleted session.</string>
+<string name="night_review_changed">A version changed during review. Reload both before choosing; your device changes are still saved.</string>
+<string name="night_review_duration">Recorded duration: %1$d seconds</string>
+<string name="night_edit_conflict">Another change arrived for this session. Your draft is still here; close this form and review the pending change before saving.</string>
 </resources>

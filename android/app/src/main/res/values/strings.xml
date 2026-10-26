@@ -205,4 +205,17 @@
     <string name="upcoming_book_pages">من الصفحة %1$d إلى الصفحة %2$d</string>
     <string name="upcoming_preview_unavailable">صورة الدرس غير متاحة</string>
     <string name="local_data_unreadable">تعذّرت قراءة بعض البيانات المحفوظة على هذا الجهاز. أبقيناها دون تغيير، ولم نعد ضبط تقدمك. أعد المحاولة.</string>
+<string name="night_review_conflict">مراجعة التعديل المعلّق</string>
+<string name="night_pending_delete">حذف جلسة بانتظار المراجعة</string>
+<string name="night_device_version">نسخة الجهاز</string>
+<string name="night_account_version">نسخة الحساب</string>
+<string name="night_keep_device">الاحتفاظ بتعديل الجهاز</string>
+<string name="night_keep_account">استخدام نسخة الحساب</string>
+<string name="night_save_copy">حفظ نسخة جديدة من الجهاز</string>
+<string name="night_deleted_version">هذه الجلسة محذوفة في هذه النسخة.</string>
+<string name="night_review_notice">راجع النسختين قبل اختيارك. ستُستبدل التعديلات المعلّقة لهذه الجلسة فقط، ولن تتغير الجلسات الأخرى.</string>
+<string name="night_copy_explanation">حُذفت الجلسة من الحساب. يمكنك الاحتفاظ بتعديل الجهاز كجلسة جديدة دون استعادة الجلسة المحذوفة.</string>
+<string name="night_review_changed">تغيرت إحدى النسختين أثناء المراجعة. أعد تحميلهما قبل الاختيار؛ تعديلات الجهاز ما زالت محفوظة.</string>
+<string name="night_review_duration">المدة المسجّلة: %1$d ثانية</string>
+<string name="night_edit_conflict">وصل تعديل آخر لهذه الجلسة. نصك المكتوب ما زال هنا؛ أغلق النموذج وراجع التعديل المعلّق قبل الحفظ.</string>
 </resources>

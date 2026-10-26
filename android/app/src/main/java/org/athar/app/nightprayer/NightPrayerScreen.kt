@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -24,31 +25,64 @@ import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import java.time.*
 
-data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = emptyList(), val busy: Boolean = false, val error: Boolean = false, val conflicts: Int = 0,val loading:Boolean=true,val unreadable:Boolean=false)
+data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = emptyList(), val busy: Boolean = false, val error: Boolean = false,
+    val conflictRows:List<NightConflict> = emptyList(),val loading:Boolean=true,val unreadable:Boolean=false,
+    val reviewId:String?=null,val review:NightConflictReview?=null,val reviewLoading:Boolean=false,val reviewError:Boolean=false,val reviewChanged:Boolean=false,val reviewLocalError:Boolean=false){
+    val conflicts:Int get()=conflictRows.size
+}
 class NightViewModel(val graph: AppGraph) : ViewModel() {
     private val user = requireNotNull(graph.session.userId)
     private val mutable = MutableStateFlow(NightUiState())
     val state = mutable.asStateFlow()
     private var observation:Job?=null
+    private var reviewJob:Job?=null
     init { retryLocal() }
     fun retryLocal(){
         observation?.cancel()
         mutable.value=mutable.value.copy(loading=true,unreadable=false)
-        observation=viewModelScope.launch { graph.nightPrayer.observe(user).protectedReads().collect {
+        observation=viewModelScope.launch { combine(graph.nightPrayer.observe(user),graph.nightPrayer.observeConflicts(user)){rows,conflicts->rows to conflicts}.protectedReads().collect {
             when(it){
-                is ProtectedRead.Ready->mutable.value=mutable.value.copy(rows=it.value,loading=false,unreadable=false)
-                ProtectedRead.Unreadable->mutable.value=mutable.value.copy(rows=emptyList(),loading=false,unreadable=true)
+                is ProtectedRead.Ready->mutable.value=mutable.value.copy(rows=it.value.first,conflictRows=it.value.second,loading=false,unreadable=false)
+                ProtectedRead.Unreadable->{reviewJob?.cancel();mutable.value=mutable.value.copy(rows=emptyList(),conflictRows=emptyList(),reviewId=null,review=null,loading=false,unreadable=true)}
                 ProtectedRead.Loading->Unit
             }
         } }
     }
-    fun sync() = operation { mutable.value = mutable.value.copy(conflicts = graph.nightPrayer.sync()) }
-    fun save(payload: JsonObject, id: String?, done: () -> Unit) = operation { if (id == null) graph.nightPrayer.save(payload) else graph.nightPrayer.save(payload, id); done() }
-    fun delete(id: String) = operation { graph.nightPrayer.delete(id) }
-    fun useServer(id: String) = operation { graph.nightPrayer.useServer(id); mutable.value = mutable.value.copy(conflicts = 0) }
+    fun sync() = operation { graph.nightPrayer.sync(user) }
+    fun save(payload: JsonObject, id: String?, done: () -> Unit) = operation { if (id == null) graph.nightPrayer.save(payload,expectedOwner=user) else graph.nightPrayer.save(payload, id,user); done() }
+    fun delete(id: String) = operation { graph.nightPrayer.delete(id,user) }
+    fun review(id:String){
+        if(mutable.value.busy||mutable.value.loading||mutable.value.unreadable||graph.session.userId!=user)return
+        reviewJob?.cancel()
+        mutable.value=mutable.value.copy(reviewId=id,review=null,reviewLoading=true,reviewError=false,reviewChanged=false,reviewLocalError=false)
+        reviewJob=viewModelScope.launch{
+            try{val result=graph.nightPrayer.reviewConflict(id,user);if(mutable.value.reviewId==id)mutable.value=mutable.value.copy(review=result,reviewLoading=false)}
+            catch(failure:CancellationException){throw failure}
+            catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(reviewLoading=false,reviewError=true,reviewLocalError=true)}
+            catch(_:Exception){mutable.value=mutable.value.copy(reviewLoading=false,reviewError=true)}
+        }
+    }
+    fun closeReview(){if(!mutable.value.busy){reviewJob?.cancel();mutable.value=mutable.value.copy(reviewId=null,review=null,reviewLoading=false,reviewError=false,reviewChanged=false,reviewLocalError=false)}}
+    fun resolve(choice:NightConflictChoice){
+        val selected=mutable.value.review?:return
+        if(mutable.value.busy||mutable.value.unreadable||mutable.value.loading||graph.session.userId!=user)return
+        viewModelScope.launch{
+            mutable.value=mutable.value.copy(busy=true,reviewError=false,reviewChanged=false,reviewLocalError=false,error=false)
+            try{
+                graph.nightPrayer.resolveConflict(selected,choice)
+                mutable.value=mutable.value.copy(reviewId=null,review=null)
+                try{graph.nightPrayer.sync(user)}catch(failure:CancellationException){throw failure}catch(_:Exception){mutable.value=mutable.value.copy(error=true)}
+            }catch(failure:CancellationException){throw failure}
+            catch(_:NightConflictChanged){mutable.value=mutable.value.copy(review=null,reviewChanged=true)}
+            catch(_:NightRetainedUnreadable){mutable.value=mutable.value.copy(reviewError=true,reviewLocalError=true)}
+            catch(_:Exception){mutable.value=mutable.value.copy(reviewError=true)}
+            finally{mutable.value=mutable.value.copy(busy=false)}
+        }
+    }
     private fun operation(block: suspend () -> Unit) {
-        if (mutable.value.busy||mutable.value.loading||mutable.value.unreadable) return
+        if (mutable.value.busy||mutable.value.loading||mutable.value.unreadable||graph.session.userId!=user) return
         viewModelScope.launch {
+            if(graph.session.userId!=user)return@launch
             mutable.value = mutable.value.copy(busy = true, error = false)
             try { block() } catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
             finally { mutable.value = mutable.value.copy(busy = false) }
@@ -65,7 +99,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
             FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
         }
-        Box(Modifier.weight(1f)) { when(section) { "tools" -> NightToolsScreen(graph); "calendar" -> NightCalendarScreen(vm); else -> NightHistoryScreen(graph) } }
+        AtharPageTransition(section,Modifier.weight(1f)){when(it){"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph)}}
     }
 }
 
@@ -78,9 +112,13 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     var form by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<String?>(null) }
     val totals = remember(state.rows) { state.rows.groupBy { it.first.nightDate }.mapValues { (_, list) -> list.sumOf { it.first.verseCount } } }
-    LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "heading", contentType = "heading") { Text(stringResource(R.string.night_prayer), style = MaterialTheme.typography.headlineMedium); Text(stringResource(R.string.night_intro)) }
-        item(key = "summary", contentType = "summary") { ElevatedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    val conflictedIds=remember(state.conflictRows){state.conflictRows.map{it.local.id}.toSet()}
+    LazyColumn(Modifier.testTag("night-history-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item(key = "heading", contentType = "heading") { AtharHeroSurface(Modifier.fillMaxWidth()){
+            Text(stringResource(R.string.night_prayer),style=MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.night_intro),style=MaterialTheme.typography.bodyMedium)
+        } }
+        item(key = "summary", contentType = "summary") { Surface(Modifier.fillMaxWidth(),shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.surfaceContainerLow,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.night_totals, totals.size, totals.values.sum()), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.night_self_report), style = MaterialTheme.typography.bodySmall)
             val pace = NightRules.pace(state.rows.mapNotNull { row -> row.first.measuredSeconds?.let { row.first.verseCount to it } })
@@ -93,6 +131,12 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         if (state.busy) item(key = "busy", contentType = "progress") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
         if (state.error) item(key = "error", contentType = "feedback") { FailurePanel(null, vm::sync) }
         if (state.conflicts > 0) item(key = "conflict", contentType = "feedback") { MessagePanel(stringResource(R.string.night_conflict), true) }
+        items(state.conflictRows.filter{it.local.deleted},key={"deleted-conflict:${it.local.id}"},contentType={"deleted-conflict"}){conflict->
+            OutlinedCard(Modifier.fillMaxWidth()){Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
+                Text(stringResource(R.string.night_pending_delete),style=MaterialTheme.typography.titleMedium)
+                TextButton(onClick={vm.review(conflict.local.id)},enabled=!state.busy,modifier=Modifier.testTag("night-conflict-${conflict.local.id}")){Text(stringResource(R.string.night_review_conflict))}
+            }}
+        }
         if (state.rows.isEmpty()) item(key = "empty", contentType = "empty") { Text(stringResource(R.string.night_empty)) }
         items(state.rows, key = { it.first.id }, contentType = { "session" }) { (local, body) ->
             OutlinedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -101,20 +145,22 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 if (body.text("entry_type") == "range") Text("${body.text("start_index")} – ${body.text("end_index")}", style = MaterialTheme.typography.labelMedium)
                 if (body.text("note").isNotBlank()) Text(body.text("note"))
                 Text(stringResource(if (local.dirty) R.string.night_pending else R.string.night_synced), style = MaterialTheme.typography.bodySmall)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = { editing = local to body; form = true }, enabled = !state.busy) { Text(stringResource(R.string.edit)) }
-                    TextButton(onClick = { deleting = local.id }, enabled = !state.busy) { Text(stringResource(R.string.delete_action), color = MaterialTheme.colorScheme.error) }
-                    if (state.conflicts > 0 && local.dirty) TextButton(onClick = { vm.useServer(local.id) }) { Text(stringResource(R.string.use_server)) }
+                val conflicted=local.id in conflictedIds
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = { editing = local to body; form = true }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.edit)) }
+                    TextButton(onClick = { deleting = local.id }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.delete_action), color = MaterialTheme.colorScheme.error) }
+                    if(conflicted)TextButton(onClick={vm.review(local.id)},enabled=!state.busy,modifier=Modifier.testTag("night-conflict-${local.id}")){Text(stringResource(R.string.night_review_conflict))}
                 }
             } }
         }
         item(key = "source", contentType = "source") { Text(stringResource(R.string.night_source), style = MaterialTheme.typography.bodySmall) }
     }
-    if (form) NightEntryDialog(graph, editing, state.busy, { form = false }) { payload -> vm.save(payload, editing?.first?.id) { form = false } }
+    if (form) NightEntryDialog(graph, editing, state.busy, editing?.first?.id in conflictedIds, { form = false }) { payload -> vm.save(payload, editing?.first?.id) { form = false } }
+    if(state.reviewId!=null)NightConflictDialog(state,vm::closeReview,{state.reviewId?.let(vm::review)},vm::resolve)
     if (deleting != null) AlertDialog(onDismissRequest = { deleting = null }, title = { Text(stringResource(R.string.delete_action)) }, text = { Text(stringResource(R.string.night_delete_confirmation)) }, confirmButton = { TextButton(onClick = { deleting?.let(vm::delete); deleting = null }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } })
 }
 
-@Composable private fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
+@Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
     val initial = editing?.second
     var date by remember { mutableStateOf(initial?.text("night_date") ?: LocalDate.now().toString()) }
     var zone by remember { mutableStateOf(initial?.text("timezone") ?: NightRules.serverTimezone(ZoneId.systemDefault())) }
@@ -131,7 +177,8 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         startSurah = "${start.surah}"; startAyah = "${start.ayah}"; endSurah = "${end.surah}"; endAyah = "${end.ayah}"
     } }
     AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(if (editing == null) R.string.night_add else R.string.edit)) }, text = {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        LazyColumn(Modifier.testTag("night-entry-fields"),verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if(conflicted)item{Text(stringResource(R.string.night_edit_conflict),color=MaterialTheme.colorScheme.error)}
             item { Text(stringResource(R.string.night_date_explanation)); DateField(date, { date = it }, stringResource(R.string.night_date), latest = LocalDate.now()) }
             item { OutlinedTextField(zone, { zone = it.take(80) }, label = { Text(stringResource(R.string.timezone)) }, singleLine = true) }
             item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(!range, { range = false }, label = { Text(stringResource(R.string.night_manual_count)) }); FilterChip(range, { range = true }, label = { Text(stringResource(R.string.night_range)) }) } }
@@ -142,7 +189,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             item { OutlinedTextField(note, { note = it.take(1000) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.private_note)) }, maxLines = 4) }
             if (error) item { Text(stringResource(R.string.invalid_input), color = MaterialTheme.colorScheme.error) }
         }
-    }, confirmButton = { TextButton(enabled = !busy && !submitting, onClick = {
+    }, confirmButton = { TextButton(enabled = !busy && !submitting&&!conflicted, onClick = {
         submitting = true; scope.launch {
             try {
                 val parsed = LocalDate.parse(date); val tz = ZoneId.of(zone); require(parsed <= LocalDate.now(tz) && parsed.year >= 1900)

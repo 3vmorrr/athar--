@@ -1,6 +1,10 @@
 # Night Prayer
 Status: backend service and native encrypted offline foundation tested; complete feature acceptance remains in progress. Requirements below remain mandatory unless marked implemented with evidence.
 
+## Conflict resolution increment
+
+Task02.5 provides durable explicit device/account review, safe stale/deletion/copy handling and retained-ciphertext/owner protection. Arabic10/English15 physical task/regression cases, main API1,47 JVM/build/lint/305 resources pass. See [conflict scope and limits](NIGHT_PRAYER_CONFLICTS.md). This does not complete the timer/editor/insights/notification roadmap.
+
 ## Calendar implementation increment
 
 The native calendar derives its daily and monthly totals from the signed-in user's locally stored sessions, including pending edits, without creating synthetic sessions or estimating missing worship. Users can move by month, select a day and inspect its recorded sessions. A seven-column calendar is used only when48dp day targets fit; narrow or large-text layouts use a dated agenda. Empty dates are described neutrally. Local-only exemptions may be shown on-device and must never enter synchronization bodies. Calendar display is distinct from astronomical night-boundary calculation and must not claim that a blank date is a missed obligation. Leap-year month length and neutral daily aggregation are covered by JVM tests. Focused real-HTTP UI cases cover opening/returning from the calendar in Arabic/English and large-font agenda layout. Complete historical/yearly analytics, reminders and physical-device acceptance remain open.
