@@ -113,3 +113,30 @@ class NightVersePlanRepository(
         }
     }
 }
+
+/**
+ * Finds the first verse in [plan] not covered by explicitly recorded range sessions.
+ * Gaps are never skipped, so a later recorded range cannot silently advance continuation.
+ * Returns null only when the whole planned range is explicitly covered.
+ */
+fun nightPlanContinuationIndex(
+    plan: NightVersePlan,
+    completedRanges: List<IntRange>,
+): Int? {
+    var next = plan.startIndex
+    completedRanges
+        .mapNotNull { range ->
+            val start = maxOf(range.first, plan.startIndex)
+            val end = minOf(range.last, plan.endIndex)
+            if (start <= end) start..end else null
+        }
+        .sortedBy { it.first }
+        .forEach { range ->
+            if (range.first > next) return next
+            if (range.last >= next) {
+                next = range.last + 1
+            }
+            if (next > plan.endIndex) return null
+        }
+    return next.takeIf { it <= plan.endIndex }
+}
