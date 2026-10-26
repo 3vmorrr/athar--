@@ -633,12 +633,29 @@ private fun NightSessionDetailFields(body: JsonObject) {
         }
 
         body.text("boundary_source").takeIf { it.isNotBlank() }?.let { source ->
+            val sourceLabel = stringResource(
+                if (source == "calculated") {
+                    R.string.night_boundary_calculated
+                } else {
+                    R.string.night_boundary_manual
+                },
+            )
             val method = body.text("calculation_method")
+            val methodLabel = when (method) {
+                "EGYPTIAN" -> stringResource(R.string.method_egyptian)
+                "MUSLIM_WORLD_LEAGUE" -> stringResource(R.string.method_mwl)
+                "UMM_AL_QURA" -> stringResource(R.string.method_umm_al_qura)
+                "KARACHI" -> stringResource(R.string.method_karachi)
+                "DUBAI" -> stringResource(R.string.method_dubai)
+                "MOON_SIGHTING_COMMITTEE" ->
+                    stringResource(R.string.method_moonsighting)
+                else -> "—"
+            }
             Text(
                 stringResource(
                     R.string.night_boundary_context,
-                    source,
-                    method.ifBlank { "—" },
+                    sourceLabel,
+                    methodLabel,
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
