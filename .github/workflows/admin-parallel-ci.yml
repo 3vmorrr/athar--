@@ -1,0 +1,104 @@
+name: Parallel Admin 17.1 acceptance
+
+on:
+  push:
+    branches:
+      - parallel/admin-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  admin-auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    env:
+      ATHAR_LOAD_DOTENV: "0"
+      APP_ENV: local
+      ATHAR_DB_HOST: 127.0.0.1
+      ATHAR_DB_PORT: "3306"
+      ATHAR_DB_NAME: athar_test_native_aaaaaaaaaaaa
+      ATHAR_DB_USER: root
+      ATHAR_DB_PASSWORD: root
+      ATHAR_AUTH_KEY: "1111111111111111111111111111111111111111111111111111111111111111"
+      ATHAR_TEST_HTTP_PORT: "8004"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring
+          coverage: none
+
+      - name: Static syntax gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l admin/auth.php
+          php -l admin/Views/login.php
+          php -l public/index.php
+          php -l app/Views/pages/admin.php
+          python3 -m py_compile tests/admin_auth_http_test.py
+
+      - name: Prepare isolated database
+        shell: bash
+        run: |
+          set -euo pipefail
+          mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS \`${ATHAR_DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+          php -r "require 'backend/bootstrap.php'; \\Athar\\Infrastructure\\MigrationRunner::apply(\\Athar\\Infrastructure\\Database::connect(), 'database/migrations');"
+          mkdir -p storage/engineering
+          python3 - <<'PY'
+          import json, os, pathlib
+          state = {
+              "database": os.environ["ATHAR_DB_NAME"],
+              "user": os.environ["ATHAR_DB_USER"],
+              "password": os.environ["ATHAR_DB_PASSWORD"],
+              "host": os.environ["ATHAR_DB_HOST"],
+              "port": int(os.environ["ATHAR_DB_PORT"]),
+              "fixture_only": True,
+          }
+          pathlib.Path("storage/engineering/native-fixture.json").write_text(json.dumps(state))
+          PY
+
+      - name: Start isolated PHP server
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -S 127.0.0.1:${ATHAR_TEST_HTTP_PORT} -t public public/router.php > /tmp/athar-admin-http.log 2>&1 &
+          echo $! > /tmp/athar-admin-http.pid
+          for attempt in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:${ATHAR_TEST_HTTP_PORT}/admin/login" >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/athar-admin-http.log
+          exit 1
+
+      - name: Admin authentication HTTP acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/admin_auth_http_test.py
+
+      - name: Server log on failure
+        if: failure()
+        shell: bash
+        run: |
+          cat /tmp/athar-admin-http.log || true
