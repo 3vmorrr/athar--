@@ -14,11 +14,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.athar.app.AppGraph
 import org.athar.app.R
+import org.athar.app.core.data.CachedResult
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.ui.*
@@ -34,6 +41,7 @@ fun AdhkarScreen(graph: AppGraph) {
     var reachedEnd by rememberSaveable(category, searchQuery, page) {
         mutableStateOf(false)
     }
+    var statsRevision by rememberSaveable { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     val entriesScroll = rememberLazyListState()
@@ -93,6 +101,11 @@ fun AdhkarScreen(graph: AppGraph) {
                             Text(stringResource(R.string.search))
                         }
                     }
+
+                    AdhkarStatsPanel(
+                        graph = graph,
+                        revision = statsRevision,
+                    )
 
                     Box(Modifier.weight(1f)) {
                         val parameters = buildMap {
@@ -232,6 +245,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                                                                 target,
                                                                                 owner,
                                                                             )
+                                                                            statsRevision++
                                                                         } catch (failure: CancellationException) {
                                                                             throw failure
                                                                         } catch (_: Exception) {
@@ -248,6 +262,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                                                     scope.launch {
                                                                         try {
                                                                             graph.counters.sync(owner)
+                                                                            statsRevision++
                                                                         } catch (failure: CancellationException) {
                                                                             throw failure
                                                                         } catch (_: Exception) {
@@ -284,6 +299,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                                                 page == originalPage &&
                                                                 position == index
                                                             ) {
+                                                                statsRevision++
                                                                 advance()
                                                             }
                                                         } catch (failure: CancellationException) { throw failure }
@@ -316,5 +332,178 @@ fun AdhkarScreen(graph: AppGraph) {
             }
         }
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
+    }
+}
+private data class AdhkarStatsUiState(
+    val loading: Boolean = true,
+    val result: CachedResult? = null,
+    val pendingCompletions: Int = 0,
+    val error: Boolean = false,
+)
+
+private class AdhkarStatsViewModel(
+    private val graph: AppGraph,
+    private val owner: Long,
+) : ViewModel() {
+    private val mutable = MutableStateFlow(AdhkarStatsUiState())
+    val state = mutable.asStateFlow()
+
+    fun load() {
+        viewModelScope.launch {
+            mutable.value = mutable.value.copy(loading = true, error = false)
+            try {
+                graph.session.requireVerifiedOwner(owner)
+                val result = graph.content.get("me/adhkar-stats")
+                val pending = graph.counters.pendingCompletionCount(owner, owner)
+                graph.session.requireVerifiedOwner(owner)
+                mutable.value = AdhkarStatsUiState(
+                    loading = false,
+                    result = result,
+                    pendingCompletions = pending,
+                )
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                mutable.value = mutable.value.copy(
+                    loading = false,
+                    error = true,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AdhkarStatsPanel(
+    graph: AppGraph,
+    revision: Int,
+) {
+    val owner = requireNotNull(graph.session.userId)
+    val vm: AdhkarStatsViewModel = viewModel(
+        key = "adhkar-stats:$owner",
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                AdhkarStatsViewModel(graph, owner) as T
+        },
+    )
+    val state by vm.state.collectAsStateWithLifecycle()
+    LaunchedEffect(owner, revision) { vm.load() }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AtharSpacing.Lg),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant,
+        ),
+    ) {
+        Column(
+            Modifier.padding(AtharSpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            AtharSectionHeader(
+                title = stringResource(R.string.adhkar_statistics),
+                actionLabel = stringResource(R.string.retry),
+                onAction = vm::load,
+            )
+
+            when {
+                state.loading && state.result == null -> {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                }
+                state.result != null -> {
+                    val data = state.result!!.data
+                    if (state.result!!.offline) {
+                        AtharStatusPill(stringResource(R.string.offline_notice))
+                    }
+                    FlowRow(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        AtharMetric(
+                            value = data.text("today_completions").ifBlank { "0" },
+                            label = stringResource(R.string.adhkar_today_completions),
+                            modifier = Modifier.weight(1f).widthIn(min = 96.dp),
+                        )
+                        AtharMetric(
+                            value = data.text("total_completions").ifBlank { "0" },
+                            label = stringResource(R.string.adhkar_total_completions),
+                            modifier = Modifier.weight(1f).widthIn(min = 96.dp),
+                        )
+                        AtharMetric(
+                            value = data.text("active_days").ifBlank { "0" },
+                            label = stringResource(R.string.adhkar_active_days),
+                            modifier = Modifier.weight(1f).widthIn(min = 96.dp),
+                        )
+                    }
+
+                    if (state.pendingCompletions > 0) {
+                        AtharStatusPill(
+                            stringResource(
+                                R.string.adhkar_pending_completions,
+                                state.pendingCompletions,
+                            ),
+                            emphasized = true,
+                        )
+                    }
+
+                    val categories = data.array("categories")
+                    if (categories.isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                            categories.take(4).forEach { row ->
+                                val current = row.text("current_count").toIntOrNull() ?: 0
+                                val target = row.text("target_count").toIntOrNull() ?: 0
+                                val progress = if (target > 0) {
+                                    (current.toFloat() / target).coerceIn(0f, 1f)
+                                } else {
+                                    0f
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                                ) {
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Text(
+                                            row.text("category"),
+                                            style = MaterialTheme.typography.labelLarge,
+                                        )
+                                        Text(
+                                            stringResource(
+                                                R.string.adhkar_category_items,
+                                                row.text("completed_items").toIntOrNull() ?: 0,
+                                                row.text("item_count").toIntOrNull() ?: 0,
+                                            ),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    LinearProgressIndicator(
+                                        progress = { progress },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    MessagePanel(
+                        stringResource(R.string.network_error),
+                        true,
+                    ) {
+                        TextButton(onClick = vm::load) {
+                            Text(stringResource(R.string.retry))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
