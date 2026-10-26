@@ -1,5 +1,11 @@
 # Engineering change log
 
+## 2026-10-27 — WP16 and Admin-track reconciliation
+
+- Landed 16.4 privacy-safe notification diagnostics at `192fb0054149`.
+- Reconciled pre-existing WP17–20 branch implementation to PARTIAL/acceptance-pending based on actual Admin/Engagement source and PARALLEL_ADMIN_TRACK.
+- Kept 20.5 blocked on authorized Gmail proof and moved the executable implementation pointer to 21.19.
+
 ## 2026-10-27 — engagement/reminder/push/inbox execution reconciliation
 
 - Reconciled progress metadata to verified branch head `65c5f551845227a9be55926ee92750031021bb01`.

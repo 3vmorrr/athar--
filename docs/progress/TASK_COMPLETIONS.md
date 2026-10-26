@@ -28,8 +28,11 @@ These are **not COMPLETE receipts**. They prove code landed on `parallel/admin-f
 |16.1|65c5f5518452|PARTIAL|
 |16.2|d520fb169cc9|PARTIAL|
 |16.3|2c3c988733f9|PARTIAL|
+|16.4|192fb0054149|PARTIAL|
 
-Next implementation: **16.4**.
+Pre-existing WP17–20 implementation on this branch is tracked in `PARALLEL_ADMIN_TRACK.md`; those tasks are PARTIAL/acceptance-pending, not COMPLETE. 20.5 remains BLOCKED.
+
+Next implementation: **21.19**.
 
 Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 

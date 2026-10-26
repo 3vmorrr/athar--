@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **16.4**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **21.19**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -900,7 +900,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 16.4 — Notification policy diagnostics
 
-- Parent: Work package 16: Inbox/policy; state: **NOT STARTED**; dependencies: 16.3.
+- Parent: Work package 16: Inbox/policy; state: **PARTIAL**; dependencies: 16.3.
 - Exact scope: Expose privacy-safe policy outcomes/preferences and delivery status without worship notes/dates/audiences.
 - Files/modules: backend/src/Engagement/ (new); android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: TTL/frequency/dedup/redaction/ownership tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -910,7 +910,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 17.1 — Independent Admin authentication
 
-- Parent: Work package 17: Independent Admin foundation; state: **NOT STARTED**; dependencies: 02.4.
+- Parent: Work package 17: Independent Admin foundation; state: **PARTIAL**; dependencies: 02.4.
 - Exact scope: Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections.
 - Files/modules: admin/ (new); backend/src/Identity/.
 - Automated gates: HTTP session/CSRF/fixation/denial/logout tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -920,7 +920,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 17.2 — Independent Admin bilingual shell
 
-- Parent: Work package 17: Independent Admin foundation; state: **NOT STARTED**; dependencies: 17.1.
+- Parent: Work package 17: Independent Admin foundation; state: **PARTIAL**; dependencies: 17.1.
 - Exact scope: Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign.
 - Files/modules: admin/ (new).
 - Automated gates: Routes/RTL/LTR/keyboard/focus/phone/tablet shell tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1050,7 +1050,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.9 — Admin public Night Prayer defaults
 
-- Parent: Work package 18: Admin content/services; state: **NOT STARTED**; dependencies: 18.8.
+- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.8.
 - Exact scope: Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions.
 - Files/modules: admin/ (new); backend/src/NightPrayer/.
 - Automated gates: Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1060,7 +1060,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.1 — Push campaign composer and preview
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 18.9.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 18.9.
 - Exact scope: Build localized draft/preview/test-recipient workflow with explicit final-send confirmation.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: Draft/escaping/payload/role/confirmation/no implicit send tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1070,7 +1070,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.2 — Consent-safe campaign audiences
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.1.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.1.
 - Exact scope: Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices.
 - Files/modules: backend/src/Engagement/ (new); admin/ (new).
 - Automated gates: Audience opt-in/unfollow/withdrawal/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1080,7 +1080,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.3 — Push campaign queue and cancellation
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.2.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.2.
 - Exact scope: Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send.
 - Files/modules: backend/src/Engagement/ (new); bin/; database/migrations/.
 - Automated gates: Fake provider races/retry/cancel/quotas/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1090,7 +1090,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.4 — Campaign history and delivery analytics
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.3.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.3.
 - Exact scope: Expose permitted counts/status/reasons and audit without sensitive recipient payloads.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: RBAC/redaction/paging/reconciliation/retry counts tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

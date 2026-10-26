@@ -16,6 +16,10 @@ Integration target: `codex/android-ecosystem`
 Observed target head during final static review: `ddec0d350776dba293bbc60a5e8e61424f4434a9`  
 Common merge base: `5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e`
 
+## Queue reconciliation after WP16
+
+On 2026-10-27 the executable queue was reconciled again after WP16. Existing WP17–20 code documented below is represented as PARTIAL / implementation landed / acceptance pending. 20.5 stays BLOCKED. The next independent implementation task is 21.19; do not restart Admin/campaign/email code merely because older queue rows said NOT STARTED.
+
 ## Status rule
 
 Nothing in this document is a runtime PASS unless a test report says so. This

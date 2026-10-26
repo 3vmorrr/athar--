@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "16.4",
+  "current_task": "21.19",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -1648,7 +1648,7 @@
       "name": "Notification policy diagnostics",
       "parent": "Work package 16: Inbox/policy",
       "scope": "Expose privacy-safe policy outcomes/preferences and delivery status without worship notes/dates/audiences.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "16.3"
       ],
@@ -1666,7 +1666,7 @@
       "name": "Independent Admin authentication",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "02.4"
       ],
@@ -1684,7 +1684,7 @@
       "name": "Independent Admin bilingual shell",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "17.1"
       ],
@@ -1919,7 +1919,7 @@
       "name": "Admin public Night Prayer defaults",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "18.8"
       ],
@@ -1937,7 +1937,7 @@
       "name": "Push campaign composer and preview",
       "parent": "Work package 19: Push campaigns",
       "scope": "Build localized draft/preview/test-recipient workflow with explicit final-send confirmation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "18.9"
       ],
@@ -1955,7 +1955,7 @@
       "name": "Consent-safe campaign audiences",
       "parent": "Work package 19: Push campaigns",
       "scope": "Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "19.1"
       ],
@@ -1973,7 +1973,7 @@
       "name": "Push campaign queue and cancellation",
       "parent": "Work package 19: Push campaigns",
       "scope": "Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "19.2"
       ],
@@ -1992,7 +1992,7 @@
       "name": "Campaign history and delivery analytics",
       "parent": "Work package 19: Push campaigns",
       "scope": "Expose permitted counts/status/reasons and audit without sensitive recipient payloads.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "19.3"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "2c3c988733f9fc090649b8dc601f4ff8137c17f8",
-    "last_landed_task": "16.3",
-    "next_task": "16.4",
+    "head": "192fb0054149e23af196557bb5d4866c1818be08",
+    "last_landed_task": "16.4",
+    "next_task": "21.19",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2796,7 +2796,31 @@
       "15.2",
       "16.1",
       "16.2",
-      "16.3"
+      "16.3",
+      "16.4",
+      "17.1",
+      "17.2",
+      "17.3",
+      "17.4",
+      "17.5",
+      "17.6",
+      "18.1",
+      "18.2",
+      "18.3",
+      "18.4",
+      "18.5",
+      "18.6",
+      "18.7",
+      "18.8",
+      "18.9",
+      "19.1",
+      "19.2",
+      "19.3",
+      "19.4",
+      "20.1",
+      "20.2",
+      "20.3",
+      "20.4"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2880,7 +2904,39 @@
       ],
       "16.3": [
         "2c3c988733f9"
+      ],
+      "16.4": [
+        "192fb0054149"
       ]
+    },
+    "preexisting_parallel_admin": {
+      "tasks": [
+        "17.1",
+        "17.2",
+        "17.3",
+        "17.4",
+        "17.5",
+        "17.6",
+        "18.1",
+        "18.2",
+        "18.3",
+        "18.4",
+        "18.5",
+        "18.6",
+        "18.7",
+        "18.8",
+        "18.9",
+        "19.1",
+        "19.2",
+        "19.3",
+        "19.4",
+        "20.1",
+        "20.2",
+        "20.3",
+        "20.4"
+      ],
+      "evidence": "Existing branch source plus docs/progress/PARALLEL_ADMIN_TRACK.md: independent Admin auth/shell/RBAC/user/audit/recovery, editorial CRUD/services/Night defaults, campaign composer/audience/queue/history, and email queue/campaign implementation are present; acceptance remains pending.",
+      "blocked": "20.5 Authorized Gmail inbox proof remains BLOCKED and is not skipped as complete."
     }
   }
 }
