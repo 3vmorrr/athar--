@@ -667,6 +667,44 @@ if ($path === '/admin') {
                     throw new RuntimeException('تعذر حذف التعليق: '.$moderationError->getMessage());
                 }
                 flash('تم حذف التعليق مع الاحتفاظ بسجل قرار المراجعة.'); redirect('/admin#admin-comments');
+            } elseif ($kind === 'night-prayer-defaults') {
+                $method = trim((string) ($_POST['calculation_method'] ?? ''));
+                $madhab = (string) ($_POST['madhab'] ?? 'standard');
+                $highLatitude = (string) ($_POST['high_latitude_rule'] ?? 'middle_of_night');
+                $targetRaw = trim((string) ($_POST['target_verses'] ?? '100'));
+                $target = filter_var($targetRaw, FILTER_VALIDATE_INT);
+                $sourceAr = trim((string) ($_POST['source_name_ar'] ?? ''));
+                $sourceEn = trim((string) ($_POST['source_name_en'] ?? ''));
+                $sourceUrl = trim((string) ($_POST['source_url'] ?? ''));
+                $introAr = trim((string) ($_POST['intro_ar'] ?? ''));
+                $introEn = trim((string) ($_POST['intro_en'] ?? ''));
+                if (!preg_match('/^[A-Za-z0-9 _-]{2,40}$/', $method)) throw new RuntimeException('اسم طريقة حساب المواقيت غير صالح.');
+                if (!in_array($madhab,['standard','hanafi'],true)) throw new RuntimeException('المذهب الافتراضي غير صالح.');
+                if (!in_array($highLatitude,['middle_of_night','seventh_of_night','angle_based'],true)) throw new RuntimeException('قاعدة خطوط العرض العليا غير صالحة.');
+                if ($target === false || $target < 1 || $target > 6236) throw new RuntimeException('الهدف الافتراضي للآيات يجب أن يكون من 1 إلى 6236.');
+                if (mb_strlen($sourceAr,'UTF-8') < 2 || mb_strlen($sourceAr,'UTF-8') > 120 || mb_strlen($sourceEn,'UTF-8') < 2 || mb_strlen($sourceEn,'UTF-8') > 120) throw new RuntimeException('اسم مصدر المواقيت غير صالح.');
+                if (!is_https_url($sourceUrl)) throw new RuntimeException('رابط مصدر المواقيت يجب أن يكون HTTPS.');
+                if (mb_strlen($introAr,'UTF-8') > 1200 || mb_strlen($introEn,'UTF-8') > 1200) throw new RuntimeException('النص التعريفي أطول من الحد المسموح.');
+                $nextRevision = max(1,(int)platform_setting('night_prayer_public_revision','1')) + 1;
+                db()->beginTransaction();
+                foreach ([
+                    'night_prayer_enabled'=>isset($_POST['enabled'])?'1':'0',
+                    'night_prayer_public_revision'=>(string)$nextRevision,
+                    'night_prayer_default_calculation_method'=>$method,
+                    'night_prayer_default_madhab'=>$madhab,
+                    'night_prayer_default_high_latitude_rule'=>$highLatitude,
+                    'night_prayer_default_target_verses'=>(string)$target,
+                    'night_prayer_source_name_ar'=>$sourceAr,
+                    'night_prayer_source_name_en'=>$sourceEn,
+                    'night_prayer_source_url'=>$sourceUrl,
+                    'night_prayer_intro_ar'=>$introAr,
+                    'night_prayer_intro_en'=>$introEn,
+                ] as $settingKey=>$settingValue) save_platform_setting($settingKey,$settingValue,(int)$admin['id']);
+                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')
+                    ->execute([$admin['id'],'night-prayer-public-defaults-updated','platform',(string)$nextRevision]);
+                db()->commit();
+                flash('تم حفظ الإعدادات العامة لقيام الليل. لم يتم الوصول إلى أي سجل عبادة خاص.');
+                redirect('/admin#admin-night-prayer');
             } elseif ($kind === 'gmail-settings') {
                 $gmailEmail = strtolower(trim((string) ($_POST['gmail_email'] ?? '')));
                 $smtpPassword = preg_replace('/\s+/', '', (string) ($_POST['smtp_password'] ?? '')) ?? (string) ($_POST['smtp_password'] ?? '');
@@ -1320,6 +1358,19 @@ if ($path === '/admin') {
         (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='skipped') AS recipient_skipped
         FROM email_campaigns c LEFT JOIN users u ON u.id=c.created_by ORDER BY c.id DESC LIMIT 30")->fetchAll();
     $dorarTokenConfigured = platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '';
+    $nightPrayerPublicDefaults = [
+        'enabled'=>platform_setting('night_prayer_enabled','1') !== '0',
+        'revision'=>max(1,(int)platform_setting('night_prayer_public_revision','1')),
+        'calculation_method'=>platform_setting('night_prayer_default_calculation_method','MuslimWorldLeague'),
+        'madhab'=>platform_setting('night_prayer_default_madhab','standard'),
+        'high_latitude_rule'=>platform_setting('night_prayer_default_high_latitude_rule','middle_of_night'),
+        'target_verses'=>max(1,min(6236,(int)platform_setting('night_prayer_default_target_verses','100'))),
+        'source_name_ar'=>platform_setting('night_prayer_source_name_ar','مصدر مواقيت الصلاة'),
+        'source_name_en'=>platform_setting('night_prayer_source_name_en','Prayer times source'),
+        'source_url'=>platform_setting('night_prayer_source_url','https://pray.api.islamic.network'),
+        'intro_ar'=>platform_setting('night_prayer_intro_ar','قيام الليل عبادة تطوعية، وهذه الأدوات للمساعدة في التنظيم دون حكم على العبادة.'),
+        'intro_en'=>platform_setting('night_prayer_intro_en','Night prayer is voluntary worship. These tools support planning without judging worship.'),
+    ];
     if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
     $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);
     $title='إدارة أثر';
