@@ -184,17 +184,20 @@ final class EmailOutboxService
         if($delivery<1)return false;
         $q=$this->db->prepare("SELECT r.status,r.user_id,c.status campaign_status,u.email_verified_at,u.suspended_at,u.email_marketing_opt_in,p.email_campaign_opt_in
             FROM engagement_campaign_recipients r JOIN engagement_campaigns c ON c.id=r.campaign_id JOIN users u ON u.id=r.user_id
-            JOIN engagement_channel_preferences p ON p.user_id=u.id WHERE r.id=? AND r.channel='email'");
+            LEFT JOIN engagement_channel_preferences p ON p.user_id=u.id WHERE r.id=? AND r.channel='email'");
         $q->execute([$delivery]);$row=$q->fetch();
         return (bool)$row&&$row['status']==='processing'&&in_array($row['campaign_status'],['processing','scheduled'],true)
-            &&$row['email_verified_at']!==null&&$row['suspended_at']===null&&(bool)$row['email_marketing_opt_in']&&(bool)$row['email_campaign_opt_in'];
+            &&$row['email_verified_at']!==null&&$row['suspended_at']===null&&(bool)$row['email_marketing_opt_in']
+            &&($row['email_campaign_opt_in']===null||(bool)$row['email_campaign_opt_in']);
     }
     private function emailCampaignUser(int $user): ?array
     {
-        $q=$this->db->prepare("SELECT u.id,u.email,u.email_verified_at,u.suspended_at,u.email_marketing_opt_in,p.email_campaign_opt_in,p.locale
-            FROM users u JOIN engagement_channel_preferences p ON p.user_id=u.id WHERE u.id=?");
+        $q=$this->db->prepare("SELECT u.id,u.email,u.email_verified_at,u.suspended_at,u.email_marketing_opt_in,p.email_campaign_opt_in,
+            CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='en' THEN 'en' WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='ar' THEN 'ar' ELSE COALESCE(p.locale,'ar') END locale
+            FROM users u LEFT JOIN engagement_channel_preferences p ON p.user_id=u.id WHERE u.id=?");
         $q->execute([$user]);$row=$q->fetch();
-        if(!$row||$row['email_verified_at']===null||$row['suspended_at']!==null||!(bool)$row['email_marketing_opt_in']||!(bool)$row['email_campaign_opt_in']||!filter_var($row['email'],FILTER_VALIDATE_EMAIL))return null;
+        if(!$row||$row['email_verified_at']===null||$row['suspended_at']!==null||!(bool)$row['email_marketing_opt_in']
+            ||($row['email_campaign_opt_in']!==null&&!(bool)$row['email_campaign_opt_in'])||!filter_var($row['email'],FILTER_VALIDATE_EMAIL))return null;
         return $row;
     }
     private function recipient(array $row): ?string
