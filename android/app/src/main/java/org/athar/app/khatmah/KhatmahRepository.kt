@@ -116,13 +116,18 @@ class KhatmahRepository(
         expectedOwner: Long? = session.userId,
     ): KhatmahPlanState = withContext(Dispatchers.IO) {
         val owner = session.requireVerifiedOwner(expectedOwner)
-        validateEditableDates(startDate, targetDate)
         require(completedPages in 0..604)
 
         ensureInitializedForEdit(owner)
         val next = local.withLock {
             session.requireVerifiedOwner(owner)
             val current = saved(owner)
+            validateEditableDates(
+                start = startDate,
+                target = targetDate,
+                allowPastTarget = current != null &&
+                    targetDate == current.targetDate,
+            )
             check(current?.conflict != true)
             if (current?.status == "finished") {
                 check(
@@ -446,14 +451,18 @@ class KhatmahRepository(
         require(ChronoUnit.DAYS.between(startDate, targetDate) <= 5L * 366L)
     }
 
-    private fun validateEditableDates(start: String, target: String) {
+    private fun validateEditableDates(
+        start: String,
+        target: String,
+        allowPastTarget: Boolean = false,
+    ) {
         validateStoredDates(start, target)
         val startDate = LocalDate.parse(start)
         val targetDate = LocalDate.parse(target)
         val now = today()
         require(!startDate.isBefore(now.minusYears(5)))
         require(!startDate.isAfter(now.plusYears(1)))
-        require(!targetDate.isBefore(now))
+        require(allowPastTarget || !targetDate.isBefore(now))
     }
 
     companion object {
