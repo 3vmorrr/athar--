@@ -188,6 +188,17 @@
 <string name="verse_count">عدد الآيات المقروءة</string>
 <string name="private_note">ملاحظة خاصة</string>
 <string name="night_history">جلساتي</string>
+<string name="night_history_page">صفحة %1$d من %2$d</string>
+<string name="night_show_details">عرض التفاصيل</string>
+<string name="night_hide_details">إخفاء التفاصيل</string>
+<string name="night_range_indices">نطاق المصحف: %1$s – %2$s</string>
+<string name="night_measured_duration_value">مدة مقاسة: %1$d ثانية</string>
+<string name="night_timezone_value">المنطقة الزمنية: %1$s</string>
+<string name="night_boundary_context">مصدر الحدود: %1$s · طريقة الحساب: %2$s</string>
+<string name="night_boundary_calculated">محسوبة من إعدادات الصلاة</string>
+<string name="night_boundary_manual">إدخال يدوي</string>
+<string name="night_started_at">بداية القياس: %1$s</string>
+<string name="night_ended_at">نهاية القياس: %1$s</string>
 <string name="night_tools">أدوات القيام</string>
 <string name="verse_calculator">حاسبة الآيات</string>
 <string name="target_count">العدد المستهدف</string>
