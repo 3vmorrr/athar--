@@ -105,7 +105,9 @@ fun AdhkarScreen(graph: AppGraph) {
                         val rows = catalog.array("items")
                         val more = catalog.asJsonObject["pagination"].text("has_more") == "true"
                         val index = position.coerceAtMost((rows.size - 1).coerceAtLeast(0))
-                        LaunchedEffect(selected, page, index) { entriesScroll.requestScrollToItem(0) }
+                        LaunchedEffect(category, searchQuery, page, index) {
+                            entriesScroll.requestScrollToItem(0)
+                        }
                         fun advance() {
                             if (index < rows.lastIndex) position = index + 1
                             else if (more) { page++; position = 0 }
@@ -202,10 +204,63 @@ fun AdhkarScreen(graph: AppGraph) {
                                                 var readAttempt by remember(owner,id,target){mutableIntStateOf(0)}
                                                 val stored by remember(owner,id,target,readAttempt) { graph.counters.observe(owner, id, target).protectedReads() }.collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
                                                 val counter=(stored as? ProtectedRead.Ready)?.value
+                                                val previousDayPending = counter != null &&
+                                                    !graph.counters.isCurrentDay(counter) &&
+                                                    (
+                                                        counter.pending ||
+                                                            counter.conflict ||
+                                                            counter.events.isNotEmpty()
+                                                    )
                                                 var busy by remember(owner,id) { mutableStateOf(false) }
                                                 if(stored==ProtectedRead.Unreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={readAttempt++}){Text(stringResource(R.string.retry))}}
                                                 else if(counter==null)LinearProgressIndicator(Modifier.fillMaxWidth())
                                                 if(counter!=null){
+                                                if(previousDayPending) {
+                                                    MessagePanel(
+                                                        stringResource(
+                                                            R.string.adhkar_previous_day_pending,
+                                                        ),
+                                                        true,
+                                                    ) {
+                                                        if(counter.conflict) {
+                                                            TextButton(
+                                                                onClick = {
+                                                                    scope.launch {
+                                                                        try {
+                                                                            graph.counters.useServer(
+                                                                                id,
+                                                                                target,
+                                                                                owner,
+                                                                            )
+                                                                        } catch (failure: CancellationException) {
+                                                                            throw failure
+                                                                        } catch (_: Exception) {
+                                                                            snackbar.showSnackbar(failed)
+                                                                        }
+                                                                    }
+                                                                },
+                                                            ) {
+                                                                Text(stringResource(R.string.use_server))
+                                                            }
+                                                        } else {
+                                                            TextButton(
+                                                                onClick = {
+                                                                    scope.launch {
+                                                                        try {
+                                                                            graph.counters.sync(owner)
+                                                                        } catch (failure: CancellationException) {
+                                                                            throw failure
+                                                                        } catch (_: Exception) {
+                                                                            snackbar.showSnackbar(failed)
+                                                                        }
+                                                                    }
+                                                                },
+                                                            ) {
+                                                                Text(stringResource(R.string.sync))
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                                 LinearProgressIndicator(
                                                     progress = { counter.count.toFloat() / target },
                                                     modifier = Modifier.fillMaxWidth(),
@@ -235,13 +290,13 @@ fun AdhkarScreen(graph: AppGraph) {
                                                         catch (_: Exception) { snackbar.showSnackbar(failed) }
                                                         finally { busy = false }
                                                     }
-                                                }, enabled = !busy && !counter.conflict && counter.count < target, modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)) {
+                                                }, enabled = !busy && !counter.conflict && !previousDayPending && counter.count < target, modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)) {
                                                     Text(stringResource(if (counter.count >= target) R.string.completed else R.string.count_action))
                                                 }
                                                 if (counter.conflict) MessagePanel(stringResource(R.string.counter_conflict), true) {
                                                     TextButton(onClick = { scope.launch { try { graph.counters.useServer(id, target,owner) } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.use_server)) }
                                                 }
-                                                TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true,expectedOwner=owner); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict) { Text(stringResource(R.string.reset_counter)) }
+                                                TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true,expectedOwner=owner); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict && !previousDayPending) { Text(stringResource(R.string.reset_counter)) }
                                                 }
                                             }
                                         }
