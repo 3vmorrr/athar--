@@ -46,9 +46,14 @@ if ($path === '/email-unsubscribe') {
     if (!$valid) { http_response_code(400); exit('رابط إلغاء الاشتراك غير صالح.'); }
     if ($method === 'POST') {
         require_csrf();
+        db()->beginTransaction();
         db()->prepare('UPDATE users SET email_marketing_opt_in=0 WHERE id=?')->execute([(int) $userId]);
+        db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,0,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=0,updated_at=UTC_TIMESTAMP()")->execute([(int)$userId]);
+        db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_unsubscribed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([(int)$userId]);
+        db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_unsubscribed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([(int)$userId]);
         db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='إلغاء الاشتراك.' WHERE user_id=?")->execute([(int) $userId]);
         db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([null,'email-campaign-unsubscribed','user',(string)$userId]);
+        db()->commit();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><h1 style="color:#174f40">تم إلغاء الاشتراك</h1><p>لن تصلك رسائل تحديثات أثر بعد الآن. رسائل الحساب الضرورية ستظل مستمرة.</p><a href="/" style="color:#1e6753">العودة إلى أثر</a></main></body></html>'; exit;
     }
@@ -443,8 +448,19 @@ if ($path === '/account') {
                 $passwordQuery = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordQuery->execute([$user['id']]); $passwordHash = (string) $passwordQuery->fetchColumn();
                 if (!password_verify($password, $passwordHash)) $accountError = 'كلمة المرور الحالية غير صحيحة.';
                 else {
-                    try { db()->prepare('UPDATE users SET display_name=?,username=?,email_marketing_opt_in=? WHERE id=?')->execute([$displayName,$username,isset($_POST['email_marketing_opt_in']) ? 1 : 0,$user['id']]); flash('تم تحديث بيانات الحساب.'); redirect('/account'); }
-                    catch (PDOException $exception) { if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
+                    try {
+                        $marketingOptIn=isset($_POST['email_marketing_opt_in']) ? 1 : 0;
+                        db()->beginTransaction();
+                        db()->prepare('UPDATE users SET display_name=?,username=?,email_marketing_opt_in=? WHERE id=?')->execute([$displayName,$username,$marketingOptIn,$user['id']]);
+                        db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,?,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=VALUES(email_campaign_opt_in),updated_at=UTC_TIMESTAMP()")->execute([$user['id'],$marketingOptIn]);
+                        if(!$marketingOptIn){
+                            db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_opt_out',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([$user['id']]);
+                            db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_opt_out',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([$user['id']]);
+                        }
+                        db()->commit();
+                        flash('تم تحديث بيانات الحساب.'); redirect('/account');
+                    }
+                    catch (PDOException $exception) { if (db()->inTransaction()) db()->rollBack(); if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
                 }
             }
         } elseif ($action === 'plan-status') {
@@ -951,6 +967,9 @@ if ($path === '/admin') {
                 $emailChanged = !hash_equals((string) $target['email'], $email);
                 if ($emailChanged) {
                     db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='تم تغيير البريد.' WHERE user_id=?")->execute([$targetId]);
+                    db()->prepare("UPDATE engagement_campaign_recipients SET status='skipped',last_error_code='email_changed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND channel='email' AND status='queued'")->execute([$targetId]);
+                    db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='email_changed',locked_at=NULL,updated_at=UTC_TIMESTAMP() WHERE user_id=? AND category='campaign' AND status='pending'")->execute([$targetId]);
+                    db()->prepare("INSERT INTO engagement_channel_preferences (user_id,email_campaign_opt_in,updated_at) VALUES (?,0,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE email_campaign_opt_in=0,updated_at=UTC_TIMESTAMP()")->execute([$targetId]);
                     db()->prepare('UPDATE users SET email=?,display_name=?,username=?,email_marketing_opt_in=0,email_verified_at=NULL,session_version=session_version+1 WHERE id=?')->execute([$email,$displayName,$username,$targetId]);
                 }
                 else db()->prepare('UPDATE users SET display_name=?,username=? WHERE id=?')->execute([$displayName,$username,$targetId]);
