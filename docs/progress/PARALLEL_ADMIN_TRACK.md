@@ -203,7 +203,9 @@ history and an email-template test. Test mail can only be queued to the
 encrypted, owner-authorized test recipient from Service Settings.
 
 Final Email campaign confirmation is blocked until SMTP host, username,
-encrypted password and valid From address are configured.
+encrypted password and valid From address are configured **and**
+`ATHAR_BASE_URL` is a valid public HTTPS URL, because unsubscribe links must
+not resolve to the local fallback address.
 
 ### 20.5 Authorized Gmail inbox proof
 
