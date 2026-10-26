@@ -23,7 +23,11 @@
 <string name="audio_current_playback">التشغيل الحالي</string>
 <string name="audio_interrupted">متوقف مؤقتًا بسبب صوت أو مكالمة أخرى</string><string name="tafsir">تفسير</string><string name="recitation_review">مراجعة التلاوة</string><string name="surah">السورة</string><string name="ayah">الآية</string><string name="juz">الجزء</string><string name="hizb">الحزب</string><string name="page">الصفحة</string><string name="open_reader">افتح في المصحف</string><string name="bookmark">حفظ علامة</string><string name="bookmarks">علاماتي</string><string name="resume_reading">متابعة القراءة</string><string name="font_size">حجم خط القرآن</string><string name="quran_source">النص: مشروع تنزيل، نسخة 1.1. النص محفوظ كما ورد في المصدر.</string><string name="source">المصدر</string><string name="reference">المرجع</string>
     <string name="choose_reciter">اختر القارئ</string><string name="play">تشغيل</string><string name="pause">إيقاف مؤقت</string><string name="stop">إيقاف</string><string name="full_surah">السورة كاملة</string><string name="one_ayah">آية محددة</string><string name="radio">الإذاعة</string><string name="no_timing">تتبّع الآيات غير متاح لهذه الرواية؛ يستمر الصوت بصورة طبيعية.</string><string name="unavailable_review">المراجعة الصوتية المحلية على Android غير متاحة بعد التحقق من توافق هذا الجهاز والنموذج. يظل صوتك على جهازك.</string>
-    <string name="favorites">المفضلة</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string>
+    <string name="favorites">المفضلة</string>
+<string name="saved_items_total">الإجمالي: %1$d</string>
+<string name="saved_quran_reference">سورة %1$s · آية %2$s</string>
+<string name="bookmark_exact_open_pending">سيتم ربط الفتح المباشر على الآية مع مسار قارئ القرآن بعد دمج مرحلة التنقل الحالية.</string>
+<string name="page_number">صفحة %1$d</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string>
 <string name="book_download_allowed">متاح للتحميل وفق الحقوق المسجلة</string>
 <string name="book_download_unavailable">التحميل غير متاح لهذا الكتاب</string>
 <string name="book_metadata">بيانات الكتاب</string>
