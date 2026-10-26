@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **16.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **16.3**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -880,7 +880,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 16.2 — Native notification inbox
 
-- Parent: Work package 16: Inbox/policy; state: **NOT STARTED**; dependencies: 16.1.
+- Parent: Work package 16: Inbox/policy; state: **PARTIAL**; dependencies: 16.1.
 - Exact scope: Implement accessible inbox list/detail/read navigation with loading/empty/error states.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/core/ui/.
 - Automated gates: Paging/read/deleted target/AR/EN UI cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
