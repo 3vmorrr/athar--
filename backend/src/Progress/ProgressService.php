@@ -224,6 +224,79 @@ final class ProgressService
         }
     }
 
+    public function khatmahAction(int $user,array $data):array
+    {
+        $action=(string)($data['action']??'');
+        if(!in_array($action,['pause','resume','restart','finish'],true)){
+            throw new ApiError('invalid_fields',422,['action'=>'invalid']);
+        }
+        $expected=$this->integer($data,'expected_revision',1,2147483647);
+
+        $this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare(
+                'SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at
+                 FROM khatmah_plans
+                 WHERE user_id=?
+                 FOR UPDATE'
+            );
+            $q->execute([$user]);
+            $current=$q->fetch();
+            if(!$current)throw new ApiError('not_found',404);
+            if((int)$current['revision']!==$expected){
+                throw new ApiError(
+                    'conflict',
+                    409,
+                    ['current'=>$this->decorateKhatmah($current)]
+                );
+            }
+
+            $status=(string)$current['status'];
+            $start=(string)$current['start_date'];
+            $target=(string)$current['target_date'];
+            $completed=(int)$current['completed_pages'];
+
+            if($action==='pause'){
+                if($status==='finished')throw new ApiError('invalid_fields',422,['status'=>'finished']);
+                $status='paused';
+            }elseif($action==='resume'){
+                if($status==='finished')throw new ApiError('invalid_fields',422,['status'=>'finished']);
+                if($target<gmdate('Y-m-d')){
+                    throw new ApiError('invalid_fields',422,['target_date'=>'past']);
+                }
+                $status='active';
+            }elseif($action==='finish'){
+                if($completed!==604){
+                    throw new ApiError('invalid_fields',422,['completed_pages'=>'requires_604']);
+                }
+                $status='finished';
+            }else{
+                $start=isset($data['start_date'])&&is_string($data['start_date'])
+                    ?$data['start_date']
+                    :gmdate('Y-m-d');
+                $target=isset($data['target_date'])&&is_string($data['target_date'])
+                    ?$data['target_date']
+                    :'';
+                $this->validateKhatmahDates($start,$target);
+                $completed=0;
+                $status='active';
+            }
+
+            $this->db->prepare(
+                'UPDATE khatmah_plans
+                 SET start_date=?,target_date=?,completed_pages=?,status=?,
+                     revision=revision+1,updated_at=UTC_TIMESTAMP()
+                 WHERE user_id=?'
+            )->execute([$start,$target,$completed,$status,$user]);
+
+            $this->db->commit();
+            return (array)$this->khatmah($user);
+        }catch(Throwable $e){
+            if($this->db->inTransaction())$this->db->rollBack();
+            throw $e;
+        }
+    }
+
     private function validateKhatmahDates(string $start,string $target):void
     {
         if(!NightPrayer::validDate($start)||!NightPrayer::validDate($target)){
