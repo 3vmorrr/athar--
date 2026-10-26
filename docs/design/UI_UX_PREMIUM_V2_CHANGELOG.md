@@ -18,6 +18,10 @@ Validation:47 JVM/build/lint/305 resources PASS; final API27 Arabic10/10, Englis
 
 Shared foundation commit: `981a9e1293b4270b5e9d2accc8f0a50174bd0763` (pushed/verified). Re-read the current Night Prayer file and pinned premium diff before editing. Reconciled the premium history surface/hero and section transition with new durable per-record conflict observation/review; preserved ProtectedRead/retry/gates and the newer owned sync/cache/auth logic. The hero is inside the history LazyColumn rather than a tall fixed wrapper above every section, preserving space on small/landscape screens. Calendar/tools presentation and all other premium screens remain separate queued slices. No older ViewModel/repository was copied over newer logic. Final build/device evidence is recorded immediately above; broader Night Prayer tools/editor/tablet/TalkBack/release acceptance remains open.
 
+### Task02.6 — watch/account recovery, verified slice
+
+Reviewed current files against pinned0e6f4ba before editing. Integrated only headlineSmall for watch title and larger bordered low-surface comments preview. Preserve current player/source identity, lazy/first-party comments, playlist/moderation logic and all newer private checkpoint ownership/recovery. Full account presentation stays separately queued.Final50 JVM/build/lint/306 resources PASS; API27 Arabic5/English15 plus main API1 PASS; Arabic/English watch/comments captures inspected, dark150-percent account error/retry checked. Keep ready player composition during ordinary metadata switching; isolate unreadable checkpoints behind retry without writes. Earlier USB reverse loss/4 failed English HTTP cases is retained; restored mapping/full rerun passed. Full provider/tablet/TalkBack/release profiling and account presentation remain later gates. The next receipt records the resulting integration commit SHA.
+
 Date: 2026-10-26  
 Branch: `uiux/athar-premium-v2`  
 Base branch: `codex/android-ecosystem`  

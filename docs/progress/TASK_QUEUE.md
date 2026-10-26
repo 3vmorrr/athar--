@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task.
 
-Snapshot: 2026-10-26. Current task: **02.6**. Open tasks: **137**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-26. Current task: **02.7.1**. Open tasks: **138**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -70,7 +70,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.6 — Watch and account local recovery surfaces
 
-- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.4, 21.1.
+- Parent: Work package 2; state: **COMPLETE**; dependencies: 02.4, 21.1.
 - Exact scope: Apply retained-unreadable behavior to lesson checkpoint and account cache presentation; never infer zero/completion or silently overwrite retained progress.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/WatchScreen.kt; android/app/src/main/java/org/athar/app/learning/LessonRepository.kt; android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt.
 - Automated gates: Malformed/tag/domain payload cases; watch checkpoint recovery and account retry/owner UI cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -78,15 +78,35 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Definition of Done: Apply retained-unreadable behavior to lesson checkpoint and account cache presentation; never infer zero/completion or silently overwrite retained progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.54 overall percentage points.
 
+## 02.7.1 — Captured-owner mutation dispatch guards
+
+- Parent: Work package 2; state: **NOT STARTED**; dependencies: 02.5, 02.6.
+- Exact scope: Capture the intended actor before asynchronous private/local or account-action dispatch; reject writes after account switching, including reading, counters, local exemptions and account tools. Preserve existing pending rows and verified-access gating.
+- Files/modules: android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt; android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt; android/app/src/androidTest/.
+- Automated gates: Deterministic actor switch before IO dispatch and during suspended mutation; rejected original-owner write and no new-owner row/API mutation; existing recovery/regression/build/lint/resources.
+- Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
+- Definition of Done: Capture the intended actor before asynchronous private/local or account-action dispatch; reject writes after account switching, including reading, counters, local exemptions and account tools. Preserve existing pending rows and verified-access gating. Applicable tests, physical Arabic/English owner-safe journey, docs, reviewed commit and verified normal push pass.
+- Estimated contribution: 0.18 overall percentage points.
+
+## 02.7.2 — Actionable permanent Night Prayer rejection recovery
+
+- Parent: Work package 2; state: **NOT STARTED**; dependencies: 02.5, 02.7.1.
+- Exact scope: Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions.
+- Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/androidTest/.
+- Automated gates: 422/404/429/503 operation outcomes; retained rejection after restart; explicit retry/repair/stale review; unreadable and owner isolation; healthy queue progress; native Arabic/English UI/build/lint/resources.
+- Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
+- Definition of Done: Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions. Applicable durable-state/API/error/localization/physical gates, safe migration if required, docs, reviewed commit and verified normal push pass.
+- Estimated contribution: 0.18 overall percentage points.
+
 ## 02.7 — Cross-module lost-response and restart recovery
 
-- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.5, 02.6.
-- Exact scope: Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects. Include actionable permanent non409 validation-rejection recovery and captured-owner checks before dispatching local mutations, including exemptions.
+- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.7.1, 02.7.2.
+- Exact scope: Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/nightprayer/; tests/.
 - Automated gates: Dropped acknowledgement/repeated retry/restart/order/conflict tests across four modules; no duplicate activity. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
 - Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
-- Definition of Done: Close missing idempotency/CAS and account-switch cases across reading/counter/lesson/prayer pending state; fix only exposed defects. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
-- Estimated contribution: 0.54 overall percentage points.
+- Definition of Done: Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment. Required cross-module storage/API/device regression, documentation, reviewed logical commit and verified normal push pass.
+- Estimated contribution: 0.18 overall percentage points.
 
 ## 02.8 — OS reconnect and process/reboot acceptance
 

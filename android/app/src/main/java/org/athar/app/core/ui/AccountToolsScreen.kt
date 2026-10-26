@@ -12,27 +12,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
+import org.athar.app.core.data.retainedAccountData
+import org.athar.app.core.data.AccountPayloads
 import org.athar.app.AppGraph
 import org.athar.app.R
 import java.time.LocalDate
 
 @Composable fun AccountToolsScreen(graph: AppGraph, tool: String, open: (String) -> Unit) {
     val scope = rememberCoroutineScope()
+    val owner=graph.session.userId
+    var localFailure by remember(owner,tool){mutableStateOf(false)}
     var failed by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) scope.launch {
-            busy = true
+            busy = true;localFailure=false;saved=false
             try {
-                val user = requireNotNull(graph.session.userId)
-                val data = graph.session.request("GET", "me/export").asJsonObject
+                val user = requireNotNull(owner)
+                check(graph.session.userId==user)
+                val local=try{retainedAccountData(user,graph.session,graph.lessons,graph.nightPrayer)}catch(failure:CancellationException){throw failure}catch(_:Exception){localFailure=true;throw IllegalStateException("Retained data unreadable")}
+                val data = graph.session.request("GET", "me/export",expectedUser=user).asJsonObject
                 withContext(Dispatchers.IO) {
                     check(graph.session.userId == user)
-                    val local = com.google.gson.JsonArray()
-                    graph.database.dao().allNights(user).filter { !it.deleted }.forEach { local.add(com.google.gson.JsonParser.parseString(graph.cipher.open(it.payloadCipher))) }
-                    data.add("device_night_sessions", local)
+                    local.entrySet().forEach{data.add(it.key,it.value)}
+                    check(graph.session.userId==user)
                     context.contentResolver.openOutputStream(uri, "wt")?.bufferedWriter(Charsets.UTF_8)?.use { it.write(data.toString()) } ?: throw java.io.IOException("Export unavailable")
                 }
                 saved = true; failed = false
@@ -45,10 +50,12 @@ import java.time.LocalDate
             Text(stringResource(R.string.export_explanation))
             Button(onClick = { exporter.launch("athar-data-${LocalDate.now()}.json") }, enabled = !busy) { Text(stringResource(R.string.export_data)) }
             if (saved) MessagePanel(stringResource(R.string.saved))
-            if (failed) MessagePanel(stringResource(R.string.network_error), true)
+            if (localFailure) MessagePanel(stringResource(R.string.local_data_unreadable),true)
+            else if (failed) MessagePanel(stringResource(R.string.network_error), true)
             if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
-        "khatmah" -> DataScreen(graph, "me/khatmah") { data, _ ->
+        "khatmah" -> DataScreen(graph, "me/khatmah") { data, reload ->
+            if(!AccountPayloads.valid("khatmah",data)){AccountDataFailure(reload);return@DataScreen}
             var target by remember(data) { mutableStateOf(data.text("target_date").ifBlank { LocalDate.now().plusDays(30).toString() }) }
             var completed by remember(data) { mutableStateOf(data.text("completed_pages").ifBlank { "0" }) }
             var status by remember(data) { mutableStateOf(data.text("status").ifBlank { "active" }) }
@@ -70,7 +77,8 @@ import java.time.LocalDate
         else -> {
             val path = if (tool == "bookmarks") "quran/bookmarks" else "me/favorites"
             DataScreen(graph, path) { data, reload ->
-                val rows = if (data.isJsonArray) data.asJsonArray.toList() else emptyList()
+                if(!AccountPayloads.valid(tool,data)){AccountDataFailure(reload);return@DataScreen}
+                val rows = data.asJsonArray.toList()
                 LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state)) }
                     items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
@@ -88,5 +96,11 @@ import java.time.LocalDate
                 }
             }
         }
+    }
+}
+
+@Composable internal fun AccountDataFailure(retry:()->Unit){
+    Box(Modifier.padding(20.dp)){
+        MessagePanel(stringResource(R.string.account_data_unavailable),true){TextButton(onClick=retry){Text(stringResource(R.string.retry))}}
     }
 }

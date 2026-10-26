@@ -1,5 +1,12 @@
 # Engineering change log
 
+## Task02.6 — watch/account local recovery
+
+- Strict retained lesson checkpoint decoding/observation, retry and no-write/no-completion guards; captured-owner save/flush; preserve ready player composition during ordinary metadata switches and own checkpoint/ack updates.
+- Account payloads distinguish explicit absence from malformed zero/empty defaults. Validate owned lesson/Night snapshots before opening an export output stream; local-only exemptions stay excluded. Full SAF lifecycle remains later.
+- Incrementally reconcile only reviewed watch title/comments preview presentation. No backend/schema/source-provider replacement.50 JVM/build/lint/306 resources PASS; final API27 Arabic5/English15 +main API1 PASS; captures inspected. Initial English4 HTTP failures from lost USB mappings retained; full rerun passed after repair.
+- Refined02.7 into owner dispatch, permanent Night rejection recovery and cross-module acceptance tasks with the same phase weight. Overall45%, phase2 80%,138 open tasks; next02.7.1.
+
 ## Task02.5 — durable Night Prayer conflict resolution
 
 - Persist owned409 conflicts across recreation, including pending deletions; exclude blocked session IDs before the batch limit so healthy work remains eligible. Other statuses preserve pending/retry classification.

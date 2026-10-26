@@ -218,4 +218,5 @@
 <string name="night_review_changed">تغيرت إحدى النسختين أثناء المراجعة. أعد تحميلهما قبل الاختيار؛ تعديلات الجهاز ما زالت محفوظة.</string>
 <string name="night_review_duration">المدة المسجّلة: %1$d ثانية</string>
 <string name="night_edit_conflict">وصل تعديل آخر لهذه الجلسة. نصك المكتوب ما زال هنا؛ أغلق النموذج وراجع التعديل المعلّق قبل الحفظ.</string>
+    <string name="account_data_unavailable">تعذر قراءة بيانات الحساب. أعد المحاولة؛ لم نعتبر بياناتك فارغة ولم نغيّرها.</string>
 </resources>

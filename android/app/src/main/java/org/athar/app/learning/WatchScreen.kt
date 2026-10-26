@@ -27,6 +27,7 @@ import kotlinx.coroutines.*
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.*
+import org.athar.app.core.data.ProtectedRead
 
 @Composable fun WatchScreen(graph:AppGraph,initial:Int,open:(String)->Unit) {
     val vm:WatchViewModel=viewModel(key="watch:${graph.session.userId}:$initial",factory=object:ViewModelProvider.Factory{@Suppress("UNCHECKED_CAST") override fun<T:ViewModel>create(modelClass:Class<T>):T=WatchViewModel(graph,initial) as T})
@@ -45,6 +46,13 @@ import org.athar.app.core.ui.*
     LaunchedEffect(id){if(id!=null){discussion.select(id);commentsOpen=false;fullComments=false;playlistOpen=false;playlistPage=1;detailsScroll.requestScrollToItem(0)}}
     Box(Modifier.fillMaxSize()) {
         if(lesson==null){if(state.error)FailurePanel(null,{vm.select(initial)})else ContentLoadingSkeleton()}
+        else if(state.localProgress !is ProtectedRead.Ready){
+            Box(Modifier.padding(20.dp).testTag("watch-local-recovery")){
+                if(state.localProgress==ProtectedRead.Unreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retry,enabled=!state.loading){Text(stringResource(R.string.retry))}}
+                else if(state.error)FailurePanel(null,vm::retry)else ContentLoadingSkeleton()
+                if(state.loading)LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+        }
         else BoxWithConstraints(Modifier.fillMaxSize()) {
             val wide=maxWidth>=840.dp || (maxWidth>=600.dp && maxWidth>maxHeight*1.4f)
             val availableHeight=maxHeight
@@ -69,7 +77,7 @@ import org.athar.app.core.ui.*
                     if(commentsOpen&&!fullComments)Box(Modifier.weight(1f)){DiscussionPanel(discussion,false,{fullComments=true},{commentsOpen=false})}
                     else LazyColumn(Modifier.weight(1f).testTag("watch-details"),state=detailsScroll,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
                         item(key="information",contentType="metadata") {
-                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.titleLarge)
+                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.headlineSmall)
                             val scholar=lesson.text("scholar_id").toIntOrNull()
                             if(scholar!=null)TextButton(onClick={vm.flush();open("scholars/$scholar")}){Text(lesson.text("scholar_name").ifBlank{stringResource(R.string.scholars)})}
                             lesson["series"]?.takeUnless{it.isJsonNull}?.let{series->TextButton(onClick={open("series/${series.text("id")}")}){Text(series.text("title"))}};if(lesson.text("lesson_number").isNotBlank())Text(stringResource(R.string.watch_position,lesson.text("lesson_number"),lesson["series"].text("lesson_count")),style=MaterialTheme.typography.bodySmall)
@@ -77,7 +85,7 @@ import org.athar.app.core.ui.*
                         item(key="actions",contentType="actions") {
                             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).testTag("watch-actions"),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically) {
                                 MarkToggle("lesson-$id",lesson.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "lesson","target_id" to id));graph.content.invalidate("me/favorites")}
-                                AssistChip(onClick={scope.launch{try{vm.complete()}catch(e:CancellationException){throw e}catch(_:Exception){snackbar.showSnackbar(failed)}}},enabled=!state.completed,label={Text(stringResource(if(state.completed)R.string.watch_completed else R.string.watch_mark_complete))},leadingIcon={Icon(AtharIcons.CheckCircle,null,Modifier.size(20.dp))})
+                                AssistChip(onClick={scope.launch{try{vm.complete()}catch(e:CancellationException){throw e}catch(_:Exception){snackbar.showSnackbar(failed)}}},enabled=!state.completed&&!state.loading,label={Text(stringResource(if(state.completed)R.string.watch_completed else R.string.watch_mark_complete))},leadingIcon={Icon(AtharIcons.CheckCircle,null,Modifier.size(20.dp))})
                                 if(PlayerPolicy.validVideo(video)){
                                     AssistChip(onClick={context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply{type="text/plain";putExtra(Intent.EXTRA_TEXT,lesson.text("title")+"\n"+PlayerPolicy.youtubeUrl(video))},null))},label={Text(stringResource(R.string.watch_share))},leadingIcon={Icon(AtharIcons.Share,null,Modifier.size(20.dp))})
                                     AssistChip(onClick={uri.openUri(PlayerPolicy.youtubeUrl(video))},label={Text(stringResource(R.string.open_youtube))})
@@ -89,7 +97,7 @@ import org.athar.app.core.ui.*
                         }
                         item(key="description",contentType="description"){ExpandableDescription(lesson.text("description"))}
                         item(key="comments",contentType="comments-preview") {
-                            Surface(onClick={inlineComments=inlineFits;commentsOpen=true;fullComments=!inlineFits},modifier=Modifier.testTag("watch-comments"),shape=MaterialTheme.shapes.medium,color=MaterialTheme.colorScheme.surfaceContainer) {
+                            Surface(onClick={inlineComments=inlineFits;commentsOpen=true;fullComments=!inlineFits},modifier=Modifier.testTag("watch-comments"),shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.surfaceContainerLow,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) {
                                 Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                                     Row(verticalAlignment=Alignment.CenterVertically){Icon(AtharIcons.ChatBubble,null,Modifier.size(20.dp));Spacer(Modifier.width(8.dp));Text(stringResource(R.string.watch_comments_count,comments.total),Modifier.weight(1f),style=MaterialTheme.typography.titleSmall);Icon(AtharIcons.ArrowForward,null)}
                                     val preview=comments.row

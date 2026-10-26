@@ -2,6 +2,7 @@ package org.athar.app.learning
 
 import androidx.annotation.Keep
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
@@ -19,29 +20,39 @@ import java.util.UUID
 
 /** Private durable checkpoints; remote errors never discard the local resume position. */
 @OptIn(FlowPreview::class)
-class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository,private val requestSync:(Long)->Unit={}) : AutoCloseable {
+class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository,private val requestSync:(Long)->Unit={},automaticSync:Boolean=true) : AutoCloseable {
     private val gson = Gson(); private val local = Mutex(); private val remote = Mutex()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val changes = MutableSharedFlow<Unit>(replay = 1,onBufferOverflow=BufferOverflow.DROP_OLDEST)
     private val failed=MutableStateFlow<Long?>(null);val failedUser=failed.asStateFlow()
     init {
-        scope.launch { changes.debounce(750).collect { try { sync() } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Remains pending. */ } } }
-        scope.launch { session.state.collect { if (it is AuthState.SignedIn) changes.emit(Unit) } }
+        if(automaticSync)scope.launch { changes.debounce(750).collect { try { sync() } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Remains pending. */ } } }
+        if(automaticSync)scope.launch { session.state.collect { if (it is AuthState.SignedIn) changes.emit(Unit) } }
     }
     private fun key(id: Int) = "lesson-progress:$id"
     private fun decode(row: CachedDocument):SavedLessonProgress {
-        val value=requireNotNull(gson.fromJson(cipher.open(row.payloadCipher), SavedLessonProgress::class.java))
+        val body=JsonParser.parseString(cipher.open(row.payloadCipher)).asJsonObject
+        for(field in listOf("lessonId","positionSeconds","durationSeconds","version"))require(body[field]?.toString()?.matches(Regex("[0-9]+"))==true)
+        for(field in listOf("complete","pending"))require(body[field]?.let{it.isJsonPrimitive&&it.asJsonPrimitive.isBoolean}==true)
+        val value=requireNotNull(gson.fromJson(body, SavedLessonProgress::class.java))
         require(value.lessonId>0&&row.cacheKey==key(value.lessonId)&&value.positionSeconds in 0..86400&&value.durationSeconds in 0..86400&&value.version>0)
+        require(value.durationSeconds==0||value.positionSeconds<=value.durationSeconds)
+        value.eventId?.let{require(UUID.fromString(it).toString()==it)}
+        require(!value.complete||value.eventId!=null)
         return value
     }
     suspend fun saved(user: Long, id: Int): SavedLessonProgress? = withContext(Dispatchers.IO) { dao.cache(user, key(id))?.let(::decode) }
-    fun checkpoint(id:Int,position:Int,duration:Int,complete:Boolean) {
+    fun observe(user:Long,id:Int)=dao.observeCache(user,key(id)).map{it?.let(::decode)}.flowOn(Dispatchers.Default)
+    suspend fun retained(user:Long)=withContext(Dispatchers.IO){dao.caches(user,"lesson-progress:%").map(::decode).also{check(session.userId==user)}}
+    fun checkpoint(id:Int,position:Int,duration:Int,complete:Boolean,expectedOwner:Long?=null) {
         val user=session.userId ?: return
-        scope.launch { try { if(session.userId==user)save(id,position,duration,complete) }catch(e:CancellationException){throw e}catch(_:Exception){failed.value=user} }
+        if(expectedOwner!=null&&expectedOwner!=user)return
+        scope.launch { try { if(session.userId==user)save(id,position,duration,complete,user) }catch(e:CancellationException){throw e}catch(_:Exception){failed.value=user} }
     }
-    suspend fun save(id: Int, position: Int, duration: Int, complete: Boolean = false) = withContext(Dispatchers.IO) {
+    suspend fun save(id: Int, position: Int, duration: Int, complete: Boolean = false,expectedOwner:Long?=null) = withContext(Dispatchers.IO) {
         require(id > 0 && position in 0..86400 && duration in 0..86400)
         val user = requireNotNull(session.userId)
+        check(expectedOwner==null||expectedOwner==user)
         local.withLock {
             val old = saved(user, id)
             check(session.userId == user)

@@ -190,4 +190,5 @@
 <string name="night_review_changed">A version changed during review. Reload both before choosing; your device changes are still saved.</string>
 <string name="night_review_duration">Recorded duration: %1$d seconds</string>
 <string name="night_edit_conflict">Another change arrived for this session. Your draft is still here; close this form and review the pending change before saving.</string>
+    <string name="account_data_unavailable">Account data could not be read. Retry; your data has not been treated as empty or changed.</string>
 </resources>
