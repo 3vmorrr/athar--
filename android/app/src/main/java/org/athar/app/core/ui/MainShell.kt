@@ -36,12 +36,30 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.snap
+import androidx.compose.ui.graphics.graphicsLayer
 
 internal fun JsonElement.text(key: String): String = runCatching { asJsonObject[key]?.takeUnless { it.isJsonNull }?.asString.orEmpty() }.getOrDefault("")
 internal fun JsonElement.array(key: String): List<JsonElement> = runCatching { asJsonObject[key]?.asJsonArray?.toList().orEmpty() }.getOrDefault(emptyList())
 
 private data class Destination(val key: String, val title: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 private val destinations = listOf(Destination("home", R.string.home, AtharIcons.Home), Destination("quran", R.string.quran, AtharIcons.MenuBook), Destination("knowledge", R.string.knowledge, AtharIcons.School), Destination("adhkar", R.string.adhkar, AtharIcons.Spa), Destination("account", R.string.account, AtharIcons.Person))
+
+@Composable
+private fun AtharNavIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, selected: Boolean) {
+    val reduced = reducedMotion()
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.08f else 1f,
+        animationSpec = if (reduced) snap() else spring(
+            stiffness = AtharMotion.SmallSpringStiffness,
+            dampingRatio = AtharMotion.SmallSpringDamping,
+        ),
+        label = "nav-icon",
+    )
+    Icon(icon, null, Modifier.graphicsLayer { scaleX = scale; scaleY = scale })
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable fun MainShell(vm: AppViewModel, auth: AuthState.SignedIn) {
@@ -69,15 +87,68 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wide = maxWidth >= 840.dp
         Row(Modifier.fillMaxSize()) {
-            if (wide) NavigationRail(Modifier.fillMaxHeight().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)), header = { Brand(Modifier.size(76.dp)) }) {
+            if (wide) NavigationRail(
+                modifier = Modifier.fillMaxHeight().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                header = { Brand(Modifier.size(76.dp)) },
+            ) {
                 Spacer(Modifier.height(24.dp))
-                destinations.forEach { destination -> NavigationRailItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title)) }) }
+                destinations.forEach { destination ->
+                    val active = selected == destination.key
+                    NavigationRailItem(
+                        selected = active,
+                        onClick = { navigateTab(destination.key) },
+                        icon = { AtharNavIcon(destination.icon, active) },
+                        label = { Text(stringResource(destination.title)) },
+                        colors = NavigationRailItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    )
+                }
             }
             Scaffold(modifier = Modifier.weight(1f), topBar = {
-                CenterAlignedTopAppBar(title = { if (topLevel) Brand(Modifier.height(44.dp).width(64.dp)) else Text(stringResource(when { route == "night-prayer" -> R.string.night_prayer; route.startsWith("upcoming") -> R.string.upcoming_lessons; currentEntry?.arguments?.getString("kind") == "books" -> R.string.books; currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars; currentEntry?.arguments?.getString("kind") == "series" -> R.string.series; else -> R.string.lessons })) }, navigationIcon = { if (!topLevel) IconButton(onClick = { navigation.popBackStack() }) { Icon(AtharIcons.ArrowBack, stringResource(R.string.back)) } })
+                CenterAlignedTopAppBar(
+                    title = {
+                        if (topLevel) Brand(Modifier.height(44.dp).width(64.dp))
+                        else Text(stringResource(when {
+                            route == "night-prayer" -> R.string.night_prayer
+                            route.startsWith("upcoming") -> R.string.upcoming_lessons
+                            currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
+                            currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars
+                            currentEntry?.arguments?.getString("kind") == "series" -> R.string.series
+                            else -> R.string.lessons
+                        }))
+                    },
+                    navigationIcon = {
+                        if (!topLevel) IconButton(onClick = { navigation.popBackStack() }) {
+                            Icon(AtharIcons.ArrowBack, stringResource(R.string.back))
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                    ),
+                )
             }, bottomBar = {
-                if (!wide && topLevel) NavigationBar {
-                    destinations.forEach { destination -> NavigationBarItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title), maxLines = 1) }) }
+                if (!wide && topLevel) NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    tonalElevation = 0.dp,
+                ) {
+                    destinations.forEach { destination ->
+                        val active = selected == destination.key
+                        NavigationBarItem(
+                            selected = active,
+                            onClick = { navigateTab(destination.key) },
+                            icon = { AtharNavIcon(destination.icon, active) },
+                            label = { Text(stringResource(destination.title), maxLines = 1) },
+                            colors = NavigationBarItemDefaults.colors(
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                            ),
+                        )
+                    }
                 }
             }) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) {
