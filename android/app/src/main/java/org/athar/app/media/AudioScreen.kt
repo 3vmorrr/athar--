@@ -74,6 +74,60 @@ import org.athar.app.quran.AyahText
                 ),
                 modifier = Modifier.fillMaxWidth(),
             )
+            if (
+                state.recording != null &&
+                (state.radio != radio || (!radio && !selectedIsLoaded))
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    ),
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth().padding(AtharSpacing.Lg),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.audio_current_playback),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                            Text(
+                                state.recording?.text("name")
+                                    .orEmpty()
+                                    .ifBlank { state.recording?.text("reciter_name").orEmpty() },
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                stringResource(
+                                    if (state.playing) R.string.watch_playing
+                                    else R.string.watch_paused,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        TextButton(onClick = vm::toggle) {
+                            Text(
+                                stringResource(
+                                    if (state.playing) R.string.pause
+                                    else R.string.play,
+                                ),
+                            )
+                        }
+                        TextButton(onClick = vm::stop) {
+                            Text(stringResource(R.string.stop))
+                        }
+                    }
+                }
+            }
+
             if (radio) {
                 // Station selection remains below the hero; playback state is owned by AudioViewModel.
             } else {
