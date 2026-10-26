@@ -20,6 +20,20 @@
     <string name="home">الرئيسية</string><string name="quran">القرآن</string><string name="knowledge">المعرفة</string><string name="adhkar">الأذكار</string>
 <string name="all_categories">كل التصنيفات</string><string name="account">حسابي</string><string name="night_prayer">قيام الليل</string>
 <string name="night_tonight">الليلة</string>
+<string name="night_plan_title">خطة القراءة</string>
+<string name="night_plan_notice">الخطة أداة خاصة للتخطيط فقط. حفظها لا يعني أنك قرأت الآيات ولا يغيّر موضع القرآن أو الختمة.</string>
+<string name="night_plan_preview">%1$s · %2$d آية</string>
+<string name="night_save_plan">حفظ الخطة على الجهاز</string>
+<string name="night_saved_plan">الخطة المحفوظة</string>
+<string name="night_plan_empty">لا توجد خطة قراءة محفوظة لقيام الليل.</string>
+<string name="night_plan_reference">مرجع خطة قيام الليل</string>
+<string name="night_plan_verse_count">%1$d آية مخططة</string>
+<string name="night_plan_separate_progress">هذه الخطة مستقلة عن موضع قراءة القرآن وخطة الختمة، ولا تُسجل كتقدم إلا عند اختيار «تسجيل كمكتمل» صراحةً.</string>
+<string name="night_record_completed">تسجيل كمكتمل</string>
+<string name="night_copy_reference">نسخ المرجع</string>
+<string name="night_clear_plan">مسح الخطة المحفوظة</string>
+<string name="night_record_date_notice">اختر تاريخ المغرب الذي تنتمي إليه الجلسة صراحةً. بعد منتصف الليل قد يكون تاريخ الليلة هو اليوم السابق.</string>
+<string name="night_maghrib_date">تاريخ المغرب للجلسة</string>
 <string name="night_identity_unavailable">تعذر تحديد هوية الليلة بأمان. احفظ المدينة والمنطقة الزمنية وطريقة الحساب أولًا؛ لن نخمن وقت المغرب أو الفجر.</string>
 <string name="night_identity_active">ليلة %1$s جارية الآن</string>
 <string name="night_identity_upcoming">الليلة القادمة مرتبطة بمغرب %1$s</string>
