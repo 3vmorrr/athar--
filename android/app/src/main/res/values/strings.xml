@@ -114,6 +114,10 @@
 <string name="export_scope_account">بيانات الحساب المتزامنة: الملف الشخصي، العلامات، المفضلة، الخطط، التقدم والإحصائيات المسجلة.</string>
 <string name="export_scope_device">بيانات محتفظ بها على هذا الجهاز ولم تُفقد: تقدم الدروس وجلسات قيام الليل المحلية.</string>
 <string name="export_private_excluded">الفترات الخاصة المحلية مستبعدة من النسخة</string>
+<string name="export_security_excluded">لا تتضمن النسخة كلمات المرور أو رموز الدخول أو refresh tokens أو مفاتيح التشفير المحلية.</string>
+<string name="export_confirm_title">إنشاء نسخة من بياناتك؟</string>
+<string name="export_confirm_body">ستختار بنفسك مكان حفظ ملف JSON يحتوي بيانات حسابك وتقدمك المسموح بتصديره. تعامل معه كملف خاص.</string>
+<string name="export_choose_location">اختيار مكان الحفظ</string>
 <string name="export_requires_current_account">يحتاج إنشاء نسخة كاملة إلى الوصول للحساب الحالي. إذا تعذر جلب بيانات الحساب فلن نكتب ملفًا ناقصًا.</string>
 <string name="export_saved_complete">تم حفظ نسخة الحساب الكاملة في المكان الذي اخترته.</string>
 <string name="export_account_unavailable">تعذر جلب بيانات الحساب الحالية. تأكد من الاتصال وأن الجلسة ما زالت صالحة ثم حاول مرة أخرى. لم تتم كتابة نسخة ناقصة.</string>
