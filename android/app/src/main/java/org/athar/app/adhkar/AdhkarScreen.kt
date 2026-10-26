@@ -56,9 +56,36 @@ fun AdhkarScreen(graph: AppGraph) {
                         }
                         LazyColumn(modifier = Modifier.testTag("adhkar-entries"), state = entriesScroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             item(key = "heading", contentType = "heading") {
-                                Column(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
-                                    Text(selected, style = MaterialTheme.typography.headlineSmall)
-                                    Text(stringResource(R.string.adhkar_item_position, (page - 1) * 20 + index + 1, catalog.asJsonObject["pagination"].text("total").toIntOrNull() ?: 0), style = MaterialTheme.typography.bodySmall)
+                                AtharHeroSurface(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    ) {
+                                        Surface(
+                                            shape = MaterialTheme.shapes.medium,
+                                            color = MaterialTheme.colorScheme.primary,
+                                        ) {
+                                            Icon(
+                                                AtharIcons.Spa,
+                                                null,
+                                                Modifier.padding(10.dp).size(24.dp),
+                                                tint = MaterialTheme.colorScheme.onPrimary,
+                                            )
+                                        }
+                                        Column(Modifier.weight(1f)) {
+                                            Text(selected, style = MaterialTheme.typography.headlineSmall)
+                                            Text(
+                                                stringResource(
+                                                    R.string.adhkar_item_position,
+                                                    (page - 1) * 20 + index + 1,
+                                                    catalog.asJsonObject["pagination"].text("total").toIntOrNull() ?: 0,
+                                                ),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                             if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
@@ -66,7 +93,12 @@ fun AdhkarScreen(graph: AppGraph) {
                                 val id = dhikr.text("id").toInt()
                                 val target = dhikr.text("repeat_count").toIntOrNull()?.takeIf { it in 1..65535 }
                                 item(key = "dhikr-$id", contentType = "counter") {
-                                    ElevatedCard(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
+                                    Surface(
+                                        modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.extraLarge,
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    ) {
                                         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                                             Text(dhikr.text("title"), style = MaterialTheme.typography.titleLarge)
                                             Text(dhikr.text("formula"), fontFamily = QuranFont, fontSize = 27.sp, lineHeight = 48.sp)
