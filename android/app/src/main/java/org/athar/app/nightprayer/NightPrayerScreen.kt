@@ -180,6 +180,11 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 label = { Text(stringResource(R.string.night_calendar)) },
             )
             FilterChip(
+                section == "insights",
+                { section = "insights" },
+                label = { Text(stringResource(R.string.night_insights)) },
+            )
+            FilterChip(
                 section == "tools",
                 { section = "tools" },
                 label = { Text(stringResource(R.string.night_tools)) },
@@ -190,6 +195,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             when (it) {
                 "tonight" -> NightTonightScreen(graph, vm, timerVm)
                 "plan" -> NightPlanScreen(graph, vm)
+                "insights" -> NightInsightsScreen(graph, vm)
                 "tools" -> NightToolsScreen(graph)
                 "calendar" -> NightCalendarScreen(vm)
                 else -> NightHistoryScreen(graph, vm, addRequest)
