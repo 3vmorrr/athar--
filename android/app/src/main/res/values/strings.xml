@@ -688,4 +688,13 @@
     <string name="books_catalog_empty">لا توجد كتب منشورة حاليًا.</string>
     <string name="books_catalog_no_match">لا توجد كتب مطابقة لبحثك.</string>
     <string name="books_catalog_invalid">تعذر قراءة بيانات كتالوج الكتب بأمان.</string>
+    <string name="knowledge_intro">تابع تعلمك الحقيقي إن وُجد، أو استكشف الدروس والسلاسل والعلماء والكتب المنشورة.</string>
+    <string name="knowledge_saved_progress">لديك تقدم محفوظ في درس سابق.</string>
+    <string name="continue_learning">متابعة التعلم</string>
+    <string name="explore_lessons">استكشاف الدروس</string>
+    <string name="open_series">فتح السلسلة</string>
+    <string name="explore_knowledge">استكشف المعرفة</string>
+    <string name="knowledge_empty">لا يوجد محتوى منشور في هذا القسم حاليًا.</string>
+    <string name="knowledge_no_match">لا توجد نتائج مطابقة لبحثك.</string>
+    <string name="knowledge_catalog_invalid">تعذر قراءة بيانات قسم المعرفة بأمان.</string>
 </resources>

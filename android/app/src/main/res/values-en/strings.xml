@@ -660,4 +660,13 @@
     <string name="books_catalog_empty">There are no published books right now.</string>
     <string name="books_catalog_no_match">No books match your search.</string>
     <string name="books_catalog_invalid">The book catalog data could not be read safely.</string>
+    <string name="knowledge_intro">Continue real saved learning when available, or explore published lessons, series, scholars and books.</string>
+    <string name="knowledge_saved_progress">You have saved progress in a previous lesson.</string>
+    <string name="continue_learning">Continue learning</string>
+    <string name="explore_lessons">Explore lessons</string>
+    <string name="open_series">Open series</string>
+    <string name="explore_knowledge">Explore knowledge</string>
+    <string name="knowledge_empty">There is no published content in this section right now.</string>
+    <string name="knowledge_no_match">No results match your search.</string>
+    <string name="knowledge_catalog_invalid">The Knowledge data could not be read safely.</string>
 </resources>

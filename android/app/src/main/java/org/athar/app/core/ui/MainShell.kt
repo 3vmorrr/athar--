@@ -299,52 +299,16 @@ private fun AtharNavIcon(
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
 
-@Composable private fun KnowledgeScreen(graph: AppGraph, open: (String) -> Unit, initialType: String = "lessons") {
-    val tabs = listOf("lessons" to R.string.lessons, "series" to R.string.series, "scholars" to R.string.scholars, "books" to R.string.books)
-    var type by rememberSaveable { mutableStateOf(initialType) }
-    var input by rememberSaveable { mutableStateOf("") }
-    var query by rememberSaveable { mutableStateOf("") }
-    var page by rememberSaveable { mutableIntStateOf(1) }
-    Column(Modifier.fillMaxSize()) {
-        TextButton(onClick={open("upcoming")},modifier=Modifier.padding(horizontal=16.dp)){Icon(AtharIcons.CalendarMonth,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.upcoming_lessons))}
-        FlowRow(
-            Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            tabs.forEach { tab ->
-                FilterChip(
-                    selected = type == tab.first,
-                    onClick = {
-                        if (tab.first == "books") {
-                            open("catalog-books")
-                        } else {
-                            type = tab.first
-                            page = 1
-                            query = ""
-                            input = ""
-                        }
-                    },
-                    label = { Text(stringResource(tab.second)) },
-                )
-            }
-        }
-        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(input, { input = it.take(100) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
-            IconButton(onClick = { query = input.trim(); page = 1 }) { Icon(AtharIcons.Search, stringResource(R.string.search)) }
-        }
-        DataScreen(graph, type, mapOf("q" to query, "page" to "$page")) { data, _ ->
-            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
-                val rows = data.array("items")
-                if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state), Modifier.padding(16.dp)) }
-                items(rows, key = { it.text("id") }, contentType = { type }) { item -> ContentRow(item, { open("$type/${item.text("id")}") }) }
-                item(key = "pagination", contentType = "controls") { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }
-                    Text("$page", Modifier.padding(16.dp))
-                    TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) }
-                } }
-            }
-        }
-    }
+@Composable private fun KnowledgeScreen(
+    graph: AppGraph,
+    open: (String) -> Unit,
+    initialType: String = "lessons",
+) {
+    org.athar.app.learning.KnowledgeHubScreen(
+        graph = graph,
+        open = open,
+        initialType = initialType,
+    )
 }
 
 @Composable private fun CatalogDetail(graph: AppGraph, path: String, open: (String) -> Unit) {

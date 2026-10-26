@@ -18,6 +18,22 @@ import java.util.UUID
 
 @Keep data class SavedLessonProgress(val lessonId: Int, val positionSeconds: Int, val durationSeconds: Int, val complete: Boolean, val eventId: String?, val pending: Boolean = true, val version: Long = 1)
 
+data class RetainedLessonProgress(
+    val progress: SavedLessonProgress,
+    val updatedAtMillis: Long,
+)
+
+object LessonContinuationPolicy {
+    fun latest(values: List<RetainedLessonProgress>): RetainedLessonProgress? =
+        values
+            .asSequence()
+            .filter { !it.progress.complete && it.progress.positionSeconds > 0 }
+            .maxWithOrNull(
+                compareBy<RetainedLessonProgress> { it.updatedAtMillis }
+                    .thenBy { it.progress.lessonId },
+            )
+}
+
 /** Private durable checkpoints; remote errors never discard the local resume position. */
 @OptIn(FlowPreview::class)
 class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCipher, private val session: SessionRepository,private val requestSync:(Long)->Unit={},automaticSync:Boolean=true) : AutoCloseable {
@@ -44,6 +60,14 @@ class LessonRepository(private val dao: AtharDao, private val cipher: PrivateCip
     suspend fun saved(user: Long, id: Int): SavedLessonProgress? = withContext(Dispatchers.IO) { dao.cache(user, key(id))?.let(::decode) }
     fun observe(user:Long,id:Int)=dao.observeCache(user,key(id)).map{it?.let(::decode)}.flowOn(Dispatchers.Default)
     suspend fun retained(user:Long)=withContext(Dispatchers.IO){session.requireVerifiedOwner(user);dao.caches(user,"lesson-progress:%").map(::decode).also{session.requireVerifiedOwner(user)}}
+    suspend fun latestIncomplete(user:Long):RetainedLessonProgress?=withContext(Dispatchers.IO){
+        session.requireVerifiedOwner(user)
+        val retained=dao.caches(user,"lesson-progress:%").map { row ->
+            RetainedLessonProgress(decode(row),row.updatedAt)
+        }
+        session.requireVerifiedOwner(user)
+        LessonContinuationPolicy.latest(retained)
+    }
     fun checkpoint(id:Int,position:Int,duration:Int,complete:Boolean,expectedOwner:Long?=null) {
         val user=session.userId ?: return
         if(expectedOwner!=null&&expectedOwner!=user)return
