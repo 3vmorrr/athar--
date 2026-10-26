@@ -22,3 +22,30 @@ The instrumentation application selects fixture origin8004 only while the test r
 ## First executed subgate
 
 Strict connected-scheduler candidate build/test APK/lint PASS (`os-connected-scheduler-build.log`,1m40s),56 unchanged JVM cases/316 resources. API27 Arabic1/1 PASS (5.171s) with requireValidatedScheduler=true: the active validated network and installed WorkManager SUCCEEDED path were mandatory, and the offline direct Worker fallback could not satisfy the test. English strict rerun1/1 PASS (5.172s). Scoped no-secret/diff review PASS. No process-death/reboot/network-transition result is claimed;02.8 remains PARTIAL.
+
+
+## Split-stage harness under implementation
+
+OsSyncLifecycleTest and scripts/test-android-os-sync.ps1 use the existing compile-time Debug base URL at8004 for both instrumentation and ordinary background startup. The test-only osLifecycle flag and selected single method are mandatory; ordinary test runs skip these stages. Prepare signs in a fresh generated actor, closes foreground repository helpers, writes pending reading/counter/lesson/Night records and local exemptions, then enqueues the real PrivateSyncWorker with production ownership/constraints/backoff and a bounded initial delay. Only job/actor/fixture identifiers and ciphertext hashes enter the ignored receipt.
+
+The host's check_os_lifecycle_fixture.php reads only the recorded generated actor and checks all four actual server states plus zero inferred activity; it never triggers delivery. Delivery must be observed on the server before verifyDelivered instrumentation is launched. Verification checks the exact persisted WorkRequest SUCCEEDED, a different process PID, cleared private pending flags, one Night revision and unchanged exemption ciphertext. Neither retainedWithoutNetwork nor verifyDelivered calls sync/doWork. Retained-network verification additionally requires the initial delay to have elapsed, no qualifying Internet network, exact unchanged ciphertext/outbox and attempt0/ENQUEUED.
+
+The physical sequence will first check ordinary process exit/background execution, then a temporary Wi-Fi disconnect/restoration (mobile data is already off), then a reboot with restored USB mapping. Original Wi-Fi-on/mobile-data-off state and the normal8002 Debug build must be restored afterward. Test identities remain confined to the generated fixture schema. All stages are still unexecuted until their recorded evidence passes; no global setting has yet changed.
+
+
+## Physical execution — in progress
+
+First harness candidate failed Kotlin compilation because WorkManager's nullable WorkInfo future result was not checked. Explicit requireNotNull fixed it without suppression. Fixture-origin build2 passes56 JVM cases, production/test APK and lint (2m49s),316 resources and read-only healthy development schema15/34. Candidate/history no-secret review passes.
+
+Process stage prepare1/1 PASS (7.663s), with all four private modules pending and a90-second delayed installed WorkRequest. The host's read-only query confirmed no server rows/activity before dispatch. Selected app process was then killed with am kill; process count0 and package stopped=false were independently observed, without force-stop/data-clear. The host observed all four server states delivered before verification started, with zero inferred activity. Process verification1/1 PASS (6.503s): exact persisted WorkRequest SUCCEEDED, different process PID, no remaining pending mutations, one Night revision and unchanged exemption ciphertext. First reconnect preparation was interrupted during an early network transition; USB reverse mappings were empty afterward and the instrumentation log incomplete. Wi-Fi-on/mobile-data-off was restored and that attempt is retained as incomplete, not accepted. Reconnect preparation is being repeated fully before changing connectivity.
+
+
+Reconnect retry prepare1/1 PASS (7.028s), with a fresh generated actor and a90-second delayed request, and an empty host-observed server state. Only after the complete preparation, Wi-Fi was disabled (mobile data remained in its original off state). After the initial delay elapsed, host rows were still absent and retainedWithoutNetwork1/1 PASS: no qualifying network, exact WorkRequest ENQUEUED/attempt0 and unchanged ciphertext/outbox/exemptions. A finally block restored Wi-Fi-on and the USB mapping. Automatic post-reconnect delivery/verification is now underway. Candidate fixture APKs are retained privately for reproduction while the normal8002 build is being restored. Read-only keyguard inspection reports secure=false; no PIN/password is handled by the harness.
+
+
+Reconnect background delivery was independently observed by the host before verification; exact-work verification1/1 PASS (6.383s), all four server states correct and zero inferred activity. Reboot prepare1/1 PASS (7.48s), with a new generated actor and a120-second delayed request; host state empty before reboot. A selected-device reboot has now been requested after recording boot identity. The normal8002 build has already passed full56 JVM/production/test APK/lint gates (1m59s), but is intentionally not installed until the fixture-origin reboot test completes.
+
+
+## Deferred checkpoint at integration handoff
+
+The user changed execution order: preserve this02.8 work and return only after available parallel implementation batches are integrated and stabilized. Actual process/reconnect/reboot split-stage assertions passed on the fixture-origin APK, and the normal8002 APK was restored with full build/lint and Arabic9/9 normal/sync regressions. English final regression and reconciliation against incoming changes remain open. This checkpoint does not close02.8 or change its canonical PARTIAL status. No source from the parallel lane is included in this checkpoint.
