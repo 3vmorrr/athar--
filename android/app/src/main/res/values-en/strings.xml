@@ -18,6 +18,9 @@
 <string name="night_plan_reference">Night Prayer plan reference</string>
 <string name="night_plan_verse_count">%1$d planned verses</string>
 <string name="night_plan_separate_progress">This plan is separate from Quran reading position and Khatmah progress. It is not recorded as progress unless you explicitly choose “Record completed”.</string>
+<string name="night_plan_continue_at">Next plan position: Surah %1$d · Ayah %2$d</string>
+<string name="night_plan_continue_separate">This position belongs only to the Night Prayer plan. Quran and Khatmah positions were not changed.</string>
+<string name="night_plan_recorded_complete">The full planned range is covered by explicitly recorded sessions</string>
 <string name="night_record_completed">Record completed</string>
 <string name="night_copy_reference">Copy reference</string>
 <string name="night_clear_plan">Clear saved plan</string>
