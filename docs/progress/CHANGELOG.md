@@ -1,5 +1,11 @@
 # Engineering change log
 
+## Task02.4 — authentication session ownership
+
+- Fixed old response/refresh success/revocation races during a new login/registration. Authentication intent and durable credential-save boundary share a mutex; successful new authentication also invalidates requests started during its wait. Failed sign-in preserves the prior stored session.
+-47 JVM/build/test APK/lint and292 resources PASS; physical Worker/HTTP1/1 and Arabic4/4 +English4/4 auth/counter/reader regression PASS. Failed pre-fix cases and initial wrong test-selector batch remain documented.
+- Added strict143-record executable queue, renderer/dependency validation and pinned premium branch reconciliation ledger. Only task02.4 implementation is changed; shared premium integration is the next independent task21.1. Native Android remains primary; independent Admin and other unimplemented features are not credited as complete.
+
 ##2026-10-26 — Disposable content-cache bounds
 
 - Bounded encrypted Arabic/English HTTP responses to200 rows/8MiB per actor,1MiB per document and seven-day fallback age; metadata-only transactional pruning leaves private progress/outbox/cursors/exemptions untouched. Existing Room schema1 is preserved.

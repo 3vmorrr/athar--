@@ -47,8 +47,10 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         catch (failure: IOException) { offline(saved, epoch) }
     }
 
-    suspend fun login(email: String, password: String) { val epoch = generation.get(); accept(transport.request("POST", "auth/login", mapOf("email" to email.trim(), "password" to password), language = language()), epoch) }
-    suspend fun register(name: String, username: String, email: String, password: String, confirmation: String) { val epoch = generation.get(); accept(transport.request("POST", "auth/register", mapOf("display_name" to name.trim(), "username" to username.trim(), "email" to email.trim(), "password" to password, "password_confirmation" to confirmation), language = language()), epoch) }
+    // Invalidate both former requests and requests started while a new sign-in was pending.
+    private suspend fun beginAuthentication():Long=sessionMutex.withLock{generation.incrementAndGet()}
+    suspend fun login(email: String, password: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/login", mapOf("email" to email.trim(), "password" to password), language = language()), epoch, true) }
+    suspend fun register(name: String, username: String, email: String, password: String, confirmation: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/register", mapOf("display_name" to name.trim(), "username" to username.trim(), "email" to email.trim(), "password" to password, "password_confirmation" to confirmation), language = language()), epoch, true) }
     suspend fun verify(code: String) { val epoch = generation.get(); accept(request("POST", "auth/verify-email", mapOf("code" to code)), epoch) }
     suspend fun resend(): String = request("POST", "auth/resend").asJsonObject.get("delivery_status").asString
     suspend fun forgot(email: String) { transport.request("POST", "auth/forgot-password", mapOf("email" to email.trim()), language = language()) }
@@ -98,16 +100,18 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         catch (_: IOException) { /* Local credentials are still removed when offline. */ }
     }
 
-    private suspend fun accept(data: JsonElement, epoch: Long) {
+    private suspend fun accept(data: JsonElement, epoch: Long, rotateRequests:Boolean=false) {
         val reply = gson.fromJson(data, AuthReply::class.java)
         val user = reply.user ?: stored?.user ?: throw IOException("Invalid authentication response")
         if (reply.session.accessToken.isBlank() || reply.session.refreshToken.isBlank()) throw IOException("Invalid authentication response")
         val session = StoredSession(user, reply.session, now() + reply.session.expiresIn * 1000)
-        save(session, epoch, reply.deliveryStatus)
+        save(session, epoch, reply.deliveryStatus,rotateRequests)
     }
     private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, "unauthenticated", "") }
-    private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null) = sessionMutex.withLock {
-        checkGeneration(epoch); store.save(session); stored = session; publish(session, delivery)
+    private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {
+        checkGeneration(epoch); store.save(session)
+        if(rotateRequests)generation.incrementAndGet()
+        stored = session; publish(session, delivery)
     }
     private suspend fun offline(session: StoredSession, epoch: Long) = sessionMutex.withLock {
         if (generation.get() == epoch && stored != null) mutableState.value = AuthState.SignedIn(session.user, offline = true)

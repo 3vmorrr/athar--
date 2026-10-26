@@ -1,5 +1,11 @@
 # Verification report
 
+## Task02.4 — authentication ownership races,26 October2026
+
+Reproduced two actual defects with targeted JVM tests before changing logic:8 cases,2 FAIL (`session-race-before-fix.log`). Final logic serializes authentication intent with credential persistence and invalidates requests at intent and successful session publication. Full47 JVM cases (10 session cases), production/test APK and lint PASS (`session-race-final-build.log`,3m23s);292 paired resources PASS. Actual API27 Worker/Room/Keystore/HTTP1/1 PASS (6.018s); Arabic4/4 PASS (25.998s) and English4/4 PASS (25.804s) identity-feedback/OTP/real fixture login-counter/reading-resume journeys. No app reset/uninstall/real mail send. Initial Arabic runner invocation named a nonexistent test class; that initialization failure is retained in `session-race-ui-ar.log`; corrected final batch is `session-race-ui-ar-corrected.log`, not a claim that the invalid selector passed.
+
+Queue validation records143 unique tasks/140 open before02.4 completion, valid earlier dependencies and100 total phase2 weight. Source review fetched premium UI tip0e6f4ba and read both required design docs; no UI source was applied during this business-logic task. Backend/API/schema unchanged; prior20,000 isolated assertions remain historical latest backend evidence. OS connected-network/reboot acceptance remains02.8, not inferred from manual Worker HTTP.
+
 ##26 October — disposable response-cache limits
 
 Final production/test APK,42 JVM cases and lint PASS (`content-cache-owner-build.log`,3m20s);292 paired resources PASS. Actual API27 cache/retained-storage/unique-scheduling15/15 PASS (17.095s, `content-cache-physical-final.log`): transaction bounds, expiry, corruption recovery, actor change during failed HTTP, prior upcoming-cache localization/encryption/404 behavior and private-data regressions. Arabic reader/counter2/2 PASS (22.534s, `content-cache-ui-ar.log`), English2/2 PASS (21.784s, content-cache-ui-en.log), including opening retained on-device schema1 after APK update. Initial candidate3/3 storage passed before the stronger owner-boundary assertion; final evidence supersedes that narrower pass. No database reset, key invalidation or real data deletion. Read-only development15 migration/34 table check and main API HTTP200 pass; unchanged backend suites were not rerun.

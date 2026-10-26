@@ -1,5 +1,9 @@
 # Implementation plan
 
+## Strict executable queue —26 October2026
+
+The [ordered task queue](TASK_QUEUE.md) and editable [task records](TASK_QUEUE.json) refine the existing roadmap; they do not replace completed phases. Exactly one implementation task is active. Each row records scope/state/dependencies/modules/automated and physical gates/Definition of Done/estimated contribution. Task02.4 completes the already-started authentication race fix, mapped to tracker O04. Current21.1 provides only reviewed shared premium primitives required by upcoming overlapping UI work; it does not authorize a full presentation branch overwrite. Blocked external acceptance tasks remain visible while independently ready work continues. Each successful task must be documented, diff/secret reviewed, committed, normally pushed, remote-SHA checked and reported before starting the next.
+
 ## Formal checkpoint roadmap —2026-10-25
 
 Phase2's first stable milestone O01 now passes retained private-read/ciphertext/metadata/cancellation gates, ordinary reader/counter regression and Arabic/English physical UI inspection. Continue persistent owned background sync and remaining cache/conflict hardening; do not mark the entire offline phase complete from O01. See [local recovery scope](../features/LOCAL_DATA_RECOVERY.md).
