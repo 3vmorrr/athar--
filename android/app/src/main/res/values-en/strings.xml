@@ -131,6 +131,7 @@
     <string name="scholar_lesson_count">%1$d lessons</string>
     <string name="adhkar_item_position">Entry %1$d of %2$d</string>
     <string name="adhkar_no_fixed_count">The source does not specify a repetition count for this entry.</string>
+<string name="adhkar_previous_day_pending">Changes from a previous day are still saved on this device. Sync or resolve them before starting today’s count; they will not be reset automatically.</string>
     <string name="adhkar_section_end">You have reached the last entry in this section.</string>
     <string name="set_reading_position">Resume from here</string>
     <string name="reading_position_label">Reading position: %1$s · Verse %2$d</string>
