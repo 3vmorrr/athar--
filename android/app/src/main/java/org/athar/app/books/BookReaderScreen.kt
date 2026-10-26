@@ -1,6 +1,7 @@
 package org.athar.app.books
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
@@ -64,7 +65,7 @@ private class BookReaderViewModel(
     private var renderer: PdfRenderer? = null
     private val preferences = application.getSharedPreferences(
         "athar-book-reader",
-        Application.MODE_PRIVATE,
+        Context.MODE_PRIVATE,
     )
     private val pageKey = "page:$owner:$bookId"
 
@@ -388,7 +389,7 @@ fun BookReaderScreen(
                                 .weight(1f)
                                 .heightIn(min = 52.dp),
                         ) {
-                            Text(stringResource(R.string.more))
+                            Text(stringResource(R.string.book_next_page))
                         }
                     }
                 }
