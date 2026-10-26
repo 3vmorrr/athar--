@@ -324,7 +324,12 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             Box(Modifier.weight(1f)) {
                 when (mode) {
                     "read" -> QuranReaderScreen(graph, fontSize, vm)
-                    "tafsir" -> TafsirScreen(graph, fontSize)
+                    "tafsir" -> TafsirScreen(
+                        graph = graph,
+                        fontSize = fontSize,
+                        initialSurah = reading?.surah ?: 1,
+                        initialAyah = reading?.ayah ?: 1,
+                    )
                     else -> org.athar.app.media.AudioScreen(graph, mode == "radio")
                 }
             }

@@ -274,6 +274,13 @@
 <string name="choose_tafsir">اختر كتاب التفسير</string>
 <string name="tafsir_reference">الجزء %1$s · الصفحة %2$s</string>
 <string name="quranpedia_source">المصدر: الموسوعة القرآنية</string>
+<string name="tafsir_choose_source_hint">اختر كتاب تفسير لعرض شرحه للآية الحالية. اختيار المصدر منفصل عن نص القرآن ولا يغيّر النص المحفوظ.</string>
+<string name="tafsir_selected_source">المصدر المختار</string>
+<string name="tafsir_source_unavailable">مصدر التفسير غير متاح الآن. إن كانت لديك نسخة محفوظة فستظل ظاهرة؛ لن نمسحها أو نعيد المحاولة تلقائيًا باستمرار.</string>
+<string name="tafsir_no_content">لا يوجد شرح متاح لهذه الآية في هذا الكتاب.</string>
+<string name="tafsir_no_sources">لا توجد كتب تفسير مطابقة لهذا البحث.</string>
+<string name="tafsir_sources_count">%1$d كتاب تفسير</string>
+<string name="tafsir_page_status">الصفحة %1$d من %2$d · %3$d مقطع</string>
 <string name="syncing">جارٍ الحفظ</string>
 <string name="remove_bookmark">حذف العلامة</string>
 <string name="your_journey">مساحتك في أثر</string>
