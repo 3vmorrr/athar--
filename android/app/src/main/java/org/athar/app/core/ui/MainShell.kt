@@ -519,6 +519,40 @@ private fun AtharNavIcon(
             }
         }
 
+        item(key = "revoke-other-sessions", contentType = "action") {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column(
+                    Modifier.padding(AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    Text(
+                        stringResource(R.string.revoke_other_sessions),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        stringResource(R.string.revoke_other_sessions_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            vm.perform(successMessage = "sessions_revoked") {
+                                vm.graph.session.revokeOtherSessions(auth.user.id)
+                            }
+                        },
+                        enabled = !operation.busy,
+                        modifier = Modifier.heightIn(min = 52.dp),
+                    ) {
+                        Text(stringResource(R.string.revoke_other_sessions))
+                    }
+                }
+            }
+        }
+
         if (operation.error != null || operation.message != null) {
             item(key = "feedback", contentType = "feedback") {
                 org.athar.app.auth.Feedback(operation)
