@@ -18,6 +18,7 @@ import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable fun TafsirScreen(graph: AppGraph, fontSize: Int) {
     var surahInput by remember { mutableStateOf("1") }; var ayahInput by remember { mutableStateOf("1") }
     var reference by remember { mutableStateOf(1 to 1) }
@@ -78,14 +79,34 @@ import org.athar.app.core.ui.*
     if (selector) {
         var page by remember { mutableIntStateOf(1) }
         var input by remember { mutableStateOf("") }; var query by remember { mutableStateOf("") }
-        AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.choose_tafsir)) }, text = {
-            Column(Modifier.height(460.dp)) {
-                Row { OutlinedTextField(input, { input = it.take(80) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) }); TextButton(onClick = { query = input; page = 1 }) { Text(stringResource(R.string.search)) } }
-                DataScreen(graph, "quran/tafsirs", mapOf("surah" to "${reference.first}", "page" to "$page", "per_page" to "20", "q" to query)) { data, _ -> LazyColumn {
-                items(data.array("items"), key = { it.text("id") }, contentType = { "book" }) { row -> TextButton(onClick = { book = row; selector = false }, Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(row.text("name")) } }
-                if (data.array("items").isEmpty()) item { Text(stringResource(R.string.empty_state)) }
-                item { Row { TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }; TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) } } }
-            } } }
-        }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
+        ModalBottomSheet(onDismissRequest = { selector = false }) {
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(stringResource(R.string.choose_tafsir), style = MaterialTheme.typography.titleLarge)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(input, { input = it.take(80) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
+                    TextButton(onClick = { query = input; page = 1 }) { Text(stringResource(R.string.search)) }
+                }
+                DataScreen(graph, "quran/tafsirs", mapOf("surah" to "${reference.first}", "page" to "$page", "per_page" to "20", "q" to query)) { data, _ ->
+                    LazyColumn(Modifier.heightIn(max = 460.dp)) {
+                        items(data.array("items"), key = { it.text("id") }, contentType = { "book" }) { row ->
+                            TextButton(
+                                onClick = { book = row; selector = false },
+                                Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                            ) { Text(row.text("name")) }
+                        }
+                        if (data.array("items").isEmpty()) item { QuietEmptyState(stringResource(R.string.empty_state)) }
+                        item {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }
+                                TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
