@@ -84,6 +84,10 @@ final class ApiKernel
         }
         if($path==='/admin/comments'){$this->method($r,'GET');return [(new \Athar\Learning\DiscussionService($this->db))->moderation($actor,$r->query),200];}
         if(preg_match('#^/admin/comments/([1-9][0-9]*)$#',$path,$m)){$this->method($r,'PUT');return [(new \Athar\Learning\DiscussionService($this->db))->moderate($actor,(int)$m[1],$r->body),200];}
+        if($path==='/me/sessions/revoke-others'){
+            $this->method($r,'POST');
+            return [['revoked_count'=>$this->auth->revokeOtherSessions($actor)],200];
+        }
         if($path==='/me'){
             if($r->method==='GET')return [$this->auth->profile((int)$actor['id']),200];
             if($r->method==='PATCH')return [$this->auth->updateProfile((int)$actor['id'],$r->string('display_name',80),$r->string('username',24)),200];
