@@ -1,5 +1,6 @@
 package org.athar.app.quran
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,8 +25,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,30 +105,57 @@ internal fun QuranMushafPage(
 
 @Composable
 internal fun QuranSearchResults(
-    verses: List<AyahText>,
+    page: QuranSearchPage,
     fontSize: Int,
     modifier: Modifier = Modifier,
+    onOpenAyah: (AyahText) -> Unit,
     onLongPressAyah: (AyahText) -> Unit,
+    onPreviousPage: () -> Unit,
+    onNextPage: () -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag("quran-search-results"),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             horizontal = AtharSpacing.Lg,
             vertical = AtharSpacing.Md,
         ),
     ) {
+        item(key = "search-pager-top", contentType = "search-pager") {
+            QuranSearchPager(page, onPreviousPage, onNextPage)
+        }
         items(
-            verses,
-            key = { it.position.globalIndex },
+            page.hits,
+            key = { it.ayah.position.globalIndex },
             contentType = { "quran-search-result" },
-        ) { ayah ->
+        ) { hit ->
+            val ayah = hit.ayah
+            val highlight = MaterialTheme.colorScheme.tertiaryContainer
+            val annotated = remember(hit, highlight) {
+                buildAnnotatedString {
+                    append(ayah.text)
+                    hit.highlightRanges.forEach { range ->
+                        if (range.first >= 0 && range.last < ayah.text.length) {
+                            addStyle(
+                                SpanStyle(
+                                    background = highlight,
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
+                                range.first,
+                                range.last + 1,
+                            )
+                        }
+                    }
+                }
+            }
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = AtharSpacing.Sm)
-                    .pointerInput(ayah.position.globalIndex) {
-                        detectTapGestures(onLongPress = { onLongPressAyah(ayah) })
-                    },
+                    .testTag("quran-search-result-${ayah.position.globalIndex}")
+                    .combinedClickable(
+                        onClick = { onOpenAyah(ayah) },
+                        onLongClick = { onLongPressAyah(ayah) },
+                    ),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
             ) {
@@ -136,7 +166,7 @@ internal fun QuranSearchResults(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Text(
-                        ayah.text,
+                        annotated,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = AtharSpacing.Sm),
@@ -147,7 +177,64 @@ internal fun QuranSearchResults(
                             textDirection = TextDirection.Rtl,
                         ),
                     )
+                    Text(
+                        stringResource(R.string.quran_open_ayah),
+                        modifier = Modifier.padding(top = AtharSpacing.Sm),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
                 }
+            }
+        }
+        item(key = "search-pager-bottom", contentType = "search-pager") {
+            QuranSearchPager(page, onPreviousPage, onNextPage)
+        }
+    }
+}
+
+@Composable
+private fun QuranSearchPager(
+    page: QuranSearchPage,
+    onPreviousPage: () -> Unit,
+    onNextPage: () -> Unit,
+) {
+    Column(
+        Modifier.fillMaxWidth().padding(vertical = AtharSpacing.Sm),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AtharSpacing.Sm),
+    ) {
+        androidx.compose.foundation.layout.Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+        ) {
+            Text(
+                stringResource(R.string.quran_search_results_count, page.total),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                stringResource(
+                    R.string.quran_search_page,
+                    page.pageNumber,
+                    page.pageCount,
+                ),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        androidx.compose.foundation.layout.Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+        ) {
+            TextButton(
+                onClick = onPreviousPage,
+                enabled = page.hasPrevious,
+            ) {
+                Text(stringResource(R.string.previous_page))
+            }
+            TextButton(
+                onClick = onNextPage,
+                enabled = page.hasNext,
+            ) {
+                Text(stringResource(R.string.next_page))
             }
         }
     }

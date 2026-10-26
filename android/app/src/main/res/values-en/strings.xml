@@ -227,6 +227,13 @@
 <string name="quran_range_invalid">Check the range start and end. The end must be at or after the start and remain inside the Quran.</string>
 <string name="quran_range_label">%1$d:%2$d – %3$d:%4$d</string>
 <string name="quran_section_label">%1$s %2$d</string>
+<string name="quran_search_prompt">Enter at least two letters to search the Quran text stored on this device.</string>
+<string name="quran_search_no_results">No ayahs match this search.</string>
+<string name="quran_search_results_count">%1$d results</string>
+<string name="quran_search_page">Page %1$d of %2$d</string>
+<string name="previous_page">Previous page</string>
+<string name="next_page">Next page</string>
+<string name="quran_open_ayah">Open ayah in reader</string>
 <string name="method_egyptian">Egyptian General Authority of Survey</string>
 <string name="method_mwl">Muslim World League</string>
 <string name="method_umm_al_qura">Umm al-Qura</string>

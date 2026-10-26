@@ -37,7 +37,7 @@ class QuranRepository(private val context: Context) {
     }
 }
 class QuranData(val index: QuranIndex, val verses: List<AyahText>) {
-    private val searchText = verses.map { normalize(it.text) }
+    private val searchText = verses.map { QuranSearchNormalizer.normalize(it.text) }
     fun surah(number: Int): List<AyahText> {
         val range = index.section("surah", number)
         return verses.subList(range.first - 1, range.last)
@@ -50,11 +50,38 @@ class QuranData(val index: QuranIndex, val verses: List<AyahText>) {
         verses.subList(range.start.globalIndex - 1, range.end.globalIndex)
     fun range(startSurah: Int, startAyah: Int, endSurah: Int, endAyah: Int): List<AyahText> =
         range(index.range(startSurah, startAyah, endSurah, endAyah))
-    fun search(query: String): List<AyahText> { val normalized = normalize(query); require(normalized.length >= 2); return verses.filterIndexed { offset, _ -> searchText[offset].contains(normalized) } }
+    fun search(query: String): List<AyahText> {
+        val normalized = QuranSearchNormalizer.normalize(query)
+        require(normalized.length >= 2)
+        return verses.filterIndexed { offset, _ -> searchText[offset].contains(normalized) }
+    }
+
+    fun searchPage(query: String, offset: Int = 0, limit: Int = 20): QuranSearchPage {
+        require(offset >= 0)
+        require(limit in 1..50)
+        val normalized = QuranSearchNormalizer.normalize(query)
+        require(normalized.length >= 2)
+        val matches = searchText.indices.filter { searchText[it].contains(normalized) }
+        val safeOffset = offset.coerceAtMost(matches.size)
+        val pageIndices = matches.drop(safeOffset).take(limit)
+        val hits = pageIndices.map { verseIndex ->
+            val ayah = verses[verseIndex]
+            QuranSearchHit(
+                ayah = ayah,
+                highlightRanges = QuranSearchNormalizer.highlightRanges(ayah.text, query),
+            )
+        }
+        return QuranSearchPage(
+            query = query,
+            normalizedQuery = normalized,
+            hits = hits,
+            total = matches.size,
+            offset = safeOffset,
+            limit = limit,
+        )
+    }
+
     companion object {
-        private val marks = Regex("[\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06ED\\u0640]")
-        private val alifs = Regex("[أإآٱ]")
-        private val whitespace = Regex("\\s+")
-        fun normalize(text: String): String = text.replace(marks, "").replace(alifs, "ا").replace('ى', 'ي').replace(whitespace, " ").trim()
+        fun normalize(text: String): String = QuranSearchNormalizer.normalize(text)
     }
 }
