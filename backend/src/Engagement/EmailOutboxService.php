@@ -30,6 +30,26 @@ final class EmailOutboxService
         return $q->rowCount()===1 || $this->outboxExists($dedupe);
     }
 
+    public function enqueueAuthorizedTest(
+        string $recipientCipher,
+        string $subject,
+        string $plainBody,
+        string $locale,
+        string $idempotencyKey,
+        ?string $htmlBody=null
+    ): bool {
+        if($recipientCipher===''||!in_array($locale,['ar','en'],true)||mb_strlen($subject,'UTF-8')<2||mb_strlen($subject,'UTF-8')>180||trim($plainBody)==='')throw new ApiError('invalid_fields',422);
+        $dedupe=hash('sha256','authorized-test:'.$idempotencyKey);
+        $footer=$locale==='en'
+            ? 'Authorized Athar development preview. This is not a subscription delivery.'
+            : 'معاينة تطوير مصرح بها من أثر. هذه ليست رسالة اشتراك.';
+        $q=$this->db->prepare("INSERT IGNORE INTO email_outbox
+            (category,priority,user_id,campaign_delivery_id,recipient_email_cipher,locale,subject,plain_body,html_body,html_footer,status,idempotency_key,attempt_count,max_attempts,available_at,expires_at,created_at,updated_at)
+            VALUES ('campaign',30,NULL,NULL,?,?,?,?,?, 'pending',?,0,3,UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR),UTC_TIMESTAMP(),UTC_TIMESTAMP())");
+        $q->execute([$recipientCipher,$locale,$subject,$plainBody,$htmlBody,$footer,$dedupe]);
+        return $q->rowCount()===1 || $this->outboxExists($dedupe);
+    }
+
     public function enqueueDueCampaignEmails(int $limit=250): array
     {
         $limit=max(1,min(1000,$limit));
@@ -110,7 +130,7 @@ final class EmailOutboxService
                 if($category==='campaign'&&$this->campaignDailyQuotaReached()){
                     $this->requeue($id,'campaign_daily_quota',3600);$retried++;continue;
                 }
-                if($category==='campaign'&&!$this->campaignDeliveryStillEligible((int)$row['campaign_delivery_id'])){
+                if($category==='campaign'&&$row['campaign_delivery_id']!==null&&!$this->campaignDeliveryStillEligible((int)$row['campaign_delivery_id'])){
                     $this->cancelOutbox($id,'campaign_or_consent_cancelled');$cancelled++;continue;
                 }
                 $recipient=$this->recipient($row);
