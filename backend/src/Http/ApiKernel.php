@@ -154,6 +154,7 @@ final class ApiKernel
         }
         if(str_starts_with($path,'/night-prayer/')){
             if(!$this->nightPrayer)throw new ApiError('service_unavailable',503);
+            if($path==='/night-prayer/config'){$this->method($r,'GET');return [$this->nightPrayer->publicConfig(),200];}
             if($path==='/night-prayer/sessions'){
                 if($r->method==='GET')return [$this->nightPrayer->sessions($user,$r->query),200];
                 $this->method($r,'POST');return [$this->nightPrayer->write($user,$r->string('id',36),$r->body),201];
