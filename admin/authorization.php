@@ -74,6 +74,15 @@ function admin_authorize_kind(array $actor, string $kind): void
     }
 }
 
+function admin_redact_email(?string $email): string
+{
+    $email = trim((string) $email);
+    if ($email === '' || !str_contains($email, '@')) return $email === '' ? '—' : '***';
+    [$local, $domain] = array_pad(explode('@', $email, 2), 2, '');
+    $visible = mb_substr($local, 0, min(2, max(1, mb_strlen($local, 'UTF-8'))), 'UTF-8');
+    return $visible . '***@' . $domain;
+}
+
 function admin_authorize_user_target(array $actor, array $target, string $operation): void
 {
     $actorId = (int) ($actor['id'] ?? 0);
