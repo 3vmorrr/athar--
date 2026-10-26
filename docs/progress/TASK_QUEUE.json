@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "21.20",
+  "current_task": "21.21",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -2247,7 +2247,7 @@
       "name": "Books immersive hero and editorial hierarchy",
       "parent": "Work package21: UX/accessibility",
       "scope": "Apply the shared hero/layered-content system using actual permitted book covers or original Athar books artwork. Preserve metadata/rights/download/reading/offline ownership and accessible catalog actions; no random stock, fake cover/title or new backend contracts.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "21.7",
         "06.5"
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "4c3ca400b13d72facb04ce11de64cdf2586cbe4b",
-    "last_landed_task": "21.19",
-    "next_task": "21.20",
+    "head": "cdad86bccc7946b6b21fce950b93fd2471360e19",
+    "last_landed_task": "21.20",
+    "next_task": "21.21",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2821,7 +2821,8 @@
       "20.2",
       "20.3",
       "20.4",
-      "21.19"
+      "21.19",
+      "21.20"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2911,6 +2912,9 @@
       ],
       "21.19": [
         "4c3ca400b13d"
+      ],
+      "21.20": [
+        "cdad86bccc79"
       ]
     },
     "preexisting_parallel_admin": {
