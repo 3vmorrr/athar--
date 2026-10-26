@@ -141,7 +141,18 @@ final class ApiKernel
             if($r->method==='GET')return [$this->progress->lessonProgress($user,(int)($r->query['lesson_id']??0)),200];
             $this->method($r,'PUT');return [$this->progress->saveLessonProgress($user,$r->body),200];
         }
-        if($path==='/me/activity'){$this->method($r,'POST');$this->progress->activity($user,$r->string('event_id',36),$r->string('activity_type',32));return [['recorded'=>true],200];}
+        if($path==='/me/activity'){
+            $this->method($r,'POST');
+            $activityDate=$r->body['activity_date']??null;
+            if($activityDate!==null&&!is_string($activityDate))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
+            $this->progress->activity(
+                $user,
+                $r->string('event_id',36),
+                $r->string('activity_type',32),
+                $activityDate,
+            );
+            return [['recorded'=>true],200];
+        }
         if(preg_match('#^/lessons/([1-9][0-9]*)/comments$#',$path,$m)){
             if($r->method==='GET')return [$this->progress->comments($user,(int)$m[1]),200];
             $this->method($r,'POST');if(!$this->rates->consume('comments',(string)$user,3,3600))throw new ApiError('rate_limited',429);return [$this->progress->addComment($user,(int)$m[1],$r->string('body',2000)),201];
