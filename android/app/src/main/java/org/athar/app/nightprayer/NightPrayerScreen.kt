@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -94,6 +95,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 @Composable fun NightPrayerScreen(graph: AppGraph) {
     var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("tonight") }
     var addRequest by remember { mutableIntStateOf(0) }
+    val owner = requireNotNull(graph.session.userId)
     val vm: NightViewModel = viewModel(
         key = "night:${graph.session.userId}",
         factory = object : ViewModelProvider.Factory {
@@ -102,6 +104,25 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 NightViewModel(graph) as T
         },
     )
+    val timerVm: NightTimerViewModel = viewModel(
+        key = "night-timer:$owner",
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                NightTimerViewModel(graph, owner) as T
+        },
+    )
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, timerVm) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                timerVm.pauseForBackground()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     val state by vm.state.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
@@ -167,7 +188,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 
         AtharPageTransition(section, Modifier.weight(1f)) {
             when (it) {
-                "tonight" -> NightTonightScreen(graph, vm)
+                "tonight" -> NightTonightScreen(graph, vm, timerVm)
                 "plan" -> NightPlanScreen(graph, vm)
                 "tools" -> NightToolsScreen(graph)
                 "calendar" -> NightCalendarScreen(vm)
