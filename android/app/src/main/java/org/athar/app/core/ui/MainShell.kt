@@ -24,6 +24,7 @@ import org.athar.app.AppGraph
 import org.athar.app.AppViewModel
 import org.athar.app.R
 import org.athar.app.auth.AuthState
+import org.athar.app.auth.AccountInput
 import org.athar.app.quran.QuranScreen
 import org.athar.app.adhkar.AdhkarScreen
 import org.athar.app.books.BookDetailScreen
@@ -320,33 +321,275 @@ private fun AtharNavIcon(
     }
 }
 
-@Composable private fun AccountProfileScreen(vm: AppViewModel, auth: AuthState.SignedIn) {
+@Composable private fun AccountProfileScreen(
+    vm: AppViewModel,
+    auth: AuthState.SignedIn,
+) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    var name by remember(auth.user) { mutableStateOf(auth.user.displayName.orEmpty()) }
-    var username by remember(auth.user) { mutableStateOf(auth.user.username.orEmpty()) }
-    var current by remember { mutableStateOf("") }; var password by remember { mutableStateOf("") }; var confirmation by remember { mutableStateOf("") }
-    var delete by remember { mutableStateOf(false) }; var deletePassword by remember { mutableStateOf("") }
-    LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "profile", contentType = "heading") { Text(stringResource(R.string.profile), style = MaterialTheme.typography.headlineSmall) }
-        item(key = "email", contentType = "text") { Text(auth.user.email) }
-        item(key = "name", contentType = "field") { OutlinedTextField(name, { name = it.take(120) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true) }
-        item(key = "username", contentType = "field") { OutlinedTextField(username, { username = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, singleLine = true) }
-        item(key = "save", contentType = "action") { Button(onClick = { vm.perform { vm.graph.session.updateProfile(name, username,auth.user.id) } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) } }
-        item(key = "settings", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge) }
-        item(key = "language", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("ar" to R.string.arabic, "en" to R.string.english).forEach { (tag, label) -> OutlinedButton(onClick = { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag)) }) { Text(stringResource(label)) } } } }
-        item(key = "theme", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("light" to R.string.light, "dark" to R.string.dark, "system" to R.string.system_theme).forEach { (key, label) -> FilterChip(settings?.theme == key, { scope.launch { vm.graph.settings.theme(key) } }, label = { Text(stringResource(label)) }) } } }
-        item(key = "security", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.change_password), style = MaterialTheme.typography.titleLarge) }
-        item(key = "password-fields", contentType = "fields") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            PasswordField(current, { current = it }, stringResource(R.string.current_password))
-            PasswordField(password, { password = it }, stringResource(R.string.new_password))
-            PasswordField(confirmation, { confirmation = it }, stringResource(R.string.confirm_password))
-            Button(onClick = { if (password != confirmation) vm.invalid("password_mismatch") else vm.perform { vm.graph.session.changePassword(current, password, confirmation,auth.user.id); current = ""; password = ""; confirmation = "" } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) }
-        } }
-        if (operation.error != null || operation.message != null) item(key = "feedback", contentType = "feedback") { org.athar.app.auth.Feedback(operation) }
-        item(key = "signout", contentType = "action") { OutlinedButton(onClick = {vm.logout(auth.user.id)}) { Text(stringResource(R.string.logout)) } }
-        item(key = "delete", contentType = "action") { TextButton(onClick = { delete = true }) { Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error) } }
+    var name by remember(auth.user) {
+        mutableStateOf(auth.user.displayName.orEmpty())
     }
-    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { vm.perform { val id = auth.user.id; vm.graph.session.delete(deletePassword,id); vm.graph.database.dao().deleteUser(id) }; delete = false; deletePassword = "" }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
+    var username by remember(auth.user) {
+        mutableStateOf(auth.user.username.orEmpty())
+    }
+    var current by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmation by remember { mutableStateOf("") }
+    var delete by remember { mutableStateOf(false) }
+    var deletePassword by remember { mutableStateOf("") }
+
+    val normalizedName = name.trim()
+    val normalizedUsername = username.trim().lowercase()
+    val nameValid = name.isBlank() || AccountInput.validDisplayName(name)
+    val usernameValid = username.isBlank() || AccountInput.validUsername(username)
+    val profileValid = AccountInput.validProfile(name, username)
+    val profileChanged =
+        normalizedName != auth.user.displayName.orEmpty() ||
+            normalizedUsername != auth.user.username.orEmpty()
+
+    LazyColumn(
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        item(key = "profile", contentType = "heading") {
+            AtharHeroSurface(Modifier.fillMaxWidth()) {
+                Text(
+                    stringResource(R.string.profile),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    auth.user.email,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        item(key = "name", contentType = "field") {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it.take(80) },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.display_name)) },
+                supportingText = {
+                    Text(stringResource(R.string.display_name_hint))
+                },
+                isError = name.isNotBlank() && !nameValid,
+                singleLine = true,
+            )
+        }
+
+        item(key = "username", contentType = "field") {
+            OutlinedTextField(
+                value = username,
+                onValueChange = {
+                    username = AccountInput.normalizeUsernameInput(it)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.username)) },
+                supportingText = {
+                    Text(stringResource(R.string.username_hint))
+                },
+                isError = username.isNotBlank() && !usernameValid,
+                singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Ascii,
+                ),
+            )
+        }
+
+        item(key = "save", contentType = "action") {
+            Button(
+                onClick = {
+                    vm.perform(successMessage = "saved") {
+                        vm.graph.session.updateProfile(
+                            normalizedName,
+                            normalizedUsername,
+                            auth.user.id,
+                        )
+                    }
+                },
+                enabled = !operation.busy && profileValid && profileChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 52.dp),
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        }
+
+        item(key = "settings", contentType = "heading") {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.settings),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        item(key = "language", contentType = "controls") {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "ar" to R.string.arabic,
+                    "en" to R.string.english,
+                ).forEach { (tag, label) ->
+                    OutlinedButton(
+                        onClick = {
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags(tag),
+                            )
+                        },
+                    ) {
+                        Text(stringResource(label))
+                    }
+                }
+            }
+        }
+
+        item(key = "theme", contentType = "controls") {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "light" to R.string.light,
+                    "dark" to R.string.dark,
+                    "system" to R.string.system_theme,
+                ).forEach { (key, label) ->
+                    FilterChip(
+                        selected = settings?.theme == key,
+                        onClick = {
+                            scope.launch { vm.graph.settings.theme(key) }
+                        },
+                        label = { Text(stringResource(label)) },
+                    )
+                }
+            }
+        }
+
+        item(key = "security", contentType = "heading") {
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.change_password),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        item(key = "password-fields", contentType = "fields") {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                PasswordField(
+                    current,
+                    { current = it.take(200) },
+                    stringResource(R.string.current_password),
+                )
+                PasswordField(
+                    password,
+                    { password = it.take(200) },
+                    stringResource(R.string.new_password),
+                )
+                PasswordField(
+                    confirmation,
+                    { confirmation = it.take(200) },
+                    stringResource(R.string.confirm_password),
+                )
+                Button(
+                    onClick = {
+                        if (password != confirmation) {
+                            vm.invalid("password_mismatch")
+                        } else {
+                            vm.perform(successMessage = "saved") {
+                                vm.graph.session.changePassword(
+                                    current,
+                                    password,
+                                    confirmation,
+                                    auth.user.id,
+                                )
+                                current = ""
+                                password = ""
+                                confirmation = ""
+                            }
+                        }
+                    },
+                    enabled = !operation.busy &&
+                        current.isNotBlank() &&
+                        password.length in 10..200 &&
+                        confirmation.isNotBlank(),
+                    modifier = Modifier.heightIn(min = 52.dp),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
+
+        if (operation.error != null || operation.message != null) {
+            item(key = "feedback", contentType = "feedback") {
+                org.athar.app.auth.Feedback(operation)
+            }
+        }
+
+        item(key = "signout", contentType = "action") {
+            OutlinedButton(
+                onClick = { vm.logout(auth.user.id) },
+                modifier = Modifier.heightIn(min = 52.dp),
+            ) {
+                Text(stringResource(R.string.logout))
+            }
+        }
+
+        item(key = "delete", contentType = "action") {
+            TextButton(
+                onClick = { delete = true },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(
+                    stringResource(R.string.delete_account),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    }
+
+    if (delete) {
+        AlertDialog(
+            onDismissRequest = {
+                delete = false
+                deletePassword = ""
+            },
+            title = { Text(stringResource(R.string.delete_account)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.delete_account_body))
+                    PasswordField(
+                        deletePassword,
+                        { deletePassword = it.take(200) },
+                        stringResource(R.string.current_password),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        vm.perform {
+                            val id = auth.user.id
+                            vm.graph.session.delete(deletePassword, id)
+                            vm.graph.database.dao().deleteUser(id)
+                        }
+                        delete = false
+                        deletePassword = ""
+                    },
+                    enabled = deletePassword.isNotBlank() && !operation.busy,
+                ) {
+                    Text(stringResource(R.string.delete_action))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        delete = false
+                        deletePassword = ""
+                    },
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
