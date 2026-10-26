@@ -668,21 +668,41 @@ if ($path === '/admin') {
                 }
                 flash('تم حذف التعليق مع الاحتفاظ بسجل قرار المراجعة.'); redirect('/admin#admin-comments');
             } elseif ($kind === 'gmail-settings') {
-                db()->beginTransaction();
                 $gmailEmail = strtolower(trim((string) ($_POST['gmail_email'] ?? '')));
                 $smtpPassword = preg_replace('/\s+/', '', (string) ($_POST['smtp_password'] ?? '')) ?? (string) ($_POST['smtp_password'] ?? '');
+                $testRecipient = strtolower(trim((string) ($_POST['test_recipient'] ?? '')));
+                $clearTestRecipient = isset($_POST['clear_test_recipient']);
                 if (!filter_var($gmailEmail, FILTER_VALIDATE_EMAIL) || strlen($gmailEmail) > 190) throw new RuntimeException('أدخل بريد Gmail صالحًا.');
                 if ($smtpPassword === '' && platform_setting('smtp_password_cipher') === '') throw new RuntimeException('أدخل App Password الخاصة بالتطبيق.');
+                if ($testRecipient !== '' && (!filter_var($testRecipient, FILTER_VALIDATE_EMAIL) || strlen($testRecipient) > 190)) throw new RuntimeException('بريد الاختبار غير صالح.');
+                if ($testRecipient !== '' && !isset($_POST['test_recipient_authorized'])) throw new RuntimeException('أكد أن صاحب بريد الاختبار مصرح له باستلام رسائل التطوير.');
+                if ($testRecipient !== '' || $clearTestRecipient) {
+                    $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?');
+                    $passwordCheck->execute([$admin['id']]);
+                    if (!password_verify((string) ($_POST['owner_password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة مرور المالك غير صحيحة.');
+                }
+
+                db()->beginTransaction();
                 foreach (['smtp_host'=>'smtp.gmail.com','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>$gmailEmail,'smtp_from_email'=>$gmailEmail,'smtp_from_name'=>'أثر'] as $settingKey=>$settingValue) save_platform_setting($settingKey,$settingValue,(int)$admin['id']);
                 if ($smtpPassword !== '') save_platform_setting('smtp_password_cipher',seal_platform_secret($smtpPassword),(int)$admin['id']);
+                if ($clearTestRecipient) {
+                    save_platform_setting('smtp_test_recipient_cipher','',(int)$admin['id']);
+                    save_platform_setting('smtp_test_recipient_authorized_at','',(int)$admin['id']);
+                } elseif ($testRecipient !== '') {
+                    save_platform_setting('smtp_test_recipient_cipher',seal_platform_secret($testRecipient),(int)$admin['id']);
+                    save_platform_setting('smtp_test_recipient_authorized_at',gmdate('Y-m-d H:i:s'),(int)$admin['id']);
+                }
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'gmail-smtp-settings-updated','platform',null]);
                 db()->commit();
+
                 if (isset($_POST['send_test_email'])) {
                     if (!allow_session_rate('smtp_test_email',1,3600)) throw new RuntimeException('أُرسل اختبار بريد خلال الساعة الماضية. حاول لاحقًا.');
+                    $authorizedRecipient = platform_secret('smtp_test_recipient');
+                    if ($authorizedRecipient === '' || platform_setting('smtp_test_recipient_authorized_at') === '') throw new RuntimeException('حدد بريد اختبار مصرحًا به واحفظه قبل إرسال اختبار.');
                     $smtpFailure = '';
-                    if (!send_platform_email((string)$admin['email'],'اختبار إعدادات Gmail في أثر','تم إرسال رسالة الاختبار بنجاح.',$smtpFailure)) throw new RuntimeException('حُفظت الإعدادات، لكن تعذّر إرسال رسالة الاختبار: ' . ($smtpFailure !== '' ? $smtpFailure : 'تحقق من بريد Gmail وApp Password.'));
-                    flash('تم حفظ إعدادات Gmail ووصلت رسالة الاختبار إلى بريد المدير.');
-                } else flash('تم حفظ إعدادات Gmail.');
+                    if (!send_platform_email($authorizedRecipient,'اختبار إعدادات Gmail في أثر','هذه رسالة اختبار واحدة من لوحة إدارة أثر للتحقق من إعداد البريد.',$smtpFailure)) throw new RuntimeException('حُفظت الإعدادات، لكن تعذّر إرسال رسالة الاختبار: ' . ($smtpFailure !== '' ? $smtpFailure : 'تحقق من Gmail وApp Password.'));
+                    flash('تم إرسال رسالة اختبار واحدة إلى المستلم المصرح به: ' . admin_redact_email($authorizedRecipient));
+                } else flash('تم حفظ إعدادات Gmail بأمان.');
                 redirect('/admin#admin-services');
             } elseif ($kind === 'dorar-settings') {
                 db()->beginTransaction();
@@ -1277,6 +1297,20 @@ if ($path === '/admin') {
     $smtpConfig = ['smtp_host'=>'','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>'','smtp_from_email'=>'','smtp_from_name'=>'أثر'];
     foreach ($smtpConfig as $key=>$fallback) $smtpConfig[$key] = platform_setting($key,$fallback);
     $smtpPasswordConfigured = platform_setting('smtp_password_cipher') !== '';
+    $smtpTestRecipientConfigured = platform_setting('smtp_test_recipient_cipher') !== '' && platform_setting('smtp_test_recipient_authorized_at') !== '';
+    $smtpTestRecipientMasked = 'غير محدد';
+    if ($smtpTestRecipientConfigured) {
+        try { $smtpTestRecipientMasked = admin_redact_email(platform_secret('smtp_test_recipient')); }
+        catch (Throwable $testRecipientError) { $smtpTestRecipientMasked = 'تعذر قراءة الإعداد المشفر'; }
+    }
+    $serviceDiagnostics = [
+        'settings_key_source' => trim((string) (getenv('ATHAR_SETTINGS_KEY') ?: '')) !== '' ? 'متغير بيئة الخادم' : 'ملف محلي داخل storage/secrets',
+        'base_url' => platform_email_base_url(),
+        'base_url_https' => str_starts_with(platform_email_base_url(), 'https://'),
+        'smtp_credentials' => $smtpPasswordConfigured,
+        'test_recipient' => $smtpTestRecipientConfigured,
+        'dorar_token' => platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '',
+    ];
     $mailingOptInCount = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
     $emailCampaigns = db()->query("SELECT c.*,u.email AS creator_email,
         (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id) AS recipient_total,
