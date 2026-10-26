@@ -147,8 +147,9 @@ final class CampaignService
                 }
             }
             $nextRevision=(int)$campaign['revision']+1;
-            $this->db->prepare("UPDATE engagement_campaigns SET status='scheduled',scheduled_at=?,confirmed_by=?,confirmed_at=UTC_TIMESTAMP(),revision=?,updated_at=UTC_TIMESTAMP() WHERE id=?")
-                ->execute([$scheduled,$actor['id'],$nextRevision,$id]);
+            $nextStatus=$inserted>0?'scheduled':'completed';
+            $this->db->prepare("UPDATE engagement_campaigns SET status=?,scheduled_at=?,confirmed_by=?,confirmed_at=UTC_TIMESTAMP(),revision=?,updated_at=UTC_TIMESTAMP() WHERE id=?")
+                ->execute([$nextStatus,$scheduled,$actor['id'],$nextRevision,$id]);
             $this->event($id,'campaign_confirmed',(int)$actor['id'],['queued'=>$inserted,'skipped'=>$skipped]);
             $this->audit($actor,'engagement-campaign-confirmed',$id);
             $this->db->commit();
@@ -368,7 +369,9 @@ final class CampaignService
         $username=$this->setting('smtp_username');
         $from=$this->setting('smtp_from_email');
         $passwordCipher=$this->setting('smtp_password_cipher');
-        return $host!==''&&$username!==''&&$passwordCipher!==''&&filter_var($from,FILTER_VALIDATE_EMAIL)!==false;
+        $base=rtrim(trim((string)(getenv('ATHAR_BASE_URL')?:'')),'/');
+        $baseHttps=$base!==''&&filter_var($base,FILTER_VALIDATE_URL)!==false&&strtolower((string)parse_url($base,PHP_URL_SCHEME))==='https';
+        return $host!==''&&$username!==''&&$passwordCipher!==''&&filter_var($from,FILTER_VALIDATE_EMAIL)!==false&&$baseHttps;
     }
 
     private function setting(string $key): string
