@@ -26,6 +26,7 @@ import org.athar.app.R
 import org.athar.app.core.ui.*
 import org.athar.app.quran.AyahText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable fun AudioScreen(graph: AppGraph, radio: Boolean = false) {
     val app = LocalContext.current.applicationContext as android.app.Application
     val vm: AudioViewModel = viewModel(key = "audio:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = AudioViewModel(graph, app) as T })
@@ -106,7 +107,22 @@ import org.athar.app.quran.AyahText
       }
     }
     if (selector) ReaderDialog(graph, surah, { selector = false }) { reader -> update(selection.withReader(reader)); selector = false }
-    if (surahSelector) AlertDialog(onDismissRequest = { surahSelector = false }, title = { Text(stringResource(R.string.surah)) }, text = { LazyColumn(Modifier.heightIn(max = 420.dp)) { items(names, key = { it.number }, contentType = { "surah" }) { row -> TextButton(onClick = { update(selection.withSurah(row.number)); surahSelector = false }, Modifier.fillMaxWidth()) { Text("${row.number}. ${row.name}") } } } }, confirmButton = { TextButton(onClick = { surahSelector = false }) { Text(stringResource(R.string.close)) } })
+    if (surahSelector) ModalBottomSheet(onDismissRequest = { surahSelector = false }) {
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(stringResource(R.string.surah), style = MaterialTheme.typography.titleLarge)
+            LazyColumn(Modifier.heightIn(max = 420.dp)) {
+                items(names, key = { it.number }, contentType = { "surah" }) { row ->
+                    TextButton(
+                        onClick = { update(selection.withSurah(row.number)); surahSelector = false },
+                        Modifier.fillMaxWidth(),
+                    ) { Text("${row.number}. ${row.name}") }
+                }
+            }
+        }
+    }
 }
 
 @Composable private fun FollowAlong(vm: AudioViewModel, state: AudioUiState, verses: List<AyahText>) {
@@ -126,16 +142,32 @@ import org.athar.app.quran.AyahText
     ) { Text(verse.text, Modifier.fillMaxWidth().padding(16.dp), fontFamily = QuranFont, style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp)) } } }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun ReaderDialog(graph: AppGraph, surah: Int, dismiss: () -> Unit, select: (JsonElement) -> Unit) {
     var input by remember { mutableStateOf("") }; var query by remember { mutableStateOf("") }; var page by remember { mutableIntStateOf(1) }
-    AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(R.string.choose_reciter)) }, text = {
-        Column(Modifier.height(440.dp)) {
-            Row { OutlinedTextField(input, { input = it.take(80) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) }); TextButton(onClick = { query = input; page = 1 }) { Text(stringResource(R.string.search)) } }
+    ModalBottomSheet(onDismissRequest = dismiss) {
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(stringResource(R.string.choose_reciter), style = MaterialTheme.typography.titleLarge)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(input, { input = it.take(80) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
+                TextButton(onClick = { query = input; page = 1 }) { Text(stringResource(R.string.search)) }
+            }
             DataScreen(graph, "quran/reciters", mapOf("surah" to "$surah", "q" to query, "page" to "$page", "per_page" to "25")) { data, _ ->
-                LazyColumn { items(data.array("items"), key = { it.text("id") }, contentType = { "reader" }) { reader -> TextButton(onClick = { select(reader) }, Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(reader.text("name")) } }
-                    item { Row { TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }; TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) } } }
+                LazyColumn(Modifier.heightIn(max = 440.dp)) {
+                    items(data.array("items"), key = { it.text("id") }, contentType = { "reader" }) { reader ->
+                        TextButton(onClick = { select(reader) }, Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(reader.text("name")) }
+                    }
+                    item {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }
+                            TextButton(onClick = { page++ }, enabled = data.asJsonObject["pagination"].text("has_more") == "true") { Text(stringResource(R.string.more)) }
+                        }
+                    }
                 }
             }
         }
-    }, confirmButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.close)) } })
+    }
 }
