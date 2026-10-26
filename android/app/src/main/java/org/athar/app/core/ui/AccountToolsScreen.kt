@@ -15,6 +15,8 @@ import kotlinx.coroutines.*
 import org.athar.app.core.data.retainedAccountData
 import org.athar.app.core.data.accountExportEnvelope
 import org.athar.app.core.data.AccountPayloads
+import org.athar.app.khatmah.KhatmahRepository
+import org.athar.app.khatmah.KhatmahScreen
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.khatmah.KhatmahScreen
@@ -32,6 +34,13 @@ import java.time.LocalDate
     var busy by remember { mutableStateOf(false) }
     var confirmExport by remember(owner, tool) { mutableStateOf(false) }
     val context = LocalContext.current
+    val khatmahRepository = remember(graph) {
+        KhatmahRepository(
+            dao = graph.database.dao(),
+            cipher = graph.cipher,
+            session = graph.session,
+        )
+    }
     val exporter = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->
@@ -51,10 +60,11 @@ import java.time.LocalDate
 
                     val local = try {
                         retainedAccountData(
-                            user,
-                            graph.session,
-                            graph.lessons,
-                            graph.nightPrayer,
+                            owner = user,
+                            session = graph.session,
+                            lessons = graph.lessons,
+                            night = graph.nightPrayer,
+                            khatmah = khatmahRepository,
                         )
                     } catch (failure: CancellationException) {
                         throw failure
