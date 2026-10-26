@@ -195,6 +195,12 @@
 <string name="range_error">راجع السورة والآية والعدد. لا يتجاوز النطاق نهاية المصحف ولا يلتف إلى بدايته.</string>
 <string name="last_third">الثلث الأخير من الليل</string>
 <string name="latitude">خط العرض</string>
+<string name="city">المدينة</string>
+<string name="night_preferences_manual_notice">هذه الإعدادات تُدخلها وتحفظها يدويًا. أثر لا يطلب إذن الموقع ولا يقرأ GPS تلقائيًا.</string>
+<string name="night_preferences_save">حفظ المدينة وطريقة الحساب</string>
+<string name="night_preferences_saved">تم حفظ إعدادات المدينة والمنطقة وطريقة الحساب.</string>
+<string name="night_preferences_conflict">تغيّرت إعدادات قيام الليل من جهاز آخر. أعد تحميل النسخة الحالية قبل الحفظ.</string>
+<string name="night_preferences_unavailable">تعذر تحميل أو حفظ إعدادات قيام الليل حاليًا. لم نغيّر النسخة المحفوظة.</string>
 <string name="longitude">خط الطول</string>
 <string name="prayer_calculation_notice">أدخل موقعك وطريقة الحساب. هذه مواقيت محسوبة؛ راجع مواقيت مسجدك عند الاختلاف. لا نستخدم موقعك دون إذنك.</string>
 <string name="hanafi_asr">حساب العصر الحنفي</string>
