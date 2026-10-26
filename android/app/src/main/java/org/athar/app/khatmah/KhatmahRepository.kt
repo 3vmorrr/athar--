@@ -423,7 +423,6 @@ class KhatmahRepository(
         require(value.status in statuses)
         require(value.revision >= 0)
         require(value.localVersion > 0)
-        if (value.conflict) require(value.serverConflict != null)
         value.serverConflict?.let {
             validateStoredDates(it.startDate, it.targetDate)
             require(it.completedPages in 0..604)
