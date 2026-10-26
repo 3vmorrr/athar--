@@ -97,6 +97,14 @@
 <string name="rule_seventh">Seventh of the night rule</string>
 <string name="rule_angle">Twilight angle rule</string>
 <string name="export_explanation">Choose where to save your personal data copy. Unsynced device sessions are included; local exempt periods are excluded.</string>
+<string name="export_scope_title">What the export contains</string>
+<string name="export_scope_account">Synced account data: profile, bookmarks, favorites, plans, recorded progress and activity statistics.</string>
+<string name="export_scope_device">Retained device data that has not been discarded: lesson progress and local Night Prayer sessions.</string>
+<string name="export_private_excluded">Local private exemption periods are excluded</string>
+<string name="export_requires_current_account">A complete export requires access to the current account. If account data cannot be retrieved, Athar will not write a partial export.</string>
+<string name="export_saved_complete">The complete account export was saved to the location you chose.</string>
+<string name="export_account_unavailable">Current account data could not be retrieved. Check the connection and session, then try again. No partial export was written.</string>
+<string name="export_write_failed">The export was prepared, but it could not be written to the selected location. Choose another location and try again.</string>
 <string name="daily_pages">Current daily reading target: %1$s pages</string>
 <string name="counter_conflict">This counter was changed on another device. Review the server version before continuing.</string>
 <string name="show_ayah">Show ayah</string>
