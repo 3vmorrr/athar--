@@ -113,13 +113,13 @@ final class ApiKernel
             $this->method($r,'PUT');return [$this->progress->savePosition($user,$r->body),200];
         }
         if($path==='/quran/bookmarks'){
-            if($r->method==='GET')return [$this->progress->bookmarks($user),200];
+            if($r->method==='GET')return [$this->progress->bookmarks($user,$r->query),200];
             if($r->method==='DELETE'){$this->progress->deleteBookmarkAt($user,$r->body);return [['status'=>'deleted'],200];}
             $this->method($r,'POST');return [$this->progress->addBookmark($user,$r->body),201];
         }
         if(preg_match('#^/quran/bookmarks/([1-9][0-9]*)$#',$path,$m)){$this->method($r,'DELETE');$this->progress->deleteBookmark($user,(int)$m[1]);return [['status'=>'deleted'],200];}
         if($path==='/me/favorites'){
-            if($r->method==='GET')return [$this->progress->favorites($user),200];
+            if($r->method==='GET')return [$this->progress->favorites($user,$r->query),200];
             if(!in_array($r->method,['PUT','DELETE'],true))throw new ApiError('method_not_allowed',405);
             $id=$r->body['target_id']??null;if(!is_int($id)||$id<1)throw new ApiError('invalid_fields',422,['target_id'=>'invalid']);
             $this->progress->favorite($user,$r->string('target_type',12),$id,$r->method!=='DELETE');return [['saved'=>$r->method!=='DELETE'],200];
