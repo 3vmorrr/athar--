@@ -39,7 +39,12 @@
 <string name="book_download_failed">تعذر تحميل الكتاب. يمكنك المحاولة مرة أخرى.</string>
 <string name="book_cancel_download">إلغاء التحميل</string>
 <string name="book_remove_download">حذف النسخة المحمّلة</string>
-<string name="book_remove_download_confirm">سيتم حذف النسخة المحلية فقط، ولن يتأثر الكتاب أو المفضلة على حسابك.</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
+<string name="book_remove_download_confirm">سيتم حذف النسخة المحلية فقط، ولن يتأثر الكتاب أو المفضلة على حسابك.</string>
+<string name="book_not_downloaded">لا توجد نسخة محمّلة من هذا الكتاب على الجهاز.</string>
+<string name="book_integrity_failed">تعذر التحقق من سلامة النسخة المحمّلة. لن يتم فتح الملف حتى لا نعرض محتوى ناقصًا أو تالفًا.</string>
+<string name="book_remove_corrupt">حذف النسخة التالفة</string>
+<string name="book_page_description">صفحة %1$d من %2$d</string>
+<string name="book_page_count">%1$d / %2$d</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
     <string name="reset_counter">تصفير العدّاد</string><string name="next_dhikr">الذكر التالي</string><string name="count_action">سبّح وعدّ</string><string name="completed">اكتمل</string><string name="category">القسم</string><string name="progress_count">%1$d من %2$d</string>
     <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
 <string name="sync">مزامنة</string>
