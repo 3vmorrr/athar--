@@ -50,10 +50,10 @@ function admin_kind_capability(string $kind): ?string
     return match ($kind) {
         'scholar', 'series', 'lesson', 'book', 'adhkar', 'content', 'lesson-event' => 'content',
         'comment-review', 'comment-delete' => 'moderation',
-        'campaign-create', 'campaign-batch', 'campaign-retry-failed',
         'push-campaign-create', 'push-campaign-update', 'push-campaign-cancel',
         'email-campaign-create', 'email-campaign-update', 'email-campaign-cancel',
-        'engagement-campaign-save', 'engagement-campaign-confirm', 'engagement-campaign-cancel' => 'campaigns',
+        'engagement-campaign-save', 'engagement-campaign-test-email',
+        'engagement-campaign-confirm', 'engagement-campaign-cancel' => 'campaigns',
         'user-profile-update', 'user-delete', 'user-suspension' => 'users',
         'user-role' => 'roles',
         'gmail-settings', 'dorar-settings' => 'services',
