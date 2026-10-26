@@ -116,7 +116,7 @@ class KhatmahRepository(
         expectedOwner: Long? = session.userId,
     ): KhatmahPlanState = withContext(Dispatchers.IO) {
         val owner = session.requireVerifiedOwner(expectedOwner)
-        validateDates(startDate, targetDate)
+        validateEditableDates(startDate, targetDate)
         require(completedPages in 0..604)
 
         ensureInitializedForEdit(owner)
@@ -124,11 +124,16 @@ class KhatmahRepository(
             session.requireVerifiedOwner(owner)
             val current = saved(owner)
             check(current?.conflict != true)
-            val status = when {
-                current?.status == "finished" && completedPages < 604 -> "active"
-                current?.status in statuses -> current.status
-                else -> "active"
+            if (current?.status == "finished") {
+                check(
+                    startDate == current.startDate &&
+                        targetDate == current.targetDate &&
+                        completedPages == current.completedPages,
+                ) {
+                    "Finished plan requires explicit restart"
+                }
             }
+            val status = current?.status?.takeIf { it in statuses } ?: "active"
             val value = KhatmahPlanState(
                 startDate = startDate,
                 targetDate = targetDate,
@@ -197,7 +202,7 @@ class KhatmahRepository(
                 else -> {
                     val target = requireNotNull(restartTargetDate)
                     val start = now.toString()
-                    validateDates(start, target)
+                    validateEditableDates(start, target)
                     KhatmahPlanState(
                         startDate = start,
                         targetDate = target,
@@ -384,7 +389,7 @@ class KhatmahRepository(
         val row = data.asJsonObject
         val start = row["start_date"]?.asString ?: throw IOException("Invalid start")
         val target = row["target_date"]?.asString ?: throw IOException("Invalid target")
-        validateDates(start, target)
+        validateStoredDates(start, target)
         val total = row["total_pages"]?.asInt ?: throw IOException("Invalid total")
         val completed = row["completed_pages"]?.asInt ?: throw IOException("Invalid completed")
         val status = row["status"]?.asString ?: throw IOException("Invalid status")
@@ -408,14 +413,14 @@ class KhatmahRepository(
             gson.fromJson(cipher.open(row.payloadCipher), KhatmahPlanState::class.java),
         )
         require(row.cacheKey == key)
-        validateDates(value.startDate, value.targetDate)
+        validateStoredDates(value.startDate, value.targetDate)
         require(value.completedPages in 0..604)
         require(value.status in statuses)
         require(value.revision >= 0)
         require(value.localVersion > 0)
         if (value.conflict) require(value.serverConflict != null)
         value.serverConflict?.let {
-            validateDates(it.startDate, it.targetDate)
+            validateStoredDates(it.startDate, it.targetDate)
             require(it.completedPages in 0..604)
             require(it.status in statuses)
             require(it.revision > 0)
@@ -434,11 +439,21 @@ class KhatmahRepository(
         )
     }
 
-    private fun validateDates(start: String, target: String) {
+    private fun validateStoredDates(start: String, target: String) {
         val startDate = LocalDate.parse(start)
         val targetDate = LocalDate.parse(target)
         require(!targetDate.isBefore(startDate))
         require(ChronoUnit.DAYS.between(startDate, targetDate) <= 5L * 366L)
+    }
+
+    private fun validateEditableDates(start: String, target: String) {
+        validateStoredDates(start, target)
+        val startDate = LocalDate.parse(start)
+        val targetDate = LocalDate.parse(target)
+        val now = today()
+        require(!startDate.isBefore(now.minusYears(5)))
+        require(!startDate.isAfter(now.plusYears(1)))
+        require(!targetDate.isBefore(now))
     }
 
     companion object {
