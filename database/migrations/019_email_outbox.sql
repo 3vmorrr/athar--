@@ -1,0 +1,31 @@
+CREATE TABLE email_outbox (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    category ENUM('transactional','campaign') NOT NULL,
+    priority TINYINT UNSIGNED NOT NULL DEFAULT 50,
+    user_id BIGINT UNSIGNED NULL,
+    campaign_delivery_id BIGINT UNSIGNED NULL,
+    recipient_email_cipher TEXT NULL,
+    subject VARCHAR(180) NOT NULL,
+    plain_body MEDIUMTEXT NOT NULL,
+    html_body MEDIUMTEXT NULL,
+    html_footer TEXT NULL,
+    status ENUM('pending','processing','sent','failed','cancelled') NOT NULL DEFAULT 'pending',
+    idempotency_key CHAR(64) NOT NULL,
+    attempt_count SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    max_attempts SMALLINT UNSIGNED NOT NULL DEFAULT 5,
+    available_at DATETIME NOT NULL,
+    locked_at DATETIME NULL,
+    expires_at DATETIME NOT NULL,
+    last_error_code VARCHAR(80) NULL,
+    sent_at DATETIME NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_email_outbox_idempotency (idempotency_key),
+    UNIQUE KEY uq_email_campaign_delivery (campaign_delivery_id),
+    KEY idx_email_outbox_queue (status,priority,available_at,expires_at,id),
+    KEY idx_email_outbox_user (user_id,category,status,created_at),
+    CONSTRAINT fk_email_outbox_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_email_outbox_campaign_delivery FOREIGN KEY (campaign_delivery_id) REFERENCES engagement_campaign_recipients(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO schema_migrations(version) VALUES ('019_email_outbox');
