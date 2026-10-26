@@ -622,4 +622,12 @@
     <string name="night_reminder_notification_title">Night Prayer</string>
     <string name="night_reminder_notification_body">The optional Night Prayer reminder you chose.</string>
     <string name="reminder_night_active_detail">Night Prayer: %1$s</string>
+    <string name="reminder_quiet_hours">Quiet hours</string>
+    <string name="reminder_quiet_hours_explainer">A local policy for every reminder. A reminder due inside this window is deferred to the end only when that remains inside its original expiry window.</string>
+    <string name="reminder_quiet_enabled">Quiet hours enabled</string>
+    <string name="reminder_quiet_disabled">Quiet hours off</string>
+    <string name="reminder_quiet_start">From %1$s</string>
+    <string name="reminder_quiet_end">Until %1$s</string>
+    <string name="reminder_quiet_saved">Quiet-hours policy was saved locally.</string>
+    <string name="reminder_quiet_failed">Quiet hours could not be saved.</string>
 </resources>

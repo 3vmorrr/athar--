@@ -650,4 +650,12 @@
     <string name="night_reminder_notification_title">قيام الليل</string>
     <string name="night_reminder_notification_body">هذا هو التذكير الاختياري الذي اخترته لقيام الليل.</string>
     <string name="reminder_night_active_detail">قيام الليل: %1$s</string>
+    <string name="reminder_quiet_hours">ساعات الهدوء</string>
+    <string name="reminder_quiet_hours_explainer">قاعدة محلية عامة لكل التذكيرات. إذا جاء موعد داخل هذه الفترة، يؤجَّل إلى نهايتها فقط إذا كان ما زال داخل مدة صلاحية التذكير.</string>
+    <string name="reminder_quiet_enabled">ساعات الهدوء مفعلة</string>
+    <string name="reminder_quiet_disabled">ساعات الهدوء متوقفة</string>
+    <string name="reminder_quiet_start">من %1$s</string>
+    <string name="reminder_quiet_end">إلى %1$s</string>
+    <string name="reminder_quiet_saved">تم حفظ سياسة ساعات الهدوء محليًا.</string>
+    <string name="reminder_quiet_failed">تعذر حفظ ساعات الهدوء.</string>
 </resources>

@@ -67,4 +67,59 @@ class NotificationPolicyTest {
             NotificationPolicy.evaluate(candidate, Instant.parse("2026-10-26T10:15:00Z")),
         )
     }
+
+
+    @Test fun minimumIntervalUsesLastDeliveryAcrossDifferentCategories() {
+        val candidate = NotificationDeliveryCandidate(
+            idempotencyKey = "cross-category-spacing",
+            category = "quran_routine",
+            scheduledAt = Instant.parse("2026-10-26T10:00:00Z"),
+            expiresAt = Instant.parse("2026-10-26T12:00:00Z"),
+            minimumInterval = Duration.ofMinutes(30),
+        )
+        assertEquals(
+            NotificationPolicyDecision.Defer(Instant.parse("2026-10-26T10:25:00Z")),
+            NotificationPolicy.evaluate(
+                candidate = candidate,
+                now = Instant.parse("2026-10-26T10:05:00Z"),
+                lastDeliveredAnyAt = Instant.parse("2026-10-26T09:55:00Z"),
+            ),
+        )
+    }
+
+    @Test fun globalAndRuleQuietWindowsComposeAcrossCategories() {
+        val candidate = NotificationDeliveryCandidate(
+            idempotencyKey = "overlap-quiet",
+            category = "adhkar_routine",
+            scheduledAt = Instant.parse("2026-01-26T19:30:00Z"),
+            expiresAt = Instant.parse("2026-01-27T06:00:00Z"),
+            quietHours = NotificationQuietHours(LocalTime.of(21,0),LocalTime.of(23,0),zone),
+        )
+        assertEquals(
+            NotificationPolicyDecision.Defer(Instant.parse("2026-01-27T05:00:00Z")),
+            NotificationPolicy.evaluate(
+                candidate = candidate,
+                now = Instant.parse("2026-01-26T19:30:00Z"),
+                globalQuietHours = NotificationQuietHours(LocalTime.of(22,0),LocalTime.of(7,0),zone),
+            ),
+        )
+    }
+
+    @Test fun globalQuietHoursNeverPushReminderPastItsTtl() {
+        val candidate = NotificationDeliveryCandidate(
+            idempotencyKey = "quiet-ttl",
+            category = "night_prayer",
+            scheduledAt = Instant.parse("2026-01-26T21:00:00Z"),
+            expiresAt = Instant.parse("2026-01-27T03:00:00Z"),
+        )
+        assertEquals(
+            NotificationPolicyDecision.Drop(NotificationDropReason.POLICY_EXCEEDS_TTL),
+            NotificationPolicy.evaluate(
+                candidate = candidate,
+                now = Instant.parse("2026-01-26T21:00:00Z"),
+                globalQuietHours = NotificationQuietHours(LocalTime.of(22,0),LocalTime.of(7,0),zone),
+            ),
+        )
+    }
+
 }

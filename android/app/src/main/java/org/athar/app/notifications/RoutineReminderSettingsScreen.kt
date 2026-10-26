@@ -61,6 +61,9 @@ fun RoutineReminderSettingsScreen(graph: AppGraph, open: (String) -> Unit) {
         item(key = "reminder-overview") {
             ReminderCenterOverview(graph, owner, open, preferenceRead)
         }
+        item(key = "reminder-quiet-hours") {
+            ReminderQuietHoursCard(graph, owner)
+        }
         when (val current = routines) {
             ProtectedRead.Loading -> item(key = "loading") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
             ProtectedRead.Unreadable -> item(key = "unreadable") {
