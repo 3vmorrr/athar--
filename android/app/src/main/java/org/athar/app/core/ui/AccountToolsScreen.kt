@@ -41,8 +41,14 @@ import java.time.LocalDate
     }
     when(tool) {
         "export" -> Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.export_data), style = MaterialTheme.typography.headlineSmall)
-            Text(stringResource(R.string.export_explanation))
+            AtharHeroSurface(Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.export_data), style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    stringResource(R.string.export_explanation),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Button(onClick = { exporter.launch("athar-data-${LocalDate.now()}.json") }, enabled = !busy) { Text(stringResource(R.string.export_data)) }
             if (saved) MessagePanel(stringResource(R.string.saved))
             if (failed) MessagePanel(stringResource(R.string.network_error), true)
@@ -53,7 +59,18 @@ import java.time.LocalDate
             var completed by remember(data) { mutableStateOf(data.text("completed_pages").ifBlank { "0" }) }
             var status by remember(data) { mutableStateOf(data.text("status").ifBlank { "active" }) }
             LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                item { Text(stringResource(R.string.khatmah), style = MaterialTheme.typography.headlineSmall) }
+                item {
+                    AtharHeroSurface(Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.khatmah), style = MaterialTheme.typography.headlineSmall)
+                        if (data.text("daily_pages").isNotBlank()) {
+                            Text(
+                                stringResource(R.string.daily_pages, data.text("daily_pages")),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                }
                 item { DateField(target, { target = it }, stringResource(R.string.target_date)) }
                 item { OutlinedTextField(completed, { completed = it.filter(Char::isDigit).take(3) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.completed_pages)) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }
                 item { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("active" to R.string.active, "paused" to R.string.paused, "finished" to R.string.finished).forEach { (key,label) -> FilterChip(status == key, { status = key }, label = { Text(stringResource(label)) }) } } }
@@ -64,7 +81,7 @@ import java.time.LocalDate
                 } }) { Text(stringResource(R.string.save)) } }
                 if (saved) item { MessagePanel(stringResource(R.string.saved)) }
                 if (failed) item { MessagePanel(stringResource(R.string.invalid_input), true) }
-                if (data.text("daily_pages").isNotBlank()) item { Text(stringResource(R.string.daily_pages, data.text("daily_pages"))) }
+                if (data.text("daily_pages").isNotBlank()) item { Spacer(Modifier.height(1.dp)) }
             }
         }
         else -> {
@@ -72,7 +89,7 @@ import java.time.LocalDate
             DataScreen(graph, path) { data, reload ->
                 val rows = if (data.isJsonArray) data.asJsonArray.toList() else emptyList()
                 LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state)) }
+                    if (rows.isEmpty()) item { QuietEmptyState(stringResource(R.string.empty_state)) }
                     items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
                         Column {
                             if (tool == "bookmarks") Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
