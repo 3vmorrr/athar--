@@ -36,6 +36,20 @@ object AccountInput {
             normalized !in reserved
     }
 
+    fun validEmail(value: String): Boolean {
+        val email = value.trim()
+        if (email.length !in 3..190 || email.any(Char::isWhitespace)) return false
+        val at = email.indexOf('@')
+        if (at <= 0 || at != email.lastIndexOf('@') || at >= email.lastIndex) return false
+        val domain = email.substring(at + 1)
+        return domain.contains('.') &&
+            !domain.startsWith('.') &&
+            !domain.endsWith('.')
+    }
+
+    fun validPassword(value: String): Boolean =
+        value.length in 10..200 && '\u0000' !in value
+
     fun validProfile(displayName: String, username: String): Boolean =
         validDisplayName(displayName) && validUsername(username)
 }
