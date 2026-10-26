@@ -134,11 +134,12 @@ final class CampaignService
                 foreach($resolved['users'] as $user){
                     $locale=$user['locale']==='en'?'en':'ar';
                     $payload=$this->payload($campaign,$locale);
-                    $notBefore=$this->notBefore($scheduled,$campaign,$user);
+                    $quietNotBefore=$this->notBefore($scheduled,$campaign,$user);
+                    $frequencyNotBefore=$this->frequencyNotBefore((int)$user['id'],$channel,(int)$campaign['min_frequency_hours'],$scheduled);
+                    $notBefore=strtotime($frequencyNotBefore.' UTC')>strtotime($quietNotBefore.' UTC')?$frequencyNotBefore:$quietNotBefore;
                     $expires=(new DateTimeImmutable($scheduled,new DateTimeZone('UTC')))->modify('+'.(int)$campaign['ttl_seconds'].' seconds')->format('Y-m-d H:i:s');
-                    $recent=$this->recentlySent((int)$user['id'],$channel,(int)$campaign['min_frequency_hours']);
-                    $status=$recent?'skipped':'queued';$reason=$recent?'frequency_limit':null;
-                    if(strtotime($notBefore.' UTC')>=strtotime($expires.' UTC')){$status='skipped';$reason='quiet_hours_exceeds_ttl';}
+                    $status='queued';$reason=null;
+                    if(strtotime($notBefore.' UTC')>=strtotime($expires.' UTC')){$status='skipped';$reason='delivery_policy_exceeds_ttl';}
                     $dedupe=hash('sha256',$id.':'.$user['id'].':'.$channel.':'.$campaign['revision']);
                     $st=$this->db->prepare('INSERT IGNORE INTO engagement_campaign_recipients (campaign_id,user_id,channel,locale,status,payload_json,dedupe_key,next_attempt_at,expires_at,last_error_code) VALUES (?,?,?,?,?,?,?,?,?,?)');
                     $st->execute([$id,$user['id'],$channel,$locale,$status,json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR),$dedupe,$notBefore,$expires,$reason]);
@@ -284,11 +285,13 @@ final class CampaignService
         return $scheduled;
     }
 
-    private function recentlySent(int $user,string $channel,int $hours): bool
+    private function frequencyNotBefore(int $user,string $channel,int $hours,string $scheduled): string
     {
-        $cutoff=gmdate('Y-m-d H:i:s',time()-($hours*3600));
-        $q=$this->db->prepare("SELECT 1 FROM engagement_campaign_recipients WHERE user_id=? AND channel=? AND status='sent' AND sent_at>=? LIMIT 1");
-        $q->execute([$user,$channel,$cutoff]);return (bool)$q->fetchColumn();
+        $q=$this->db->prepare("SELECT MAX(sent_at) FROM engagement_campaign_recipients WHERE user_id=? AND channel=? AND status='sent'");
+        $q->execute([$user,$channel]);$last=$q->fetchColumn();
+        if(!is_string($last)||$last==='')return $scheduled;
+        $allowed=gmdate('Y-m-d H:i:s',strtotime($last.' UTC')+($hours*3600));
+        return strtotime($allowed.' UTC')>strtotime($scheduled.' UTC')?$allowed:$scheduled;
     }
 
     private function reconcileCampaignForDelivery(int $deliveryId): void
