@@ -22,7 +22,7 @@ import org.athar.app.core.ui.*
         DataScreen(graph,"series/$id/lessons",mapOf("page" to "$page")){data,_->
         LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
             item(key="series-summary",contentType="summary") {
-            Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            AtharHeroSurface(Modifier.fillMaxWidth()) {
             Text(series.text("title"),style=MaterialTheme.typography.headlineSmall)
             MarkToggle("series-$id",series.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "series","target_id" to id));graph.content.invalidate("me/favorites")}
             if(series.text("scholar_id").toIntOrNull()!=null)TextButton(onClick={open("scholars/${series.text("scholar_id")}")}){Text(series.text("scholar_name"))}
