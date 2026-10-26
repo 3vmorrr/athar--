@@ -57,23 +57,79 @@ fun AdhkarScreen(graph: AppGraph) {
                         }
                         LazyColumn(modifier = Modifier.testTag("adhkar-entries"), state = entriesScroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             item(key = "heading", contentType = "heading") {
-                                Column(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
-                                    Text(selected, style = MaterialTheme.typography.headlineSmall)
-                                    Text(stringResource(R.string.adhkar_item_position, (page - 1) * 20 + index + 1, catalog.asJsonObject["pagination"].text("total").toIntOrNull() ?: 0), style = MaterialTheme.typography.bodySmall)
-                                }
+                                AtharImmersiveHero(
+                                    presentation = AtharHeroPresentation(
+                                        artwork = AtharHeroArtwork.Adhkar,
+                                        eyebrow = stringResource(R.string.adhkar),
+                                        title = selected,
+                                        supportingText = stringResource(
+                                            R.string.adhkar_item_position,
+                                            (page - 1) * 20 + index + 1,
+                                            catalog.asJsonObject["pagination"]
+                                                .text("total")
+                                                .toIntOrNull() ?: 0,
+                                        ),
+                                    ),
+                                    modifier = Modifier
+                                        .widthIn(max = 720.dp)
+                                        .fillMaxWidth(),
+                                )
                             }
                             if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
                             rows.getOrNull(index)?.let { dhikr ->
                                 val id = dhikr.text("id").toInt()
                                 val target = dhikr.text("repeat_count").toIntOrNull()?.takeIf { it in 1..65535 }
                                 item(key = "dhikr-$id", contentType = "counter") {
-                                    ElevatedCard(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
-                                        Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                            Text(dhikr.text("title"), style = MaterialTheme.typography.titleLarge)
-                                            Text(dhikr.text("formula"), fontFamily = QuranFont, fontSize = 27.sp, lineHeight = 48.sp)
-                                            Text(dhikr.text("source_reference"), style = MaterialTheme.typography.bodySmall)
-                                            if (target == null) Text(stringResource(R.string.adhkar_no_fixed_count), style = MaterialTheme.typography.bodySmall)
-                                            else {
+                                    Surface(
+                                        modifier = Modifier
+                                            .widthIn(max = 720.dp)
+                                            .fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.extraLarge,
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        border = androidx.compose.foundation.BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outlineVariant,
+                                        ),
+                                    ) {
+                                        Column(
+                                            Modifier.padding(AtharSpacing.Xxl),
+                                            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
+                                        ) {
+                                            Text(
+                                                dhikr.text("title"),
+                                                style = MaterialTheme.typography.titleLarge,
+                                            )
+                                            Text(
+                                                dhikr.text("formula"),
+                                                fontFamily = QuranFont,
+                                                fontSize = 27.sp,
+                                                lineHeight = 48.sp,
+                                            )
+                                            Surface(
+                                                shape = MaterialTheme.shapes.medium,
+                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                            ) {
+                                                Column(
+                                                    Modifier.padding(AtharSpacing.Md),
+                                                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                                                ) {
+                                                    Text(
+                                                        stringResource(R.string.source),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                    )
+                                                    Text(
+                                                        dhikr.text("source_reference"),
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    )
+                                                }
+                                            }
+                                            if (target == null) {
+                                                AtharStatusPill(
+                                                    stringResource(R.string.adhkar_no_fixed_count),
+                                                )
+                                            } else {
                                                 val owner = requireNotNull(graph.session.userId)
                                                 LaunchedEffect(owner,id,target) {
                                                     try { graph.counters.refresh(id,target,owner) }
@@ -87,8 +143,18 @@ fun AdhkarScreen(graph: AppGraph) {
                                                 if(stored==ProtectedRead.Unreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={readAttempt++}){Text(stringResource(R.string.retry))}}
                                                 else if(counter==null)LinearProgressIndicator(Modifier.fillMaxWidth())
                                                 if(counter!=null){
-                                                LinearProgressIndicator(progress = { counter.count.toFloat() / target }, modifier = Modifier.fillMaxWidth())
-                                                Text(stringResource(R.string.progress_count, counter.count, target))
+                                                LinearProgressIndicator(
+                                                    progress = { counter.count.toFloat() / target },
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                )
+                                                AtharStatusPill(
+                                                    stringResource(
+                                                        R.string.progress_count,
+                                                        counter.count,
+                                                        target,
+                                                    ),
+                                                    emphasized = counter.count >= target,
+                                                )
                                                 Button(onClick = {
                                                     val originalPage = page
                                                     busy = true
