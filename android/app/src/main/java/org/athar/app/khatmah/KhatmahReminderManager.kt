@@ -19,6 +19,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -113,7 +117,22 @@ class KhatmahReminderManager(
     private val app = context.applicationContext
     private val cacheKey = "private:khatmah-reminder-rule:v1"
     private val mutex = Mutex()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val maintenance = KhatmahReminderMaintenanceSchedule(app, partition)
+
+    init {
+        scope.launch {
+            var previousOwner: Long? = null
+            session.state.collect { state ->
+                val owner = (state as? AuthState.SignedIn)?.user?.id
+                if (state !is AuthState.Restoring && owner != previousOwner) {
+                    previousOwner?.let(maintenance::cancel)
+                    previousOwner = owner
+                    owner?.let(maintenance::schedule)
+                }
+            }
+        }
+    }
 
     fun observe(owner: Long): Flow<ProtectedRead<KhatmahReminderRule?>> = flow {
         session.requireVerifiedOwner(owner)
