@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
@@ -18,6 +19,9 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 
 @Composable fun NightToolsScreen(graph: AppGraph) {
+    key(graph.session.userId){NightToolsContent(graph)}
+}
+@Composable private fun NightToolsContent(graph:AppGraph) {
     var fromSurah by remember { mutableStateOf("1") }; var fromAyah by remember { mutableStateOf("1") }
     var toSurah by remember { mutableStateOf("1") }; var toAyah by remember { mutableStateOf("7") }
     var count by remember { mutableStateOf("100") }; var byTarget by remember { mutableStateOf(true) }
@@ -29,10 +33,19 @@ import java.time.format.DateTimeFormatter
     var highLatitude by remember { mutableStateOf("MIDDLE_OF_THE_NIGHT") }
     var night by remember { mutableStateOf<NightContext?>(null) }; var timeError by remember { mutableStateOf(false) }
     var exemptStart by remember { mutableStateOf("") }; var exemptEnd by remember { mutableStateOf("") }; var exemptTotal by remember { mutableIntStateOf(0) }
+    var exemptAttempt by remember{mutableIntStateOf(0)}
+    var exemptReady by remember{mutableStateOf(false)}
+    var exemptUnreadable by remember{mutableStateOf(false)}
+    var exemptFormError by remember{mutableStateOf(false)}
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(Unit) { exemptTotal = graph.nightPrayer.localExemptions().size }
-    LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    LaunchedEffect(graph.session.userId,exemptAttempt) {
+        exemptReady=false;exemptUnreadable=false
+        try{exemptTotal=graph.nightPrayer.localExemptions().size;exemptReady=true}
+        catch(failure:CancellationException){throw failure}
+        catch(_:Exception){exemptUnreadable=true}
+    }
+    LazyColumn(modifier=Modifier.testTag("night-tools-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item(key = "verse-heading", contentType = "heading") { Text(stringResource(R.string.verse_calculator), style = MaterialTheme.typography.headlineSmall) }
         item(key = "verse-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(byTarget, { byTarget = true; result = null }, label = { Text(stringResource(R.string.target_count)) }); FilterChip(!byTarget, { byTarget = false; result = null }, label = { Text(stringResource(R.string.night_range)) }) }
@@ -66,15 +79,27 @@ import java.time.format.DateTimeFormatter
         } }
         item(key = "exemption-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.local_exemptions), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.exemptions_notice)) }
         item(key = "exemption-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(R.string.exemption_days, exemptTotal))
+            if(exemptReady)Text(stringResource(R.string.exemption_days, exemptTotal))
+            else if(exemptUnreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={exemptAttempt++}){Text(stringResource(R.string.retry))}}
+            else LinearProgressIndicator(Modifier.fillMaxWidth())
+            if(exemptFormError)MessagePanel(stringResource(R.string.invalid_input),true)
             DateField(exemptStart, { exemptStart = it }, stringResource(R.string.start_date), latest = LocalDate.now())
             DateField(exemptEnd, { exemptEnd = it }, stringResource(R.string.end_date), latest = LocalDate.now())
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { scope.launch {
-                    try { val start = LocalDate.parse(exemptStart); val end = LocalDate.parse(exemptEnd); require(!end.isBefore(start) && end <= LocalDate.now() && java.time.temporal.ChronoUnit.DAYS.between(start, end) <= 365); val values = graph.nightPrayer.localExemptions().toMutableSet(); var day = start; while (day <= end) { values.add(day); day = day.plusDays(1) }; graph.nightPrayer.localExemptions(values); exemptTotal = values.size; error = false }
-                    catch (failure: CancellationException) { throw failure } catch (_: Exception) { error = true }
+                OutlinedButton(enabled=exemptReady,onClick = { scope.launch {
+                    try {
+                        val start = LocalDate.parse(exemptStart); val end = LocalDate.parse(exemptEnd)
+                        require(!end.isBefore(start) && end <= LocalDate.now() && java.time.temporal.ChronoUnit.DAYS.between(start, end) <= 365)
+                        try {
+                            val values = graph.nightPrayer.localExemptions().toMutableSet()
+                            var day=start;while(day<=end){values.add(day);day=day.plusDays(1)}
+                            graph.nightPrayer.localExemptions(values);exemptTotal=values.size;exemptFormError=false
+                        }catch(failure:CancellationException){throw failure}
+                        catch(_:Exception){exemptUnreadable=true;exemptReady=false}
+                    }
+                    catch (failure: CancellationException) { throw failure } catch (_: Exception) { exemptFormError = true }
                 } }) { Text(stringResource(R.string.save)) }
-                TextButton(onClick = { scope.launch { graph.nightPrayer.localExemptions(emptySet()); exemptTotal = 0 } }) { Text(stringResource(R.string.clear_local_exemptions)) }
+                TextButton(enabled=exemptReady,onClick = { scope.launch { try{graph.nightPrayer.localExemptions(emptySet()); exemptTotal = 0;exemptFormError=false}catch(failure:CancellationException){throw failure}catch(_:Exception){exemptUnreadable=true;exemptReady=false} } }) { Text(stringResource(R.string.clear_local_exemptions)) }
             }
         } }
     }

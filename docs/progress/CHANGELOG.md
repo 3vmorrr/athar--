@@ -1,5 +1,12 @@
 # Engineering change log
 
+##2026-10-26 — Retained private-read protection
+
+- Added typed Loading/Ready/Unreadable observer states without exposing exception text or swallowing cancellation. Counter/reading payload validation prevents malformed defaults from becoming valid zero progress.
+- Protected Quran, counter, Night Prayer/calendar and exemption UI; failed reads retain ciphertext/revisions/outbox and block affected editing/false-empty analytics. Existing prayer data/metadata must agree before being displayed or replaced. Private form state is owner-scoped.
+-29 JVM cases,292 resources, build/lint, final11 physical storage cases, Arabic3/3 +English3/3 error/normal journeys and capture reruns pass. Relevant Arabic/English captures inspected. No real key invalidation or app-data reset occurred.
+- Phase2 remains IN_PROGRESS for persistent scheduling, cache bounds, broader recovery and conflict acceptance.
+
 ##2026-10-26 — Upcoming context and related reading
 
 - Added additive migration015 and revision-checked localized course/topics/book-page metadata. Hidden/deleted books are suppressed publicly; source page references never bypass rights-aware book access.

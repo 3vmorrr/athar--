@@ -1,5 +1,13 @@
 # Verification report
 
+##26 October — retained private-read protection
+
+Production/test APK,29 JVM cases and lint PASS (`protected-local-metadata-build.log`,3m2s);292 paired resources PASS. An earlier candidate11-case hardware storage suite passed, then the final production source was updated/installed and the stronger final11-case suite passed again (16.222s, `protected-local-final-storage.log`). Cases include malformed ciphertext, altered authentication tags, invalid Gson/domain records, mismatched prayer count/duration, no implicit overwrite, pending/outbox retention, explicit restoration of disposable fixtures and owner separation. The real installed encryption key was not deleted/invalidated.
+
+Current physical Arabic3/3 PASS (32.358s), English3/3 PASS (30.734s): protected UI across counters/reader/Night Prayer/calendar/exemptions, plus normal counter and exact-reading-resume regression. Logs `protected-local-physical-ar.log` / `protected-local-physical-en.log`. Temporary corrupt UI records are confined to the guarded generated fixture partition and restored in finally; only the test's own fresh UUID row is removed. Actual user data/real application partition is not reset. Test-only capture APK/lint rebuild PASS (1m9s); visual reruns1/1 per language PASS (20.393s/19.851s). Arabic counter/reader and English calendar/exemption captures were inspected for readable feedback, usable source content and disabled private mutation controls. These are normal font-scale hardware cases, not full large-font/tablet/release acceptance.
+
+Phase2 remains IN_PROGRESS: persistent background scheduling, eviction/bounds, broader cache/watch/account recovery and complete conflict acceptance remain. No automatic reconstruction of a permanently lost key is claimed. Backend/schema are unchanged from the prior20,000-assertion,15-version/34-table gate.
+
 ##26 October — optional upcoming context (tested increment)
 
 Final preview build/test APK/lint PASS (3m9s);27 JVM cases and291 paired resources PASS. Current production APK was installed with retained data. Final physical Arabic3/3 PASS (22.414s), English3/3 PASS (21.911s), logs `event-context-preview-physical-ar.log` / `event-context-preview-physical-en.log`. Updated Arabic/English live-detail captures were inspected: the invalid fixture thumbnail correctly collapses to localized compact unavailable text, while course/topics/date layout remains readable and scrolling/book navigation/playback gating assertions pass. This is not proof of real live video playback. Initial lazy-header/sleep failures remain documented below.

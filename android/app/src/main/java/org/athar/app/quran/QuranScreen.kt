@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.*
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.ui.*
+import org.athar.app.core.data.ProtectedRead
+import org.athar.app.core.data.protectedReads
 
 data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val scrollTarget: Int? = null, val scrollRequest: Long = 0)
 class QuranViewModel(private val graph: AppGraph) : ViewModel() {
@@ -29,7 +31,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val state = mutable.asStateFlow()
     private val mutableBookmarks = MutableStateFlow<Set<Int>>(emptySet())
     val bookmarks = mutableBookmarks.asStateFlow()
-    val reading = graph.reading.observe(requireNotNull(graph.session.userId)).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    private val readingRetry=MutableStateFlow(0)
+    private val readerOwner=requireNotNull(graph.session.userId)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val reading = readingRetry.flatMapLatest { graph.reading.observe(readerOwner).protectedReads() }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProtectedRead.Loading)
+    fun retryReading(){readingRetry.value++}
     private var load: Job? = null
     init {
         select(1)
@@ -91,7 +97,8 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
     val state by vm.state.collectAsStateWithLifecycle()
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
-    val reading by vm.reading.collectAsStateWithLifecycle()
+    val storedReading by vm.reading.collectAsStateWithLifecycle()
+    val reading=(storedReading as? ProtectedRead.Ready)?.value
     val listState = rememberLazyListState()
     LaunchedEffect(state.scrollRequest) {
         if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0))
@@ -153,13 +160,14 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 state.error -> FailurePanel(null) { vm.select(1) }
                 state.verses.isEmpty() -> Text(stringResource(R.string.empty_state), Modifier.padding(24.dp))
                 else -> LazyColumn(Modifier.fillMaxSize().testTag("quran-reader-list"), state = listState, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if(storedReading==ProtectedRead.Unreadable)item(key="unreadable-position",contentType="state"){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryReading){Text(stringResource(R.string.retry))}}}
                     items(state.verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { ayah ->
                         Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
                             if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                TextButton(onClick = { scope.launch { try { graph.reading.save(ayah.position.surah, ayah.position.ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
+                                TextButton(onClick = { scope.launch { try { graph.reading.save(ayah.position.surah, ayah.position.ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
                                 MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

@@ -48,9 +48,14 @@ class ReadingRepository(
         }
     }
 
-    private fun decode(row: CachedDocument): SavedReadingPosition = gson.fromJson(cipher.open(row.payloadCipher), SavedReadingPosition::class.java)
-    suspend fun saved(user: Long): SavedReadingPosition? = withContext(Dispatchers.IO) { dao.cache(user, key)?.let(::decode) }
-    fun observe(user: Long): Flow<SavedReadingPosition?> = dao.observeCache(user, key).map { it?.let(::decode) }.flowOn(Dispatchers.Default)
+    private suspend fun decode(row: CachedDocument): SavedReadingPosition {
+        val value=requireNotNull(gson.fromJson(cipher.open(row.payloadCipher), SavedReadingPosition::class.java))
+        index().global(value.surah,value.ayah)
+        require(value.revision>=0&&value.version>0)
+        return value
+    }
+    suspend fun saved(user: Long): SavedReadingPosition? = withContext(Dispatchers.IO) { dao.cache(user, key)?.let { decode(it) } }
+    fun observe(user: Long): Flow<SavedReadingPosition?> = dao.observeCache(user, key).map { it?.let { row -> decode(row) } }.flowOn(Dispatchers.Default)
     private suspend fun write(user: Long, value: SavedReadingPosition) {
         dao.cache(CachedDocument(user, key, cipher.seal(gson.toJson(value)), System.currentTimeMillis()))
     }

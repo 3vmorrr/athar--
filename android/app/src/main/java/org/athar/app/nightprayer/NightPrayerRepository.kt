@@ -20,7 +20,23 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
     private val dao = database.dao()
     private val syncLock = Mutex()
     private fun user() = requireNotNull(session.userId) { "Unauthenticated" }
-    fun observe(user: Long) = dao.nights(user).map { rows -> rows.map { it to JsonParser.parseString(cipher.open(it.payloadCipher)).asJsonObject } }.flowOn(Dispatchers.Default)
+    private fun verseCount(payload:JsonObject):Int {
+        val count=when(payload["entry_type"].asString){
+            "range"->Math.addExact(Math.subtractExact(payload["end_index"].asInt,payload["start_index"].asInt),1)
+            "manual"->payload["verse_count"].asInt
+            else->throw IllegalArgumentException("Unreadable local session")
+        }
+        require(count>0)
+        return count
+    }
+    private fun read(row:LocalNightSession):JsonObject {
+        val payload=JsonParser.parseString(cipher.open(row.payloadCipher)).asJsonObject
+        LocalDate.parse(row.nightDate)
+        require(payload["night_date"].asString==row.nightDate&&verseCount(payload)==row.verseCount)
+        require(payload["measured_seconds"]?.takeUnless{it.isJsonNull}?.asInt==row.measuredSeconds)
+        return payload
+    }
+    fun observe(user: Long) = dao.nights(user).map { rows -> rows.map { it to read(it) } }.flowOn(Dispatchers.Default)
 
     suspend fun save(payload: JsonObject, id: String = UUID.randomUUID().toString()) = withContext(Dispatchers.IO) {
         val user = user()
@@ -28,13 +44,13 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
             check(session.userId == user)
             val previous = dao.night(user, id)
             require(previous?.deleted != true)
+            if(previous!=null)read(previous)
             val expected = previous?.localRevision ?: 0
             val revision = expected + 1
             val body = payload.deepCopy().apply { remove("id"); remove("revision"); remove("deleted") }
             val mutation = UUID.randomUUID().toString()
             val outgoing = body.deepCopy().apply { addProperty("mutation_id", mutation); addProperty("expected_revision", expected) }
-            val count = if (body["entry_type"].asString == "range") body["end_index"].asInt - body["start_index"].asInt + 1 else body["verse_count"].asInt
-            require(count > 0)
+            val count = verseCount(body)
             dao.night(LocalNightSession(user, id, body["night_date"].asString, count, body["measured_seconds"]?.takeUnless { it.isJsonNull }?.asInt, cipher.seal(body.toString()), revision, previous?.serverRevision ?: 0, false, true, System.currentTimeMillis()))
             dao.enqueue(OutboxMutation(userId = user, mutationId = mutation, sessionId = id, operation = "put", expectedRevision = expected, payloadCipher = cipher.seal(outgoing.toString())))
         }
@@ -99,10 +115,17 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
     }
 
     suspend fun localExemptions(): Set<LocalDate> = withContext(Dispatchers.IO) {
-        dao.exemptions(user())?.let { JsonParser.parseString(cipher.open(it.encryptedPayload)).asJsonArray.map { date -> LocalDate.parse(date.asString) }.toSet() }.orEmpty()
+        val owner=user()
+        val result=dao.exemptions(owner)?.let { readExemptions(it) }.orEmpty()
+        check(session.userId==owner)
+        result
     }
+    private fun readExemptions(row:PrivateExemptions):Set<LocalDate> = JsonParser.parseString(cipher.open(row.encryptedPayload)).asJsonArray.map { LocalDate.parse(it.asString) }.toSet()
     suspend fun localExemptions(dates: Set<LocalDate>) = withContext(Dispatchers.IO) {
         require(dates.size <= 3660)
-        dao.exemptions(PrivateExemptions(user(), cipher.seal(com.google.gson.Gson().toJson(dates.map { it.toString() }.sorted()))))
+        val owner=user()
+        dao.exemptions(owner)?.let{readExemptions(it)}
+        check(session.userId==owner)
+        dao.exemptions(PrivateExemptions(owner, cipher.seal(com.google.gson.Gson().toJson(dates.map { it.toString() }.sorted()))))
     }
 }

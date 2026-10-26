@@ -20,20 +20,34 @@ import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.core.data.LocalNightSession
 import org.athar.app.core.ui.*
+import org.athar.app.core.data.ProtectedRead
+import org.athar.app.core.data.protectedReads
 import java.time.*
 
-data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = emptyList(), val busy: Boolean = false, val error: Boolean = false, val conflicts: Int = 0)
+data class NightUiState(val rows: List<Pair<LocalNightSession, JsonObject>> = emptyList(), val busy: Boolean = false, val error: Boolean = false, val conflicts: Int = 0,val loading:Boolean=true,val unreadable:Boolean=false)
 class NightViewModel(val graph: AppGraph) : ViewModel() {
     private val user = requireNotNull(graph.session.userId)
     private val mutable = MutableStateFlow(NightUiState())
     val state = mutable.asStateFlow()
-    init { viewModelScope.launch { graph.nightPrayer.observe(user).collect { mutable.value = mutable.value.copy(rows = it) } } }
+    private var observation:Job?=null
+    init { retryLocal() }
+    fun retryLocal(){
+        observation?.cancel()
+        mutable.value=mutable.value.copy(loading=true,unreadable=false)
+        observation=viewModelScope.launch { graph.nightPrayer.observe(user).protectedReads().collect {
+            when(it){
+                is ProtectedRead.Ready->mutable.value=mutable.value.copy(rows=it.value,loading=false,unreadable=false)
+                ProtectedRead.Unreadable->mutable.value=mutable.value.copy(rows=emptyList(),loading=false,unreadable=true)
+                ProtectedRead.Loading->Unit
+            }
+        } }
+    }
     fun sync() = operation { mutable.value = mutable.value.copy(conflicts = graph.nightPrayer.sync()) }
     fun save(payload: JsonObject, id: String?, done: () -> Unit) = operation { if (id == null) graph.nightPrayer.save(payload) else graph.nightPrayer.save(payload, id); done() }
     fun delete(id: String) = operation { graph.nightPrayer.delete(id) }
     fun useServer(id: String) = operation { graph.nightPrayer.useServer(id); mutable.value = mutable.value.copy(conflicts = 0) }
     private fun operation(block: suspend () -> Unit) {
-        if (mutable.value.busy) return
+        if (mutable.value.busy||mutable.value.loading||mutable.value.unreadable) return
         viewModelScope.launch {
             mutable.value = mutable.value.copy(busy = true, error = false)
             try { block() } catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
@@ -58,6 +72,8 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 @Composable private fun NightHistoryScreen(graph: AppGraph) {
     val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
     val state by vm.state.collectAsStateWithLifecycle()
+    if(state.loading){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
+    if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
     var editing by remember { mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null) }
     var form by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<String?>(null) }

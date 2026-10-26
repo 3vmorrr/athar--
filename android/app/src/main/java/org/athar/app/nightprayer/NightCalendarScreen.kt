@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.athar.app.R
 import org.athar.app.core.ui.AtharIcons
+import org.athar.app.core.ui.MessagePanel
+import kotlinx.coroutines.CancellationException
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -24,12 +26,24 @@ import java.util.Locale
 
 @Composable fun NightCalendarScreen(vm: NightViewModel) {
     val state by vm.state.collectAsStateWithLifecycle()
+    if(state.loading){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
+    if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
     var monthKey by rememberSaveable { mutableStateOf(YearMonth.now().toString()) }
     var selectedKey by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     val month = remember(monthKey) { YearMonth.parse(monthKey) }
     val selected = remember(selectedKey) { LocalDate.parse(selectedKey) }
-    var exemptions by remember { mutableStateOf(emptySet<LocalDate>()) }
-    LaunchedEffect(monthKey) { exemptions = vm.graph.nightPrayer.localExemptions() }
+    var exemptions by remember(vm) { mutableStateOf(emptySet<LocalDate>()) }
+    var exemptionAttempt by remember(vm){mutableIntStateOf(0)}
+    var exemptionReady by remember(vm){mutableStateOf(false)}
+    var exemptionError by remember(vm){mutableStateOf(false)}
+    LaunchedEffect(vm,monthKey,exemptionAttempt) {
+        exemptionReady=false;exemptionError=false
+        try{exemptions=vm.graph.nightPrayer.localExemptions();exemptionReady=true}
+        catch(failure:CancellationException){throw failure}
+        catch(_:Exception){exemptionError=true}
+    }
+    if(exemptionError){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={exemptionAttempt++}){Text(stringResource(R.string.retry))}}};return}
+    if(!exemptionReady){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
     val totals = remember(state.rows) { state.rows.groupBy { LocalDate.parse(it.first.nightDate) }.mapValues { (_, rows) -> rows.sumOf { it.first.verseCount } } }
     val days = remember(month, totals, exemptions) { NightCalendar.month(month, totals, exemptions) }
     val selectedRows = remember(state.rows, selectedKey) { state.rows.filter { it.first.nightDate == selectedKey } }

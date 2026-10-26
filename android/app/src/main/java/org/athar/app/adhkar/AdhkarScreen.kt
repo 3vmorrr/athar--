@@ -19,7 +19,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.athar.app.AppGraph
 import org.athar.app.R
-import org.athar.app.core.data.CounterState
+import org.athar.app.core.data.ProtectedRead
+import org.athar.app.core.data.protectedReads
 import org.athar.app.core.ui.*
 
 @Composable
@@ -77,10 +78,15 @@ fun AdhkarScreen(graph: AppGraph) {
                                                 LaunchedEffect(owner,id,target) {
                                                     try { graph.counters.refresh(id,target,owner) }
                                                     catch(failure: CancellationException) { throw failure }
-                                                    catch(_: java.io.IOException) { /* Existing/offline progress remains usable. */ }
+                                                    catch(_: Exception) { /* Existing progress remains retained; unreadable state is shown by the protected observer. */ }
                                                 }
-                                                val counter by remember(id, target) { graph.counters.observe(requireNotNull(graph.session.userId), id, target) }.collectAsStateWithLifecycle(initialValue = CounterState(id, target))
-                                                var busy by remember(id) { mutableStateOf(false) }
+                                                var readAttempt by remember(owner,id,target){mutableIntStateOf(0)}
+                                                val stored by remember(owner,id,target,readAttempt) { graph.counters.observe(owner, id, target).protectedReads() }.collectAsStateWithLifecycle(initialValue = ProtectedRead.Loading)
+                                                val counter=(stored as? ProtectedRead.Ready)?.value
+                                                var busy by remember(owner,id) { mutableStateOf(false) }
+                                                if(stored==ProtectedRead.Unreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={readAttempt++}){Text(stringResource(R.string.retry))}}
+                                                else if(counter==null)LinearProgressIndicator(Modifier.fillMaxWidth())
+                                                if(counter!=null){
                                                 LinearProgressIndicator(progress = { counter.count.toFloat() / target }, modifier = Modifier.fillMaxWidth())
                                                 Text(stringResource(R.string.progress_count, counter.count, target))
                                                 Button(onClick = {
@@ -101,6 +107,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                                     TextButton(onClick = { scope.launch { try { graph.counters.useServer(id, target) } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }) { Text(stringResource(R.string.use_server)) }
                                                 }
                                                 TextButton(onClick = { scope.launch { try { graph.counters.tap(id, target, reset = true); reachedEnd = false } catch (failure: CancellationException) { throw failure } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = !busy && !counter.conflict) { Text(stringResource(R.string.reset_counter)) }
+                                                }
                                             }
                                         }
                                     }
