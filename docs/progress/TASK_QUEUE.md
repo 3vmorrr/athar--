@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **21.21**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **22.1**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -1240,7 +1240,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 21.21 — Knowledge immersive hero and continuation hierarchy
 
-- Parent: Work package21: UX/accessibility; state: **NOT STARTED**; dependencies: 21.20, 12.4.
+- Parent: Work package21: UX/accessibility; state: **PARTIAL**; dependencies: 21.20, 12.4.
 - Exact scope: Refine the existing learning destination with a scholarly original hero, real last-lesson/series context when available, real lesson/scholar/series/book navigation and editorial hierarchy. Preserve current API/pagination/progress/moderation; fallback to exploration instead of invented continuation.
 - Files/modules: android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/core/ui/; docs/design/.
 - Automated gates: Compile shared component call sites; Compose semantics/reduced-motion tests; no data/backend diff. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

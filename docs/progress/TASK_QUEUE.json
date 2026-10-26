@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "21.21",
+  "current_task": "22.1",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -2268,7 +2268,7 @@
       "name": "Knowledge immersive hero and continuation hierarchy",
       "parent": "Work package21: UX/accessibility",
       "scope": "Refine the existing learning destination with a scholarly original hero, real last-lesson/series context when available, real lesson/scholar/series/book navigation and editorial hierarchy. Preserve current API/pagination/progress/moderation; fallback to exploration instead of invented continuation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "21.20",
         "12.4"
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "cdad86bccc7946b6b21fce950b93fd2471360e19",
-    "last_landed_task": "21.20",
-    "next_task": "21.21",
+    "head": "0d60a6dfa6c45c0fd77a2548696aff4e1ea2b775",
+    "last_landed_task": "21.21",
+    "next_task": "22.1",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2822,7 +2822,8 @@
       "20.3",
       "20.4",
       "21.19",
-      "21.20"
+      "21.20",
+      "21.21"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2915,6 +2916,9 @@
       ],
       "21.20": [
         "cdad86bccc79"
+      ],
+      "21.21": [
+        "0d60a6dfa6c4"
       ]
     },
     "preexisting_parallel_admin": {
