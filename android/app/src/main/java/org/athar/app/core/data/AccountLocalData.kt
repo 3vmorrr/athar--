@@ -8,17 +8,26 @@ import kotlinx.coroutines.flow.first
 import org.athar.app.auth.SessionRepository
 import org.athar.app.learning.LessonRepository
 import org.athar.app.nightprayer.NightPrayerRepository
+import org.athar.app.khatmah.KhatmahRepository
 import java.time.Instant
 
 /** Validate everything before the caller opens/truncates a user-selected export file. */
-suspend fun retainedAccountData(owner:Long,session:SessionRepository,lessons:LessonRepository,night:NightPrayerRepository):JsonObject {
+suspend fun retainedAccountData(
+    owner: Long,
+    session: SessionRepository,
+    lessons: LessonRepository,
+    night: NightPrayerRepository,
+    khatmah: KhatmahRepository,
+): JsonObject {
     session.requireVerifiedOwner(owner)
     val progress=lessons.retained(owner)
     val nights=JsonArray().apply{night.observe(owner).first().forEach{add(it.second)}}
+    val localKhatmah=khatmah.saved(owner)
     session.requireVerifiedOwner(owner)
     return JsonObject().apply{
         add("device_lesson_progress",Gson().toJsonTree(progress))
         add("device_night_sessions",nights)
+        add("device_khatmah_plan",Gson().toJsonTree(localKhatmah))
     }
 }
 
