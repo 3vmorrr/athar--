@@ -636,19 +636,37 @@ if ($path === '/admin') {
         try {
             admin_authorize_kind($admin, $kind);
             if ($kind === 'comment-review') {
-                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
-                if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
-                db()->prepare('UPDATE lesson_comments SET status=?,revision=revision+1,moderated_at=UTC_TIMESTAMP(),moderated_by=? WHERE id=?')->execute([$status,$admin['id'],$commentId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-'.$status,'lesson-comment',(string)$commentId]);
-                flash($status==='visible'?'تم نشر التعليق بعد مراجعته.':'تم إخفاء التعليق.'); redirect('/admin');
+                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT);
+                $revision = filter_var($_POST['expected_revision'] ?? null,FILTER_VALIDATE_INT);
+                $status = (string)($_POST['status'] ?? '');
+                $reason = trim((string)($_POST['reason'] ?? ''));
+                if (!$commentId || $commentId < 1 || $revision === false || $revision < 1 || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('بيانات مراجعة التعليق غير صالحة.');
+                try {
+                    (new \Athar\Learning\DiscussionService(db()))->moderate($admin,(int)$commentId,[
+                        'status'=>$status,
+                        'expected_revision'=>(int)$revision,
+                        'reason'=>$reason,
+                    ]);
+                } catch (\Athar\Http\ApiError $moderationError) {
+                    if ($moderationError->getMessage()==='conflict') throw new RuntimeException('تم تعديل التعليق من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر مراجعة التعليق: '.$moderationError->getMessage());
+                }
+                flash($status==='visible'?'تم نشر التعليق بعد مراجعته.':'تم إخفاء التعليق مع تسجيل السبب.'); redirect('/admin#admin-comments');
             } elseif ($kind === 'comment-delete') {
-                $commentId = filter_var($_POST['comment_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$commentId || $commentId < 1) throw new RuntimeException('التعليق المحدد غير صالح.');
-                $commentCheck = db()->prepare('SELECT id FROM lesson_comments WHERE id=?'); $commentCheck->execute([$commentId]);
-                if (!$commentCheck->fetchColumn()) throw new RuntimeException('التعليق غير موجود أو حُذف من قبل.');
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-deleted','lesson-comment',(string)$commentId]);
-                db()->prepare('DELETE FROM lesson_comments WHERE id=?')->execute([$commentId]);
-                flash('تم حذف التعليق.'); redirect('/admin#admin-comments');
+                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT);
+                $revision = filter_var($_POST['expected_revision'] ?? null,FILTER_VALIDATE_INT);
+                $reason = trim((string)($_POST['reason'] ?? ''));
+                if (!$commentId || $commentId < 1 || $revision === false || $revision < 1) throw new RuntimeException('بيانات حذف التعليق غير صالحة.');
+                try {
+                    (new \Athar\Learning\DiscussionService(db()))->deleteModerated($admin,(int)$commentId,[
+                        'expected_revision'=>(int)$revision,
+                        'reason'=>$reason,
+                    ]);
+                } catch (\Athar\Http\ApiError $moderationError) {
+                    if ($moderationError->getMessage()==='conflict') throw new RuntimeException('تم تعديل التعليق من جلسة أخرى. حدّث الصفحة ثم أعد المحاولة.');
+                    throw new RuntimeException('تعذر حذف التعليق: '.$moderationError->getMessage());
+                }
+                flash('تم حذف التعليق مع الاحتفاظ بسجل قرار المراجعة.'); redirect('/admin#admin-comments');
             } elseif ($kind === 'gmail-settings') {
                 db()->beginTransaction();
                 $gmailEmail = strtolower(trim((string) ($_POST['gmail_email'] ?? '')));
@@ -1223,7 +1241,7 @@ if ($path === '/admin') {
     $commentPageCount = max(1, (int) ceil($commentCount / $commentPageSize));
     $commentPage = max(1, min($commentPageCount, (int) (filter_var($_GET['comments_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
     $commentOffset = ($commentPage - 1) * $commentPageSize;
-    $pendingComments = db()->query("SELECT c.id,c.body,c.status,c.created_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id ORDER BY (c.status='pending') DESC,c.created_at DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}")->fetchAll();
+    $pendingComments = db()->query("SELECT c.id,c.parent_id,c.body,c.status,c.revision,c.moderation_reason,c.created_at,c.moderated_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id ORDER BY (c.status='pending') DESC,c.parent_id IS NOT NULL,c.created_at DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}")->fetchAll();
     $dashboardMetrics = [
         'users' => (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn(),
         'scholars' => (int) db()->query('SELECT COUNT(*) FROM scholars WHERE is_published=1')->fetchColumn(),
