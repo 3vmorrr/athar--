@@ -89,6 +89,8 @@
 <string name="syncing">جارٍ الحفظ</string>
 <string name="remove_bookmark">حذف العلامة</string>
 <string name="your_journey">مساحتك في أثر</string>
+<string name="your_activity">نشاطك</string>
+<string name="quick_actions">اختصارات</string>
 <string name="reading_sessions">جلسات قراءة</string>
 <string name="completed_lessons">دروس مكتملة</string>
 <string name="completed_adhkar">أذكار مكتملة</string>
