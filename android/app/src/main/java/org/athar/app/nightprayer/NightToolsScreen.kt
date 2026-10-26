@@ -13,8 +13,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import org.athar.app.AppGraph
 import org.athar.app.R
-import org.athar.app.core.ui.MessagePanel
-import org.athar.app.core.ui.DateField
+import org.athar.app.core.ui.*
 import java.time.*
 import java.time.format.DateTimeFormatter
 
@@ -46,7 +45,7 @@ import java.time.format.DateTimeFormatter
         catch(_:Exception){exemptUnreadable=true}
     }
     LazyColumn(modifier=Modifier.testTag("night-tools-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "verse-heading", contentType = "heading") { Text(stringResource(R.string.verse_calculator), style = MaterialTheme.typography.headlineSmall) }
+        item(key = "verse-heading", contentType = "heading") { AtharSectionHeader(stringResource(R.string.verse_calculator)) }
         item(key = "verse-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(byTarget, { byTarget = true; result = null }, label = { Text(stringResource(R.string.target_count)) }); FilterChip(!byTarget, { byTarget = false; result = null }, label = { Text(stringResource(R.string.night_range)) }) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { NumericInput(fromSurah, { fromSurah = it; result = null }, R.string.start_surah, Modifier.weight(1f)); NumericInput(fromAyah, { fromAyah = it; result = null }, R.string.start_ayah, Modifier.weight(1f)) }
@@ -59,7 +58,16 @@ import java.time.format.DateTimeFormatter
             if (result != null) MessagePanel(result!!)
             if (error) Text(stringResource(R.string.range_error), color = MaterialTheme.colorScheme.error)
         } }
-        item(key = "time-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.last_third), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.prayer_calculation_notice)) }
+        item(key = "time-heading", contentType = "heading") {
+            HorizontalDivider()
+            Spacer(Modifier.height(8.dp))
+            AtharSectionHeader(stringResource(R.string.last_third))
+            Text(
+                stringResource(R.string.prayer_calculation_notice),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         item(key = "time-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             DateField(date, { date = it; night = null }, stringResource(R.string.night_date))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedTextField(latitude, { latitude = it.take(15); night = null }, Modifier.weight(1f), label = { Text(stringResource(R.string.latitude)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)); OutlinedTextField(longitude, { longitude = it.take(15); night = null }, Modifier.weight(1f), label = { Text(stringResource(R.string.longitude)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)) }
@@ -77,7 +85,16 @@ import java.time.format.DateTimeFormatter
                 MessagePanel(stringResource(R.string.night_boundaries, formatter.format(context.maghrib), formatter.format(context.lastThird), formatter.format(context.fajr)))
             }
         } }
-        item(key = "exemption-heading", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.local_exemptions), style = MaterialTheme.typography.headlineSmall); Text(stringResource(R.string.exemptions_notice)) }
+        item(key = "exemption-heading", contentType = "heading") {
+            HorizontalDivider()
+            Spacer(Modifier.height(8.dp))
+            AtharSectionHeader(stringResource(R.string.local_exemptions))
+            Text(
+                stringResource(R.string.exemptions_notice),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         item(key = "exemption-form", contentType = "form") { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if(exemptReady)Text(stringResource(R.string.exemption_days, exemptTotal))
             else if(exemptUnreadable)MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick={exemptAttempt++}){Text(stringResource(R.string.retry))}}
