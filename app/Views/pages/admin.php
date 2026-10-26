@@ -1,5 +1,13 @@
 <section class="knowledge-page section-wrap admin-page">
-    <header class="knowledge-heading"><span class="eyebrow">إدارة المحتوى</span><h1>لوحة أثر</h1><p>تظهر المواد المنشورة للزوار. راجع حقوق النشر والمصدر قبل الإتاحة.</p></header>
+    <header class="knowledge-heading">
+        <span class="eyebrow">إدارة المحتوى</span>
+        <h1>لوحة أثر</h1>
+        <p>تظهر المواد المنشورة للزوار. راجع حقوق النشر والمصدر قبل الإتاحة.</p>
+        <form method="post" action="/admin/logout" class="logout-form">
+            <?= csrf_field() ?>
+            <button class="button button-secondary" type="submit">خروج من الإدارة</button>
+        </form>
+    </header>
     <?php if ($adminError !== ''): ?><div class="notice notice-error" role="alert"><?= e($adminError) ?></div><?php endif; ?>
     <div class="admin-layout">
         <aside class="admin-sidebar">
