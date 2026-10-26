@@ -135,6 +135,8 @@ object LessonReminderPlanner {
 
 enum class LessonReminderEnableResult { SCHEDULED, TOO_LATE, UNAVAILABLE }
 
+enum class LessonReminderReconcileResult { NO_CHOICE, UNCHANGED, RESCHEDULED, REMOVED, TOO_LATE }
+
 class LessonReminderManager(
     context: Context,
     private val session: SessionRepository,
@@ -183,7 +185,10 @@ class LessonReminderManager(
         choices.disable(lessonId, owner)
     }
 
-    suspend fun ensureScheduled(event: UpcomingLesson, expectedOwner: Long? = session.userId): LessonReminderEnableResult? {
+    suspend fun ensureScheduled(
+        event: UpcomingLesson,
+        expectedOwner: Long? = session.userId,
+    ): LessonReminderEnableResult? {
         val owner = session.requireVerifiedOwner(expectedOwner)
         val choice = choices.current(owner, event.id) ?: return null
         val binding = bindings.read(event.id, owner)
@@ -191,14 +196,59 @@ class LessonReminderManager(
             binding != null &&
             binding.eventRevision == event.revision &&
             binding.eventStartMillis == event.start?.toEpochMilli() &&
-            binding.sourceTimezone == event.scheduleTimezone
+            binding.sourceTimezone == event.scheduleTimezone &&
+            event.status == EventStatus.SCHEDULED &&
+            event.remindersEnabled
         ) return LessonReminderEnableResult.SCHEDULED
+
         val planned = plan(event, choice)
-        if (planned is LessonReminderPlanResult.Rejected) return planned.toEnableResult()
+        if (planned is LessonReminderPlanResult.Rejected) {
+            disable(event.id, owner)
+            return planned.toEnableResult()
+        }
         planned as LessonReminderPlanResult.Ready
         reminders.save(planned.spec, owner)
         bindings.save(planned.binding, owner)
         return LessonReminderEnableResult.SCHEDULED
+    }
+
+    suspend fun reconcileAuthoritative(
+        event: UpcomingLesson,
+        expectedOwner: Long? = session.userId,
+    ): LessonReminderReconcileResult {
+        val owner = session.requireVerifiedOwner(expectedOwner)
+        val choice = choices.current(owner, event.id) ?: return LessonReminderReconcileResult.NO_CHOICE
+        val binding = bindings.read(event.id, owner)
+
+        if (
+            event.status != EventStatus.SCHEDULED ||
+            event.start == null ||
+            !event.remindersEnabled
+        ) {
+            disable(event.id, owner)
+            return LessonReminderReconcileResult.REMOVED
+        }
+
+        if (
+            binding != null &&
+            binding.eventRevision == event.revision &&
+            binding.eventStartMillis == event.start.toEpochMilli() &&
+            binding.sourceTimezone == event.scheduleTimezone
+        ) return LessonReminderReconcileResult.UNCHANGED
+
+        val planned = plan(event, choice)
+        if (planned is LessonReminderPlanResult.Rejected) {
+            disable(event.id, owner)
+            return if (planned.reason == LessonReminderPlanFailure.TOO_LATE) {
+                LessonReminderReconcileResult.TOO_LATE
+            } else {
+                LessonReminderReconcileResult.REMOVED
+            }
+        }
+        planned as LessonReminderPlanResult.Ready
+        reminders.save(planned.spec, owner)
+        bindings.save(planned.binding, owner)
+        return LessonReminderReconcileResult.RESCHEDULED
     }
 
     private fun LessonReminderPlanResult.Rejected.toEnableResult() = when (reason) {

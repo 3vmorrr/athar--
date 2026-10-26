@@ -65,6 +65,20 @@ class LessonReminderChoiceStore(
         session.requireVerifiedOwner(owner)
     }
 
+    suspend fun all(expectedOwner: Long? = session.userId): List<LessonReminderChoice> {
+        val owner = session.requireVerifiedOwner(expectedOwner)
+        val rows = dao.caches(owner, "private:lesson-reminder-choice:%")
+        require(rows.size <= 128)
+        val values = rows.map { row ->
+            val lessonId = row.cacheKey.substringAfterLast(':').toIntOrNull()
+                ?: error("invalid lesson reminder key")
+            decode(row.payloadCipher, lessonId)
+        }.sortedBy { it.lessonId }
+        require(values.map { it.lessonId }.toSet().size == values.size)
+        session.requireVerifiedOwner(owner)
+        return values
+    }
+
     suspend fun current(owner: Long, lessonId: Int): LessonReminderChoice? {
         session.requireVerifiedOwner(owner)
         val row = dao.cache(owner, key(lessonId)) ?: return null

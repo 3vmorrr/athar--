@@ -1,15 +1,23 @@
-# Lesson reminder local scheduling
+# Lesson reminder reconciliation
 
-Task: 11.2  
+Task: 11.3  
 Implementation branch: \`parallel/admin-foundation\`  
 Status: **IMPLEMENTED / ACCEPTANCE PENDING**
 
-A selected lesson now creates one real WorkManager reminder through the WP10 owner-scoped scheduler. Canonical server \`scheduled_at\` is used as an Instant; \`schedule_timezone\` is validated and retained as source metadata without reinterpreting the UTC instant.
+Selected lesson reminders are reconciled against the existing authoritative lesson-detail endpoint. No new endpoint exposes hidden event inventory.
 
-The reminder is due 15 minutes before start and expires at start. If the 15-minute point has passed, Athar refuses to invent an immediate/late replacement.
+The app keeps an immediate and 15-minute network-constrained WorkManager reconciliation job for the currently verified owner. Account/environment tags cancel old-owner work on logout or switch.
 
-Unique work identity is stable per lesson. Idempotency includes event identity, event revision, canonical start and lead. An encrypted binding under \`private:lesson-reminder-binding:<lesson id>\` retains event id, revision, canonical start, source timezone and opaque work id.
+For each encrypted local lesson choice the worker fetches \`GET /upcoming-lessons/<lesson id>\`:
 
-Choice persistence happens before schedule creation so a crash cannot leave a hidden reminder with no visible opt-out. Scheduling failures roll back the choice. Opt-out removes work before the visible choice.
+- a newer scheduled public event with reminders enabled is rescheduled from its new canonical instant/revision/timezone;
+- live, published, cancelled or reminder-disabled events remove pending reminder work and the no-longer-fulfillable local choice;
+- HTTP 404 also removes the known local choice because the formerly known event is no longer publicly available;
+- authentication failures stop owner work;
+- transient/network failures never erase local choices and use bounded WorkManager retry.
 
-Task 11.3 owns authoritative change/cancellation reconciliation. Acceptance remains pending for build/unit/device timing, process death, near-start, permission, account-switch, timezone and reboot journeys.
+The local detail screen also re-runs \`ensureScheduled\` whenever revision/start/timezone/reminder eligibility changes, providing faster reconciliation while the user is viewing the event.
+
+No polling occurs without a selected local reminder. The worker is network-constrained and does not block offline local delivery merely because the network is unavailable.
+
+Acceptance still requires device testing around cancellation/reschedule races, offline-at-delivery, 404/private transitions, account switching, process death, periodic WorkManager timing and near-start changes.
