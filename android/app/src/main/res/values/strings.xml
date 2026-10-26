@@ -48,6 +48,9 @@
 <string name="book_next_page">الصفحة التالية</string><string name="open_youtube">فتح على YouTube</string><string name="comments">التعليقات</string><string name="comment_hint">اكتب تعليقك</string><string name="send_comment">إرسال للمراجعة</string><string name="pending_comment">بانتظار المراجعة</string>
     <string name="reset_counter">تصفير العدّاد</string><string name="next_dhikr">الذكر التالي</string><string name="count_action">سبّح وعدّ</string><string name="completed">اكتمل</string><string name="category">القسم</string><string name="progress_count">%1$d من %2$d</string>
     <string name="settings">الإعدادات</string><string name="profile">بيانات الحساب</string><string name="security">الأمان والخصوصية</string><string name="language">اللغة</string><string name="arabic">العربية</string><string name="english">English</string><string name="theme">المظهر</string><string name="light">فاتح</string><string name="dark">داكن</string><string name="system_theme">حسب الجهاز</string><string name="khatmah">خطة الختمة</string><string name="target_date">تاريخ الإتمام</string><string name="completed_pages">الصفحات المكتملة</string><string name="paused">متوقفة مؤقتًا</string><string name="active">نشطة</string><string name="finished">مكتملة</string><string name="export_data">تصدير بياناتي</string><string name="delete_account">حذف حسابي</string><string name="delete_account_body">سيُحذف حسابك وبياناته الخاصة. أكد كلمة المرور للمتابعة.</string><string name="change_password">تغيير كلمة المرور</string>
+<string name="revoke_other_sessions">تسجيل الخروج من الجلسات الأخرى</string>
+<string name="revoke_other_sessions_body">سيتم إلغاء جلسات الأجهزة والمتصفحات الأخرى فقط. ستظل هذه الجلسة الحالية مسجلة الدخول.</string>
+<string name="sessions_revoked">تم تسجيل الخروج من الجلسات الأخرى.</string>
 <string name="sync">مزامنة</string>
 <string name="edit">تعديل</string>
 <string name="use_server">الاحتفاظ بنسخة الخادم</string>
