@@ -10,8 +10,15 @@ plugins {
 
 val apiBase = providers.gradleProperty("ATHAR_API_BASE_URL").orElse("http://10.0.2.2:8002/api/v1/").get()
 require(apiBase.endsWith("/") && URI(apiBase).scheme in listOf("http", "https") && !URI(apiBase).host.isNullOrBlank()) { "ATHAR_API_BASE_URL must be an absolute API URL ending in /." }
-if (gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }) {
-    require(apiBase.startsWith("https://")) { "Release builds require an HTTPS ATHAR_API_BASE_URL." }
+if (
+    gradle.startParameter.taskNames.any {
+        it.contains("release", ignoreCase = true) ||
+            it.contains("benchmark", ignoreCase = true)
+    }
+) {
+    require(apiBase.startsWith("https://")) {
+        "Release-like builds require an HTTPS ATHAR_API_BASE_URL."
+    }
 }
 
 android {
@@ -33,7 +40,16 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+        }
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            versionNameSuffix = "-benchmark"
+            matchingFallbacks += listOf("release")
         }
     }
     testOptions { unitTests.isIncludeAndroidResources = true }

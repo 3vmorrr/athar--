@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!--
+          Release-like local measurement only. On Android 10+ this permits shell profiling
+          without making the app debuggable. API 26-28 still use am start -W timings.
+        -->
+        <profileable android:shell="true" />
+    </application>
+</manifest>
