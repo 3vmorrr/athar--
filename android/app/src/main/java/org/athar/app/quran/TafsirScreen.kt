@@ -64,7 +64,10 @@ private class TafsirViewModel(
     }
 
     private fun issue(failure: Throwable): TafsirIssue =
-        if (failure is ApiException && failure.status >= 500) {
+        if (
+            failure is ApiException &&
+            (failure.status == 404 || failure.status >= 500)
+        ) {
             TafsirIssue.SourceUnavailable
         } else {
             TafsirIssue.Network
@@ -600,6 +603,8 @@ private fun TafsirSourceSheet(
             }
             if (state.catalogLoading && state.catalog == null) {
                 LoadingScreen()
+            } else if (state.catalogLoading) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
             }
 
             state.catalog?.let { catalog ->

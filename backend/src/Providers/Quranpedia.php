@@ -85,6 +85,9 @@ final class Quranpedia
         QuranIndex::standard()->globalIndex($surah, $ayah);
 
         $listed = ($this->fetch)('category/3/books');
+        if (!is_array($listed)) {
+            throw new ApiError('service_unavailable', 502);
+        }
         $known = false;
         foreach ($listed as $entry) {
             if (is_array($entry) && (int) ($entry['id'] ?? 0) === $book) {
@@ -122,6 +125,10 @@ final class Quranpedia
             ];
         }
 
+        $bookName = trim((string) ($raw['book']['name'] ?? ''));
+        if ($bookName === '') {
+            throw new ApiError('service_unavailable', 502);
+        }
         $author = $raw['book']['author'] ?? null;
         $total = count($blocks);
         return [
@@ -129,7 +136,7 @@ final class Quranpedia
             'ayah' => $ayah,
             'book' => [
                 'id' => $book,
-                'name' => trim((string) ($raw['book']['name'] ?? '')),
+                'name' => $bookName,
                 'author' => is_array($author)
                     ? (string) ($author['full_name'] ?? $author['ar_name'] ?? '')
                     : (is_string($author) ? $author : ''),

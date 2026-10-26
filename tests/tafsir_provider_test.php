@@ -183,5 +183,14 @@ tafsir_reject(
     'malformed provider content fails closed',
 );
 
+$malformedCatalog = new Quranpedia(
+    static fn(string $path): string => 'not-an-array',
+);
+tafsir_reject(
+    fn() => $malformedCatalog->books(['surah' => 1]),
+    502,
+    'malformed provider catalog fails closed',
+);
+
 echo 'PASS: ' . $checks .
     " tafsir catalog/content/paging/source/markup/canonical assertions.\n";
