@@ -64,7 +64,7 @@ private class BookReaderViewModel(
     private var descriptor: ParcelFileDescriptor? = null
     private var renderer: PdfRenderer? = null
     private val preferences = application.getSharedPreferences(
-        "athar-book-reader",
+        BookStorage.READER_PREFERENCES,
         Context.MODE_PRIVATE,
     )
     private val pageKey = "page:$owner:$bookId"
