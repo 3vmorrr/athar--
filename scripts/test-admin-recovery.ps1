@@ -3,7 +3,7 @@ param(
     [string]$Python = 'C:\Users\SaWa\AppData\Local\Programs\Python\Python312\python.exe',
     [string]$Node = 'C:\Users\SaWa\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe',
     [string]$Playwright = 'C:\Users\SaWa\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\playwright',
-    [ValidateSet('admin_recovery_http_test.py','admin_scholar_http_test.py','admin_series_http_test.py','admin_lesson_http_test.py')][string]$Suite = 'admin_recovery_http_test.py',
+    [ValidateSet('admin_recovery_http_test.py','admin_scholar_http_test.py','admin_series_http_test.py','admin_lesson_http_test.py','admin_event_http_test.py','admin_privacy_http_test.py')][string]$Suite = 'admin_recovery_http_test.py',
     [int]$Port = 3311
 )
 $ErrorActionPreference = 'Stop'

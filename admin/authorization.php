@@ -48,7 +48,7 @@ function admin_can(array $actor, string $capability): bool
 function admin_kind_capability(string $kind): ?string
 {
     return match ($kind) {
-        'scholar', 'series', 'lesson', 'book', 'adhkar', 'content' => 'content',
+        'scholar', 'series', 'lesson', 'book', 'adhkar', 'content', 'lesson-event' => 'content',
         'comment-review', 'comment-delete' => 'moderation',
         'campaign-create', 'campaign-batch', 'campaign-retry-failed',
         'push-campaign-create', 'push-campaign-update', 'push-campaign-cancel',
@@ -106,12 +106,13 @@ function admin_audit_actions(): array
         'email-campaign-created','email-campaign-batch-sent','email-campaign-failures-requeued','email-campaign-unsubscribed',
         'backup-created-and-verified','backup-expired-and-deleted','backup-restored','backup-download-started','backup-downloaded','backup-download-grant-issued',
         'update','toggle-publication','delete','create',
+        'lesson-event-draft','lesson-event-scheduled','lesson-event-live','lesson-event-published','lesson-event-cancelled',
     ];
 }
 
 function admin_audit_target_types(): array
 {
-    return ['user','admin-user','admin-action','platform','backup','email-campaign','lesson-comment','scholar','series','lesson','book','adhkar'];
+    return ['user','admin-user','admin-action','platform','backup','email-campaign','lesson-comment','scholar','series','lesson','book','adhkar','lesson_event'];
 }
 
 /** The view never receives raw emails or unconstrained historical target text. */

@@ -12,7 +12,7 @@ function admin_mutate_lesson(array $actor, array $input): int
     if (in_array($action, ['create','update'], true)) {
         foreach (['title','description','source_url'] as $key) if (!is_string($input[$key] ?? '')) throw new RuntimeException('بيانات الدرس غير صالحة.');
         $title = trim($input['title'] ?? ''); $description = trim($input['description'] ?? ''); $source = trim($input['source_url'] ?? '');
-        if (mb_strlen($title, 'UTF-8') < 2 || mb_strlen($title, 'UTF-8') > 220 || mb_strlen($description, 'UTF-8') > 4000) throw new RuntimeException('راجع عنوان الدرس ووصفه.');
+        if (mb_strlen($title, 'UTF-8') < 2 || mb_strlen($title, 'UTF-8') > 220 || mb_strlen($description, 'UTF-8') > 20000) throw new RuntimeException('راجع عنوان الدرس ووصفه.');
         $parts = parse_url($source); $video = youtube_video_id($source);
         if (!$video || isset($parts['user']) || isset($parts['pass'])) throw new RuntimeException('أدخل رابط فيديو YouTube معتمدًا يبدأ بـ HTTPS دون بيانات دخول.');
         $scholarId = filter_var($input['scholar_id'] ?? '0', FILTER_VALIDATE_INT, ['options'=>['min_range'=>0]]);

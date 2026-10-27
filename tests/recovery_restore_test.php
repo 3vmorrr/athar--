@@ -85,13 +85,14 @@ isolated_database(function (PDO $connection): void {
             if (is_file($legacyPlain)) unlink($legacyPlain);
             if (!$legacyRegistered && is_file($legacyCipher)) unlink($legacyCipher);
         }
-        $db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([password_hash('NewerOwnerPassword123!', PASSWORD_DEFAULT), $ownerId]);
+        $db->prepare("UPDATE users SET password_hash=?,email_verified_at='2026-10-01 00:00:00' WHERE id=?")->execute([password_hash('NewerOwnerPassword123!', PASSWORD_DEFAULT), $ownerId]);
         $db->exec('UPDATE users SET session_version=83');
         $db->exec('UPDATE quran_positions SET ayah=5,revision=2');
         file_put_contents($bookPath, '%PDF-modified');
         $restored = restore_backup_archive($artifact['id'], $ownerId);
         recovery_check($restored === $ownerId, 'Owner survives normal restoration');
         recovery_check(password_verify('NewerOwnerPassword123!', (string)$db->query('SELECT password_hash FROM users WHERE id=' . $ownerId)->fetchColumn()), 'Snapshot cannot roll back the current Owner password');
+        recovery_check($db->query('SELECT email_verified_at FROM users WHERE id=' . $ownerId)->fetchColumn() === '2026-10-01 00:00:00', 'Snapshot cannot roll back the current Owner verification claim');
         recovery_check((int) $db->query('SELECT ayah FROM quran_positions')->fetchColumn() === 6, 'Private authoritative reading data restored');
         recovery_check(file_get_contents($bookPath) === $pdf, 'Registered PDF bytes restored');
         recovery_check((int) $db->query('SELECT MIN(session_version) FROM users')->fetchColumn() === 84, 'Every restored user invalidates all historical cookie versions');
@@ -141,6 +142,7 @@ isolated_database(function (PDO $connection): void {
         $actor = $db->query('SELECT * FROM users WHERE id=' . $restoredNewOwner)->fetch();
         recovery_check($actor['email'] === 'new-recovery-owner@example.test' && $actor['role'] === 'owner', 'Absent owner is recreated and returned by identity');
         recovery_check(password_verify('RecoveryFixture123!', $actor['password_hash']), 'Current owner credentials preserved');
+        recovery_check($actor['email_verified_at'] === null, 'Absent unverified owner is not silently marked verified');
         recovery_check((int) $actor['session_version'] === 85, 'Recreated owner also rotates session version');
         recovery_check((string) $db->query("SELECT setting_value FROM platform_settings WHERE setting_key='recovery-fixture'")->fetchColumn() === 'retained-setting', 'Environment settings retained');
         recovery_check($db->query("SELECT updated_by FROM platform_settings WHERE setting_key='recovery-fixture'")->fetchColumn() === null, 'Dangling retained actor reference cleared');

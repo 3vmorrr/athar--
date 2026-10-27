@@ -30,3 +30,22 @@
 [data-series-form] .check-label{min-height:44px;align-items:center}
 
 [data-lesson-form] .check-label{min-height:44px;align-items:center}
+
+
+.admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.admin-check-grid{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 0}
+.admin-event-list{margin-top:16px}
+.admin-event-card{display:grid;gap:14px}
+.admin-event-card+.admin-event-card{margin-top:12px}
+.admin-event-card .section-heading p{margin:4px 0 0}
+@media(max-width:720px){.admin-form-grid{grid-template-columns:1fr}.admin-check-grid{display:grid;grid-template-columns:1fr}}
+
+/* Event editing preserves accessible field groups across both directions. */
+.admin-event-card { min-width: 0; margin-block: 1rem; }
+.admin-event-card summary { cursor: pointer; min-height: 44px; padding-block: .75rem; font-weight: 700; }
+.event-fields { min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 1rem; display: grid; gap: 1rem; }
+.event-fields legend { padding-inline: .5rem; font-weight: 700; }
+.admin-event-card .check-label { display: flex; align-items: center; gap: .75rem; min-height: 44px; }
+.admin-event-card .check-label input { width: 20px; height: 20px; flex: 0 0 20px; }
+.event-live-confirmation { padding: .75rem; border: 1px solid var(--line); border-radius: 8px; }
+.admin-event-card input, .admin-event-card select, .admin-event-card textarea { max-width: 100%; min-width: 0; }

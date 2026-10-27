@@ -1,7 +1,7 @@
 <?php
 $editingLesson = ($lessonFormMode ?? '') === 'edit'; $lessonDraft = $lessonDraft ?? [];
 if ($adminError !== '' && ((!$editingLesson && ($_POST['kind'] ?? '') === 'lesson') || ($editingLesson && ($_POST['content_type'] ?? '') === 'lesson' && ($_POST['content_action'] ?? '') === 'update' && (int)($_POST['id'] ?? 0) === (int)$lessonDraft['id']))) {
-    foreach (['title','description','source_url','scholar_id','series_id','sort_order'] as $field) if (is_string($_POST[$field] ?? null)) $lessonDraft[$field] = mb_substr($_POST[$field], 0, 4000, 'UTF-8');
+    foreach (['title','description','source_url','scholar_id','series_id','sort_order'] as $field) if (is_string($_POST[$field] ?? null)) $lessonDraft[$field] = mb_substr($_POST[$field], 0, $field === 'description' ? 20000 : 4000, 'UTF-8');
     $lessonDraft['is_published'] = isset($_POST['publish']);
 }
 ?>
@@ -11,7 +11,7 @@ if ($adminError !== '' && ((!$editingLesson && ($_POST['kind'] ?? '') === 'lesso
 <?= csrf_field() ?><input type="hidden" name="kind" value="<?= $editingLesson ? 'content' : 'lesson' ?>">
 <?php if ($editingLesson): ?><input type="hidden" name="content_type" value="lesson"><input type="hidden" name="content_action" value="update"><input type="hidden" name="id" value="<?= (int)$lessonDraft['id'] ?>"><?php endif; ?>
 <label><?= $lessonCopy('العنوان') ?><input name="title" minlength="2" maxlength="220" value="<?= e((string)($lessonDraft['title'] ?? '')) ?>" required></label>
-<label><?= $lessonCopy('الوصف') ?><textarea name="description" maxlength="4000" rows="3"><?= e((string)($lessonDraft['description'] ?? '')) ?></textarea></label>
+<label><?= $lessonCopy('الوصف') ?><textarea name="description" maxlength="20000" rows="3"><?= e((string)($lessonDraft['description'] ?? '')) ?></textarea></label>
 <label><?= $lessonCopy('رابط فيديو YouTube') ?><input type="url" name="source_url" dir="ltr" maxlength="500" value="<?= e((string)($lessonDraft['source_url'] ?? '')) ?>" required><small><?= $lessonCopy('استخدم رابط مشاهدة أو youtu.be أو رابط تضمين معتمد. يبقى التشغيل لدى المشغل الرسمي.') ?></small></label>
 <label><?= $lessonCopy('العالم') ?><select name="scholar_id"><option value="0"><?= $lessonCopy('بدون') ?></option><?php foreach ($scholars as $optionScholar): ?><option value="<?= (int)$optionScholar['id'] ?>" <?= (int)($lessonDraft['scholar_id'] ?? 0) === (int)$optionScholar['id'] ? 'selected' : '' ?>><?= e($optionScholar['name']) ?></option><?php endforeach; ?></select></label>
 <label><?= $lessonCopy('السلسلة') ?><select name="series_id"><option value="0"><?= $lessonCopy('بدون') ?></option><?php foreach ($seriesItems as $optionSeries): ?><option value="<?= (int)$optionSeries['id'] ?>" <?= (int)($lessonDraft['series_id'] ?? 0) === (int)$optionSeries['id'] ? 'selected' : '' ?>><?= e($optionSeries['title']) ?></option><?php endforeach; ?></select></label>

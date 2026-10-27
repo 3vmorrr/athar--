@@ -1,0 +1,69 @@
+<?php
+$editingEvent = isset($eventRecord);
+$eventData = $editingEvent ? [
+    'lesson_id'=>(string)$eventRecord['id'],'expected_revision'=>(string)$eventRecord['revision'],'status'=>$eventRecord['status'],'visibility'=>$eventRecord['visibility'],
+    'schedule_timezone'=>$eventRecord['schedule_timezone'],'scheduled_local'=>'','schedule_offset'=>'','estimated_duration_minutes'=>(string)($eventRecord['estimated_duration_minutes'] ?? ''),
+    'title_ar'=>$eventRecord['translations']['ar']['title'] ?? $eventRecord['title'],'description_ar'=>$eventRecord['translations']['ar']['description'] ?? '',
+    'title_en'=>$eventRecord['translations']['en']['title'] ?? '','description_en'=>$eventRecord['translations']['en']['description'] ?? '',
+    'course_title_ar'=>$eventRecord['editor_context']['course_title_ar'] ?? '','course_title_en'=>$eventRecord['editor_context']['course_title_en'] ?? '',
+    'topics_ar'=>implode("\n", $eventRecord['editor_context']['topics_ar'] ?? []),'topics_en'=>implode("\n", $eventRecord['editor_context']['topics_en'] ?? []),
+    'related_book_id'=>(string)($eventRecord['editor_context']['related_book_id'] ?? ''),'related_page_start'=>(string)($eventRecord['editor_context']['related_page_start'] ?? ''),'related_page_end'=>(string)($eventRecord['editor_context']['related_page_end'] ?? ''),
+    'is_live_event'=>$eventRecord['is_live_event'],'reminders_enabled'=>$eventRecord['reminders_enabled'],'replay_available'=>$eventRecord['replay_available'],
+] : ['lesson_id'=>'','expected_revision'=>'0','status'=>'draft','visibility'=>'public','schedule_timezone'=>'UTC'];
+$eventTimeUnreadable = false;
+if ($editingEvent && !in_array($eventRecord['schedule_timezone'], DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC), true)) $eventTimeUnreadable = true;
+if ($editingEvent && !$eventTimeUnreadable && $eventRecord['scheduled_at'] !== null) {
+    try {
+        $local = (new DateTimeImmutable($eventRecord['scheduled_at']))->setTimezone(new DateTimeZone($eventRecord['schedule_timezone']));
+        $eventData['scheduled_local']=$local->format('Y-m-d\TH:i:s.v'); $eventData['schedule_offset']=$local->format('P');
+    } catch (Throwable $unreadableEventTime) { $eventTimeUnreadable=true; }
+}
+$eventHasDraft = $adminError !== '' && ($_POST['kind'] ?? '') === 'lesson-event' && ($editingEvent ? (int)($_POST['lesson_id'] ?? 0) === $eventRecord['id'] : !isset($eventSelectedRecord));
+if ($eventHasDraft) {
+    foreach (['lesson_id','expected_revision','status','visibility','schedule_timezone','scheduled_local','schedule_offset','estimated_duration_minutes','title_ar','description_ar','title_en','description_en','course_title_ar','course_title_en','topics_ar','topics_en','related_book_id','related_page_start','related_page_end'] as $field) if (is_string($_POST[$field] ?? null)) $eventData[$field]=mb_substr($_POST[$field],0,20001,'UTF-8');
+    foreach (['is_live_event','reminders_enabled','replay_available','clear_english_translation','clear_arabic_description'] as $field) $eventData[$field]=isset($_POST[$field]);
+}
+$eventConflict = $editingEvent && $eventHasDraft && ($eventDraftConflict || (int)$eventData['expected_revision'] !== $eventRecord['revision']);
+$eventAllowedStates = \Athar\Learning\UpcomingLessonService::editableStates($editingEvent ? $eventRecord['status'] : 'draft');
+?>
+<?php if ($editingEvent): ?>
+<article class="knowledge-card admin-event-card" data-event-record="<?= (int)$eventRecord['id'] ?>">
+<header class="section-heading"><div><h3><?= e($eventRecord['title']) ?></h3><p><?= $eventCopy('الحالة المحفوظة','Saved status') ?>: <?= $eventCopy(...($eventStatuses[$eventRecord['status']] ?? ['غير متاح','Unavailable'])) ?> · <?= $eventCopy('النسخة المحفوظة','Saved version') ?> <?= (int)$eventRecord['revision'] ?></p></div></header>
+<?php if ($eventRecord['scheduled_at'] !== null): ?><p class="source-note"><?= $eventCopy('الموعد المحفوظ','Saved instant') ?>: <bdi><?= e($eventRecord['scheduled_at']) ?></bdi> · <bdi><?= e($eventRecord['schedule_timezone']) ?></bdi></p><?php endif; ?>
+<?php if (preg_match('/^[A-Za-z0-9_-]{11}$/D', (string)$eventRecord['youtube_id'])): ?><a class="text-button" href="https://www.youtube.com/watch?v=<?= e($eventRecord['youtube_id']) ?>" target="_blank" rel="noopener noreferrer"><?= $eventCopy('فتح المشغل الرسمي للتحقق','Open the official provider to verify') ?></a><?php endif; ?>
+<?php if ($eventRecord['live_confirmed_at'] !== null): ?><p class="source-note"><?= $eventCopy('آخر تأكيد للبث','Last live confirmation') ?>: <bdi><?= e($eventRecord['live_confirmed_at']) ?></bdi> · <?= e((string)$eventRecord['live_source']) ?></p><?php endif; ?>
+<?php if ($eventConflict): ?><div class="notice notice-error" data-event-conflict><?= $eventCopy('مسودتك محفوظة في هذا النموذج ولم تُكتب فوق النسخة الأحدث.','This form retains your unsaved draft; the newer saved version has not been overwritten.') ?> <a class="text-button" href="<?= e($eventUrl(['event_edit'=>$eventRecord['id']])) ?>"><?= $eventCopy('تحميل النسخة الحالية (تجاهل المسودة)','Load current version (discard draft)') ?></a></div><?php endif; ?>
+<?php if ($eventTimeUnreadable): ?><p class="notice notice-error"><?= $eventCopy('تعذر قراءة بيانات توقيت هذا الحدث. احتُفظ بالسجل؛ أعد المحاولة قبل التعديل.','This event’s time data could not be read. The record is preserved; retry before editing.') ?></p></article><?php return; endif; ?>
+<details class="inventory-edit" <?= $eventFocus === $eventRecord['id'] || $eventHasDraft ? 'open' : '' ?>><summary><?= $eventCopy('تعديل الحدث','Edit event') ?></summary>
+<?php else: ?><details class="knowledge-card admin-event-card admin-event-create" <?= !isset($eventSelectedRecord) ? 'open' : '' ?>><summary><?= $eventCopy('إنشاء حدث لدرس','Create an event for a lesson') ?></summary><?php endif; ?>
+<form method="post" class="form-stack" action="<?= e($eventUrl(['event_edit'=>null])) ?>" data-event-form>
+<?= csrf_field() ?><input type="hidden" name="kind" value="lesson-event"><input type="hidden" name="expected_revision" value="<?= e((string)$eventData['expected_revision']) ?>">
+<?php if ($editingEvent): ?><input type="hidden" name="lesson_id" value="<?= (int)$eventRecord['id'] ?>"><?php else: ?>
+<label><?= $eventCopy('الدرس','Lesson') ?><select name="lesson_id" required <?= !$eventEligibleLessons ? 'disabled' : '' ?>><option value=""><?= $eventCopy('اختر درسًا','Choose a lesson') ?></option><?php foreach ($eventEligibleLessons as $choice): ?><option value="<?= (int)$choice['id'] ?>" <?= (int)($eventData['lesson_id'] ?? 0) === (int)$choice['id'] ? 'selected' : '' ?>><?= e($choice['title']) ?></option><?php endforeach; ?></select></label>
+<?php if (!$eventEligibleLessons): ?><p class="source-note"><?= $eventCopy('لا يوجد درس بلا حدث حاليًا. أنشئ درسًا أولًا أو عدّل حدثًا قائمًا.','Every available lesson already has an event. Create a lesson first or edit an existing event.') ?></p><?php endif; ?>
+<?php endif; ?>
+<fieldset class="event-fields event-schedule-fields"><legend><?= $eventCopy('التوقيت والحالة','Schedule and status') ?></legend><div class="admin-form-grid">
+<label><?= $eventCopy('الحالة','Status') ?><select name="status" data-event-state><?php if (!in_array($eventData['status'] ?? 'draft', $eventAllowedStates, true)): ?><option value="<?= e((string)$eventData['status']) ?>" selected disabled><?= $eventCopy('حالة غير متاحة — راجع النسخة الحالية','Unavailable status — review the current version') ?></option><?php endif; ?><?php foreach ($eventAllowedStates as $state): ?><option value="<?= e($state) ?>" <?= ($eventData['status'] ?? 'draft') === $state ? 'selected' : '' ?>><?= $eventCopy(...$eventStatuses[$state]) ?></option><?php endforeach; ?></select></label>
+<label><?= $eventCopy('الظهور','Visibility') ?><select name="visibility"><option value="public" <?= ($eventData['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>><?= $eventCopy('عام','Public') ?></option><option value="private" <?= ($eventData['visibility'] ?? '') === 'private' ? 'selected' : '' ?>><?= $eventCopy('خاص','Private') ?></option></select></label>
+<label><?= $eventCopy('المنطقة الزمنية','Time zone') ?><input name="schedule_timezone" dir="ltr" maxlength="80" value="<?= e((string)($eventData['schedule_timezone'] ?? 'UTC')) ?>" placeholder="Africa/Cairo" required></label>
+<label><?= $eventCopy('الموعد المحلي','Local date and time') ?><input type="datetime-local" name="scheduled_local" dir="ltr" step="0.001" value="<?= e((string)($eventData['scheduled_local'] ?? '')) ?>"></label>
+<label><?= $eventCopy('فرق UTC عند الحاجة','UTC offset when needed') ?><input name="schedule_offset" dir="ltr" maxlength="6" value="<?= e((string)($eventData['schedule_offset'] ?? '')) ?>" placeholder="+02:00"><small><?= $eventCopy('اتركه فارغًا لوقت غير ملتبس. حدده عند تكرار الساعة بسبب تغيير التوقيت.','Leave blank for a unique local time. Specify it when the clock repeats.') ?></small></label>
+<label><?= $eventCopy('المدة المتوقعة بالدقائق','Estimated duration in minutes') ?><input type="number" name="estimated_duration_minutes" dir="ltr" min="1" max="1440" value="<?= e((string)($eventData['estimated_duration_minutes'] ?? '')) ?>"></label>
+</div><div class="admin-check-grid">
+<?php foreach (['is_live_event'=>['حدث مباشر','Live event'],'reminders_enabled'=>['السماح بتذكير المشتركين الذين وافقوا','Allow reminders for users who opted in'],'replay_available'=>['إعادة المشاهدة متاحة','Replay is available']] as $flag=>$label): ?><label class="check-label"><input type="checkbox" name="<?= $flag ?>" <?= !empty($eventData[$flag]) ? 'checked' : '' ?>><?= $eventCopy(...$label) ?></label><?php endforeach; ?>
+</div><label class="check-label event-live-confirmation"><input type="checkbox" name="confirm_live" data-event-confirm><?= $eventCopy('تحققت الآن من أن المشغل الرسمي يبث مباشرةً.','I have checked that the official provider is live now.') ?></label></fieldset>
+<fieldset class="event-fields event-translation-fields"><legend><?= $eventCopy('العناوين والترجمة','Titles and translation') ?></legend>
+<label><?= $eventCopy('العنوان العربي','Arabic title') ?><input name="title_ar" dir="rtl" maxlength="220" value="<?= e((string)($eventData['title_ar'] ?? '')) ?>" <?= $editingEvent ? 'required' : '' ?>><?php if (!$editingEvent): ?><small><?= $eventCopy('اتركه فارغًا للاحتفاظ بعنوان الدرس.','Leave blank to retain the lesson title.') ?></small><?php endif; ?></label>
+<label><?= $eventCopy('الوصف العربي','Arabic description') ?><textarea name="description_ar" dir="rtl" maxlength="20000" rows="3"><?= e((string)($eventData['description_ar'] ?? '')) ?></textarea></label>
+<label class="check-label"><input type="checkbox" name="clear_arabic_description" <?= !empty($eventData['clear_arabic_description']) ? 'checked' : '' ?>><?= $eventCopy('حذف الوصف العربي صراحةً','Explicitly clear the Arabic description') ?></label>
+<?php if (!$editingEvent): ?><p class="source-note"><?= $eventCopy('الوصف الفارغ يحتفظ بوصف الدرس ما لم تطلب حذفه.','A blank description retains the lesson description unless you explicitly clear it.') ?></p><?php endif; ?>
+<label><?= $eventCopy('العنوان الإنجليزي','English title') ?><input name="title_en" dir="ltr" maxlength="220" value="<?= e((string)($eventData['title_en'] ?? '')) ?>"></label>
+<label><?= $eventCopy('الوصف الإنجليزي','English description') ?><textarea name="description_en" dir="ltr" maxlength="20000" rows="3"><?= e((string)($eventData['description_en'] ?? '')) ?></textarea></label>
+<label class="check-label"><input type="checkbox" name="clear_english_translation" <?= !empty($eventData['clear_english_translation']) ? 'checked' : '' ?>><?= $eventCopy('حذف الترجمة الإنجليزية (له الأولوية على الحقول)','Clear the English translation (takes priority over the fields)') ?></label></fieldset>
+<fieldset class="event-fields event-context-fields"><legend><?= $eventCopy('الدورة والمرجع','Course and reference') ?></legend><div class="admin-form-grid">
+<?php foreach (['ar'=>['اسم الدورة بالعربية','Arabic course title'],'en'=>['اسم الدورة بالإنجليزية','English course title']] as $language=>$label): ?><label><?= $eventCopy(...$label) ?><input name="course_title_<?= $language ?>" dir="<?= $language === 'ar' ? 'rtl' : 'ltr' ?>" maxlength="200" value="<?= e((string)($eventData['course_title_'.$language] ?? '')) ?>"></label><?php endforeach; ?>
+</div><?php foreach (['ar'=>['الموضوعات العربية','Arabic topics'],'en'=>['الموضوعات الإنجليزية','English topics']] as $language=>$label): ?><label><?= $eventCopy(...$label) ?><textarea name="topics_<?= $language ?>" dir="<?= $language === 'ar' ? 'rtl' : 'ltr' ?>" rows="3"><?= e((string)($eventData['topics_'.$language] ?? '')) ?></textarea><small><?= $eventCopy('موضوع في كل سطر أو بفاصلة. 12 موضوعًا بحد أقصى، ومن 2 إلى 80 حرفًا.','One topic per line or comma. At most 12 topics, each 2 to 80 characters.') ?></small></label><?php endforeach; ?>
+<div class="admin-form-grid"><label><?= $eventCopy('كتاب مرتبط','Related book') ?><select name="related_book_id"><option value=""><?= $eventCopy('بدون','None') ?></option><?php foreach ($books as $choice): ?><option value="<?= (int)$choice['id'] ?>" <?= (int)($eventData['related_book_id'] ?? 0) === (int)$choice['id'] ? 'selected' : '' ?>><?= e($choice['title']) ?></option><?php endforeach; ?></select></label>
+<?php foreach (['related_page_start'=>['من صفحة','From page'],'related_page_end'=>['إلى صفحة','To page']] as $field=>$label): ?><label><?= $eventCopy(...$label) ?><input type="number" name="<?= $field ?>" dir="ltr" min="1" max="100000" value="<?= e((string)($eventData[$field] ?? '')) ?>"></label><?php endforeach; ?></div></fieldset>
+<button class="button button-primary" <?= $eventConflict || (!$editingEvent && !$eventEligibleLessons) ? 'disabled' : '' ?>><?= $eventCopy('حفظ الحدث','Save event') ?></button>
+</form><?php if ($editingEvent): ?></details></article><?php else: ?></details><?php endif; ?>

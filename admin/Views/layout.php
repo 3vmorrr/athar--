@@ -12,6 +12,9 @@ if (($managedUserSearch ?? '') !== '' || ($managedUserPage ?? 1) > 1) {
 if (($auditSearch ?? '') !== '' || ($auditPage ?? 1) > 1) {
     $userContext += ['audit_q' => $auditSearch ?? '', 'audit_page' => $auditPage ?? 1];
 }
+foreach (['events_page' => $lessonEventPageNumber ?? 1, 'event_edit' => $eventFocus ?? 0] as $key => $value) {
+    if ($value > ($key === 'events_page' ? 1 : 0)) $userContext[$key] = $value;
+}
 $chrome = $rtl ? [
     'dashboard' => 'لوحة الإدارة',
     'site' => 'فتح أثر',

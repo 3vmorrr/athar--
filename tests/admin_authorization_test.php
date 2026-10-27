@@ -31,7 +31,7 @@ foreach (array_keys($grants) as $actorRole) {
         }
     }
 }
-foreach (['scholar','series','lesson','book','adhkar','content'] as $kind) $check(admin_kind_capability($kind)==='content', $kind);
+foreach (['scholar','series','lesson','book','adhkar','content','lesson-event'] as $kind) $check(admin_kind_capability($kind)==='content', $kind);
 foreach (['comment-review','comment-delete'] as $kind) $check(admin_kind_capability($kind)==='moderation', $kind);
 foreach (['user-profile-update','user-delete','user-suspension'] as $kind) $check(admin_kind_capability($kind)==='users', $kind);
 foreach (['backup-create','backup-grant','backup-restore','local-reset'] as $kind) $check(admin_kind_capability($kind)==='recovery', $kind);

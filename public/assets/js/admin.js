@@ -131,6 +131,18 @@
     filter('[data-admin-user-search]', '[data-admin-user]', '[data-admin-user-empty]');
     filter('[data-admin-audit-search]', '[data-admin-audit]', '[data-admin-audit-empty]');
 
+    document.querySelectorAll('[data-event-form]').forEach((form) => {
+        const state = form.querySelector('[data-event-state]');
+        const confirm = form.querySelector('[data-event-confirm]');
+        const sync = () => {
+            confirm.required = state.value === 'live';
+            confirm.disabled = state.value !== 'live';
+            if (confirm.disabled) confirm.checked = false;
+        };
+        state.addEventListener('change', sync);
+        sync();
+    });
+
     document.querySelectorAll('form[data-confirm]').forEach((form) => {
         form.addEventListener('submit', (event) => {
             if (!window.confirm(form.dataset.confirm || 'Confirm?')) event.preventDefault();

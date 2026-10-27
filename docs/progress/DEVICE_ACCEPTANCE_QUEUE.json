@@ -1,0 +1,17 @@
+{
+  "updated": "2026-10-27",
+  "policy": "Batch physical scenarios by journey; preserve existing evidence elsewhere and never infer device PASS from compilation, HTTP or desktop browsers. Add scenarios as affected native tasks are reviewed; this incremental queue does not replace existing task-specific open gates.",
+  "sessions": [
+    {
+      "id": "upcoming-admin-native",
+      "state": "QUEUED",
+      "tasks": ["18.4"],
+      "device": "Authorized Samsung API27 ARM32",
+      "scenarios": [
+        "An actual Admin scheduled edit and explicit confirmed-live transition reach the native Upcoming detail with the exact instant and truthful state; Watch obeys publication and parent visibility.",
+        "AR/EN, timezone display, network loss/retry and retained event detail do not fabricate a fresh live-provider confirmation or discard protected owned state."
+      ],
+      "existing_evidence": "docs/testing/ADMIN_EVENTS.md: backend/service/HTTP and desktop/phone-sized browser acceptance; no new Android source change or physical playback claim."
+    }
+  ]
+}

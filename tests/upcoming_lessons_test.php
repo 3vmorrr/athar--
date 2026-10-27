@@ -121,5 +121,18 @@ isolated_database(static function(PDO $db):void{
     $changed=$kernel->handle(new \Athar\Http\Request('PUT','/api/v1/admin/lessons/5/event',['expected_revision'=>1,'status'=>'cancelled'],$adminHeaders));
     event_assert($changed->status===200&&$changed->body['data']['revision']===2,'admin mutation route applies revision checks');
     event_assert($kernel->handle(new \Athar\Http\Request('GET','/api/v1/upcoming-lessons/5',[],$headers))->body['data']['status']==='cancelled','reader sees actual post-admin state');
+    event_assert(UpcomingLessonService::editableStates('live') === ['live','published','cancelled'],'editor states come from the canonical transition map');
+    event_assert(UpcomingLessonService::editableStates('unknown') === [],'unknown state cannot fabricate an editor transition');
+    $db->exec("INSERT INTO lessons(title,youtube_id,source_url,is_published) VALUES ('Live confirmation fixture','Chk_1234567','https://www.youtube.com/watch?v=Chk_1234567',1)");
+    $liveLesson=(int)$db->lastInsertId();
+    $liveEvent=$service->save($admin,$liveLesson,['expected_revision'=>0,'status'=>'live','scheduled_at'=>'2026-01-01T12:00:00Z','is_live_event'=>true]);
+    $db->prepare("UPDATE lesson_events SET live_confirmed_at='2020-01-01 00:00:00',live_source='provider' WHERE lesson_id=?")->execute([$liveLesson]);
+    $same=$service->save($admin,$liveLesson,['expected_revision'=>$liveEvent['revision'],'status'=>'live']);
+    event_assert(str_starts_with($same['live_confirmed_at'],'2020-01-01')&&$same['live_source']==='provider','metadata edit cannot fabricate a fresh live confirmation or replace its authority');
+    foreach([null,'true',1] as $invalid)event_denied(fn()=>$service->save($admin,$liveLesson,['expected_revision'=>$same['revision'],'confirm_live'=>$invalid]),422,'live confirmation is a strict boolean');
+    $fresh=$service->save($admin,$liveLesson,['expected_revision'=>$same['revision'],'confirm_live'=>true]);
+    event_assert(!str_starts_with($fresh['live_confirmed_at'],'2020-01-01')&&$fresh['live_source']==='admin','explicit operator reconfirmation records fresh truthful authority');
+    event_denied(fn()=>$service->save($admin,5,['expected_revision'=>2,'confirm_live'=>true]),422,'non-live state cannot receive a fabricated live confirmation');
+
 });
 echo 'PASS: '.$checks." upcoming/state/UTC/visibility/CAS/change-fact/authorization assertions.\n";

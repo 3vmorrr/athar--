@@ -307,7 +307,7 @@ function restore_backup_archive_locked(int $backupId, int $ownerId): int
             }
         }
         $zip->close(); $zip = new ZipArchive();
-        $oldOwner = $db->prepare("SELECT email,password_hash FROM users WHERE id=? AND role='owner' AND suspended_at IS NULL"); $oldOwner->execute([$ownerId]); $ownerCredentials = $oldOwner->fetch();
+        $oldOwner = $db->prepare("SELECT email,password_hash,email_verified_at FROM users WHERE id=? AND role='owner' AND suspended_at IS NULL"); $oldOwner->execute([$ownerId]); $ownerCredentials = $oldOwner->fetch();
         if (!$ownerCredentials) throw new RuntimeException('تعذر التحقق من حساب المالك الحالي.');
         // Restoring an older version must never make an old public/Admin cookie valid again.
         $versionFloor = (int) $db->query('SELECT COALESCE(MAX(session_version),0) FROM users')->fetchColumn();
@@ -330,13 +330,13 @@ function restore_backup_archive_locked(int $backupId, int $ownerId): int
                     $db->prepare($sql)->execute(array_values($row));
                 }
             }
-            $preserve = $db->prepare("UPDATE users SET password_hash=?,role='owner',suspended_at=NULL WHERE email=?");
-            $preserve->execute([$ownerCredentials['password_hash'], $ownerCredentials['email']]);
+            $preserve = $db->prepare("UPDATE users SET password_hash=?,role='owner',suspended_at=NULL,email_verified_at=? WHERE email=?");
+            $preserve->execute([$ownerCredentials['password_hash'], $ownerCredentials['email_verified_at'], $ownerCredentials['email']]);
             $restoredOwner = $db->prepare('SELECT id FROM users WHERE email=?');
             $restoredOwner->execute([$ownerCredentials['email']]);
             $restoredOwnerId = (int) $restoredOwner->fetchColumn();
             if (!$restoredOwnerId) {
-                $db->prepare("INSERT INTO users(email,password_hash,role) VALUES (?,?,'owner')")->execute([$ownerCredentials['email'], $ownerCredentials['password_hash']]);
+                $db->prepare("INSERT INTO users(email,password_hash,role,email_verified_at) VALUES (?,?,'owner',?)")->execute([$ownerCredentials['email'], $ownerCredentials['password_hash'], $ownerCredentials['email_verified_at']]);
                 $restoredOwnerId = (int) $db->lastInsertId();
             }
             $db->prepare('UPDATE users SET session_version=?')->execute([$versionFloor + 1]);

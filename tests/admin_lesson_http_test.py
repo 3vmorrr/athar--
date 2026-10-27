@@ -33,7 +33,7 @@ saved = row(identifier)
 check(saved['scholar_id'] is None and saved['series_id'] is None and int(saved['is_published']) == 0 and int(saved['sort_order']) == -11, 'Standalone draft/order and optional associations are genuine')
 check('Add a YouTube lesson' in page and '&lt;script&gt;lesson_test()&lt;/script&gt;' in page and '<script>lesson_test()</script>' not in page, 'Lesson metadata is escaped and editorial controls localized')
 edit = {**fields,'kind':'content','content_type':'lesson','content_action':'update','id':identifier}
-for change in [{'title':'x'},{'title':'t'*221},{'description':'d'*4001},{'source_url':'http://www.youtube.com/watch?v='+video},{'source_url':'https://youtube.com.example.invalid/watch?v='+video},{'source_url':'https://user:pass@www.youtube.com/watch?v='+video},{'source_url':'https://www.youtube.com/watch?v=short'},{'sort_order':'1.5'},{'sort_order':'100001'},{'scholar_id':'-1'},{'series_id':'-1'},{'scholar_id':'999999999'},{'series_id':'999999999'}]:
+for change in [{'title':'x'},{'title':'t'*221},{'description':'d'*20001},{'source_url':'http://www.youtube.com/watch?v='+video},{'source_url':'https://youtube.com.example.invalid/watch?v='+video},{'source_url':'https://user:pass@www.youtube.com/watch?v='+video},{'source_url':'https://www.youtube.com/watch?v=short'},{'sort_order':'1.5'},{'sort_order':'100001'},{'scholar_id':'-1'},{'series_id':'-1'},{'scholar_id':'999999999'},{'series_id':'999999999'}]:
     _,_,page = submit({**edit,**change})
     check('data-admin-form-error' in page and row(identifier) == saved, 'Invalid lesson metadata/provider/association cannot mutate the row')
 submit({**fields,'title':'Must not duplicate'})

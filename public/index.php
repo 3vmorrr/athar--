@@ -8,6 +8,7 @@ require_once dirname(__DIR__) . '/admin/authorization.php';
 require_once dirname(__DIR__) . '/admin/scholars.php';
 require_once dirname(__DIR__) . '/admin/series.php';
 require_once dirname(__DIR__) . '/admin/lessons.php';
+require_once dirname(__DIR__) . '/admin/events.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -643,6 +644,7 @@ if ($path === '/admin/logout' && $method === 'POST') {
 if ($path === '/admin') {
     $admin = admin_require_auth();
     $adminError = '';
+    $eventDraftConflict = false;
     $backupArtifacts = [];
     if (($admin['role'] ?? '') === 'owner') {
         try { expire_backup_artifacts(); } catch (Throwable $exception) { $adminError = 'تعذر تنظيف النسخ المنتهية. راجع مساحة التخزين.'; }
@@ -898,6 +900,10 @@ if ($path === '/admin') {
                 $_SESSION['backup_grant_id'] = (int) db()->lastInsertId(); $_SESSION['backup_grant_token'] = $token;
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'backup-download-grant-issued', 'backup', (string) $backupId]);
                 flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin#admin-backups');
+            } elseif ($kind === 'lesson-event') {
+                $savedEvent = admin_event_save($admin, $_POST);
+                flash('تم حفظ حالة الدرس القادم/المباشر وتسجيل التغيير.');
+                redirect('/admin?event_edit=' . (int)$savedEvent['id'] . '#admin-events');
             } elseif ($kind === 'content') {
                 $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
@@ -956,6 +962,7 @@ if ($path === '/admin') {
             db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) db()->lastInsertId()]);
             flash('تم حفظ المحتوى.'); redirect('/admin');
         } catch (Throwable $exception) {
+            $eventDraftConflict = $exception instanceof AdminEventConflict;
             if (db()->inTransaction()) db()->rollBack();
             $adminError = $exception instanceof RuntimeException && !($exception instanceof PDOException) ? $exception->getMessage() : 'تعذر حفظ المحتوى. راجع الحقول أو الاتصال بقاعدة البيانات.';
             if (isset($_POST['ajax_campaign_batch'])) { http_response_code(422); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>false,'error'=>$adminError], JSON_UNESCAPED_UNICODE); exit; }
@@ -966,6 +973,33 @@ if ($path === '/admin') {
     $lessons = db()->query('SELECT l.*,s.name AS scholar_name FROM lessons l LEFT JOIN scholars s ON s.id=l.scholar_id ORDER BY l.sort_order,l.id DESC')->fetchAll();
     $books = db()->query('SELECT * FROM books ORDER BY id DESC')->fetchAll();
     $adhkarItems = db()->query('SELECT * FROM adhkar_items ORDER BY sort_order,id DESC')->fetchAll();
+    $lessonEventService = new \Athar\Learning\UpcomingLessonService(db());
+    $lessonEvents = []; $lessonEventTotal = null; $lessonEventPageCount = 1;
+    $lessonEventPageNumber = max(1, min(10000, (int)(filter_var($_GET['events_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
+    $eventFocus = max(0, (int)(filter_var($_GET['event_edit'] ?? 0, FILTER_VALIDATE_INT) ?: 0));
+    if ($adminError !== '' && ($_POST['kind'] ?? '') === 'lesson-event') $eventFocus = max(0, (int)(filter_var($_POST['lesson_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0));
+    $eventFocusedRecord = null; $lessonEventLoadState = empty($admin['email_verified_at']) ? 'verification_required' : 'ready';
+    $eventExistingLessonIds = [];
+    if ($lessonEventLoadState === 'ready') {
+        try {
+            $eventExistingLessonIds = array_map('intval', db()->query('SELECT lesson_id FROM lesson_events')->fetchAll(PDO::FETCH_COLUMN));
+            $lessonEventPage = $lessonEventService->page(['page'=>$lessonEventPageNumber,'per_page'=>20], 'ar', $admin);
+            $lessonEventTotal = (int)$lessonEventPage['pagination']['total'];
+            $lessonEventPageCount = max(1, (int)ceil($lessonEventTotal / 20));
+            if ($lessonEventPageNumber > $lessonEventPageCount) {
+                $lessonEventPageNumber = $lessonEventPageCount;
+                $lessonEventPage = $lessonEventService->page(['page'=>$lessonEventPageNumber,'per_page'=>20], 'ar', $admin);
+            }
+            foreach ($lessonEventPage['items'] as $eventSummary) {
+                try { $lessonEvents[] = $lessonEventService->detail((int)$eventSummary['id'], 'ar', $admin); }
+                catch (Throwable $eventReadFailure) { $lessonEventLoadState = 'partial'; }
+            }
+            if (in_array($eventFocus, $eventExistingLessonIds, true) && !in_array($eventFocus, array_column($lessonEvents, 'id'), true)) {
+                try { $eventFocusedRecord = $lessonEventService->detail($eventFocus, 'ar', $admin); }
+                catch (Throwable $eventReadFailure) { $lessonEventLoadState = 'partial'; }
+            }
+        } catch (Throwable $eventReadFailure) { $lessonEventLoadState = 'unavailable'; $lessonEventTotal = null; }
+    }
     $auditSearch = trim(mb_substr(is_string($_GET['audit_q'] ?? null) ? $_GET['audit_q'] : '', 0, 80, 'UTF-8'));
     $auditActions = admin_audit_actions();
     $auditTypes = admin_audit_target_types();

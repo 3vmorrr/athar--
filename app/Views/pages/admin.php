@@ -9,6 +9,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'overview' => 'Overview & analytics',
     'create' => 'Create content',
     'content' => 'Saved content',
+    'events' => 'Upcoming & Live',
     'comments' => 'Comment moderation',
     'campaigns' => 'Email campaigns',
     'services' => 'Service settings',
@@ -25,6 +26,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'overview' => 'نظرة عامة وتحليلات',
     'create' => 'إضافة محتوى',
     'content' => 'المحتوى المحفوظ',
+    'events' => 'القادم والمباشر',
     'comments' => 'مراجعة التعليقات',
     'campaigns' => 'حملات البريد',
     'services' => 'إعدادات الخدمات',
@@ -39,7 +41,8 @@ require dirname(__DIR__, 3) . '/admin/Views/recovery-copy.php';
 require dirname(__DIR__, 3) . '/admin/Views/scholar-copy.php';
 require dirname(__DIR__, 3) . '/admin/Views/series-copy.php';
 require dirname(__DIR__, 3) . '/admin/Views/lesson-copy.php';
-if (!empty($flashMessage['message'])) $flashMessage['message'] = $lessonTranslation($seriesTranslation($scholarTranslation($recoveryTranslation($userTranslation((string) $flashMessage['message'])))));
+require dirname(__DIR__, 3) . '/admin/Views/events-copy.php';
+if (!empty($flashMessage['message'])) $flashMessage['message'] = $eventTranslation($lessonTranslation($seriesTranslation($scholarTranslation($recoveryTranslation($userTranslation((string) $flashMessage['message']))))));
 ?>
 <section class="knowledge-page section-wrap admin-page">
     <header class="knowledge-heading">
@@ -47,7 +50,7 @@ if (!empty($flashMessage['message'])) $flashMessage['message'] = $lessonTranslat
         <h1><?= e($adminShellCopy['title']) ?></h1>
         <p><?= e($adminShellCopy['lede']) ?></p>
     </header>
-    <?php if ($adminError !== ''): ?><div class="notice notice-error" role="alert" tabindex="-1" data-admin-form-error><?= e($lessonTranslation($seriesTranslation($scholarTranslation($recoveryTranslation($userTranslation($adminError)))))) ?></div><?php endif; ?>
+    <?php if ($adminError !== ''): ?><div class="notice notice-error" role="alert" tabindex="-1" data-admin-form-error><?= e($eventTranslation($lessonTranslation($seriesTranslation($scholarTranslation($recoveryTranslation($userTranslation($adminError))))))) ?></div><?php endif; ?>
     <div class="admin-layout">
         <aside class="admin-sidebar" id="admin-primary-nav">
             <strong class="admin-sidebar-title"><?= e($adminShellCopy['sidebar']) ?></strong>
@@ -55,6 +58,7 @@ if (!empty($flashMessage['message'])) $flashMessage['message'] = $lessonTranslat
                 <a href="#admin-overview" aria-current="location" aria-controls="admin-overview"><?= e($adminShellCopy['overview']) ?></a>
                 <a href="#admin-create" aria-controls="admin-create"><?= e($adminShellCopy['create']) ?></a>
                 <a href="#admin-content" aria-controls="admin-content"><?= e($adminShellCopy['content']) ?></a>
+                <a href="#admin-events" aria-controls="admin-events"><?= e($adminShellCopy['events']) ?> <span><?= $lessonEventTotal === null ? "—" : (int)$lessonEventTotal ?></span></a>
                 <a href="#admin-comments" aria-controls="admin-comments"><?= e($adminShellCopy['comments']) ?> <span><?= (int) $dashboardMetrics['pending_comments'] ?></span></a>
                 <?php if (admin_can($admin, 'campaigns')): ?><a href="#admin-campaigns" aria-controls="admin-campaigns"><?= e($adminShellCopy['campaigns']) ?></a><?php endif; ?>
                 <?php if (admin_can($admin, 'services')): ?><a href="#admin-services" aria-controls="admin-services"><?= e($adminShellCopy['services']) ?></a><?php endif; ?>
@@ -157,6 +161,7 @@ if (!empty($flashMessage['message'])) $flashMessage['message'] = $lessonTranslat
         </div>
         <?php if ($managedUserPageCount > 1): ?><nav class="admin-pagination" aria-label="<?= $userCopy('صفحات المستخدمين') ?>"><?php if ($managedUserPage > 1): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['users_q'=>$managedUserSearch,'users_page'=>$managedUserPage-1])) ?>#admin-users"><?= $userCopy('السابق') ?></a><?php endif; ?><span><?= $userCopy('صفحة') ?> <?= $managedUserPage ?> <?= $userCopy('من') ?> <?= $managedUserPageCount ?></span><?php if ($managedUserPage < $managedUserPageCount): ?><a class="button button-secondary" href="/admin?<?= e(http_build_query(['users_q'=>$managedUserSearch,'users_page'=>$managedUserPage+1])) ?>#admin-users"><?= $userCopy('التالي') ?></a><?php endif; ?></nav><?php endif; ?>
     </section>
+    <?php require dirname(__DIR__, 3) . '/admin/Views/events.php'; ?>
     <section class="admin-inventory admin-panel" id="admin-comments" data-admin-panel hidden><h2><?= $userCopy('إدارة تعليقات الدروس') ?></h2><?php if (!$pendingComments): ?><p class="source-note"><?= $userCopy('لا توجد تعليقات.') ?></p><?php else: ?><div class="knowledge-results"><?php foreach ($pendingComments as $comment): ?><article class="knowledge-card"><strong><?= e($comment['lesson_title']) ?></strong><p><?= e($comment['display_name'] ?: '@'.$comment['username']) ?> · <?= e($comment['created_at']) ?> · <?= $comment['status']==='pending'?$userCopy('بانتظار المراجعة'):($comment['status']==='visible'?$userCopy('منشور'):$userCopy('مخفي')) ?></p><p><?= nl2br(e($comment['body'])) ?></p><div class="hero-actions"><?php if ($comment['status'] !== 'visible'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="visible"><button class="button button-primary" type="submit"><?= $userCopy('نشر التعليق') ?></button></form><?php endif; ?><?php if ($comment['status'] !== 'hidden'): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-review"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><input type="hidden" name="status" value="hidden"><button class="button button-secondary" type="submit"><?= $userCopy('إخفاء') ?></button></form><?php endif; ?><form method="post" data-confirm="<?= $userCopy('حذف التعليق نهائيًا؟') ?>"><?= csrf_field() ?><input type="hidden" name="kind" value="comment-delete"><input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>"><button class="button button-danger" type="submit"><?= $userCopy('حذف') ?></button></form></div></article><?php endforeach; ?></div><?php endif; ?><?php if ($commentPageCount > 1): ?><nav class="admin-pagination" aria-label="<?= $userCopy('صفحات التعليقات') ?>"><?php if ($commentPage > 1): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage - 1 ?>#admin-comments"><?= $userCopy('الأحدث') ?></a><?php endif; ?><span><?= $userCopy('صفحة') ?> <?= $commentPage ?> <?= $userCopy('من') ?> <?= $commentPageCount ?> · <?= number_format($commentCount) ?> <?= $userCopy('تعليق') ?></span><?php if ($commentPage < $commentPageCount): ?><a class="button button-secondary" href="/admin?comments_page=<?= $commentPage + 1 ?>#admin-comments"><?= $userCopy('الأقدم') ?></a><?php endif; ?></nav><?php endif; ?></section>
     <?php require dirname(__DIR__, 3) . '/admin/Views/audit.php'; ?>
         </div>

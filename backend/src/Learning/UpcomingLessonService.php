@@ -22,6 +22,11 @@ final class UpcomingLessonService
     ];
     public function __construct(PDO $db) { $this->db=$db; }
 
+    public static function editableStates(string $status = 'draft'): array
+    {
+        return isset(self::TRANSITIONS[$status]) ? array_values(array_unique(array_merge([$status], self::TRANSITIONS[$status]))) : [];
+    }
+
     private function publicScope(): string
     {
         return "e.visibility='public' AND e.status<>'draft'
@@ -158,7 +163,7 @@ final class UpcomingLessonService
     public function save(array $actor,int $lesson,array $input): array
     {
         $this->admin($actor);
-        $allowed=['expected_revision','status','scheduled_at','schedule_timezone','estimated_duration_minutes','is_live_event','reminders_enabled','replay_available','visibility','title_ar','description_ar','title_en','description_en','course_title_ar','course_title_en','topics_ar','topics_en','related_book_id','related_page_start','related_page_end'];
+        $allowed=['expected_revision','status','scheduled_at','schedule_timezone','estimated_duration_minutes','is_live_event','reminders_enabled','replay_available','visibility','title_ar','description_ar','title_en','description_en','course_title_ar','course_title_en','topics_ar','topics_en','related_book_id','related_page_start','related_page_end','confirm_live'];
         if(array_diff(array_keys($input),$allowed))throw new ApiError('invalid_fields',422,['input'=>'unsupported_field']);
         $expected=$input['expected_revision']??null;
         if(!is_int($expected)||$expected<0)throw new ApiError('invalid_fields',422,['expected_revision'=>'required']);
@@ -189,6 +194,8 @@ final class UpcomingLessonService
                 if(!is_bool($flags[$key]))throw new ApiError('invalid_fields',422,[$key=>'invalid']);
             }
             if(($status==='live'&&!$flags['is_live_event'])||($flags['replay_available']&&$status!=='published'))throw new ApiError('invalid_fields',422,['status'=>'inconsistent_media_state']);
+            $confirmLive=array_key_exists('confirm_live',$input)?$input['confirm_live']:false;
+            if(!is_bool($confirmLive)||($confirmLive&&$status!=='live'))throw new ApiError('invalid_fields',422,['confirm_live'=>'invalid']);
             if(in_array($status,['live','published'],true)&&!preg_match('/^[A-Za-z0-9_-]{11}$/D',$parent['youtube_id']))throw new ApiError('invalid_fields',422,['youtube_id'=>'required']);
             $visibility=array_key_exists('visibility',$input)?$input['visibility']:($old['visibility']??'public');
             if(!in_array($visibility,['public','private'],true))throw new ApiError('invalid_fields',422,['visibility'=>'invalid']);
@@ -206,8 +213,9 @@ final class UpcomingLessonService
             }
             $published=$visibility==='public'&&($status==='live'||($status==='published'&&(!$flags['is_live_event']||$flags['replay_available'])));
             $this->db->prepare('UPDATE lessons SET title=?,description=?,is_published=? WHERE id=?')->execute([$title,$description,(int)$published,$lesson]);
-            $confirmed=$status==='live'?($previous==='live'?($old['live_confirmed_at']??gmdate('Y-m-d H:i:s')):gmdate('Y-m-d H:i:s')):($old['live_confirmed_at']??null);
-            $source=$confirmed!==null?'admin':null;$revision=$expected+1;
+            $freshConfirmation=$status==='live'&&($confirmLive||$previous!=='live');
+            $confirmed=$freshConfirmation?gmdate('Y-m-d H:i:s'):($old['live_confirmed_at']??null);
+            $source=$freshConfirmation?'admin':($old['live_source']??null);$revision=$expected+1;
             $values=[$status,$start,$zone,$duration,(int)$flags['is_live_event'],(int)$flags['reminders_enabled'],(int)$flags['replay_available'],$visibility,$confirmed,$source,$revision,(int)$actor['id']];
             if($old===null){
                 $this->db->prepare('INSERT INTO lesson_events(status,scheduled_at,schedule_timezone,estimated_duration_minutes,is_live_event,reminders_enabled,replay_available,visibility,live_confirmed_at,live_source,revision,updated_by,created_by,lesson_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP())')->execute(array_merge($values,[(int)$actor['id'],$lesson]));

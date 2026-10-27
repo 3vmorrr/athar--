@@ -35,7 +35,7 @@ try {
     if (-not $ready) { throw 'Dedicated test server did not start.' }
     & $php scripts/test-control.php create
     if ($LASTEXITCODE -ne 0) { throw 'Test control database safety check/setup failed.' }
-    foreach ($test in @('tests/domain_test.php','tests/quran_text_test.php','tests/backup_assets_test.php','tests/provider_identity_migration_test.php','tests/recovery_restore_test.php','tests/media_provider_test.php','tests/tafsir_provider_test.php','tests/api_identity_test.php','tests/catalog_progress_test.php','tests/learning_test.php','tests/upcoming_lessons_test.php','tests/night_prayer_api_test.php','tests/admin_authorization_test.php')) {
+    foreach ($test in @('tests/domain_test.php','tests/quran_text_test.php','tests/backup_assets_test.php','tests/provider_identity_migration_test.php','tests/admin_event_time_test.php','tests/recovery_restore_test.php','tests/media_provider_test.php','tests/tafsir_provider_test.php','tests/api_identity_test.php','tests/catalog_progress_test.php','tests/learning_test.php','tests/upcoming_lessons_test.php','tests/night_prayer_api_test.php','tests/admin_authorization_test.php')) {
         & $php $test
         if ($LASTEXITCODE -ne 0) { throw "Failed: $test" }
     }

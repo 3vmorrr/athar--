@@ -1,9 +1,9 @@
 {
-  "codex_head": "5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc",
+  "codex_head": "8e8c8eca26875eb887469f3714f81d7c9c2b0749",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "LAST_PARALLEL_INTEGRATED_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -455,7 +455,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Controller/authorization/view conflicts reconciled semantically; preserve grant redirect, privacy allowlist/projection/global audit, localized comments and newer authoring handlers.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -464,11 +464,17 @@
         "app/Views/pages/admin.php",
         "public/assets/css/admin.css"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
+      "security_privacy": "Verified active content actor, canonical CAS/transition/audit/change writes, no fake confirmation refresh, strict DST/precision, retained corrupt/stale data, controlled event audit allowlist and private canary regression.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE + TESTED",
+      "secondary_task_attribution": [
+        "17.6: preserve current owner email_verified_at exactly through recovery, including NULL; verified by67 recovery assertions.",
+        "18.3: align lesson description bound with existing canonical event20,000; full authoring regressions pass."
+      ],
+      "integration_base": "8e8c8eca26875eb887469f3714f81d7c9c2b0749",
+      "acceptance": "docs/testing/ADMIN_EVENTS.md;20,791 backend;263 HTTP/260 browser authoring chain;independent149 HTTP/58 browser;privacy218 HTTP. No native code/schema change or physical-device claim.",
+      "component_reconciliation": "2f800af event responsive styles accepted; unrelated stale user-search CSS superseded by newer17.4 global search."
     },
     {
       "task_or_group": "18.5",
@@ -3175,8 +3181,8 @@
     }
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
-  "LAST_REVIEWED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
-  "reviewed_cursor_scope": "18.3 existing-baseline authoring accepted; no new source range consumed. Next new source task18.4 begins826f521 after source cursor6bbfee5.",
+  "LAST_REVIEWED_PARALLEL_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
+  "reviewed_cursor_scope": "18.4 four-commit range826f521..2f800af accepted with fixes and full applicable acceptance. Next source task18.5 starts937ae074.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3485,7 +3491,7 @@
       }
     ]
   },
-  "LAST_INTEGRATED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "LAST_INTEGRATED_PARALLEL_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
   "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
   "migration_reservations": {
     "027_lesson_provider_identity": {
@@ -3495,5 +3501,23 @@
       "policy": "Preserve incoming source numbers; full migration-ledger fingerprint detects lower-numbered additions after027. Re-fetch and reconcile any future collision explicitly.",
       "commit": "5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc"
     }
+  },
+  "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
+  "next_batch": {
+    "tasks": [
+      "18.5",
+      "18.6",
+      "18.7",
+      "18.8",
+      "18.9"
+    ],
+    "scope": "remaining WP18 content/services",
+    "state": "REVIEW PENDING",
+    "immediate_high_risk_gates": [
+      "book rights/download/file deletion/transaction boundaries",
+      "moderation deletion/revision/authorization",
+      "encrypted provider settings/diagnostics/secrets"
+    ],
+    "batch_gate": "targeted PHP syntax and content/services domain/HTTP/browser contracts; WP18 closure checks; no unrelated Android/global rerun"
   }
 }

@@ -1,5 +1,9 @@
 # Implementation plan
 
+## Parallel integration checkpoint — task18.4
+
+Upcoming/Live Admin accepted with strict timezone/DST/precision handling, canonical CAS/transitions/context/audit, preserved actual confirmation provenance, explicit clearing, retained stale drafts, real global totals/paging and verified-email gating.20,791 backend;263 HTTP/260 browser authoring chain;independent149 HTTP/58 browser;privacy218 HTTP PASS. AR/EN light/dark phone/desktop captures reviewed. [Evidence and reconciliation](../testing/ADMIN_EVENTS.md). No migration/native source change or physical playback claim. Exact cursor2f800af4cd7e988c6d9e908e59efb39c3a58b692; next18.5 books/rights. WP18:4/9 (44%); overall51% (51.38 weighted,±10pp);128 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task18.3
 
 Existing lesson authoring baseline accepted with strict provider/field/scope validation, row/parent locks and transactional audit, event-history protection, scoped dependent cleanup and bilingual retained editors.234 actual HTTP,202 browser and20,765 backend assertions PASS; actual native Watch/playlist/visibility/case-preserving identity and parent concurrency checked. Migration027 and complete-ledger legacy-compatible recovery separately tested/pushed. [Evidence and limits](../testing/ADMIN_LESSONS.md). No production migration/native code change or physical playback claim. No new source range consumed; cursor6bbfee5. Next18.4 Upcoming/Live; WP18:3/9 (33%); overall51% (50.88 weighted,±10pp);129 open. WP02.8 remains deferred.

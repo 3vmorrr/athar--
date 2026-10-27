@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|18.3 Admin lessons/provider identity|5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc +8e8c8eca26875eb887469f3714f81d7c9c2b0749|20,765 backend;234 HTTP;202 browser;populated migration/legacy recovery;both normal pushes/exact remote verified|
 |18.2 Admin series|b252c8f43089001e7d06ba0b3b98df42b6050354|193 HTTP;135 browser;20,752 backend;native catalog/FK child race/SQL rollback;normal push/exact remote verified|
 |18.1 Admin scholars/portraits|b07dd7400e70d72c288cf1d217aa65f49cd3ebd2 + correction30af099338ed2a3e37f5468c985520f206eb0a2b|162 HTTP;68 browser;20,752 backend;corrected adjacent lesson branch with actual readback;both normal pushes/exact remote verified|
 |17.6 Owner recovery operations|6e8700981354b37378c8a3476277afe77b6bbaa6|20,752 backend;189 HTTP;48 browser;actual pre/post-COMMIT process kills/corruption preservation;normal push/exact remote verified|
