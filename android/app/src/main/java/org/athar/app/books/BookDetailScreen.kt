@@ -204,10 +204,10 @@ fun BookDetailScreen(
                         )
 
                         MarkToggle(
-                            path = "books/$bookId",
+                            identity = "book:$bookId:favorite",
                             initial = favoriteInitial,
-                            enabled = true,
-                            snackbar = snackbar,
+                            favorite = true,
+                            feedback = snackbar,
                         ) { selected ->
                             graph.session.request(
                                 if (selected) "PUT" else "DELETE",
