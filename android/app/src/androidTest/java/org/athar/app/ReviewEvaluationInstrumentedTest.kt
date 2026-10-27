@@ -6,6 +6,7 @@ import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.JsonArray
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.File
@@ -185,7 +186,7 @@ class ReviewEvaluationInstrumentedTest {
             add(
                 "device_abis",
                 JsonArray().apply {
-                    Build.SUPPORTED_ABIS.forEach(::add)
+                    Build.SUPPORTED_ABIS.forEach { add(it) }
                 },
             )
             add(
@@ -327,7 +328,7 @@ class ReviewEvaluationInstrumentedTest {
             addProperty("audio_ms", audioMillis)
             addProperty("finalize_ms", finalizeMillis)
             if (firstTokenComputeMillis == null) {
-                add("first_token_compute_ms", null)
+                add("first_token_compute_ms", JsonNull.INSTANCE)
             } else {
                 addProperty(
                     "first_token_compute_ms",
@@ -335,7 +336,7 @@ class ReviewEvaluationInstrumentedTest {
                 )
             }
             if (firstTokenAudioMillis == null) {
-                add("first_token_audio_ms", null)
+                add("first_token_audio_ms", JsonNull.INSTANCE)
             } else {
                 addProperty(
                     "first_token_audio_ms",

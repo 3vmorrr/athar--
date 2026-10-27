@@ -159,7 +159,7 @@ object ReviewEvaluationMetricsCalculator {
                 ?.let(::percentile95),
             p95FirstTokenAudioMillis = firstAudio
                 .takeIf { it.isNotEmpty() }
-                ?.let { percentile95(it.map(Long::toDouble)).toLong() },
+                ?.let { percentile95(it.map { value -> value.toDouble() }).toLong() },
             maxPeakPssKb = records.maxOf { it.peakPssKb },
         )
     }
