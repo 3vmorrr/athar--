@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -289,7 +290,7 @@ class ReviewModelDownloadWorker(
         val url = ReviewModelUrlPolicy.resolve(manager.apiBaseUrl, artifact)
         val call = client.newCall(Request.Builder().url(url).get().build())
         currentCall = call
-        val cancellationWatcher = CoroutineScope(coroutineContext).launch {
+        val cancellationWatcher = CoroutineScope(currentCoroutineContext()).launch {
             try {
                 awaitCancellation()
             } finally {
