@@ -78,7 +78,7 @@ class ReviewAudioCapture(private val context: Context) {
         val minBufferBytes = AudioRecord.getMinBufferSize(
             ReviewAudioCaptureContract.SAMPLE_RATE_HZ,
             AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16,
+            AudioFormat.ENCODING_PCM_16BIT,
         )
         require(minBufferBytes > 0)
         val bufferBytes = max(
@@ -90,7 +90,7 @@ class ReviewAudioCapture(private val context: Context) {
             .setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
             .setAudioFormat(
                 AudioFormat.Builder()
-                    .setEncoding(AudioFormat.ENCODING_PCM_16)
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
                     .setSampleRate(ReviewAudioCaptureContract.SAMPLE_RATE_HZ)
                     .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
                     .build(),
