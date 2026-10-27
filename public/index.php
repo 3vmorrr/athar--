@@ -55,23 +55,24 @@ if (!$apiRequest && !$recoveryRequest) {
 
 if ($path === '/api/v1' || str_starts_with($path, '/api/v1/')) require dirname(__DIR__) . '/backend/api.php';
 
-if ($path === '/email-unsubscribe') {
-    $unsubscribeInput = $method === 'POST' ? $_POST : $_GET;
-    $userId = filter_var($unsubscribeInput['u'] ?? null, FILTER_VALIDATE_INT);
-    $token = (string) ($unsubscribeInput['t'] ?? '');
-    $valid = $userId && $userId > 0 && preg_match('/^[a-f0-9]{64}$/i', $token) && hash_equals(email_campaign_unsubscribe_url((int) $userId), platform_email_base_url() . '/email-unsubscribe?u=' . (int) $userId . '&t=' . $token);
-    if (!$valid) { http_response_code(400); exit('رابط إلغاء الاشتراك غير صالح.'); }
-    if ($method === 'POST') {
-        require_csrf();
-        db()->prepare('UPDATE users SET email_marketing_opt_in=0 WHERE id=?')->execute([(int) $userId]);
-        db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='إلغاء الاشتراك.' WHERE user_id=?")->execute([(int) $userId]);
-        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([null,'email-campaign-unsubscribed','user',(string)$userId]);
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><h1 style="color:#174f40">تم إلغاء الاشتراك</h1><p>لن تصلك رسائل تحديثات أثر بعد الآن. رسائل الحساب الضرورية ستظل مستمرة.</p><a href="/" style="color:#1e6753">العودة إلى أثر</a></main></body></html>'; exit;
+if ($path === '/email-unsubscribe' && in_array($method,['GET','POST'],true)) {
+    header('Cache-Control: no-store, private');header('Referrer-Policy: no-referrer');
+    $unsubscribeInput=$method==='POST'?$_POST:$_GET;
+    $userId=filter_var($unsubscribeInput['u']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+    $token=is_string($unsubscribeInput['t']??null)?$unsubscribeInput['t']:'';
+    $version=filter_var($unsubscribeInput['v']??1,FILTER_VALIDATE_INT);
+    $expires=isset($unsubscribeInput['e'])?filter_var($unsubscribeInput['e'],FILTER_VALIDATE_INT):null;
+    try {$valid=$userId&&$version!==false&&$expires!==false&&email_campaign_unsubscribe_valid($userId,$token,$expires,$version);}catch(Throwable $invalidKey){$valid=false;}
+    if(!$valid){http_response_code(400);exit('Invalid or expired unsubscribe link. رابط إلغاء الاشتراك غير صالح أو منتهي.');}
+    $preferences=new \Athar\Engagement\PreferenceService(db());
+    try {$unsubscribeLocale=$preferences->get($userId)['locale'];}catch(\Athar\Http\ApiError $gone){http_response_code(400);exit('This link is no longer available. الرابط لم يعد متاحًا.');}
+    $unsubscribeDone=false;
+    if($method==='POST'){
+        require_csrf();$preferences->update($userId,['email_campaign_opt_in'=>false]);$unsubscribeDone=true;
     }
-    header('Content-Type: text/html; charset=utf-8');
-    echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:48px 16px;background:#f4f3ed;color:#22332c;font:16px Arial;text-align:center"><main style="max-width:520px;margin:auto;padding:32px;border:1px solid #d8e2da;border-radius:18px;background:#fff"><img src="' . e(platform_email_base_url() . '/assets/images/athar-logo-cropped.png') . '" alt="أثر" width="94"><h1 style="color:#174f40">إدارة رسائل أثر</h1><p>هل تريد إلغاء رسائل الأخبار والتحديثات؟</p><form method="post">' . csrf_field() . '<input type="hidden" name="u" value="' . (int) $userId . '"><input type="hidden" name="t" value="' . e($token) . '"><button style="min-height:46px;padding:10px 20px;border:0;border-radius:10px;background:#1e6753;color:#fff;font-weight:bold">إلغاء الاشتراك</button></form></main></body></html>'; exit;
+    header('Content-Type: text/html; charset=utf-8');require dirname(__DIR__).'/app/Views/pages/email-unsubscribe.php';exit;
 }
+
 if (
     in_array($path, ['/login','/register','/account','/forgot-password','/reset-password','/verify-email','/series','/lessons'], true)
     || admin_is_request_path($path)
@@ -465,8 +466,8 @@ if ($path === '/account') {
                 $passwordQuery = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordQuery->execute([$user['id']]); $passwordHash = (string) $passwordQuery->fetchColumn();
                 if (!password_verify($password, $passwordHash)) $accountError = 'كلمة المرور الحالية غير صحيحة.';
                 else {
-                    try { db()->prepare('UPDATE users SET display_name=?,username=?,email_marketing_opt_in=? WHERE id=?')->execute([$displayName,$username,isset($_POST['email_marketing_opt_in']) ? 1 : 0,$user['id']]); flash('تم تحديث بيانات الحساب.'); redirect('/account'); }
-                    catch (PDOException $exception) { if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
+                    try { db()->beginTransaction(); db()->prepare('UPDATE users SET display_name=?,username=? WHERE id=?')->execute([$displayName,$username,$user['id']]); (new \Athar\Engagement\PreferenceService(db()))->update((int)$user['id'],['email_campaign_opt_in'=>isset($_POST['email_marketing_opt_in'])]); db()->commit(); flash('تم تحديث بيانات الحساب.'); redirect('/account'); }
+                    catch (PDOException $exception) { if(db()->inTransaction())db()->rollBack(); if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
                 }
             }
         } elseif ($action === 'plan-status') {
@@ -686,7 +687,7 @@ if ($path === '/admin') {
             } elseif ($kind === 'dorar-settings') {
                 admin_save_dorar($admin,$_POST);
                 flash('تم حفظ إعدادات بحث الدرر السنية.');redirect('/admin#admin-services');
-            } elseif (in_array($kind,['engagement-campaign-save','engagement-campaign-confirm','engagement-campaign-cancel'],true)) {
+            } elseif (in_array($kind,['engagement-campaign-save','engagement-campaign-confirm','engagement-campaign-cancel','engagement-campaign-test-email'],true)) {
                 $campaignId=admin_campaign_action($admin,$_POST);
                 flash(admin_locale()==='en'?'Campaign saved. Scheduling creates a queue; delivery is not performed in this request.':'تم حفظ الحملة. الجدولة تُنشئ طابورًا ولا تُنفذ التسليم داخل هذا الطلب.');
                 redirect('/admin?campaign_preview='.$campaignId.'#admin-campaigns');
@@ -743,6 +744,9 @@ if ($path === '/admin') {
                 if ($emailChanged) {
                     db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='تم تغيير البريد.' WHERE user_id=?")->execute([$targetId]);
                     db()->prepare('UPDATE users SET email=?,display_name=?,username=?,email_marketing_opt_in=0,email_verified_at=NULL,session_version=session_version+1 WHERE id=?')->execute([$email,$displayName,$username,$targetId]);
+                    db()->prepare('DELETE FROM auth_tokens WHERE user_id=?')->execute([$targetId]);
+                    (new \Athar\Engagement\PreferenceService(db()))->update((int)$targetId,['email_campaign_opt_in'=>false]);
+                    db()->prepare("UPDATE email_outbox SET status='cancelled',last_error_code='recipient_unavailable' WHERE user_id=? AND status='pending'")->execute([$targetId]);
                 }
                 else db()->prepare('UPDATE users SET display_name=?,username=? WHERE id=?')->execute([$displayName,$username,$targetId]);
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $emailChanged ? 'admin-user-email-updated' : 'admin-user-profile-updated', 'user', (string) $targetId]);
