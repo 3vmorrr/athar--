@@ -58,11 +58,13 @@ isolated_database(function (PDO $connection): void {
         $artifact = build_backup_archive($ownerId);
         $artifacts[] = $artifact['id'];
         recovery_check($artifact['byte_size'] > 0, 'Real encrypted database/asset backup built');
+        $db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([password_hash('NewerOwnerPassword123!', PASSWORD_DEFAULT), $ownerId]);
         $db->exec('UPDATE users SET session_version=83');
         $db->exec('UPDATE quran_positions SET ayah=5,revision=2');
         file_put_contents($bookPath, '%PDF-modified');
         $restored = restore_backup_archive($artifact['id'], $ownerId);
         recovery_check($restored === $ownerId, 'Owner survives normal restoration');
+        recovery_check(password_verify('NewerOwnerPassword123!', (string)$db->query('SELECT password_hash FROM users WHERE id=' . $ownerId)->fetchColumn()), 'Snapshot cannot roll back the current Owner password');
         recovery_check((int) $db->query('SELECT ayah FROM quran_positions')->fetchColumn() === 6, 'Private authoritative reading data restored');
         recovery_check(file_get_contents($bookPath) === $pdf, 'Registered PDF bytes restored');
         recovery_check((int) $db->query('SELECT MIN(session_version) FROM users')->fetchColumn() === 84, 'Every restored user invalidates all historical cookie versions');
@@ -80,6 +82,12 @@ isolated_database(function (PDO $connection): void {
             recovery_check((int) $db->query('SELECT MIN(session_version) FROM users')->fetchColumn() === 84, 'Asset failure retains current credential versions');
             recovery_check(!glob(backup_directory() . '/restore-original-*.asset'), 'Successful compensation cleans original-file rollback copies');
         } finally { rmdir($initialPhotoPath); file_put_contents($initialPhotoPath, "\x89PNG\r\n\x1a\ninitial fixture"); }
+        $db->exec("CREATE TRIGGER recovery_restore_audit_abort BEFORE INSERT ON audit_logs FOR EACH ROW BEGIN IF NEW.action='backup-restored' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture failure after asset installation'; END IF; END");
+        try {
+            recovery_denied(fn() => restore_backup_archive($artifact['id'], $ownerId), 'Post-install transactional failure is surfaced');
+            recovery_check(file_get_contents($bookPath) === $currentPdf && (int)$db->query('SELECT ayah FROM quran_positions')->fetchColumn() === 5, 'Post-install SQL failure compensates files and restores prior database state');
+            recovery_check(!\Athar\Infrastructure\RecoveryJournal::exists() && !glob(backup_directory() . '/restore-original-*.asset'), 'Compensated exception removes its journal and retained originals');
+        } finally { $db->exec('DROP TRIGGER recovery_restore_audit_abort'); }
 
         $db->prepare('UPDATE backup_artifacts SET expires_at=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 SECOND) WHERE id=?')->execute([$artifact['id']]);
         recovery_denied(fn() => restore_backup_archive($artifact['id'], $ownerId), 'Expired artifact refused despite recent verification');
@@ -100,6 +108,8 @@ isolated_database(function (PDO $connection): void {
         $db->prepare("INSERT INTO users(email,password_hash,role) VALUES ('new-recovery-owner@example.test',?,'owner')")->execute([$hash]);
         $newOwner = (int) $db->lastInsertId();
         $db->prepare("INSERT INTO platform_settings(setting_key,setting_value,updated_by) VALUES ('recovery-fixture','retained-setting',?)")->execute([$newOwner]);
+        $db->exec("UPDATE users SET email='changed-identity@example.test' WHERE id=2");
+        $db->exec("INSERT INTO platform_settings(setting_key,setting_value,updated_by) VALUES ('reused-identity','retained-setting',2)");
         $restoredNewOwner = restore_backup_archive($artifact['id'], $newOwner);
         $actor = $db->query('SELECT * FROM users WHERE id=' . $restoredNewOwner)->fetch();
         recovery_check($actor['email'] === 'new-recovery-owner@example.test' && $actor['role'] === 'owner', 'Absent owner is recreated and returned by identity');
@@ -107,6 +117,7 @@ isolated_database(function (PDO $connection): void {
         recovery_check((int) $actor['session_version'] === 85, 'Recreated owner also rotates session version');
         recovery_check((string) $db->query("SELECT setting_value FROM platform_settings WHERE setting_key='recovery-fixture'")->fetchColumn() === 'retained-setting', 'Environment settings retained');
         recovery_check($db->query("SELECT updated_by FROM platform_settings WHERE setting_key='recovery-fixture'")->fetchColumn() === null, 'Dangling retained actor reference cleared');
+        recovery_check($db->query("SELECT updated_by FROM platform_settings WHERE setting_key='reused-identity'")->fetchColumn() === null, 'Reused account ID cannot inherit another retained settings attribution');
         recovery_check((int) $db->query("SELECT actor_id FROM audit_logs WHERE action='backup-restored' ORDER BY id DESC LIMIT 1")->fetchColumn() === $restoredNewOwner, 'Restore journal identifies the recreated owner');
         $db->exec('UPDATE users SET session_version=4294967295');
         recovery_denied(fn() => restore_backup_archive($artifact['id'], $restoredNewOwner), 'Session-version overflow refused before deletion');
@@ -164,6 +175,20 @@ isolated_database(function (PDO $connection): void {
             if (is_file($unregisteredPath)) unlink($unregisteredPath);
             if ($previousEnv === false) putenv('APP_ENV'); else putenv('APP_ENV=' . $previousEnv);
         }
+        $journalPath = \Athar\Infrastructure\RecoveryJournal::path();
+        recovery_check(!is_file($journalPath), 'No recovery journal remains before preservation tests');
+        $malformed = '{"version":';
+        file_put_contents($journalPath, $malformed);
+        try {
+            recovery_check(\Athar\Infrastructure\MaintenanceGuard::acquire() === null, 'Malformed journal refuses ordinary requests');
+            recovery_check(file_get_contents($journalPath) === $malformed, 'Malformed journal is preserved rather than silently reset');
+        } finally { unlink($journalPath); }
+        $foreign = json_encode(['version'=>1,'id'=>str_repeat('a',32),'database'=>'different_environment','files'=>[]]);
+        file_put_contents($journalPath, $foreign);
+        try {
+            recovery_check(\Athar\Infrastructure\MaintenanceGuard::acquire() === null, 'Recovery journal cannot cross database environments');
+            recovery_check(file_get_contents($journalPath) === $foreign, 'Foreign-environment journal remains intact');
+        } finally { unlink($journalPath); }
     } finally {
         foreach ($artifacts as $id) {
             $q = $db->prepare('SELECT storage_key FROM backup_artifacts WHERE id=?'); $q->execute([$id]);

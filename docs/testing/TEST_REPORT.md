@@ -1,3 +1,7 @@
+## Task17.6 — owner recovery and interruption safety
+
+20,752 backend (61 recovery),189 actual HTTP and48 browser assertions PASS. Actual pre/post-COMMIT PHP kills, automatic next-request repair, corrupt original/journal preservation, maintenance exclusion, password/session/actor isolation, encrypted single-use downloads, real isolated reset/recovery and rollback accepted. AR/EN light/dark desktop/phone/error focus/cancellation inspected. [Evidence and scope](ADMIN_RECOVERY.md). No migration/native change; no physical Android claim. Source cursor8a06c84; WP17 closes6/6;18.1 follows;02.8 remains deferred.
+
 ## Task17.5 — privacy-bounded Admin analysis and journal
 
 218 HTTP/20,691 backend PASS. Private reading/activity canaries absent from Admin HTML and preserved in owner export;205 canonical events paged100/100/5, opaque targets/email redacted before view, raw rows retained. Bilingual phone/desktop journal/details/overview accepted. [Full evidence, conflict reconciliation and owned-runner memory bounds](ADMIN_PRIVACY.md). No migration/native change;17.6 follows;02.8 remains deferred.

@@ -225,6 +225,15 @@ function expire_backup_artifacts(): void
 
 function restore_backup_archive(int $backupId, int $ownerId): int
 {
+    global $atharRecoveryGuard;
+    if ($atharRecoveryGuard instanceof \Athar\Infrastructure\MaintenanceGuard) return restore_backup_archive_locked($backupId, $ownerId);
+    acquire_maintenance_lock();
+    try { return restore_backup_archive_locked($backupId, $ownerId); }
+    finally { release_maintenance_lock(); }
+}
+
+function restore_backup_archive_locked(int $backupId, int $ownerId): int
+{
     $key = backup_key();
     $query = db()->prepare("SELECT * FROM backup_artifacts WHERE id=? AND status IN ('ready','downloaded') AND expires_at>UTC_TIMESTAMP() AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR)");
     $query->execute([$backupId]); $artifact = $query->fetch();
@@ -314,16 +323,19 @@ function restore_backup_archive(int $backupId, int $ownerId): int
             }
             $db->exec('DELETE FROM auth_tokens'); $db->exec('DELETE FROM backup_download_grants');
             foreach(['api_sessions','auth_rate_buckets'] as $securityTable)if(in_array($securityTable,$tables,true))$db->exec('DELETE FROM `'.$securityTable.'`');
-            $installed = backup_install_staged_assets($staged);
+            $installation = backup_install_staged_assets($staged);
+            $installed = $installation['files'];
             $db->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$restoredOwnerId, 'backup-restored', 'backup', (string) $backupId]);
+            $db->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$restoredOwnerId, 'backup-restore-committed', 'restore-operation', $installation['operation_id']]);
             $db->commit();
         } catch (Throwable $failure) {
             if ($db->inTransaction()) $db->rollBack();
             backup_rollback_installed_assets($installed);
+            \Athar\Infrastructure\RecoveryJournal::clear();
             throw $failure;
         }
         finally { $db->exec('SET FOREIGN_KEY_CHECKS=1'); }
-        foreach ($installed as $original) if ($original !== null && is_file($original)) @unlink($original);
+        \Athar\Infrastructure\RecoveryJournal::repair($db);
         append_owner_audit(['action' => 'backup-restored', 'actor_id' => $restoredOwnerId, 'backup_id' => $backupId]);
         return $restoredOwnerId;
     } finally {

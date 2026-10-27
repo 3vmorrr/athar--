@@ -43,6 +43,7 @@ function backup_read_assets(ZipArchive $zip,string $kind,array $manifest,array $
 function backup_install_staged_assets(array &$staged): array
 {
     $installed = [];
+    $journal = \Athar\Infrastructure\RecoveryJournal::begin(db(), $staged);
     try {
         foreach ($staged as $assetKey => $stage) {
             [$kind, $key] = explode('/', $assetKey, 2);
@@ -51,18 +52,18 @@ function backup_install_staged_assets(array &$staged): array
             if (is_link($directory) || (!is_dir($directory) && !mkdir($directory, 0700, true))) throw new RuntimeException('Restore asset directory is unavailable.');
             $destination = $directory . '/' . $key;
             if (is_link($destination) || is_dir($destination)) throw new RuntimeException('Restore asset destination is unsafe.');
-            $original = null;
+            $original = $journal->originalFor($assetKey);
             if (is_file($destination)) {
-                $original = dirname($stage) . '/restore-original-' . bin2hex(random_bytes(16)) . '.asset';
                 if (!@rename($destination, $original)) throw new RuntimeException('The original asset could not be retained for rollback.');
             }
             $installed[$destination] = $original;
             if (!@rename($stage, $destination)) throw new RuntimeException('A restored asset could not be installed.');
             unset($staged[$assetKey]);
         }
-        return $installed;
+        return ['files'=>$installed, 'operation_id'=>$journal->id];
     } catch (Throwable $failure) {
         backup_rollback_installed_assets($installed);
+        \Athar\Infrastructure\RecoveryJournal::clear();
         throw $failure;
     }
 }

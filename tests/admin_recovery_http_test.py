@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import urllib.error
 import urllib.parse
+import urllib.request
 
 root = Path(__file__).resolve().parents[1]
 sandbox = Path(os.environ.get('ATHAR_RECOVERY_SANDBOX', '')).resolve()
@@ -148,6 +149,59 @@ check(status == 200 and 'Restoration is complete.' in page, 'HTTP restore recove
 check(fixture.service('echo json_encode((int)$db->query("SELECT COUNT(*) FROM lessons")->fetchColumn());') > 0, 'Post-reset HTTP restoration recovers content')
 check(not list((root/'storage/backups').glob('athar-restore-*')) and not list((root/'storage/backups').glob('athar-reset-check-*')), 'HTTP recovery leaves no plaintext temporary files')
 print(f'PASS: {checks} actual HTTP recovery assertions (plus120 existing HTTP).')
+
+# Kill a real PHP process after file replacement, on either side of COMMIT.
+# The next ordinary request must repair from the journal before serving data.
+import secrets
+import time
+for committed in [False, True]:
+    asset = secrets.token_hex(20) + '.pdf'
+    destination = root / 'storage/books' / asset
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_bytes(b'%PDF-current-before-crash')
+    stage_name = 'restore-' + secrets.token_hex(16) + '.asset'
+    stage = root / 'storage/backups' / stage_name
+    stage.write_bytes(b'%PDF-restored-before-crash')
+    prior_name = authz.snapshot(owner)['display_name']
+    changed_name = 'Committed crash fixture' if committed else 'Uncommitted crash fixture'
+    program = fixture.setup + "require 'app/backup.php';acquire_maintenance_lock();$db=db();$db->beginTransaction();"
+    program += "$db->prepare('UPDATE users SET display_name=? WHERE id=?')->execute(['" + changed_name + "'," + str(owner['id']) + "]);"
+    program += "$staged=['books/" + asset + "'=>backup_directory().DIRECTORY_SEPARATOR.'" + stage_name + "'];$installed=backup_install_staged_assets($staged);"
+    if committed:
+        program += "$db->prepare(\"INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,'backup-restore-committed','restore-operation',?)\")->execute([" + str(owner['id']) + ",$installed['operation_id']]);$db->commit();"
+    program += 'echo "FILES_INSTALLED\\n";flush();fgets(STDIN);'
+    process = subprocess.Popen([fixture.php, '-r', program], cwd=fixture.ROOT, env=fixture.environment, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        check(process.stdout.readline().strip() == 'FILES_INSTALLED', 'Crash fixture reaches the real post-install boundary')
+        check(destination.read_bytes() == b'%PDF-restored-before-crash', 'Staged bytes reached the actual file before termination')
+        check((root/'storage/locks/recovery-pending.json').is_file(), 'Durable journal exists before process termination')
+        process.kill(); process.communicate(timeout=10)
+        if not committed:
+            journal = json.loads((root/'storage/locks/recovery-pending.json').read_text())
+            original = root / 'storage/backups' / journal['files']['books/' + asset]['original']
+            original.write_bytes(b'corrupted rollback fixture')
+            try: blocked = urllib.request.urlopen(fixture.base + '/api/v1/health', timeout=10)
+            except urllib.error.HTTPError as error: blocked = error
+            check(blocked.code == 503, 'Corrupted recovery originals refuse API service')
+            check(original.read_bytes() == b'corrupted rollback fixture' and (root/'storage/locks/recovery-pending.json').is_file(), 'Unreadable recovery data and journal are preserved for operator repair')
+            check(destination.read_bytes() == b'%PDF-restored-before-crash', 'Corrupt original is not installed over the current file')
+            original.write_bytes(b'%PDF-current-before-crash')
+        for attempt in range(40):
+            try: response = urllib.request.urlopen(fixture.base + '/api/v1/health', timeout=10)
+            except urllib.error.HTTPError as error: response = error
+            if response.code == 200: break
+            check(response.code == 503, 'Pending cleanup refuses requests until its database lock is released')
+            time.sleep(0.1)
+        check(response.code == 200, 'An ordinary API request repairs the interrupted recovery')
+        expected = b'%PDF-restored-before-crash' if committed else b'%PDF-current-before-crash'
+        check(destination.read_bytes() == expected, 'Journal repair follows the actual database COMMIT outcome')
+        check(authz.snapshot(owner)['display_name'] == (changed_name if committed else prior_name), 'Filesystem recovery agrees with database commit/rollback')
+        check(not (root/'storage/locks/recovery-pending.json').exists() and not list((root/'storage/backups').glob('restore-original-*.asset')), 'Completed crash recovery removes journal and rollback copies')
+    finally:
+        if process.poll() is None: process.kill(); process.communicate(timeout=10)
+        if destination.is_file(): destination.unlink()
+        if stage.is_file(): stage.unlink()
+print(f'PASS: {checks} total recovery assertions including actual pre/post-COMMIT process termination.')
 if os.environ.get('ATHAR_TEST_NODE'):
     import subprocess
     browser_env = dict(os.environ, ATHAR_TEST_OWNER_EMAIL=owner['email'])

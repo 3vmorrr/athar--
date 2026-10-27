@@ -2,7 +2,7 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem integrates one logical task at a time from the recorded exact source cursor. Inspect both local worktrees, preserve newer security/offline logic and premium UI, integrate, fix, test, document, commit, push and verify the remote SHA before the next task. Never bulk merge or count source-only implementation as accepted. Keep the parallel worktree and classify every interleaved commit. WP02.8 remains PARTIAL and deferred until all available parallel work is integrated and stabilized, then complete it and audit WP1–WP24. External gates stay open while independent integration proceeds. No per-task permission is required.
 
-Snapshot: 2026-10-26. Current task: **17.6**. Open tasks: **133**. Overall estimate: **49%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **18.1**. Open tasks: **132**. Overall estimate: **49%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. The parallel branch leads implementation; this track accepts one integration task at a time under PARALLEL_INTEGRATION.json.
 
@@ -960,13 +960,13 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 17.6 — Owner recovery operations
 
-- Parent: Work package 17: Independent Admin foundation; state: **PARTIAL**; dependencies: 17.5.
+- Parent: Work package 17: Independent Admin foundation; state: **COMPLETE**; dependencies: 17.5.
 - Exact scope: Expose owner-only backup/restore operation review/confirmation/status without executing destructive development restore.
 - Files/modules: admin/ (new); app/backup.php; app/backup-assets.php.
-- Automated gates: Owner/action/CSRF/secret redaction/confirmation tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
+- Automated gates: COMPLETE:20,752 backend (61 isolated recovery),189 HTTP,48 actual browser assertions; actual pre/post-COMMIT worker termination, corrupt journal/original preservation, owner/password/version/actor isolation, TTL/single-use/CSRF, reset/recovery and rollback. Evidence:docs/testing/ADMIN_RECOVERY.md.
+- Physical-device gate: Actual Admin browser AR/EN light/dark desktop1440/phone360; root-font enlargement/reduced motion/error focus/cancelled confirmation. No native code/UI change; no physical Android PASS claimed.
 - Definition of Done: Expose owner-only backup/restore operation review/confirmation/status without executing destructive development restore. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
-- Estimated contribution: 0.60 overall percentage points.
+- Estimated contribution: 0.00 overall percentage points.
 
 ## 18.1 — Admin scholar CRUD and portraits
 

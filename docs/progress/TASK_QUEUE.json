@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-26",
-  "current_task": "17.6",
+  "updated": "2026-10-27",
+  "current_task": "18.1",
   "overall_estimate_percent": 49,
-  "overall_estimate_detail": 48.78,
+  "overall_estimate_detail": 49.38,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1763,7 +1763,7 @@
       "name": "Owner recovery operations",
       "parent": "Work package 17: Independent Admin foundation",
       "scope": "Expose owner-only backup/restore operation review/confirmation/status without executing destructive development restore.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "17.5"
       ],
@@ -1772,10 +1772,10 @@
         "app/backup.php",
         "app/backup-assets.php"
       ],
-      "automated_tests": "Owner/action/CSRF/secret redaction/confirmation tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "automated_tests": "COMPLETE:20,752 backend (61 isolated recovery),189 HTTP,48 actual browser assertions; actual pre/post-COMMIT worker termination, corrupt journal/original preservation, owner/password/version/actor isolation, TTL/single-use/CSRF, reset/recovery and rollback. Evidence:docs/testing/ADMIN_RECOVERY.md.",
+      "physical_device": "Actual Admin browser AR/EN light/dark desktop1440/phone360; root-font enlargement/reduced motion/error focus/cancelled confirmation. No native code/UI change; no physical Android PASS claimed.",
       "definition_of_done": "Expose owner-only backup/restore operation review/confirmation/status without executing destructive development restore. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.5963
+      "estimated_contribution_pp": 0
     },
     {
       "id": "18.1",

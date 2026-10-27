@@ -1,9 +1,9 @@
 {
-  "codex_head": "de1737245e74b009881d8da3886731443ba7ca8e",
+  "codex_head": "a0eb4de0c5f84630163af779f7498df0844d505f",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "5ad55efbb9d06d5c89395cf663c70da015b90257",
+  "LAST_PARALLEL_INTEGRATED_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -300,9 +300,9 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "secondary_task_attribution": [],
-      "acceptance": "docs/testing/ADMIN_RECOVERY.md;51 isolated recovery/20,742 backend,172 HTTP,48 browser assertions PASS. Abrupt process termination between file replacement and DB commit remains pending.",
+      "acceptance": "docs/testing/ADMIN_RECOVERY.md;61 recovery/20,752 backend,189 HTTP,48 actual browser assertions PASS, including actual pre/post-COMMIT process kills and preserved corrupted journal/originals. No migration/native change.",
       "integration_subtasks": [
         {
           "id": "17.6.1",
@@ -321,7 +321,12 @@
         },
         {
           "id": "17.6.4",
-          "state": "BACKEND/HTTP/BROWSER TESTED; commit receipt follows"
+          "state": "COMPLETE + TESTED / PUSH VERIFIED",
+          "commit": "a0eb4de0c5f84630163af779f7498df0844d505f"
+        },
+        {
+          "id": "17.6.5",
+          "state": "BACKEND/HTTP/BROWSER/PROCESS-KILL TESTED; final commit receipt follows"
         }
       ]
     },
@@ -3140,7 +3145,7 @@
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
   "LAST_REVIEWED_PARALLEL_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
-  "reviewed_cursor_scope": "Task17.6 source inspected; later mapped commits remain review pending. Reviewed is not accepted.",
+  "reviewed_cursor_scope": "Task17.6 integrated and tested, including durable recovery; later source groups remain review pending.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3448,5 +3453,6 @@
         "subject": "docs(progress): switch from implementation to acceptance closure"
       }
     ]
-  }
+  },
+  "LAST_INTEGRATED_PARALLEL_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4"
 }

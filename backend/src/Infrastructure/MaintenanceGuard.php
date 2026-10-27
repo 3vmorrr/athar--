@@ -21,6 +21,19 @@ final class MaintenanceGuard
         if (!$handle) throw new RuntimeException('Maintenance lock storage is unavailable.');
         @chmod($path, 0600);
         if (!flock($handle, ($exclusive ? LOCK_EX : LOCK_SH) | LOCK_NB)) { fclose($handle); return null; }
+        if (RecoveryJournal::exists()) {
+            if (!$exclusive && !flock($handle, LOCK_EX | LOCK_NB)) { fclose($handle); return null; }
+            try {
+                $db = Database::connect();
+                if ((string) $db->query("SELECT GET_LOCK('athar_maintenance_lock',0)")->fetchColumn() !== '1') { fclose($handle); return null; }
+                try { RecoveryJournal::repair($db); }
+                finally { $db->query("SELECT RELEASE_LOCK('athar_maintenance_lock')"); }
+            } catch (\Throwable $failure) {
+                error_log('[Athar recovery] Pending journal preserved; recovery requires retry or operator review.');
+                fclose($handle); return null;
+            }
+            if (!$exclusive && !flock($handle, LOCK_SH | LOCK_NB)) { fclose($handle); return null; }
+        }
         return new self($handle);
     }
 

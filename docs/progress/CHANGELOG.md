@@ -1,5 +1,9 @@
 # Engineering change log
 
+## Parallel integration checkpoint — task17.6
+
+Owner-only bilingual backup/grant/download/restore/reset accepted with current-password/literal/CSRF gates, session isolation, all-user cookie revocation, recovered-owner identity, recoverable-backup checks and transactional/asset compensation. Durable journal repairs actual pre/post-COMMIT process termination; malformed/corrupt/foreign recovery data stays preserved and blocks service.20,752 backend,189 HTTP and48 browser assertions PASS; secret scan clear. [Evidence, source reconciliation and limits](../testing/ADMIN_RECOVERY.md). No migration/native change or physical Android claim. Source cursor8a06c84c1d021ad26b0f86791d78fc1e74adb1f4; next18.1. WP17:6/6 (100%); overall49% (49.38 weighted,±10pp);132 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task17.5
 
 Privacy-bounded Admin overview/account detail and operational journal accepted. Removed private individual/aggregate worship queries; canonical audit allowlist and pre-view projection exclude raw email/opaque private target data while preserving original rows.218 HTTP and20,691 backend assertions PASS, including unchanged private self export and205 records paged100/100/5. Actual AR/EN phone/desktop reviewed. [Evidence, conflicts and resource-run notes](../testing/ADMIN_PRIVACY.md). No migration/native change. Cursor5ad55efbb9d06d5c89395cf663c70da015b90257; next17.6 owner recovery. WP17 closure5/6 (83%); overall49% (48.78 weighted,±10pp);133 open. WP02.8 remains deferred.
