@@ -209,7 +209,7 @@ fun CustomRoutineSection(
                                         Text(stringResource(if (rule.enabled) R.string.custom_routine_pause else R.string.custom_routine_resume))
                                     }
                                     TextButton(onClick = { deleteRule = rule }, enabled = !busy) {
-                                        Text(stringResource(R.string.delete))
+                                        Text(stringResource(R.string.delete_action))
                                     }
                                 }
                             }
@@ -252,7 +252,7 @@ fun CustomRoutineSection(
             text = { Text(stringResource(R.string.custom_routine_delete_body, target.label)) },
             confirmButton = {
                 TextButton(onClick = { perform(CustomUiAction("delete",id=target.id)) }) {
-                    Text(stringResource(R.string.delete))
+                    Text(stringResource(R.string.delete_action))
                 }
             },
             dismissButton = { TextButton(onClick = { deleteRule = null }) { Text(stringResource(R.string.cancel)) } },
