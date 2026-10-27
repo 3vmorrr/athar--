@@ -240,6 +240,7 @@ private fun QuranSearchPager(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun QuranAyahActionSheet(
     ayah: AyahText,
