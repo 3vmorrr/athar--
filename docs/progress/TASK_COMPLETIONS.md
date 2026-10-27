@@ -46,8 +46,9 @@ Pre-existing WP17–20 implementation on this branch is tracked in `PARALLEL_ADM
 |09.2|1547e18ff2c5, 34121064da6e, f832432d510a|PARTIAL|
 |09.3|b12557918c13, 9912b1bcad1e, 294611c2f9d2, 41c73e148844|PARTIAL|
 |09.4|cf93dd341796, 97f26e53c4e8, 75ffee142bd1|PARTIAL|
+|09.5|33dacb2cd183, f99a822cb0ba|PARTIAL|
 
-Next implementation: **09.5**.
+Next implementation: **24.3**.
 
 Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 

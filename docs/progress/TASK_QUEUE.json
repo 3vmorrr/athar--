@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "09.5",
+  "current_task": "24.3",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -1127,7 +1127,7 @@
       "name": "Measured review accuracy and latency",
       "parent": "Work package 9: Native review engine",
       "scope": "Evaluate representative reciters/learner/errors and report measured false acceptance/rejection and latency; never claim99% without evidence.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "09.4"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "75ffee142bd15ce07dd9bd21a83b01261e4af618",
-    "last_landed_task": "09.4",
-    "next_task": "09.5",
+    "head": "f99a822cb0ba943bfd2306f6534ae3058d6b562b",
+    "last_landed_task": "09.5",
+    "next_task": "24.3",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2842,7 +2842,8 @@
       "10.6",
       "09.2",
       "09.3",
-      "09.4"
+      "09.4",
+      "09.5"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2963,6 +2964,10 @@
         "cf93dd341796",
         "97f26e53c4e8",
         "75ffee142bd1"
+      ],
+      "09.5": [
+        "33dacb2cd183",
+        "f99a822cb0ba"
       ]
     },
     "preexisting_parallel_admin": {
@@ -3019,7 +3024,6 @@
       },
       "true_missing": [
         "09.2",
-        "09.5",
         "24.3",
         "24.4",
         "24.5"

@@ -1,5 +1,13 @@
 # Engineering change log
 
+## 2026-10-27 — 09.5 reproducible review evaluation
+
+- Added frozen-WAV manifest and Android instrumentation that runs the same fbank/ONNX/alignment path as production.
+- Added separate false-accept, false-reject, abstention and noisy unsafe-decision metrics plus latency/real-time-factor/PSS evidence and Wilson intervals.
+- Added host staging/aggregation script with benchmark APK/git/model/device identity; no audio is committed and no 99% claim is made.
+- 09.5 remains PARTIAL until representative authorized recordings are measured on the release-like physical device.
+- Execution advances to 24.3 signed reproducible Android release.
+
 ## 2026-10-27 — 09.4 expected-ayah alignment and uncertainty
 
 - Added pinned CTC token vocabulary and bounded verified-corpus passage reader.
