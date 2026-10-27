@@ -25,6 +25,13 @@ if (
 val generatedReviewModelAssets = layout.buildDirectory.dir("generated/review-model-assets")
 val reviewModelSourceDirectory = rootProject.file("../public/assets/models")
 
+val onnxRuntimeAndroidVersion = "1.31.0"
+val onnxRuntimeAarCheck by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    isTransitive = false
+}
+
 android {
     namespace = "org.athar.app"
     compileSdk = 36
@@ -144,8 +151,32 @@ val generateReviewModelAssets by tasks.registering {
     }
 }
 
+val verifyOnnxRuntimeAndroidAbis by tasks.registering {
+    val artifacts = onnxRuntimeAarCheck
+    inputs.files(artifacts)
+    doLast {
+        val aar = artifacts.singleFile
+        val entries = zipTree(aar).files
+            .map { it.path.replace('\\', '/') }
+        val required = listOf(
+            "/jni/armeabi-v7a/libonnxruntime.so",
+            "/jni/arm64-v8a/libonnxruntime.so",
+        )
+        required.forEach { suffix ->
+            check(entries.any { it.endsWith(suffix) }) {
+                "ONNX Runtime Android " + onnxRuntimeAndroidVersion +
+                    " does not contain required ABI library " + suffix
+            }
+        }
+    }
+}
+
 tasks.named("preBuild") {
-    dependsOn(verifyReferenceAssets, generateReviewModelAssets)
+    dependsOn(
+        verifyReferenceAssets,
+        generateReviewModelAssets,
+        verifyOnnxRuntimeAndroidAbis,
+    )
 }
 
 dependencies {
@@ -175,6 +206,14 @@ dependencies {
     implementation("androidx.media3:media3-session:1.8.0")
     implementation("androidx.work:work-runtime-ktx:2.10.3")
     implementation("androidx.webkit:webkit:1.16.0")
+    implementation(
+        "com.microsoft.onnxruntime:onnxruntime-android:" + onnxRuntimeAndroidVersion,
+    )
+    add(
+        onnxRuntimeAarCheck.name,
+        "com.microsoft.onnxruntime:onnxruntime-android:" +
+            onnxRuntimeAndroidVersion + "@aar",
+    )
     // Official Java implementation avoids newer Kotlin/JDK binary requirements.
     implementation("com.batoulapps.adhan:adhan:1.2.1")
     testImplementation("junit:junit:4.13.2")

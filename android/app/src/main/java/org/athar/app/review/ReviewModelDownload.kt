@@ -85,6 +85,16 @@ class ReviewModelManager(
     fun observe(owner: Long) =
         work.getWorkInfosForUniqueWorkFlow(workName(owner))
 
+    internal fun artifact(id: String): ReviewModelArtifact =
+        manifest.artifacts.single { it.id == id }
+
+    internal fun verifiedArtifactFile(id: String): File {
+        val artifact = artifact(id)
+        val file = store.artifactFile(manifest, artifact)
+        require(ReviewModelDigest.verify(file, artifact))
+        return file
+    }
+
     suspend fun accept(owner: Long) {
         ReviewModelAccess(session, consent, store, manifest).accept(owner)
     }
