@@ -14,3 +14,9 @@
 - [ ] Host quotas, model delivery, failure states and maintenance instructions documented.
 
 Unchecked gates are release blockers, not optional polish.
+
+- [ ] Signed APK/AAB verified and release handoff package generated with \`scripts/release_handoff.py\`.
+- [ ] Server/Admin ZIP comes from the exact clean release Git SHA and contains no local secrets.
+- [ ] Release manifest/checksums independently reviewed.
+- [ ] User/Admin/maintenance/known-limit guides delivered to the operator.
+- [ ] Hosted signed-device evidence and rollback ownership recorded.
