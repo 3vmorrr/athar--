@@ -340,6 +340,17 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
     }
 
     fun toggle() { controller?.let { if (it.isPlaying) it.pause() else { if (it.playbackState == Player.STATE_ENDED) it.seekTo(0); it.play() } } }
+    fun seekTo(positionMs: Long) {
+        controller?.let { player ->
+            val duration = player.duration.takeIf { it != C.TIME_UNSET && it > 0 } ?: return
+            player.seekTo(positionMs.coerceIn(0L, duration))
+        }
+    }
+    fun duration(): Long = controller?.duration?.takeIf { it != C.TIME_UNSET && it > 0 } ?: 0L
+    fun setPlaybackSpeed(speed: Float) {
+        controller?.setPlaybackSpeed(speed.coerceIn(0.5f, 2f))
+    }
+    fun playbackSpeed(): Float = controller?.playbackParameters?.speed ?: 1f
     fun stop() {
         request?.cancel()
         nextRequestGeneration()
