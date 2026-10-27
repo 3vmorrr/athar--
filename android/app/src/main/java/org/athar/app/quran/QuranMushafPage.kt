@@ -240,7 +240,7 @@ private fun QuranSearchPager(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 internal fun QuranAyahActionSheet(
     ayah: AyahText,
