@@ -697,4 +697,7 @@
     <string name="knowledge_empty">لا يوجد محتوى منشور في هذا القسم حاليًا.</string>
     <string name="knowledge_no_match">لا توجد نتائج مطابقة لبحثك.</string>
     <string name="knowledge_catalog_invalid">تعذر قراءة بيانات قسم المعرفة بأمان.</string>
+    <string name="quran_copy_ayah">نسخ الآية والمرجع</string>
+    <string name="quran_share_ayah">مشاركة الآية والمرجع</string>
+    <string name="quran_ayah_copied">تم نسخ نص الآية والمرجع والمصدر.</string>
 </resources>

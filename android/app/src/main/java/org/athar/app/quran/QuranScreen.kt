@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.*
@@ -370,7 +371,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     var fontDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
-    val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
+    val context = LocalContext.current
+    val saved = stringResource(R.string.saved)
+    val failed = stringResource(R.string.network_error)
+    val copied = stringResource(R.string.quran_ayah_copied)
+    val shareTitle = stringResource(R.string.quran_share_ayah)
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             when {
@@ -620,6 +625,28 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                     } catch (_: Exception) {
                         snackbar.showSnackbar(failed)
                     }
+                }
+            },
+            onCopy = {
+                try {
+                    QuranAyahShareActions.copy(
+                        context,
+                        QuranAyahShareContract.from(ayah),
+                    )
+                    scope.launch { snackbar.showSnackbar(copied) }
+                } catch (_: Exception) {
+                    scope.launch { snackbar.showSnackbar(failed) }
+                }
+            },
+            onShare = {
+                try {
+                    QuranAyahShareActions.share(
+                        context,
+                        QuranAyahShareContract.from(ayah),
+                        shareTitle,
+                    )
+                } catch (_: Exception) {
+                    scope.launch { snackbar.showSnackbar(failed) }
                 }
             },
         )

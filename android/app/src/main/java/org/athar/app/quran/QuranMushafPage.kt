@@ -248,6 +248,8 @@ internal fun QuranAyahActionSheet(
     onDismiss: () -> Unit,
     onSavePosition: () -> Unit,
     onToggleBookmark: () -> Unit,
+    onCopy: () -> Unit,
+    onShare: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -272,6 +274,25 @@ internal fun QuranAyahActionSheet(
                 style = MaterialTheme.typography.bodyLarge.copy(
                     textDirection = TextDirection.Rtl,
                 ),
+            )
+            Text(
+                "[" + ayah.position.surah + ":" + ayah.position.ayah + "]",
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    textDirection = TextDirection.Content,
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                QuranAyahShareContract.SOURCE_NAME + " — " +
+                    QuranAyahShareContract.SOURCE_URL,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = AtharSpacing.Xs, bottom = AtharSpacing.Md),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    textDirection = TextDirection.Content,
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (canSavePosition) {
                 Button(
@@ -301,6 +322,28 @@ internal fun QuranAyahActionSheet(
                         else R.string.bookmark,
                     ),
                 )
+            }
+            TextButton(
+                onClick = {
+                    onCopy()
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+            ) {
+                Text(stringResource(R.string.quran_copy_ayah))
+            }
+            TextButton(
+                onClick = {
+                    onShare()
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+            ) {
+                Text(stringResource(R.string.quran_share_ayah))
             }
         }
     }

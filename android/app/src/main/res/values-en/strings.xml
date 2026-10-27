@@ -669,4 +669,7 @@
     <string name="knowledge_empty">There is no published content in this section right now.</string>
     <string name="knowledge_no_match">No results match your search.</string>
     <string name="knowledge_catalog_invalid">The Knowledge data could not be read safely.</string>
+    <string name="quran_copy_ayah">Copy ayah and reference</string>
+    <string name="quran_share_ayah">Share ayah and reference</string>
+    <string name="quran_ayah_copied">Ayah text, reference and source copied.</string>
 </resources>
