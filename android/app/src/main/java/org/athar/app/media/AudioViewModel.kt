@@ -347,6 +347,7 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
         }
     }
     fun duration(): Long = controller?.duration?.takeIf { it != C.TIME_UNSET && it > 0 } ?: 0L
+    fun playbackPosition(): Long = controller?.currentPosition?.coerceAtLeast(0L) ?: 0L
     fun setPlaybackSpeed(speed: Float) {
         controller?.setPlaybackSpeed(speed.coerceIn(0.5f, 2f))
     }
