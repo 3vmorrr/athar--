@@ -80,8 +80,8 @@ python scripts/android_release_artifacts.py verify \
 The verifier uses Android SDK \`apksigner\` and \`apkanalyzer\` plus JDK \`jarsigner\`. It checks:
 
 - application id is exactly \`org.athar.app\`;
-- APK and AAB agree on version code/name;
-- release artifacts are not debuggable;
+- APK and AAB agree on application id and version code/name;
+- the installable release APK is not debuggable;
 - APK cryptographic signature verifies and the signer certificate matches when supplied;
 - AAB JAR signature verifies;
 - full-file SHA-256;

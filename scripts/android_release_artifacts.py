@@ -97,7 +97,7 @@ def sdk_tool(name: str) -> str:
         if not raw:
             continue
         root = pathlib.Path(raw)
-        if name == "apkanalyzer":
+        if name in {"apkanalyzer", "android"}:
             candidates.extend([
                 root / "cmdline-tools" / "latest" / "bin" / name,
                 root / "tools" / "bin" / name,
@@ -129,9 +129,45 @@ def jarsigner_tool() -> str:
     raise RuntimeError("tool_not_found: jarsigner")
 
 
-def apkanalyzer_value(artifact: pathlib.Path, *args: str) -> str:
+def android_cli_metadata(artifact: pathlib.Path) -> dict:
+    tool = sdk_tool("android")
+    raw = run([
+        tool,
+        "analyze",
+        "--analysis=basic",
+        "--format=json",
+        str(artifact),
+    ])
+    root = json.loads(raw)
+    results = root.get("results")
+    if not isinstance(results, list) or len(results) != 1:
+        raise RuntimeError("android_analyze_result_shape_invalid")
+    app_info = (
+        results[0].get("basic", {})
+        .get("appInfo", {})
+    )
+    package_name = app_info.get("packageName")
+    version_name = app_info.get("versionName")
+    version_code = app_info.get("versionCode")
+    if not isinstance(package_name, str) or not package_name:
+        raise RuntimeError("android_analyze_package_missing")
+    if not isinstance(version_name, str) or not version_name:
+        raise RuntimeError("android_analyze_version_name_missing")
+    try:
+        parsed_version_code = int(version_code)
+    except (TypeError, ValueError) as failure:
+        raise RuntimeError("android_analyze_version_code_invalid") from failure
+    return {
+        "application_id": package_name,
+        "version_code": parsed_version_code,
+        "version_name": version_name,
+    }
+
+
+def apk_debuggable(apk: pathlib.Path) -> bool:
     tool = sdk_tool("apkanalyzer")
-    return run([tool, "manifest", *args, str(artifact)]).strip()
+    value = run([tool, "manifest", "debuggable", str(apk)]).strip().lower()
+    return value in {"true", "1", "yes"}
 
 
 def apk_signer_certificate(apk: pathlib.Path) -> dict:
@@ -163,19 +199,6 @@ def verify_aab_signature(aab: pathlib.Path) -> dict:
     return {"jar_signature_verified": True}
 
 
-def manifest_metadata(artifact: pathlib.Path) -> dict:
-    package_name = apkanalyzer_value(artifact, "application-id")
-    version_code = apkanalyzer_value(artifact, "version-code")
-    version_name = apkanalyzer_value(artifact, "version-name")
-    debuggable = apkanalyzer_value(artifact, "debuggable").lower()
-    return {
-        "application_id": package_name,
-        "version_code": int(version_code),
-        "version_name": version_name,
-        "debuggable": debuggable in {"true", "1", "yes"},
-    }
-
-
 def validate_expected(
     metadata: dict,
     expected_package: str,
@@ -188,7 +211,7 @@ def validate_expected(
         raise ValueError("version_code_mismatch")
     if metadata["version_name"] != expected_version_name:
         raise ValueError("version_name_mismatch")
-    if metadata["debuggable"]:
+    if metadata.get("debuggable") is True:
         raise ValueError("release_artifact_is_debuggable")
 
 
@@ -207,8 +230,9 @@ def verify_artifacts(
     if not SEMVER.fullmatch(expected_version_name):
         raise ValueError("expected_version_name_invalid")
 
-    apk_metadata = manifest_metadata(apk)
-    aab_metadata = manifest_metadata(aab)
+    apk_metadata = android_cli_metadata(apk)
+    apk_metadata["debuggable"] = apk_debuggable(apk)
+    aab_metadata = android_cli_metadata(aab)
     validate_expected(
         apk_metadata,
         expected_package,
@@ -221,7 +245,10 @@ def verify_artifacts(
         expected_version_code,
         expected_version_name,
     )
-    if apk_metadata != aab_metadata:
+    if {
+        key: apk_metadata[key]
+        for key in ("application_id", "version_code", "version_name")
+    } != aab_metadata:
         raise ValueError("apk_aab_manifest_metadata_mismatch")
 
     signer = apk_signer_certificate(apk)
@@ -235,7 +262,10 @@ def verify_artifacts(
     return {
         "schema_version": 1,
         "verified_at_utc": datetime.now(timezone.utc).isoformat(),
-        "metadata": apk_metadata,
+        "metadata": {
+            "apk": apk_metadata,
+            "aab": aab_metadata,
+        },
         "apk": {
             "path": str(apk),
             "sha256": sha256_file(apk),
