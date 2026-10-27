@@ -2,7 +2,7 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem reviews every task from the exact recorded source SHA and integrates selectively in logical batches of roughly3–6 related tasks. Fast review covers correctness/contracts/schema/ownership/protected data/privacy/offline/concurrency/accessibility/RTL/premium UI and compile risks. Fix immediately; deep-test high-risk changes immediately. Reuse unchanged reviewed evidence; batch relevant expensive validation, run Work Package gates, broader milestone gates and one exhaustive final WP1–24 audit. Queue physical scenarios for shared device sessions. Commit/push/verify after stable integration batches, record exact reviewed/integrated cursors and each task status honestly. No bulk merge or source-only acceptance. WP02.8 stays deferred until available parallel batches stabilize. Continue without per-task permission.
 
-Snapshot: 2026-10-27. Current task: **20.1**. Open integration/acceptance tasks: **126**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+Snapshot: 2026-10-27. Current task: **21.19**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
 
 Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 
@@ -1102,7 +1102,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 20.1 — Transactional email branding and reliability
 
-- Parent: Work package 20: Email campaigns; state: **PARTIAL**; dependencies: 18.8.
+- Parent: Work package 20: Email campaigns; state: **COMPLETE**; dependencies: 18.8.
 - Exact scope: Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send.
 - Files/modules: app/mailer.php; backend/src/Identity/.
 - Automated gates: HTML/plaintext/escaping/OTP no-account-before-verification/fake SMTP tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1112,7 +1112,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 20.2 — Email consent and unsubscribe
 
-- Parent: Work package 20: Email campaigns; state: **PARTIAL**; dependencies: 20.1.
+- Parent: Work package 20: Email campaigns; state: **COMPLETE**; dependencies: 20.1.
 - Exact scope: Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages.
 - Files/modules: backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Tamper/expiry/idempotency/withdrawal/no auth bypass tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1122,7 +1122,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 20.3 — Prioritized email queue
 
-- Parent: Work package 20: Email campaigns; state: **PARTIAL**; dependencies: 20.2.
+- Parent: Work package 20: Email campaigns; state: **COMPLETE**; dependencies: 20.2.
 - Exact scope: Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations.
 - Files/modules: backend/src/Engagement/ (new); bin/; database/migrations/.
 - Automated gates: Fake SMTP priority/duplicate/concurrency/cancel/retry/limits tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

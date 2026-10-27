@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "20.1",
+  "current_task": "21.19",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -2027,7 +2027,7 @@
       "name": "Transactional email branding and reliability",
       "parent": "Work package 20: Email campaigns",
       "scope": "Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.8"
       ],
@@ -2038,14 +2038,15 @@
       "automated_tests": "HTML/plaintext/escaping/OTP no-account-before-verification/fake SMTP tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.3578
+      "estimated_contribution_pp": 0.3578,
+      "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
     },
     {
       "id": "20.2",
       "name": "Email consent and unsubscribe",
       "parent": "Work package 20: Email campaigns",
       "scope": "Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "20.1"
       ],
@@ -2056,14 +2057,15 @@
       "automated_tests": "Tamper/expiry/idempotency/withdrawal/no auth bypass tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.3578
+      "estimated_contribution_pp": 0.3578,
+      "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
     },
     {
       "id": "20.3",
       "name": "Prioritized email queue",
       "parent": "Work package 20: Email campaigns",
       "scope": "Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "20.2"
       ],
@@ -2075,7 +2077,8 @@
       "automated_tests": "Fake SMTP priority/duplicate/concurrency/cancel/retry/limits tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.3578
+      "estimated_contribution_pp": 0.3578,
+      "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
     },
     {
       "id": "20.4",
@@ -2093,7 +2096,8 @@
       "automated_tests": "Role/audience/unsubscribe/preview/cancel/queue integration tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement localized preview/test/confirmed scheduled email or push+email campaigns with independent channel consent. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.3578
+      "estimated_contribution_pp": 0.3578,
+      "acceptance": "Email queue/Owner confirmation/authorized tests/cancellation accepted locally;combined Push atomically unavailable until canonical WP15 dispatcher and acceptance. EMAIL_OUTBOX.md."
     },
     {
       "id": "20.5",
@@ -2112,7 +2116,8 @@
       "physical_device": "Requires configured Gmail and explicitly authorized test recipient; received inbox evidence, never bulk send.",
       "definition_of_done": "Use configured Gmail App Password and explicitly authorized test recipient to prove OTP/reset/campaign-template delivery. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3578,
-      "blocker": "Authorized real recipient inbox delivery not yet proven."
+      "blocker": "Authorized real recipient inbox delivery not yet proven.",
+      "acceptance": "External acceptance: no authorized real Gmail inbox receipt proved for OTP/reset/campaign templates. No fixture result closes this gate. Continue independent integration."
     },
     {
       "id": "21.19",

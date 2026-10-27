@@ -1,5 +1,9 @@
 # Implementation tracker
 
+## WP20 Email checkpoint —2026-10-27
+
+Source infrastructure reviewed through0748860ff54ab7b0399613458f36eed0f8da5205. Encrypted priority outbox, token/recipient binding, signed consent, Owner template tests and safe worker recovery accepted locally.193 combined backend+final35 focused;42 HTTP/worker+32 service+15 browser;219 Admin privacy/auth PASS. Restored adjacent overview/recovery/create panels removed in preceding campaign view replacement;navigation and actual authoring verified. [Evidence and limits](../testing/EMAIL_OUTBOX.md). On reviewed push:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Real Gmail20.5 and canonical Push/combined acceptance remain open. Next21.19/21.2;WP02.8 preserved.
+
 ## WP18 content/services batch checkpoint —2026-10-27
 
 Reviewed17 consecutive source commits through e217cee15082e4e0a0585a5b9a715a88d47f88de. Code adopted9/9 WP18; strict validated6/9:18.4/18.6/18.9 remain queued for native acceptance, Samsung disconnected. Batch118 HTTP+142 browser;978 relevant backend;218 privacy HTTP;15 visual/keyboard PASS. [Reconciliation, focused tests and limits](../testing/ADMIN_CONTENT_SERVICES_BATCH.md). On reviewed commit/verified push,23/149 strictly validated,126 open. Exact implementation totals across branches remain unverified; historical51% estimate is frozen, not completion evidence. Audit snapshot at14d is preserved. Next19.1; WP02.8 remains deferred.

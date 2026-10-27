@@ -12,6 +12,31 @@ function admin_campaign_action(array $actor,array $post): int
     $english=admin_locale()==='en';
     $service=new \Athar\Engagement\CampaignService(db());
     $kind=$post['kind'];
+    if($kind==='engagement-campaign-test-email') {
+        if(($actor['role']??'')!=='owner')admin_deny_action($actor,'admin-action',$kind);
+        if(empty($actor['email_verified_at']))admin_deny_action($actor,'admin-action',$kind);
+        $locale=admin_campaign_text($post,'test_locale','ar');
+        if(!in_array($locale,['ar','en'],true))throw new RuntimeException($english?'Invalid test language.':'لغة الاختبار غير صالحة.');
+        $db=admin_begin_settings($actor,$post,true);
+        try {
+            $verified=$db->prepare('SELECT email_verified_at FROM users WHERE id=? FOR UPDATE');$verified->execute([$actor['id']]);
+            if(!$verified->fetchColumn())admin_deny_action($actor,'admin-action',$kind);
+            $id=filter_var($post['campaign_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+            $q=$db->prepare('SELECT * FROM engagement_campaigns WHERE id=? FOR UPDATE');$q->execute([$id]);$campaign=$q->fetch();
+            $version=filter_var($post['expected_revision']??null,FILTER_VALIDATE_INT);
+            if(!$campaign||$campaign['status']!=='draft'||(int)$campaign['revision']!==$version||!in_array($campaign['channel'],['email','push_email'],true))throw new RuntimeException($english?'Reload the current Email draft before testing.':'أعد تحميل مسودة البريد الحالية قبل الاختبار.');
+            $recipientCipher=platform_setting('smtp_test_recipient_cipher');
+            if(platform_setting('smtp_test_recipient_authorized_at')===''||$recipientCipher==='')throw new RuntimeException($english?'Configure an authorized test recipient in Services first.':'حدد مستلم اختبار مصرحًا به في الخدمات أولًا.');
+            $recipient=open_platform_secret($recipientCipher);
+            if(!filter_var($recipient,FILTER_VALIDATE_EMAIL))throw new RuntimeException($english?'The authorized recipient is unreadable.':'تعذرت قراءة المستلم المصرح.');
+            $rates=new \Athar\Identity\RateLimiter($db,\Athar\Infrastructure\SecretKey::authentication());
+            if(!$rates->consume('campaign-admin-test',(string)$actor['id'],1,3600))throw new RuntimeException($english?'A test was queued recently. Try again later.':'وُضع اختبار مؤخرًا. حاول لاحقًا.');
+            $body=$campaign['body_'.$locale];$title=$campaign['title_'.$locale];
+            (new \Athar\Engagement\EmailOutboxService($db))->enqueueAuthorizedTest($recipientCipher,$title,$body,$locale,'campaign:'.$id.':'.$version.':'.$locale.':'.gmdate('YmdH'),'<p>'.nl2br(e($body),false).'</p>');
+            $db->prepare('INSERT INTO audit_logs(actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$actor['id'],'engagement-campaign-test-queued','engagement-campaign',(string)$id]);$db->commit();
+            return (int)$id;
+        }catch(Throwable $failure){if($db->inTransaction())$db->rollBack();throw new RuntimeException($english?'The authorized test could not be queued. Check the saved draft, password, recipient and recent test limit.':'تعذر وضع الاختبار المصرح في الطابور. راجع المسودة وكلمة المرور والمستلم وحد الاختبارات الأخير.');}
+    }
     $id=filter_var($post['campaign_id']??'',FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
     $revision=filter_var($post['expected_revision']??'',FILTER_VALIDATE_INT,['options'=>['min_range'=>1,'max_range'=>2147483646]]);
     if($kind!=='engagement-campaign-save'&&(!$id||!$revision))throw new RuntimeException($english?'A campaign and its saved version are required.':'يلزم تحديد الحملة ونسختها المحفوظة.');

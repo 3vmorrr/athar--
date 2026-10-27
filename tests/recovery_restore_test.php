@@ -55,6 +55,11 @@ isolated_database(function (PDO $connection): void {
         file_put_contents($initialPhotoPath, "\x89PNG\r\n\x1a\ninitial fixture");
         $db->prepare("INSERT INTO scholars(name,image_key) VALUES ('Initial recovery portrait',?)")->execute([$initialPhotoKey]);
         $db->prepare("INSERT INTO books(title,author,source_url,rights_basis,file_key,can_download,is_published) VALUES ('Recovery fixture','QA','https://example.invalid/source','Fixture only',?,1,1)")->execute([$bookKey]);
+        $db->exec("INSERT INTO email_outbox(category,user_id,subject,plain_body,status,idempotency_key,available_at,expires_at) VALUES ('transactional',2,'Fixture','Fixture volatile body','pending',REPEAT('e',64),UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 10 MINUTE))");
+        $db->exec('UPDATE users SET email_marketing_opt_in=1 WHERE id=2');
+        $campaignService=new \Athar\Engagement\CampaignService($db,static fn($channel)=>true);
+        $campaign=$campaignService->createDraft(['id'=>$ownerId,'role'=>'owner'],['name'=>'Recovery campaign fixture','channel'=>'email','title_ar'=>'Fixture AR','body_ar'=>'Fixture AR body','title_en'=>'Fixture EN','body_en'=>'Fixture EN body']);
+        $campaignService->confirmAndSchedule(['id'=>$ownerId,'role'=>'owner'],$campaign['id'],1,'CONFIRM '.$campaign['id']);
         $artifact = build_backup_archive($ownerId);
         $artifacts[] = $artifact['id'];
         recovery_check($artifact['byte_size'] > 0, 'Real encrypted database/asset backup built');
@@ -75,6 +80,7 @@ isolated_database(function (PDO $connection): void {
             decrypt_backup_file($oldCipher, $legacyPlain, backup_key());
             $legacyZip = new ZipArchive(); $legacyZip->open($legacyPlain);
             $legacyManifest = json_decode($legacyZip->getFromName('manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+            recovery_check(!isset($legacyManifest['tables']['email_outbox'])&&$legacyZip->getFromName('database/email_outbox.json')===false,'Backup excludes volatile token/delivery payloads entirely');
             $legacyManifest['schema_version'] = $beforeMax;
             recovery_check(backup_archive_schema_version($legacyZip, $legacyManifest) === backup_schema_version($db), 'Legacy maximum-version labels retain full-ledger compatibility');
             $legacyZip->addFromString('manifest.json', json_encode($legacyManifest, JSON_THROW_ON_ERROR)); $legacyZip->close();
@@ -90,6 +96,8 @@ isolated_database(function (PDO $connection): void {
         $db->exec('UPDATE quran_positions SET ayah=5,revision=2');
         file_put_contents($bookPath, '%PDF-modified');
         $restored = restore_backup_archive($artifact['id'], $ownerId);
+        recovery_check((int)$db->query('SELECT COUNT(*) FROM email_outbox')->fetchColumn()===0,'Restore removes live volatile deliveries instead of replaying OTPs');
+        recovery_check($db->query('SELECT status FROM engagement_campaigns WHERE id='.(int)$campaign['id'])->fetchColumn()==='cancelled','Restored scheduled campaign requires a fresh Owner confirmation');
         recovery_check($restored === $ownerId, 'Owner survives normal restoration');
         recovery_check(password_verify('NewerOwnerPassword123!', (string)$db->query('SELECT password_hash FROM users WHERE id=' . $ownerId)->fetchColumn()), 'Snapshot cannot roll back the current Owner password');
         recovery_check($db->query('SELECT email_verified_at FROM users WHERE id=' . $ownerId)->fetchColumn() === '2026-10-01 00:00:00', 'Snapshot cannot roll back the current Owner verification claim');

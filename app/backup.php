@@ -180,7 +180,7 @@ function build_backup_archive(int $ownerId): array
         $database = getenv('ATHAR_DB_NAME') ?: 'athar';
         $list = $pdo->prepare("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME");
         $list->execute([$database]); $tables = $list->fetchAll(PDO::FETCH_COLUMN);
-        $excluded = ['auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
+        $excluded = ['email_outbox','auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
         $counts = []; $checksums = []; $assetKeys = ['books'=>[],'scholars'=>[]]; $excludedTables = [];
         foreach ($tables as $table) {
             if (!is_string($table) || !preg_match('/^[a-zA-Z0-9_]+$/', $table)) continue;
@@ -289,7 +289,7 @@ function restore_backup_archive_locked(int $backupId, int $ownerId): int
             $contents = $zip->getFromName($entry);
             if ($contents === false || !hash_equals($expected, hash('sha256', $contents))) throw new RuntimeException('فشل التحقق من أحد ملفات النسخة.');
         }
-        $excluded = ['auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
+        $excluded = ['email_outbox','auth_tokens','api_sessions','auth_rate_buckets','backup_artifacts','backup_download_grants','platform_settings'];
         $tables = $db->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=" . $db->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
         $restoreTables = [];
         foreach ($manifest['tables'] as $table => $count) {
@@ -352,6 +352,11 @@ function restore_backup_archive_locked(int $backupId, int $ownerId): int
                 }
             }
             $db->exec('DELETE FROM auth_tokens'); $db->exec('DELETE FROM backup_download_grants');
+            if(in_array('email_outbox',$tables,true))$db->exec('DELETE FROM email_outbox');
+            if(in_array('engagement_campaigns',$tables,true)){
+                $db->exec("UPDATE engagement_campaigns SET status='cancelled',cancelled_at=UTC_TIMESTAMP(),revision=revision+1 WHERE status IN ('scheduled','processing')");
+                $db->exec("UPDATE engagement_campaign_recipients SET status='cancelled',locked_at=NULL,last_error_code='restored_requires_reconfirmation' WHERE status IN ('queued','processing')");
+            }
             foreach(['api_sessions','auth_rate_buckets'] as $securityTable)if(in_array($securityTable,$tables,true))$db->exec('DELETE FROM `'.$securityTable.'`');
             $installation = backup_install_staged_assets($staged);
             $installed = $installation['files'];

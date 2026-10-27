@@ -11,6 +11,7 @@ const root=process.env.ATHAR_RECOVERY_SANDBOX;
   for(const [width,lang,theme] of [[1440,'en','light'],[360,'ar','dark'],[360,'en','dark'],[1440,'ar','light']]) {
    await page.setViewportSize({width,height:1000});await page.goto(`http://127.0.0.1:8004/admin?lang=${lang}&theme=${theme}#admin-campaigns`);
    check(await page.locator('[data-campaign-editor]').isVisible(),'Composer visible');
+   check(await page.locator('[data-admin-nav] a[href^="#admin-"]').evaluateAll(links=>links.every(link=>document.querySelector(link.hash)!==null)),'Every adjacent Admin navigation target exists');
    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No overflow');
    const form=page.locator('[data-campaign-editor]');
    await form.locator('[name=name]').fill(`Browser campaign ${lang} ${width}`);

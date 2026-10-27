@@ -3,7 +3,7 @@ param(
     [string]$Python = 'C:\Users\SaWa\AppData\Local\Programs\Python\Python312\python.exe',
     [string]$Node = 'C:\Users\SaWa\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe',
     [string]$Playwright = 'C:\Users\SaWa\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\playwright',
-    [ValidateSet('admin_recovery_http_test.py','admin_scholar_http_test.py','admin_series_http_test.py','admin_lesson_http_test.py','admin_event_http_test.py','admin_privacy_http_test.py','admin_book_http_test.py','admin_editorial_http_test.py','admin_services_http_test.py','admin_night_defaults_http_test.py','admin_content_batch_http_test.py','admin_content_visual_test.py','admin_campaign_http_test.py')][string]$Suite = 'admin_recovery_http_test.py',
+    [ValidateSet('admin_recovery_http_test.py','admin_scholar_http_test.py','admin_series_http_test.py','admin_lesson_http_test.py','admin_event_http_test.py','admin_privacy_http_test.py','admin_book_http_test.py','admin_editorial_http_test.py','admin_services_http_test.py','admin_night_defaults_http_test.py','admin_content_batch_http_test.py','admin_content_visual_test.py','admin_campaign_http_test.py','email_http_test.py')][string]$Suite = 'admin_recovery_http_test.py',
     [int]$Port = 3311
 )
 $ErrorActionPreference = 'Stop'
@@ -17,18 +17,18 @@ $data = Join-Path $sandbox 'mysql'
 if (Get-NetTCPConnection -State Listen -LocalPort $Port,8004 -ErrorAction SilentlyContinue) { throw 'Recovery test ports are already occupied.' }
 New-Item -ItemType Directory -Path $sandbox,$data,(Join-Path $sandbox 'storage/engineering'),(Join-Path $sandbox 'storage/sessions') -Force | Out-Null
 # Never copy .env, production storage, books, keys or session files.
-foreach ($folder in @('app','admin','backend','database','public','tests')) {
+foreach ($folder in @('app','admin','backend','bin','database','public','tests')) {
     Copy-Item -LiteralPath (Join-Path $repo $folder) -Destination $sandbox -Recurse
 }
 & (Join-Path $mysqlBin 'mysql_install_db.exe') "--datadir=$data" "--port=$Port" --silent
 if ($LASTEXITCODE -ne 0) { throw 'Recovery MariaDB initialization failed.' }
 $previousValues=@{}
-foreach ($name in @('ATHAR_LOAD_DOTENV','APP_ENV','ATHAR_DB_HOST','ATHAR_DB_PORT','ATHAR_DB_NAME','ATHAR_DB_USER','ATHAR_DB_PASSWORD','ATHAR_TEST_DATA_DIR','ATHAR_BACKUP_KEY','ATHAR_AUTH_KEY','ATHAR_DATA_KEY','ATHAR_SETTINGS_KEY','ATHAR_BASE_URL','ATHAR_DORAR_API_TOKEN','ATHAR_RECOVERY_SANDBOX','ATHAR_TEST_SESSION_DIR','ATHAR_TEST_NODE','ATHAR_TEST_PLAYWRIGHT')) { $previousValues[$name]=[Environment]::GetEnvironmentVariable($name,'Process') }
+foreach ($name in @('ATHAR_LOAD_DOTENV','APP_ENV','ATHAR_DB_HOST','ATHAR_DB_PORT','ATHAR_DB_NAME','ATHAR_DB_USER','ATHAR_DB_PASSWORD','ATHAR_TEST_DATA_DIR','ATHAR_BACKUP_KEY','ATHAR_AUTH_KEY','ATHAR_DATA_KEY','ATHAR_SETTINGS_KEY','ATHAR_EMAIL_OUTBOX_KEY','ATHAR_BASE_URL','ATHAR_DORAR_API_TOKEN','ATHAR_RECOVERY_SANDBOX','ATHAR_TEST_SESSION_DIR','ATHAR_TEST_NODE','ATHAR_TEST_PLAYWRIGHT')) { $previousValues[$name]=[Environment]::GetEnvironmentVariable($name,'Process') }
 $env:ATHAR_LOAD_DOTENV='0'; $env:APP_ENV='local'; $env:ATHAR_DB_HOST='127.0.0.1'; $env:ATHAR_DB_PORT="$Port"; $env:ATHAR_DB_NAME='mysql'; $env:ATHAR_DB_USER='root'; $env:ATHAR_DB_PASSWORD=''; $env:ATHAR_TEST_DATA_DIR=$data
 $env:ATHAR_BACKUP_KEY=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).ToLowerInvariant()
 $env:ATHAR_AUTH_KEY=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).ToLowerInvariant()
 $env:ATHAR_DATA_KEY=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).ToLowerInvariant()
-$env:ATHAR_SETTINGS_KEY=''; $env:ATHAR_BASE_URL='http://127.0.0.1:8004'; $env:ATHAR_DORAR_API_TOKEN=''
+$env:ATHAR_EMAIL_OUTBOX_KEY=''; $env:ATHAR_SETTINGS_KEY=''; $env:ATHAR_BASE_URL=if($Suite -eq 'email_http_test.py'){'https://example.invalid'}else{'http://127.0.0.1:8004'}; $env:ATHAR_DORAR_API_TOKEN=''
 $env:ATHAR_RECOVERY_SANDBOX=$sandbox
 $env:ATHAR_TEST_SESSION_DIR=Join-Path $sandbox 'storage/sessions'
 $env:ATHAR_TEST_NODE=$Node

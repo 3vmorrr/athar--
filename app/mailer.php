@@ -80,27 +80,53 @@ function platform_email_base_url(): string
     return 'http://127.0.0.1:8081';
 }
 
-function email_campaign_unsubscribe_url(int $userId): string
+function email_campaign_unsubscribe_url(int $userId, ?int $expiresAt = null): string
 {
-    $token = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
-    return platform_email_base_url() . '/email-unsubscribe?u=' . $userId . '&t=' . $token;
+    $expiresAt ??= time() + 31536000;
+    $token = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+    return platform_email_base_url() . '/email-unsubscribe?' . http_build_query([
+        'u' => $userId,
+        'e' => $expiresAt,
+        'v' => 2,
+        't' => $token,
+    ]);
 }
 
-function platform_email_html(string $subject, string $body, string $footerHtml = '', ?string $customBodyHtml = null): string
+function email_campaign_unsubscribe_valid(int $userId, string $token, ?int $expiresAt = null, int $version = 1): bool
 {
+    if (!preg_match('/^[a-f0-9]{64}$/i', $token)) return false;
+    if ($version === 2) {
+        if ($expiresAt === null || $expiresAt < time() || $expiresAt > time() + 31622400) return false;
+        $expected = hash_hmac('sha256', 'athar-email-unsubscribe:v2:' . $userId . ':' . $expiresAt, setting_cipher_key());
+        return hash_equals($expected, strtolower($token));
+    }
+    if ($version !== 1) return false;
+    // Compatibility for previously delivered v1 links. All newly generated links use expiring v2 tokens.
+    $legacy = hash_hmac('sha256', 'athar-email-unsubscribe:' . $userId, setting_cipher_key());
+    return hash_equals($legacy, strtolower($token));
+}
+
+function platform_email_html(string $subject, string $body, string $footerHtml = '', ?string $customBodyHtml = null, string $locale = 'ar'): string
+{
+    $locale = $locale === 'en' ? 'en' : 'ar';
+    $direction = $locale === 'en' ? 'ltr' : 'rtl';
+    $brand = $locale === 'en' ? 'Athar' : 'منصة أثر';
+    $tagline = $locale === 'en'
+        ? 'Athar · A calm space for Quran, knowledge, and worship'
+        : 'أثر · مساحة هادئة للقرآن والمعرفة والعبادة';
     $logoUrl = platform_email_base_url() . '/assets/images/athar-logo-cropped.png';
     $escapedBody = nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), false);
-    return '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
-        . '<body style="margin:0;padding:24px 12px;background:#f4f3ed;color:#22332c;font-family:Arial,Tahoma,sans-serif;direction:rtl">'
+    return '<!doctype html><html lang="' . $locale . '" dir="' . $direction . '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+        . '<body style="margin:0;padding:24px 12px;background:#f4f3ed;color:#22332c;font-family:Arial,Tahoma,sans-serif;direction:' . $direction . '">'
         . '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;border-collapse:collapse"><tr><td style="padding:8px 0 18px;text-align:center">'
-        . '<img src="' . htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') . '" width="104" height="96" alt="أثر" style="display:block;width:104px;height:auto;max-height:96px;object-fit:contain;margin:0 auto">'
+        . '<img src="' . htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') . '" width="104" height="96" alt="Athar" style="display:block;width:104px;height:auto;max-height:96px;object-fit:contain;margin:0 auto">'
         . '</td></tr><tr><td style="overflow:hidden;border:1px solid #d8e2da;border-radius:18px;background:#fff">'
-        . '<div style="height:7px;background:#1e6753"></div><div style="padding:30px 28px 26px">'
-        . '<div style="margin:0 0 10px;color:#a66b31;font-size:12px;font-weight:bold;letter-spacing:.08em">منصة أثر</div>'
+        . '<div style="height:7px;background:#1e6753"></div><div style="padding:30px 28px 26px;text-align:' . ($locale === 'en' ? 'left' : 'right') . '">'
+        . '<div style="margin:0 0 10px;color:#a66b31;font-size:12px;font-weight:bold;letter-spacing:.08em">' . htmlspecialchars($brand, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
         . '<h1 style="margin:0 0 20px;color:#174f40;font-size:23px;line-height:1.6">' . htmlspecialchars($subject, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h1>'
         . '<div style="color:#34443d;font-size:16px;line-height:2">' . ($customBodyHtml ?? $escapedBody) . '</div>'
         . ($footerHtml !== '' ? '<div style="margin-top:24px;padding-top:18px;border-top:1px solid #e3e9e4;color:#65756c;font-size:13px;line-height:1.9">' . $footerHtml . '</div>' : '')
-        . '</div></td></tr><tr><td style="padding:18px 8px;text-align:center;color:#68756e;font-size:12px;line-height:1.8">أثر · مساحة هادئة للقرآن والمعرفة والعبادة</td></tr></table></body></html>';
+        . '</div></td></tr><tr><td style="padding:18px 8px;text-align:center;color:#68756e;font-size:12px;line-height:1.8">' . htmlspecialchars($tagline, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</td></tr></table></body></html>';
 }
 
 function platform_secret(string $key, string $environmentName = ''): string
@@ -132,7 +158,24 @@ function smtp_command($socket, string $command, array $expected): string
     return $reply;
 }
 
-function send_platform_email(string $recipient, string $subject, string $body, ?string &$failureReason = null, ?string $htmlBody = null, string $htmlFooter = '', string $category = 'transactional'): bool
+function platform_email_mime(string $recipient,string $from,string $fromName,string $subject,string $body,?string $htmlBody=null,string $htmlFooter='',string $locale='ar',string $host='athar.local'): string
+{
+    if(!filter_var($recipient,FILTER_VALIDATE_EMAIL)||!filter_var($from,FILTER_VALIDATE_EMAIL)||preg_match('/[\r\n]/',$subject.$fromName)||!preg_match('/^[a-z0-9.-]+$/iD',$host))throw new RuntimeException('Invalid mail headers.');
+    $encodedName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $messageId = '<' . bin2hex(random_bytes(16)) . '@' . $host . '>';
+    $body = preg_replace("/(?<!\r)\n|\r(?!\n)/", "\r\n", $body) ?? $body;
+    $boundary = 'athar_' . bin2hex(random_bytes(16));
+    $plainPart = rtrim(chunk_split(base64_encode($body), 76, "\r\n"), "\r\n");
+    $html = platform_email_html($subject, $body, $htmlFooter, $htmlBody, $locale);
+    $htmlPart = rtrim(chunk_split(base64_encode($html), 76, "\r\n"), "\r\n");
+    $message = "Date: " . date(DATE_RFC2822) . "\r\nFrom: {$encodedName} <{$from}>\r\nTo: <{$recipient}>\r\nSubject: {$encodedSubject}\r\nMessage-ID: {$messageId}\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n\r\n"
+        . "--{$boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n{$plainPart}\r\n"
+        . "--{$boundary}\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n{$htmlPart}\r\n--{$boundary}--\r\n.\r\n";
+    return $message;
+}
+
+function send_platform_email(string $recipient, string $subject, string $body, ?string &$failureReason = null, ?string $htmlBody = null, string $htmlFooter = '', string $category = 'transactional', string $locale = 'ar'): bool
 {
     $failureReason = null;
     $host = trim(platform_setting('smtp_host'));
@@ -149,6 +192,7 @@ function send_platform_email(string $recipient, string $subject, string $body, ?
     $socket = @stream_socket_client($target, $errorCode, $errorMessage, 12, STREAM_CLIENT_CONNECT, $context);
     if (!is_resource($socket)) { $failureReason = 'تعذر الوصول إلى خادم Gmail على المنفذ المحفوظ (' . (int) $errorCode . '). تحقق من اتصال الخادم وإتاحة المنفذ 587.'; error_log('[Athar] SMTP connection failed (' . (int) $errorCode . ').'); return false; }
     stream_set_timeout($socket, 12);
+    $dispatchStarted=false;
     try {
         [$greeting] = smtp_read_response($socket);
         if ($greeting !== 220) throw new RuntimeException('SMTP greeting rejected.');
@@ -166,20 +210,11 @@ function send_platform_email(string $recipient, string $subject, string $body, ?
         smtp_command($socket, 'MAIL FROM:<' . $from . '>', [250]);
         smtp_command($socket, 'RCPT TO:<' . $recipient . '>', [250, 251]);
         smtp_command($socket, 'DATA', [354]);
-        $encodedName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
-        $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-        $messageId = '<' . bin2hex(random_bytes(16)) . '@' . $host . '>';
-        $body = preg_replace("/(?<!\r)\n|\r(?!\n)/", "\r\n", $body) ?? $body;
-        $body = preg_replace('/^\./m', '..', $body) ?? $body;
-        $boundary = 'athar_' . bin2hex(random_bytes(16));
-        $plainPart = rtrim(chunk_split(base64_encode($body), 76, "\r\n"), "\r\n");
-        $html = platform_email_html($subject, $body, $htmlFooter, $htmlBody);
-        $htmlPart = rtrim(chunk_split(base64_encode($html), 76, "\r\n"), "\r\n");
-        $message = "Date: " . date(DATE_RFC2822) . "\r\nFrom: {$encodedName} <{$from}>\r\nTo: <{$recipient}>\r\nSubject: {$encodedSubject}\r\nMessage-ID: {$messageId}\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n\r\n"
-            . "--{$boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n{$plainPart}\r\n"
-            . "--{$boundary}\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n{$htmlPart}\r\n--{$boundary}--\r\n.\r\n";
-        fwrite($socket, $message);
+        $message=platform_email_mime($recipient,$from,$fromName,$subject,$body,$htmlBody,$htmlFooter,$locale,$host);
+        $dispatchStarted=true;
+        $written=0;while($written<strlen($message)){$part=fwrite($socket,substr($message,$written));if($part===false||$part===0)throw new RuntimeException('SMTP write unavailable.');$written+=$part;}
         [$accepted] = smtp_read_response($socket);
+        if($accepted>=400)$dispatchStarted=false;
         if ($accepted !== 250) throw new RuntimeException('SMTP server rejected the message.');
         try { smtp_command($socket, 'QUIT', [221]); } catch (Throwable $quitError) { error_log('[Athar] SMTP quit failed after message acceptance.'); }
         if (!in_array($category, ['transactional','campaign'], true)) $category = 'transactional';
@@ -188,7 +223,7 @@ function send_platform_email(string $recipient, string $subject, string $body, ?
         return true;
     } catch (Throwable $exception) {
         $status = preg_match('/^SMTP command rejected \(([0-9]{3})\)$/D',$exception->getMessage(),$match) ? $match[1] : null;
-        $failureReason = $status === null ? 'تعذر إكمال اتصال SMTP الآمن. راجع الإعدادات والمستلم.' : 'رفض خادم SMTP الطلب ('.$status.').';
+        $failureReason = $dispatchStarted ? 'delivery_outcome_unknown' : ($status === null ? 'تعذر إكمال اتصال SMTP الآمن. راجع الإعدادات والمستلم.' : 'رفض خادم SMTP الطلب ('.$status.').');
         error_log('[Athar] SMTP delivery failed'.($status === null ? '.' : ' ('.$status.').'));
         return false;
     } finally { fclose($socket); }

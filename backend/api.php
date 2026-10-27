@@ -12,7 +12,23 @@ use Athar\Infrastructure\SecretKey;
 require_once __DIR__.'/bootstrap.php';
 try {
     $pdo=Database::connect();$key=SecretKey::authentication();
-    $mailer=static function(string $to,string $subject,string $body):bool { $failure=null;$sent=send_platform_email($to,$subject,$body,$failure);if(!$sent)error_log('[Athar] OTP email unavailable: '.($failure??'unknown failure'));return $sent; };
+    $mailer=static function(string $to,string $subject,string $body,int $userId,string $purpose,int $tokenId,string $locale) use ($pdo):bool {
+        try {
+            return (new \Athar\Engagement\EmailOutboxService($pdo))->enqueueTransactional(
+                $userId,
+                $subject,
+                $body,
+                'otp:' . $purpose . ':' . $tokenId,
+                $locale,
+                600,
+                authTokenId: $tokenId,
+                purpose: $purpose
+            );
+        } catch (Throwable $queueError) {
+            error_log('[Athar API] OTP email queue unavailable.');
+            return false;
+        }
+    };
     $kernel=new ApiKernel($pdo,new AuthService($pdo,new OtpService($pdo,$key,$mailer)),new RateLimiter($pdo,$key),new \Athar\NightPrayer\NightPrayerService($pdo,SecretKey::privateData()));
     try {$request=Request::fromGlobals();$response=$kernel->handle($request);}
     catch(ApiError $e){$request=new Request($_SERVER['REQUEST_METHOD']??'GET','/api/v1',[],['Accept-Language'=>$_SERVER['HTTP_ACCEPT_LANGUAGE']??'ar']);$response=$kernel->error($request,$e->getMessage(),$e->status,$e->fields);}

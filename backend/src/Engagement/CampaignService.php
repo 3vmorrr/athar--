@@ -177,6 +177,10 @@ final class CampaignService
             if(($actor['role']??'')!=='owner'&&(int)$campaign['created_by']!==(int)$actor['id'])throw new ApiError('forbidden',403);
             $this->db->prepare("UPDATE engagement_campaigns SET status='cancelled',cancelled_at=UTC_TIMESTAMP(),revision=revision+1,updated_at=UTC_TIMESTAMP() WHERE id=?")->execute([$id]);
             $this->db->prepare("UPDATE engagement_campaign_recipients SET status='cancelled',last_error_code='campaign_cancelled' WHERE campaign_id=? AND status IN ('queued','failed')")->execute([$id]);
+            if($this->tableExists('email_outbox')){
+                $this->db->prepare("UPDATE email_outbox o JOIN engagement_campaign_recipients r ON r.id=o.campaign_delivery_id SET o.status='cancelled',o.last_error_code='campaign_cancelled' WHERE r.campaign_id=? AND o.status='pending'")->execute([$id]);
+                $this->db->prepare("UPDATE engagement_campaign_recipients r JOIN email_outbox o ON o.campaign_delivery_id=r.id SET r.status='cancelled',r.last_error_code='campaign_cancelled' WHERE r.campaign_id=? AND o.status='cancelled' AND r.status='processing'")->execute([$id]);
+            }
             $this->event($id,'campaign_cancelled',(int)$actor['id'],[]);
             $this->audit($actor,'engagement-campaign-cancelled',$id);
             $this->db->commit();
@@ -279,7 +283,7 @@ final class CampaignService
         $where=["u.suspended_at IS NULL","u.email_verified_at IS NOT NULL"];$args=[];
         if($channel==='push')$where[]='COALESCE(p.push_campaign_opt_in,0)=1';
         else{$where[]='u.email_marketing_opt_in=1';$where[]='COALESCE(p.email_campaign_opt_in,u.email_marketing_opt_in)=1';}
-        $localeExpression="CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='en' THEN 'en' WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='ar' THEN 'ar' ELSE COALESCE(p.locale,'ar') END";
+        $localeExpression="CASE WHEN p.locale_is_explicit=1 THEN p.locale WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='en' THEN 'en' WHEN JSON_UNQUOTE(JSON_EXTRACT(u.preferences_json,'$.language'))='ar' THEN 'ar' ELSE COALESCE(p.locale,'ar') END";
         if($campaign['audience_locale']!==null){$where[]=$localeExpression.'=?';$args[]=$campaign['audience_locale'];}
         if($campaign['audience_type']==='test_recipient'){$where[]='u.id=?';$args[]=$actorId;}
         $join='';
@@ -296,6 +300,13 @@ final class CampaignService
         $sql='SELECT DISTINCT u.id,'.$localeExpression.' locale,p.quiet_start,p.quiet_end,p.timezone FROM users u LEFT JOIN engagement_channel_preferences p ON p.user_id=u.id'.$join.' WHERE '.implode(' AND ',$where).' ORDER BY u.id';
         // Preview and confirmation use the same complete consent-safe audience.
         $q=$this->db->prepare($sql);$q->execute($args);return ['available'=>true,'reason'=>null,'users'=>$q->fetchAll()];
+    }
+
+    public function deliveryNotBefore(int $user,string $channel,array $campaign,string $scheduled): string
+    {
+        $q=$this->db->prepare('SELECT quiet_start,quiet_end,timezone FROM engagement_channel_preferences WHERE user_id=?');$q->execute([$user]);
+        $preferences=$q->fetch()?:['quiet_start'=>null,'quiet_end'=>null,'timezone'=>null];
+        return $this->notBefore($this->frequencyNotBefore($user,$channel,(int)$campaign['min_frequency_hours'],$scheduled),$campaign,$preferences);
     }
 
     private function notBefore(string $scheduled,array $campaign,array $user): string
@@ -378,7 +389,7 @@ final class CampaignService
 
     private function safeReason(string $code): string
     {
-        return in_array($code,['provider_unavailable','provider_rejected','invalid_token','rate_limited','timeout','transport_error','ttl_expired','stale_lock_recovered','campaign_cancelled','push_consent_unavailable','email_consent_unavailable','email_opt_out','push_opt_out','delivery_policy_exceeds_ttl','delivery_policy_deferred','email_outbox_expired'],true)?$code:'delivery_failed';
+        return in_array($code,['provider_unavailable','provider_rejected','invalid_token','rate_limited','timeout','transport_error','ttl_expired','stale_lock_recovered','campaign_cancelled','push_consent_unavailable','email_consent_unavailable','email_opt_out','push_opt_out','delivery_policy_exceeds_ttl','delivery_policy_deferred','email_outbox_expired','delivery_outcome_unknown','restored_requires_reconfirmation'],true)?$code:'delivery_failed';
     }
 
     private function decorate(array $row): array

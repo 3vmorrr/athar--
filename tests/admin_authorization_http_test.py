@@ -126,4 +126,4 @@ check(any(row['target_type'] == 'admin-user' and row['target_id'] == str(race['i
 check(all('private-canary' not in str(row) for row in audit), 'Untrusted action text never enters audit storage')
 
 (fixture.ROOT / 'storage/engineering/admin-rbac-fixture.json').write_text(json.dumps({'fixture_only': True, 'owner_email': owner['email'], 'manager_email': manager['email'], 'password': 'AdminFixture123!'}), encoding='utf-8')
-print(f'PASS: {checks} actual HTTP Admin action/target/rollback/concurrency assertions (plus60 authentication/shell).')
+print(f'PASS: {checks} actual HTTP Admin action/target/rollback/concurrency assertions (plus{fixture.checks} authentication/shell).')

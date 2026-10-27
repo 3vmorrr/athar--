@@ -1,5 +1,9 @@
 # Engineering change log
 
+## WP20 Email checkpoint —2026-10-27
+
+Source infrastructure reviewed through0748860ff54ab7b0399613458f36eed0f8da5205. Encrypted priority outbox, token/recipient binding, signed consent, Owner template tests and safe worker recovery accepted locally.193 combined backend+final35 focused;42 HTTP/worker+32 service+15 browser;219 Admin privacy/auth PASS. Restored adjacent overview/recovery/create panels removed in preceding campaign view replacement;navigation and actual authoring verified. [Evidence and limits](../testing/EMAIL_OUTBOX.md). On reviewed push:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Real Gmail20.5 and canonical Push/combined acceptance remain open. Next21.19/21.2;WP02.8 preserved.
+
 ## WP19 campaign foundation —2026-10-27
 
 Initial7 source commits throughc191c3a plus attributed later campaign corrections adopted selectively; transactional draft/audit, strict DST schedules, consent/locale snapshots, fenced queue attempts, retry/TTL/frequency/quiet deferral, redacted analytics and bilingual Admin. Retired browser bulk-send route/controls.47 campaign+67 recovery+692 authorization;17 HTTP+25 browser PASS. [Evidence](../testing/ADMIN_CAMPAIGNS.md). WP19 remains4 PARTIAL: actual Push dispatcher absent in source; canonical WP15 push_devices relationship preserved, no duplicate registry.23 validated+3 native-pending+4 reviewed partial+119 unclassified=149. Continue20.1 while provider/dependency acceptance stays open.

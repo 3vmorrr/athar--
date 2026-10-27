@@ -80,6 +80,15 @@ if (!empty($flashMessage['message'])) $flashMessage['message']=$adminTranslate((
     <?php endif; ?>
     <?php if (admin_can($admin,'night_prayer_defaults')) require dirname(__DIR__,3).'/admin/Views/night-defaults.php'; ?>
     <?php require dirname(__DIR__,3).'/admin/Views/campaigns.php'; ?>
+    <?php require dirname(__DIR__, 3) . '/admin/Views/overview.php'; ?>
+    <?php require dirname(__DIR__, 3) . '/admin/Views/recovery.php'; ?>
+    <div class="admin-grid admin-panel" id="admin-create" data-admin-panel hidden>
+        <?php $scholarDraft=[]; $scholarFormMode='create'; require dirname(__DIR__,3).'/admin/Views/scholar-form.php'; ?>
+        <?php $seriesDraft=[]; $seriesFormMode='create'; require dirname(__DIR__,3).'/admin/Views/series-form.php'; ?>
+        <?php $lessonDraft=[]; $lessonFormMode='create'; require dirname(__DIR__,3).'/admin/Views/lesson-form.php'; ?>
+        <?php $bookDraft=[]; $bookFormMode='create'; require dirname(__DIR__,3).'/admin/Views/book-form.php'; ?>
+        <?php $adhkarDraft=[]; $adhkarFormMode='create'; require dirname(__DIR__,3).'/admin/Views/adhkar-form.php'; ?>
+    </div>
     <section class="admin-inventory admin-panel" id="admin-content" data-admin-panel hidden><h2><?= $seriesCopy('المحتوى المحفوظ') ?></h2>
         <div class="inventory-grid"><article><h3><?= $scholarCopy('العلماء') ?> <span><?= count($scholars) ?></span></h3><?php $contentType='scholar'; foreach ($scholars as $row): ?><div class="inventory-row"><p><?= e($row['name']) ?> · <?= $scholarCopy($row['is_published'] ? 'منشور' : 'مسودة') ?></p><?php $rowId=(int) $row['id']; require __DIR__ . '/admin-row-actions.php'; ?></div><?php endforeach; ?></article>
         <article><h3><?= $seriesCopy('السلاسل') ?> <span><?= count($seriesItems) ?></span></h3><?php $contentType='series'; foreach ($seriesItems as $row): ?><div class="inventory-row"><p><?= e($row['title']) ?> · <?= $seriesCopy($row['is_published'] ? 'منشور' : 'مسودة') ?></p><?php $rowId=(int) $row['id']; require __DIR__ . '/admin-row-actions.php'; ?></div><?php endforeach; ?></article>

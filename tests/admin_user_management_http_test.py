@@ -163,4 +163,4 @@ check(len(Cards(page).rows) == 1 and new_email in Cards(page).rows[0], 'Updated 
 audit = fixture.service("$q=$db->prepare(\"SELECT action FROM audit_logs WHERE actor_id=? AND target_type='user' AND target_id=?\");$q->execute([" + str(authz.manager['id']) + ",'" + str(target['id']) + "']);echo json_encode($q->fetchAll(PDO::FETCH_COLUMN));")
 check(audit.count('admin-user-suspended') == 1 and audit.count('admin-user-restored') == 1 and 'admin-user-email-updated' in audit, 'Effective transitions have one durable audit event')
 (fixture.ROOT/'storage/engineering/admin-users-fixture.json').write_text(json.dumps({'fixture_only':True,'search':prefix,'owner_email':authz.owner['email'],'manager_email':authz.manager['email'],'target_id':target['id'],'target_email':new_email}),encoding='utf-8')
-print(f'PASS: {checks} user administration HTTP/state/token/search assertions (plus120 existing HTTP).')
+print(f'PASS: {checks} user administration HTTP/state/token/search assertions (plus{fixture.checks+authz.checks} existing HTTP).')

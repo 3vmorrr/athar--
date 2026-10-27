@@ -35,7 +35,7 @@ status,_,_=manager.submit({'kind':'engagement-campaign-confirm','campaign_id':ci
 check(status==403,'Admin cannot launch a campaign')
 status,_,html=manager.submit({'kind':'engagement-campaign-cancel','campaign_id':cid,'expected_revision':'2'})
 check(status==200 and sql("echo json_encode($db->query('SELECT status FROM engagement_campaigns WHERE id="+str(cid)+"')->fetchColumn());")=='cancelled','Creator cancellation commits')
-for bad in ({'image_url':'https://'+'user:password'+'@example.invalid/image'},{'scheduled_at':'2026-03-08T02:30','schedule_timezone':'America/New_York'},{'ttl_hours':'0'}):
+for bad in ({'image_url':'https://' + 'user:password' + '@example.invalid/image'},{'scheduled_at':'2026-03-08T02:30','schedule_timezone':'America/New_York'},{'ttl_hours':'0'}):
     status,_,html=manager.submit({**base,**bad})
     check(status==200 and 'Check the campaign fields' in html,'Invalid draft rejected with controlled localized feedback')
 status,_,html=owner.submit({'kind':'campaign-batch','campaign_id':cid})

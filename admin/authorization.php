@@ -51,6 +51,7 @@ function admin_kind_capability(string $kind): ?string
         'scholar', 'series', 'lesson', 'book', 'adhkar', 'content', 'lesson-event' => 'content',
         'comment-review', 'comment-delete' => 'moderation',
         'engagement-campaign-save','engagement-campaign-confirm','engagement-campaign-cancel',
+        'engagement-campaign-test-email',
         'campaign-create', 'campaign-batch', 'campaign-retry-failed',
         'push-campaign-create', 'push-campaign-update', 'push-campaign-cancel',
         'email-campaign-create', 'email-campaign-update', 'email-campaign-cancel' => 'campaigns',
