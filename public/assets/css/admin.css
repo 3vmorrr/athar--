@@ -60,3 +60,6 @@
 
 /* Keep the skip link hidden until keyboard focus, including full-element captures. */
 .admin-skip-link:not(:focus){transform:none;clip:rect(0,0,0,0);clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden;white-space:nowrap}
+
+.admin-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}.admin-preview-grid>section{padding:16px;border:1px solid var(--line);border-radius:14px;overflow-wrap:anywhere}.admin-campaign-list{display:grid;gap:14px;margin-block:18px}.admin-campaign-preview,.admin-campaign-composer{margin-block:18px}.admin-campaign-preview p{overflow-wrap:anywhere}.admin-campaign-composer fieldset{display:grid;gap:16px;border:0;padding:0;min-width:0}.admin-campaign-composer fieldset:disabled{opacity:.7}@media(max-width:720px){.admin-preview-grid{grid-template-columns:1fr}}
+.admin-campaign-stats{display:flex;flex-wrap:wrap;gap:8px;margin-block:16px}.admin-campaign-stats span{padding:7px 11px;border-radius:14px;background:var(--surface2)}#admin-campaigns .button:disabled{opacity:.5;cursor:not-allowed}

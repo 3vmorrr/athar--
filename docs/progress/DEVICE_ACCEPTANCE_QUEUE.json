@@ -28,6 +28,22 @@
         "Reconcile new public Night Prayer config with native8.6: actual supported calculation/high-latitude identifiers and attribution, enabled suggestions and explicit choices; never overwrite existing private preferences or infer automatic endpoint consumption. Check CAS/conflict, offline retained state and AR/EN."
       ],
       "existing_evidence": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md: relevant backend, actual HTTP and desktop/phone-sized browser checks; no new Android code or physical PASS."
+    },
+    {
+      "id": "campaign-push-delivery",
+      "state": "WAITING CANONICAL WP15 DISPATCHER",
+      "tasks": [
+        "19.1",
+        "19.2",
+        "19.3",
+        "19.4"
+      ],
+      "device": "Authorized Samsung API27 ARM32, currently disconnected",
+      "scenarios": [
+        "After canonical WP15 integration, verify Owner test campaign actually reaches the correct active environment/device; revoked/switched-account tokens excluded.",
+        "Verify native deep link, locale, quiet/frequency/TTL, duplicate/retry and cancellation journey; no worship-history targeting or fake delivery analytics."
+      ],
+      "existing_evidence": "ADMIN_CAMPAIGNS.md: local domain/Admin gates only; no provider acceptance."
     }
   ],
   "device_availability": "2026-10-27 adb devices -l: no connected devices; no new physical acceptance claimed."

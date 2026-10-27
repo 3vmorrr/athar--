@@ -1,9 +1,9 @@
 {
-  "codex_head": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+  "codex_head": "1167b847ff081f4e3546c908c6956e8d52fa98a1",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+  "LAST_PARALLEL_INTEGRATED_SHA": "c191c3a6637f8685936176b3e3fa4d6ee8e709da",
   "cursor_policy": "Cursor records contiguous reviewed source code adopted or explicitly superseded, with applicable batch checks passed. It does not close separately queued required device/provider gates; task acceptance remains independent. Cursor advance becomes effective with this stable batch commit and verified push.",
   "groups": [
     {
@@ -3196,8 +3196,8 @@
     }
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
-  "LAST_REVIEWED_PARALLEL_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
-  "reviewed_cursor_scope": "18.5-18.9:17 consecutive source commits937ae074..e217cee1 reviewed/adopted with fixes; backend/HTTP/browser/package gates PASS.18.6/18.9 native acceptance pending;18.4 remains pending. Next source WP19.",
+  "LAST_REVIEWED_PARALLEL_SHA": "c191c3a6637f8685936176b3e3fa4d6ee8e709da",
+  "reviewed_cursor_scope": "Initial7 campaign commits5ebeb719..c191c3a adopted with fixes. Later campaign corrections selectively adopted and attributed in campaign_batch; interleaved WP20 commits remain unconsumed. No cursor leap across WP20.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3506,8 +3506,8 @@
       }
     ]
   },
-  "LAST_INTEGRATED_PARALLEL_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
-  "review_worktree_checkout": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+  "LAST_INTEGRATED_PARALLEL_SHA": "c191c3a6637f8685936176b3e3fa4d6ee8e709da",
+  "review_worktree_checkout": "c191c3a6637f8685936176b3e3fa4d6ee8e709da",
   "migration_reservations": {
     "027_lesson_provider_identity": {
       "state": "DISPOSABLE POPULATED-SCHEMA / LEGACY RECOVERY TESTED; PUSH VERIFIED",
@@ -3520,19 +3520,43 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
+      "20.1",
+      "20.2",
+      "20.3",
+      "20.4"
+    ],
+    "scope": "Email branding/preferences/encrypted durable outbox and confirmed campaigns",
+    "state": "REVIEW PENDING",
+    "external_gate": "20.5 requires authorized actual Gmail inbox proof; keep open and continue other work."
+  },
+  "progress_audit": "Historic snapshot docs/progress/PROGRESS_AUDIT_2026-10-27.json at14d:20 strict validated. This stable WP18 batch adds3 applicable closures=>23/149,126 requiring integration/review/acceptance; exact implementation totals remain UNVERIFIED.",
+  "campaign_batch": {
+    "tasks": [
       "19.1",
       "19.2",
       "19.3",
       "19.4"
     ],
-    "scope": "WP19 consent-safe push campaigns",
-    "state": "REVIEW PENDING",
-    "immediate_high_risk_gates": [
-      "audience consent/ownership/privacy",
-      "queue cancellation/delivery/concurrency",
-      "provider secret and payload boundaries"
+    "classification": "KEEP WITH FIXES",
+    "baseline": "1167b847ff081f4e3546c908c6956e8d52fa98a1",
+    "source_initial_range": "5ebeb719..c191c3a6",
+    "later_campaign_corrections": [
+      "cb9e4e4",
+      "3d33bd0",
+      "082a69c",
+      "bcd28eb",
+      "ad6ce86",
+      "281e9b2",
+      "dae7acb"
     ],
-    "batch_gate": "Relevant campaign domain/schema/HTTP/browser gates; provider/device acceptance separate, never simulated as delivered."
-  },
-  "progress_audit": "Historic snapshot docs/progress/PROGRESS_AUDIT_2026-10-27.json at14d:20 strict validated. This stable WP18 batch adds3 applicable closures=>23/149,126 requiring integration/review/acceptance; exact implementation totals remain UNVERIFIED."
+    "findings": [
+      "Canonical WP15 table is push_devices, not notification_devices. No campaign Push dispatcher exists in source; preserve dependency and block launch.",
+      "Draft insert/event/audit need one transaction. Strict scalar, public-destination and DST validation required.",
+      "Preview transport readiness must not fabricate eligible recipient counts.",
+      "Recipient snapshots, later consent checks, leases, cancellation and redacted analytics need focused tests."
+    ],
+    "state": "INTEGRATED FOUNDATION / PUSH DISPATCH AND FOLLOW ACCEPTANCE PENDING",
+    "acceptance": "docs/testing/ADMIN_CAMPAIGNS.md;47 domain;67 recovery;692 capability;17 HTTP;25 browser. No real provider send, canonical device registry not imported early.",
+    "integration_commit": "Receipt follows next checkpoint; this commit cannot contain its own SHA."
+  }
 }

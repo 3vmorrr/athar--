@@ -17,6 +17,8 @@ foreach (['events_page' => $lessonEventPageNumber ?? 1, 'event_edit' => $eventFo
 }
 if (($commentPage ?? 1) > 1) $userContext['comments_page']=$commentPage;
 if (($commentFilter ?? 'all') !== 'all') $userContext['comments_status']=$commentFilter;
+if (($campaignPage ?? 1)>1) $userContext['campaigns_page']=$campaignPage;
+if (($campaignFocus ?? 0)>0) $userContext['campaign_preview']=$campaignFocus;
 $chrome = $rtl ? [
     'dashboard' => 'لوحة الإدارة',
     'site' => 'فتح أثر',
@@ -54,7 +56,6 @@ $chrome = $rtl ? [
     <link rel="icon" type="image/png" href="/assets/images/athar-favicon.png">
     <link rel="stylesheet" href="/assets/css/admin.css?v=<?= e($adminCssVersion) ?>">
     <script src="/assets/js/admin.js?v=<?= e($adminJsVersion) ?>" defer></script>
-    <script src="/assets/js/admin-campaign-legacy.js?v=1" defer></script>
 </head>
 <body class="admin-app" data-close-menu="<?= e($chrome['close_menu']) ?>">
     <a class="admin-skip-link" href="#admin-main"><?= $rtl ? 'انتقل إلى المحتوى' : 'Skip to content' ?></a>

@@ -11,6 +11,7 @@ require_once dirname(__DIR__) . '/admin/lessons.php';
 require_once dirname(__DIR__) . '/admin/books.php';
 require_once dirname(__DIR__) . '/admin/editorial.php';
 require_once dirname(__DIR__) . '/admin/services.php';
+require_once dirname(__DIR__) . '/admin/campaigns.php';
 require_once dirname(__DIR__) . '/admin/events.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
@@ -685,74 +686,13 @@ if ($path === '/admin') {
             } elseif ($kind === 'dorar-settings') {
                 admin_save_dorar($admin,$_POST);
                 flash('تم حفظ إعدادات بحث الدرر السنية.');redirect('/admin#admin-services');
-            } elseif ($kind === 'campaign-create') {
-                $subject = trim((string) ($_POST['subject'] ?? ''));
-                $body = trim((string) ($_POST['body'] ?? ''));
-                if (mb_strlen($subject, 'UTF-8') < 3 || mb_strlen($subject, 'UTF-8') > 180 || mb_strlen($body, 'UTF-8') < 10 || mb_strlen($body, 'UTF-8') > 4000) throw new RuntimeException('اكتب عنوانًا من 3–180 حرفًا ورسالة من 10–4000 حرف.');
-                if (platform_setting('smtp_username') === '' || platform_setting('smtp_password_cipher') === '') throw new RuntimeException('اضبط بريد Gmail وApp Password أولًا من إعدادات الخدمات.');
-                $eligible = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
-                if ($eligible < 1) throw new RuntimeException('لا يوجد مستخدمون أكدوا بريدهم واشتركوا في رسائل التحديثات بعد.');
-                db()->beginTransaction();
-                db()->prepare("INSERT INTO email_campaigns (subject,body,status,created_by) VALUES (?,?,'draft',?)")->execute([$subject,$body,$admin['id']]);
-                $campaignId = (int) db()->lastInsertId();
-                db()->prepare("INSERT INTO email_campaign_recipients (campaign_id,user_id,email) SELECT ?,id,email FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->execute([$campaignId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-created','email-campaign',(string)$campaignId]);
-                db()->commit();
-                flash('تم تجهيز الحملة لـ' . $eligible . ' مشترك. اضغط «بدء الإرسال» مرة واحدة لإكمال الدفعات تلقائيًا.'); redirect('/admin#admin-campaigns');
-            } elseif ($kind === 'campaign-batch') {
-                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$campaignId || $campaignId < 1) throw new RuntimeException('الحملة المحددة غير صالحة.');
-                $pdo = db(); $pdo->beginTransaction();
-                $campaignQuery = $pdo->prepare('SELECT subject,body,status FROM email_campaigns WHERE id=? FOR UPDATE'); $campaignQuery->execute([$campaignId]); $campaign = $campaignQuery->fetch();
-                if (!$campaign || !in_array($campaign['status'], ['draft','sending','paused'], true)) throw new RuntimeException('الحملة غير متاحة للإرسال أو اكتملت بالفعل.');
-                $pdo->prepare("UPDATE email_campaigns SET status='sending' WHERE id=?")->execute([$campaignId]);
-                $pdo->prepare("UPDATE email_campaign_recipients SET status='pending' WHERE campaign_id=? AND status='processing' AND updated_at < DATE_SUB(UTC_TIMESTAMP(), INTERVAL 15 MINUTE)")->execute([$campaignId]);
-                $recipientsQuery = $pdo->prepare("SELECT id,user_id,email FROM email_campaign_recipients WHERE campaign_id=? AND status='pending' ORDER BY id LIMIT 3 FOR UPDATE");
-                $recipientsQuery->execute([$campaignId]); $recipients = $recipientsQuery->fetchAll();
-                foreach ($recipients as $reservedRecipient) $pdo->prepare("UPDATE email_campaign_recipients SET status='processing' WHERE id=?")->execute([$reservedRecipient['id']]);
-                $pdo->commit(); $sentNow = 0; $failedNow = 0; $skippedNow = 0; $quotaPaused = false;
-                foreach ($recipients as $recipient) {
-                    $recipientUser = null;
-                    if ($recipient['user_id'] !== null) { $userQuery = $pdo->prepare('SELECT email,display_name,email_marketing_opt_in,email_verified_at FROM users WHERE id=?'); $userQuery->execute([$recipient['user_id']]); $recipientUser = $userQuery->fetch(); }
-                    if (!$recipientUser || !$recipientUser['email_marketing_opt_in'] || !$recipientUser['email_verified_at']) {
-                        $pdo->prepare("UPDATE email_campaign_recipients SET status='skipped',failure_note='لم يعد المستخدم مشتركًا أو أن بريده غير مؤكد.' WHERE id=? AND status='processing'")->execute([$recipient['id']]); $skippedNow++; continue;
-                    }
-                    $sentLastDay = (int) $pdo->query("SELECT COUNT(*) FROM email_send_events WHERE sent_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 24 HOUR)")->fetchColumn();
-                    if ($sentLastDay >= 450) { $quotaPaused = true; $pdo->prepare("UPDATE email_campaign_recipients SET status='pending' WHERE id=? AND status='processing'")->execute([$recipient['id']]); continue; }
-                    $unsubscribeUrl = email_campaign_unsubscribe_url((int) $recipient['user_id']);
-                    $displayName = trim((string) ($recipientUser['display_name'] ?? ''));
-                    $greeting = $displayName !== '' ? "أهلًا {$displayName}،\n\n" : '';
-                    $footerText = "\n\nوصلتك هذه الرسالة لأنك اشتركت في تحديثات أثر. لإلغاء الاشتراك: {$unsubscribeUrl}";
-                    $htmlBody = ($displayName !== '' ? '<p style="margin:0 0 12px">أهلًا ' . e($displayName) . '،</p>' : '') . nl2br(e((string) $campaign['body']), false);
-                    $htmlFooter = 'وصلتك هذه الرسالة لأنك اشتركت في تحديثات أثر. <a href="' . e($unsubscribeUrl) . '" style="color:#1e6753;font-weight:bold">إلغاء الاشتراك</a>';
-                    $failure = '';
-                    try { $delivered = send_platform_email((string) $recipientUser['email'], (string) $campaign['subject'], $greeting . (string) $campaign['body'] . $footerText, $failure, $htmlBody, $htmlFooter, 'campaign'); }
-                    catch (Throwable $mailError) { $failure = 'تعذر تجهيز رسالة البريد. راجع إعدادات Gmail.'; $delivered = false; }
-                    if ($delivered) { $pdo->prepare("UPDATE email_campaign_recipients SET status='sent',sent_at=UTC_TIMESTAMP(),failure_note=NULL WHERE id=? AND status='processing'")->execute([$recipient['id']]); $sentNow++; }
-                    else { $pdo->prepare("UPDATE email_campaign_recipients SET status='failed',failure_note=? WHERE id=? AND status='processing'")->execute([mb_substr($failure ?: 'فشل إرسال البريد.',0,255,'UTF-8'),$recipient['id']]); $failedNow++; }
-                }
-                $remainingQuery = $pdo->prepare("SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id=? AND status='pending'"); $remainingQuery->execute([$campaignId]); $remaining = (int) $remainingQuery->fetchColumn();
-                $processingQuery = $pdo->prepare("SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id=? AND status='processing'"); $processingQuery->execute([$campaignId]); $processing = (int) $processingQuery->fetchColumn();
-                if ($remaining === 0 && $processing === 0) $pdo->prepare("UPDATE email_campaigns SET status='completed' WHERE id=?")->execute([$campaignId]);
-                elseif ($quotaPaused) $pdo->prepare("UPDATE email_campaigns SET status='paused' WHERE id=?")->execute([$campaignId]);
-                $pdo->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-batch-sent','email-campaign',(string)$campaignId]);
-                if (isset($_POST['ajax_campaign_batch'])) {
-                    $campaignStats = $pdo->prepare("SELECT COUNT(*) AS total, SUM(status='sent') AS sent, SUM(status IN ('pending','processing')) AS pending, SUM(status='failed') AS failed, SUM(status='skipped') AS skipped FROM email_campaign_recipients WHERE campaign_id=?");
-                    $campaignStats->execute([$campaignId]);
-                    header('Content-Type: application/json; charset=utf-8');
-                    echo json_encode(['ok'=>true,'campaign_id'=>(int)$campaignId,'sent_now'=>$sentNow,'failed_now'=>$failedNow,'skipped_now'=>$skippedNow,'paused'=>$quotaPaused,'stats'=>$campaignStats->fetch()], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR); exit;
-                }
-                flash("نتيجة الدفعة: {$sentNow} أُرسلت، {$failedNow} فشلت، {$skippedNow} تم تخطيها، و{$remaining} متبقية." . ($quotaPaused ? ' توقفت الحملة عند حد الإرسال اليومي.' : '')); redirect('/admin#admin-campaigns');
-            } elseif ($kind === 'campaign-retry-failed') {
-                $campaignId = filter_var($_POST['campaign_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$campaignId || $campaignId < 1) throw new RuntimeException('الحملة المحددة غير صالحة.');
-                db()->beginTransaction();
-                $campaignCheck = db()->prepare('SELECT id FROM email_campaigns WHERE id=? FOR UPDATE'); $campaignCheck->execute([$campaignId]);
-                if (!$campaignCheck->fetchColumn()) throw new RuntimeException('الحملة غير موجودة.');
-                db()->prepare("UPDATE email_campaign_recipients SET status='pending',failure_note=NULL WHERE campaign_id=? AND status='failed'")->execute([$campaignId]);
-                db()->prepare("UPDATE email_campaigns SET status='sending' WHERE id=?")->execute([$campaignId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'email-campaign-failures-requeued','email-campaign',(string)$campaignId]);
-                db()->commit(); flash('أُعيدت الرسائل الفاشلة إلى قائمة الإرسال.'); redirect('/admin#admin-campaigns');
+            } elseif (in_array($kind,['engagement-campaign-save','engagement-campaign-confirm','engagement-campaign-cancel'],true)) {
+                $campaignId=admin_campaign_action($admin,$_POST);
+                flash(admin_locale()==='en'?'Campaign saved. Scheduling creates a queue; delivery is not performed in this request.':'تم حفظ الحملة. الجدولة تُنشئ طابورًا ولا تُنفذ التسليم داخل هذا الطلب.');
+                redirect('/admin?campaign_preview='.$campaignId.'#admin-campaigns');
+            } elseif (in_array($kind,['campaign-create','campaign-batch','campaign-retry-failed'],true)) {
+                http_response_code(410);
+                throw new RuntimeException(admin_locale()==='en'?'The old bulk-send action is retired. Use campaign drafts and Owner confirmation.':'أُلغي إجراء الإرسال الجماعي القديم. استخدم مسودات الحملات وتأكيد المالك.');
             } elseif ($kind === 'user-suspension') {
                 $targetId = filter_var($_POST['user_id'] ?? null, FILTER_VALIDATE_INT);
                 $nextState = (string) ($_POST['state'] ?? '');
@@ -999,13 +939,18 @@ if ($path === '/admin') {
     $nightPrayerPublicDefaults=null;
     if (admin_can($admin,'night_prayer_defaults')) { try { $nightPrayerPublicDefaults=\Athar\NightPrayer\PublicNightPrayerDefaults::load(db()); } catch (Throwable $configReadFailure) {} }
     $mailingOptInCount = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
-    $emailCampaigns = db()->query("SELECT c.*,u.email AS creator_email,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id) AS recipient_total,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='sent') AS recipient_sent,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status IN ('pending','processing')) AS recipient_pending,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='failed') AS recipient_failed,
-        (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id AND r.status='skipped') AS recipient_skipped
-        FROM email_campaigns c LEFT JOIN users u ON u.id=c.created_by ORDER BY c.id DESC LIMIT 30")->fetchAll();
+    $campaignPageData=['items'=>[],'pagination'=>['page'=>1,'per_page'=>20,'total'=>0,'has_more'=>false]];
+    $campaignPreview=null;$campaignUnavailable=false;
+    if(!empty($admin['email_verified_at'])) {
+        try {
+            $campaignService=new \Athar\Engagement\CampaignService(db());
+            $campaignPage=max(1,(int)(filter_var($_GET['campaigns_page']??1,FILTER_VALIDATE_INT)?:1));
+            $campaignPageData=$campaignService->page($admin,$campaignPage,20);
+            $campaignFocus=(int)(filter_var($_GET['campaign_preview']??($_POST['campaign_id']??0),FILTER_VALIDATE_INT)?:0);
+            if($campaignFocus>0)$campaignPreview=$campaignService->preview($admin,$campaignFocus);
+        } catch(Throwable $campaignLoadFailure) {$campaignUnavailable=true;}
+    } else $campaignUnavailable=true;
+
     $dorarTokenConfigured = platform_setting('dorar_api_token_cipher') !== '' || trim((string)(getenv('ATHAR_DORAR_API_TOKEN') ?: '')) !== '';
     if (($admin['role'] ?? '') === 'owner') $backupArtifacts = db()->query('SELECT id,schema_version,byte_size,status,expires_at,created_at FROM backup_artifacts ORDER BY id DESC LIMIT 20')->fetchAll();
     $backupGrantReady = !empty($_SESSION['backup_grant_id']) && !empty($_SESSION['backup_grant_token']);

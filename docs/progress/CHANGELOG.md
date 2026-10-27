@@ -1,6 +1,10 @@
 # Engineering change log
 
-## WP18 content/services batch checkpoint �2026-10-27
+## WP19 campaign foundation —2026-10-27
+
+Initial7 source commits throughc191c3a plus attributed later campaign corrections adopted selectively; transactional draft/audit, strict DST schedules, consent/locale snapshots, fenced queue attempts, retry/TTL/frequency/quiet deferral, redacted analytics and bilingual Admin. Retired browser bulk-send route/controls.47 campaign+67 recovery+692 authorization;17 HTTP+25 browser PASS. [Evidence](../testing/ADMIN_CAMPAIGNS.md). WP19 remains4 PARTIAL: actual Push dispatcher absent in source; canonical WP15 push_devices relationship preserved, no duplicate registry.23 validated+3 native-pending+4 reviewed partial+119 unclassified=149. Continue20.1 while provider/dependency acceptance stays open.
+
+## WP18 content/services batch checkpoint —2026-10-27
 
 Reviewed17 consecutive source commits through e217cee15082e4e0a0585a5b9a715a88d47f88de. Code adopted9/9 WP18; strict validated6/9:18.4/18.6/18.9 remain queued for native acceptance, Samsung disconnected. Batch118 HTTP+142 browser;978 relevant backend;218 privacy HTTP;15 visual/keyboard PASS. [Reconciliation, focused tests and limits](../testing/ADMIN_CONTENT_SERVICES_BATCH.md). On reviewed commit/verified push,23/149 strictly validated,126 open. Exact implementation totals across branches remain unverified; historical51% estimate is frozen, not completion evidence. Audit snapshot at14d is preserved. Next19.1; WP02.8 remains deferred.
 

@@ -11,7 +11,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'content' => 'Saved content',
     'events' => 'Upcoming & Live',
     'comments' => 'Comment moderation',
-    'campaigns' => 'Email campaigns',
+    'campaigns' => 'Campaigns',
     'services' => 'Service settings',
     'users' => 'User management',
     'backups' => 'Backup & recovery',
@@ -28,7 +28,7 @@ $adminShellCopy = $adminLocale === 'en' ? [
     'content' => 'المحتوى المحفوظ',
     'events' => 'القادم والمباشر',
     'comments' => 'مراجعة التعليقات',
-    'campaigns' => 'حملات البريد',
+    'campaigns' => 'الحملات',
     'services' => 'إعدادات الخدمات',
     'users' => 'إدارة المستخدمين',
     'backups' => 'النسخ والاستعادة',
@@ -79,23 +79,7 @@ if (!empty($flashMessage['message'])) $flashMessage['message']=$adminTranslate((
     <?php require dirname(__DIR__,3).'/admin/Views/services.php'; ?>
     <?php endif; ?>
     <?php if (admin_can($admin,'night_prayer_defaults')) require dirname(__DIR__,3).'/admin/Views/night-defaults.php'; ?>
-    <section class="admin-inventory admin-panel" id="admin-campaigns" data-admin-panel hidden>
-        <div class="section-heading"><div><span class="eyebrow">التواصل مع المجتمع</span><h2>حملات البريد الإلكتروني</h2></div><span class="source-chip"><?= number_format($mailingOptInCount) ?> مشتركًا مؤكد البريد</span></div>
-        <p class="source-note">تصل الحملة فقط لمن أكد بريده واختار الاشتراك. ابدأ الإرسال مرة واحدة وسيكمل الموقع تلقائيًا على دفعات من 3 رسائل، ويمكنك إيقافه بعد الدفعة الحالية. يتوقف عند 450 رسالة خلال 24 ساعة لترك مساحة لرسائل التحقق. كل رسالة تحمل شعار أثر ورابط إلغاء الاشتراك.</p>
-        <article class="knowledge-card admin-campaign-composer"><h3>إنشاء حملة</h3><form class="form-stack" method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-create"><label>عنوان الرسالة<input name="subject" maxlength="180" minlength="3" required></label><label>نص الرسالة<textarea name="body" maxlength="4000" minlength="10" rows="7" required></textarea><small>نص عادي آمن؛ سيظهر داخل قالب أثر المتوافق مع Gmail والهواتف.</small></label><button class="button button-primary" type="submit" <?= !$mailingOptInCount || !$smtpPasswordConfigured ? 'disabled' : '' ?>>تجهيز الحملة للمشتركين</button></form><?php if (!$smtpPasswordConfigured): ?><p class="source-note">احفظ بريد Gmail وApp Password أولًا من إعدادات الخدمات.</p><?php elseif (!$mailingOptInCount): ?><p class="source-note">لا يوجد مشترك مؤكد البريد بعد. يمكن للمستخدم الاشتراك من بيانات الحساب.</p><?php endif; ?></article>
-        <p class="source-note admin-campaign-feedback" data-campaign-feedback role="status" aria-live="polite"></p>
-        <button class="button button-secondary" type="button" data-campaign-stop hidden>إيقاف بعد الدفعة الحالية</button>
-        <div class="admin-campaign-list"><h3>الحملات السابقة</h3><?php if (!$emailCampaigns): ?><p class="source-note">لم تُنشأ حملات بعد.</p><?php else: ?><?php foreach ($emailCampaigns as $campaign): $campaignStatus = ['draft'=>'جاهزة للإرسال','sending'=>'قيد الإرسال','paused'=>'متوقفة مؤقتًا','completed'=>'مكتملة'][$campaign['status']] ?? $campaign['status']; ?><article class="knowledge-card admin-campaign-row"><div class="admin-campaign-heading"><div><strong><?= e($campaign['subject']) ?></strong><p>أُنشئت <?= e($campaign['created_at']) ?> · بواسطة <?= e($campaign['creator_email'] ?: 'النظام') ?></p></div><span class="source-chip"><?= e($campaignStatus) ?></span></div><div class="admin-campaign-stats"><span><?= (int)$campaign['recipient_sent'] ?> أُرسلت</span><span><?= (int)$campaign['recipient_pending'] ?> متبقية</span><span><?= (int)$campaign['recipient_failed'] ?> فشلت</span><span><?= (int)$campaign['recipient_skipped'] ?> تم تخطيها</span></div><?php if (in_array($campaign['status'], ['draft','sending','paused'], true) && (int)$campaign['recipient_pending'] > 0): ?><form method="post" class="admin-campaign-action" data-campaign-batch><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-batch"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><button class="button button-primary" type="submit">بدء الإرسال (3 رسائل لكل دفعة)</button></form><?php endif; ?><?php if ((int)$campaign['recipient_failed'] > 0): ?><form method="post" class="admin-campaign-action" data-confirm="ستُعاد الرسائل الفاشلة فقط إلى قائمة الإرسال."><?= csrf_field() ?><input type="hidden" name="kind" value="campaign-retry-failed"><input type="hidden" name="campaign_id" value="<?= (int)$campaign['id'] ?>"><button class="button button-secondary" type="submit">إعادة محاولة الرسائل الفاشلة</button></form><?php endif; ?></article><?php endforeach; ?><?php endif; ?></div>
-    </section>
-    <?php require dirname(__DIR__, 3) . '/admin/Views/overview.php'; ?>
-    <?php require dirname(__DIR__, 3) . '/admin/Views/recovery.php'; ?>
-    <div class="admin-grid admin-panel" id="admin-create" data-admin-panel hidden>
-        <?php $scholarDraft=[]; $scholarFormMode='create'; require dirname(__DIR__,3).'/admin/Views/scholar-form.php'; ?>
-        <?php $seriesDraft=[]; $seriesFormMode='create'; require dirname(__DIR__,3).'/admin/Views/series-form.php'; ?>
-        <?php $lessonDraft=[]; $lessonFormMode='create'; require dirname(__DIR__,3).'/admin/Views/lesson-form.php'; ?>
-        <?php $bookDraft=[]; $bookFormMode='create'; require dirname(__DIR__,3).'/admin/Views/book-form.php'; ?>
-        <?php $adhkarDraft=[]; $adhkarFormMode='create'; require dirname(__DIR__,3).'/admin/Views/adhkar-form.php'; ?>
-    </div>
+    <?php require dirname(__DIR__,3).'/admin/Views/campaigns.php'; ?>
     <section class="admin-inventory admin-panel" id="admin-content" data-admin-panel hidden><h2><?= $seriesCopy('المحتوى المحفوظ') ?></h2>
         <div class="inventory-grid"><article><h3><?= $scholarCopy('العلماء') ?> <span><?= count($scholars) ?></span></h3><?php $contentType='scholar'; foreach ($scholars as $row): ?><div class="inventory-row"><p><?= e($row['name']) ?> · <?= $scholarCopy($row['is_published'] ? 'منشور' : 'مسودة') ?></p><?php $rowId=(int) $row['id']; require __DIR__ . '/admin-row-actions.php'; ?></div><?php endforeach; ?></article>
         <article><h3><?= $seriesCopy('السلاسل') ?> <span><?= count($seriesItems) ?></span></h3><?php $contentType='series'; foreach ($seriesItems as $row): ?><div class="inventory-row"><p><?= e($row['title']) ?> · <?= $seriesCopy($row['is_published'] ? 'منشور' : 'مسودة') ?></p><?php $rowId=(int) $row['id']; require __DIR__ . '/admin-row-actions.php'; ?></div><?php endforeach; ?></article>

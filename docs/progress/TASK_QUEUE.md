@@ -2,7 +2,7 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem reviews every task from the exact recorded source SHA and integrates selectively in logical batches of roughly3–6 related tasks. Fast review covers correctness/contracts/schema/ownership/protected data/privacy/offline/concurrency/accessibility/RTL/premium UI and compile risks. Fix immediately; deep-test high-risk changes immediately. Reuse unchanged reviewed evidence; batch relevant expensive validation, run Work Package gates, broader milestone gates and one exhaustive final WP1–24 audit. Queue physical scenarios for shared device sessions. Commit/push/verify after stable integration batches, record exact reviewed/integrated cursors and each task status honestly. No bulk merge or source-only acceptance. WP02.8 stays deferred until available parallel batches stabilize. Continue without per-task permission.
 
-Snapshot: 2026-10-27. Current task: **19.1**. Open integration/acceptance tasks: **126**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+Snapshot: 2026-10-27. Current task: **20.1**. Open integration/acceptance tasks: **126**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
 
 Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 
@@ -1062,7 +1062,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.1 — Push campaign composer and preview
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 18.9.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 18.9.
 - Exact scope: Build localized draft/preview/test-recipient workflow with explicit final-send confirmation.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: Draft/escaping/payload/role/confirmation/no implicit send tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1072,7 +1072,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.2 — Consent-safe campaign audiences
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.1.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.1.
 - Exact scope: Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices.
 - Files/modules: backend/src/Engagement/ (new); admin/ (new).
 - Automated gates: Audience opt-in/unfollow/withdrawal/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1082,7 +1082,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.3 — Push campaign queue and cancellation
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.2.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.2.
 - Exact scope: Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send.
 - Files/modules: backend/src/Engagement/ (new); bin/; database/migrations/.
 - Automated gates: Fake provider races/retry/cancel/quotas/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1092,7 +1092,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 19.4 — Campaign history and delivery analytics
 
-- Parent: Work package 19: Push campaigns; state: **NOT STARTED**; dependencies: 19.3.
+- Parent: Work package 19: Push campaigns; state: **PARTIAL**; dependencies: 19.3.
 - Exact scope: Expose permitted counts/status/reasons and audit without sensitive recipient payloads.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: RBAC/redaction/paging/reconciliation/retry counts tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
