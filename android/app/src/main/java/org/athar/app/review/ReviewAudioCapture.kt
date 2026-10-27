@@ -109,7 +109,14 @@ class ReviewAudioCapture(private val context: Context) {
                         AudioRecord.RECORDSTATE_RECORDING,
                 )
                 val pcm = ShortArray(ReviewAudioCaptureContract.CHUNK_SAMPLES)
-                while (isActive && !stopping.get()) {
+                var capturedSamples = 0L
+                val maximumSamples =
+                    24L * 60L * ReviewAudioCaptureContract.SAMPLE_RATE_HZ
+                while (
+                    isActive &&
+                    !stopping.get() &&
+                    capturedSamples < maximumSamples
+                ) {
                     if (!hasPermission()) {
                         reason = ReviewAudioStopReason.PermissionRevoked
                         break
@@ -121,12 +128,15 @@ class ReviewAudioCapture(private val context: Context) {
                         AudioRecord.READ_BLOCKING,
                     )
                     when {
-                        count > 0 -> onChunk(
-                            ReviewAudioCaptureContract.normalizePcm16(
-                                pcm,
-                                count,
-                            ),
-                        )
+                        count > 0 -> {
+                            capturedSamples += count
+                            onChunk(
+                                ReviewAudioCaptureContract.normalizePcm16(
+                                    pcm,
+                                    count,
+                                ),
+                            )
+                        }
                         count == AudioRecord.ERROR_DEAD_OBJECT -> {
                             reason = ReviewAudioStopReason.Interrupted
                             break

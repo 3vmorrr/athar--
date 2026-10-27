@@ -732,4 +732,21 @@
     <string name="review_model_rollback">الرجوع إلى النسخة السابقة المتحققة</string>
     <string name="review_model_remove">حذف حزمة النموذج من الجهاز</string>
     <string name="review_model_privacy_note">هذه المرحلة تنزّل ملفات النموذج فقط. لا تطلب إذن الميكروفون ولا ترفع أي صوت أو نص تلاوة.</string>
+    <string name="review_runtime_title">اختبار التشغيل المحلي</string>
+    <string name="review_runtime_probe_explainer">يشغّل هذا الاختبار استدلالًا واحدًا بمدخلات الحالة الصفرية للتحقق من أن نموذج ONNX والعمليات والأشكال تعمل محليًا. لا يعتبر اختبار دقة للتلاوة.</string>
+    <string name="review_runtime_compatible">ONNX Runtime %1$s نفّذ النموذج محليًا</string>
+    <string name="review_runtime_input_memory">ذاكرة مدخلات الاختبار المحدودة: %1$d KiB</string>
+    <string name="review_runtime_failed">تعذر تحميل النموذج أو تنفيذ استدلال التوافق. لن يتم تشغيل الميكروفون للمراجعة.</string>
+    <string name="review_runtime_test">اختبار توافق النموذج محليًا</string>
+    <string name="review_runtime_retest">إعادة اختبار توافق النموذج</string>
+    <string name="review_microphone_explainer">إذن الميكروفون لا يُطلب إلا عند بدء هذا الاختبار. الصوت يبقى في الذاكرة على هيئة أجزاء 100ms ولا يتم حفظه أو رفعه.</string>
+    <string name="review_microphone_test">اختبار الميكروفون محليًا</string>
+    <string name="review_microphone_stop">إيقاف اختبار الميكروفون</string>
+    <string name="review_microphone_duration">تم استقبال صوت محلي لمدة %1$d ثانية</string>
+    <string name="review_microphone_denied">لم تمنح إذن الميكروفون. يمكنك المحاولة مرة أخرى عندما تريد.</string>
+    <string name="review_microphone_revoked">تم سحب إذن الميكروفون أثناء الالتقاط، لذلك توقف الاختبار فورًا.</string>
+    <string name="review_microphone_interrupted">انقطع جهاز أو مسار الصوت، لذلك توقف الالتقاط.</string>
+    <string name="review_microphone_failed">تعذر تشغيل الميكروفون بالتنسيق المحلي المطلوب.</string>
+    <string name="review_microphone_background_stopped">توقف الميكروفون تلقائيًا عند مغادرة الشاشة أو انتقال التطبيق للخلفية.</string>
+    <string name="review_recognition_still_disabled">لم يتم بعد نقل محرك 16kHz→fbank→CTC والتتبع الخاص بـ Tilawa إلى Kotlin. لذلك لا يعرض Athar أي حكم «صحيح/خطأ» أو آية متوقعة من هذا الاختبار.</string>
 </resources>

@@ -46,3 +46,14 @@ The user must explicitly acknowledge and accept NPL-1.2 for the current manifest
 Each artifact downloads to a private \`.part\` file, is size-bounded, hashed while streaming and renamed only after exact SHA-256 verification. Activation occurs only after all three artifacts verify. Failed/cancelled partials are removed and the previously active verified version remains untouched. The store retains at most the current and previous activated version so a verified rollback remains possible.
 
 The UI exposes package/version/storage/consent/download/cancel/remove/rollback state. It explicitly states that \`runtime_verified=false\`: Task 09.2 does not request microphone permission and does not run inference. Task 09.3 owns native runtime and microphone lifecycle proof.
+
+
+## Native microphone/runtime status
+
+Task 09.3 now has a real Android microphone lifecycle and a real ONNX Runtime compatibility inference path.
+
+The app requests RECORD_AUDIO only after the user presses the local microphone-test action. Capture is 16 kHz mono PCM16, converted to bounded 100 ms Float32 chunks and never persisted or uploaded. Leaving the foreground stops capture.
+
+The pinned ONNX Runtime Android dependency is checked at build time for both armeabi-v7a and arm64-v8a shared libraries. After the Task 09.2 package is installed, the user may run a native CPU compatibility probe. It constructs every declared current Zipformer input/state tensor within a bounded memory budget and executes the graph for log_probs.
+
+This still does not constitute recitation recognition. The upstream @tilawa/core TypeScript package owns the audio feature extraction, streaming state propagation, CTC decoding and Quran tracking. Until an approved native equivalent is implemented, Athar does not show verse matches or word verdicts from microphone audio.

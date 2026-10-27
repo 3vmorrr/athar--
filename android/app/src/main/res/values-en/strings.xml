@@ -704,4 +704,21 @@
     <string name="review_model_rollback">Roll back to previous verified version</string>
     <string name="review_model_remove">Remove model package from device</string>
     <string name="review_model_privacy_note">This stage downloads model files only. It does not request microphone permission or upload any audio or recitation text.</string>
+    <string name="review_runtime_title">Local runtime test</string>
+    <string name="review_runtime_probe_explainer">This runs one zero-state graph inference to verify that the ONNX model, operators and tensor shapes execute locally. It is not a recitation accuracy test.</string>
+    <string name="review_runtime_compatible">ONNX Runtime %1$s executed the model locally</string>
+    <string name="review_runtime_input_memory">Bounded probe input memory: %1$d KiB</string>
+    <string name="review_runtime_failed">The model could not be loaded or the compatibility inference failed. The microphone will not be used for review.</string>
+    <string name="review_runtime_test">Test model compatibility locally</string>
+    <string name="review_runtime_retest">Retest model compatibility</string>
+    <string name="review_microphone_explainer">Microphone permission is requested only when you start this test. Audio stays in memory as 100 ms chunks and is never saved or uploaded.</string>
+    <string name="review_microphone_test">Test microphone locally</string>
+    <string name="review_microphone_stop">Stop microphone test</string>
+    <string name="review_microphone_duration">Received %1$d seconds of local audio</string>
+    <string name="review_microphone_denied">Microphone permission was not granted. You can try again when you choose.</string>
+    <string name="review_microphone_revoked">Microphone permission was revoked during capture, so the test stopped immediately.</string>
+    <string name="review_microphone_interrupted">The audio device or route was interrupted, so capture stopped.</string>
+    <string name="review_microphone_failed">The microphone could not run with the required local capture format.</string>
+    <string name="review_microphone_background_stopped">The microphone stopped automatically when the screen/app left the foreground.</string>
+    <string name="review_recognition_still_disabled">Tilawa's 16 kHz→fbank→CTC and tracking engine has not yet been ported to Kotlin. Athar therefore shows no “correct/incorrect” verdict or inferred ayah from this test.</string>
 </resources>
