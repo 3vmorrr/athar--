@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "TEMPLATE_ONLY_NO_PHYSICAL_MEASUREMENTS",
+  "task": "22.4",
+  "required_scenarios": [
+    "before-natural-idle",
+    "after-natural-idle",
+    "network-absent-pending-sync",
+    "network-restored",
+    "offline-due-reminder",
+    "media-playing",
+    "media-stopped",
+    "after-account-switch"
+  ],
+  "claims_prohibited_without_device_evidence": [
+    "battery percentage improvement",
+    "joules saved",
+    "exact wakeup count",
+    "exact network-byte budget pass",
+    "idle cancellation pass"
+  ]
+}

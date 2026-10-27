@@ -36,6 +36,8 @@ import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.network.ApiException
 import org.athar.app.core.security.PrivateCipher
+import org.athar.app.core.sync.BackgroundWorkBudgets
+import org.athar.app.core.sync.BackgroundWorkConstraints
 
 data class NotificationInboxLocalState(
     val items: List<NotificationInboxItem> = emptyList(),
@@ -401,9 +403,9 @@ class NotificationInboxRepository(
                 ),
             )
             .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build(),
+                BackgroundWorkConstraints.forBudget(
+                    BackgroundWorkBudgets.INBOX_SYNC,
+                ),
             )
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
             .addTag(syncTag(owner))

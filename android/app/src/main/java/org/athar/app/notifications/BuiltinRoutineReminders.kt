@@ -38,6 +38,8 @@ import org.athar.app.core.data.CachedDocument
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.security.PrivateCipher
+import org.athar.app.core.sync.BackgroundWorkBudgets
+import org.athar.app.core.sync.BackgroundWorkConstraints
 
 enum class BuiltinRoutineKind(val key: String) {
     SALAWAT("salawat"),
@@ -318,7 +320,20 @@ private class BuiltinRoutineMaintenanceSchedule(
         manager.enqueueUniquePeriodicWork(
             "builtin-routine-maintenance-$partition-$owner",
             ExistingPeriodicWorkPolicy.UPDATE,
-            PeriodicWorkRequestBuilder<BuiltinRoutineMaintenanceWorker>(24, TimeUnit.HOURS).setInputData(input).addTag(tag(owner)).build(),
+            PeriodicWorkRequestBuilder<BuiltinRoutineMaintenanceWorker>(
+                BackgroundWorkBudgets.ROUTINE_MAINTENANCE.periodicHours!!,
+                TimeUnit.HOURS,
+                BackgroundWorkBudgets.ROUTINE_MAINTENANCE.flexHours!!,
+                TimeUnit.HOURS,
+            )
+                .setInputData(input)
+                .setConstraints(
+                    BackgroundWorkConstraints.forBudget(
+                        BackgroundWorkBudgets.ROUTINE_MAINTENANCE,
+                    ),
+                )
+                .addTag(tag(owner))
+                .build(),
         )
     }
 

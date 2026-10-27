@@ -39,6 +39,8 @@ import org.athar.app.core.data.CachedDocument
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.security.PrivateCipher
+import org.athar.app.core.sync.BackgroundWorkBudgets
+import org.athar.app.core.sync.BackgroundWorkConstraints
 
 data class CustomRoutineRule(
     val id: String,
@@ -359,7 +361,20 @@ private class CustomRoutineMaintenanceSchedule(
         manager.enqueueUniquePeriodicWork(
             "custom-routine-maintenance-$partition-$owner",
             ExistingPeriodicWorkPolicy.UPDATE,
-            PeriodicWorkRequestBuilder<CustomRoutineMaintenanceWorker>(24, TimeUnit.HOURS).setInputData(input).addTag(tag(owner)).build(),
+            PeriodicWorkRequestBuilder<CustomRoutineMaintenanceWorker>(
+                BackgroundWorkBudgets.ROUTINE_MAINTENANCE.periodicHours!!,
+                TimeUnit.HOURS,
+                BackgroundWorkBudgets.ROUTINE_MAINTENANCE.flexHours!!,
+                TimeUnit.HOURS,
+            )
+                .setInputData(input)
+                .setConstraints(
+                    BackgroundWorkConstraints.forBudget(
+                        BackgroundWorkBudgets.ROUTINE_MAINTENANCE,
+                    ),
+                )
+                .addTag(tag(owner))
+                .build(),
         )
     }
 

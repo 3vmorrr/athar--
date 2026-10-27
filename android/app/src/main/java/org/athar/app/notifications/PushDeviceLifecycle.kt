@@ -17,6 +17,8 @@ import org.athar.app.auth.SessionLifecycleHooks
 import org.athar.app.auth.SessionRepository
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.network.ApiException
+import org.athar.app.core.sync.BackgroundWorkBudgets
+import org.athar.app.core.sync.BackgroundWorkConstraints
 
 interface DevicePushTokenSource {
     suspend fun currentToken(): String?
@@ -151,7 +153,11 @@ class PushDeviceLifecycleManager(
                 PushDeviceSyncWorker.ACTOR to owner,
                 PushDeviceSyncWorker.ENVIRONMENT to partition,
             ))
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .setConstraints(
+                BackgroundWorkConstraints.forBudget(
+                    BackgroundWorkBudgets.PUSH_DEVICE_SYNC,
+                ),
+            )
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS)
             .addTag(tag(owner))
             .build()
