@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|18.4 Admin Upcoming/Live|14d46fc7f3c17ed2ae9f55962c28f423741072bc|Normal push/exact remote verified; Admin/backend/browser evidence in ADMIN_EVENTS.md. Required physical cross-system gate remains QUEUED; task PARTIAL, excluded from strict completed count.|
 |18.3 Admin lessons/provider identity|5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc +8e8c8eca26875eb887469f3714f81d7c9c2b0749|20,765 backend;234 HTTP;202 browser;populated migration/legacy recovery;both normal pushes/exact remote verified|
 |18.2 Admin series|b252c8f43089001e7d06ba0b3b98df42b6050354|193 HTTP;135 browser;20,752 backend;native catalog/FK child race/SQL rollback;normal push/exact remote verified|
 |18.1 Admin scholars/portraits|b07dd7400e70d72c288cf1d217aa65f49cd3ebd2 + correction30af099338ed2a3e37f5468c985520f206eb0a2b|162 HTTP;68 browser;20,752 backend;corrected adjacent lesson branch with actual readback;both normal pushes/exact remote verified|

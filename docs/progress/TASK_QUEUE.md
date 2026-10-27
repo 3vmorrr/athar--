@@ -2,7 +2,9 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem reviews every task from the exact recorded source SHA and integrates selectively in logical batches of roughly3–6 related tasks. Fast review covers correctness/contracts/schema/ownership/protected data/privacy/offline/concurrency/accessibility/RTL/premium UI and compile risks. Fix immediately; deep-test high-risk changes immediately. Reuse unchanged reviewed evidence; batch relevant expensive validation, run Work Package gates, broader milestone gates and one exhaustive final WP1–24 audit. Queue physical scenarios for shared device sessions. Commit/push/verify after stable integration batches, record exact reviewed/integrated cursors and each task status honestly. No bulk merge or source-only acceptance. WP02.8 stays deferred until available parallel batches stabilize. Continue without per-task permission.
 
-Snapshot: 2026-10-27. Current task: **18.5**. Open tasks: **128**. Overall estimate: **51%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **19.1**. Open integration/acceptance tasks: **126**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+
+Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. The parallel branch leads implementation; this track accepts one integration task at a time under PARALLEL_INTEGRATION.json.
 
@@ -1000,17 +1002,17 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.4 — Admin upcoming and live editor
 
-- Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 18.3.
+- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.3.
 - Exact scope: Edit localized course/topics/book pages/UTC schedules/status/replay with CAS and explicit audited transitions.
 - Files/modules: admin/ (new); backend/src/Learning/.
-- Automated gates: COMPLETE:20,791 backend;263 actual HTTP/260 browser authoring chain;final independent149 HTTP/58 browser;privacy218 HTTP. Time/DST/precision/CAS/audit/confirmation, translation clearing, true totals/paging, verified-email gating and retained malformed data. Evidence:docs/testing/ADMIN_EVENTS.md.
+- Automated gates: COMPLETE:20,791 backend;263 actual HTTP/260 browser authoring chain;final independent149 HTTP/58 browser;privacy218 HTTP. Time/DST/precision/CAS/audit/confirmation, translation clearing, true totals/paging, verified-email gating and retained malformed data. Evidence:docs/testing/ADMIN_EVENTS.md. Audit correction2026-10-27: implementation and committed Admin/backend acceptance passed; full task closure remains open for the queued physical cross-system scenario. Do not count as fully validated.
 - Physical-device gate: Actual AR/EN light/dark Admin1440/360 browser create/edit/conflict-related feedback, retained precision and unchecked confirmation, no overflow/JS errors; captures visually inspected. Canonical native API regressions pass; no Android source change or physical provider-playback claim.
 - Definition of Done: Edit localized course/topics/book pages/UTC schedules/status/replay with CAS and explicit audited transitions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.00 overall percentage points.
 
 ## 18.5 — Admin book CRUD and rights
 
-- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.4.
+- Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 18.4.
 - Exact scope: Manage metadata/source/rights/direct-download links and publication without forcing book uploads.
 - Files/modules: admin/ (new); backend/src/Catalog/.
 - Automated gates: URL/rights/publish/delete/native catalog/RBAC tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1030,7 +1032,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.7 — Admin discussion moderation
 
-- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.6.
+- Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 18.6.
 - Exact scope: Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit.
 - Files/modules: admin/ (new); backend/src/Learning/.
 - Automated gates: Parent hiding/CAS/role/audit/paging/native pending states tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1040,7 +1042,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.8 — Admin secure service settings
 
-- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.7.
+- Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 18.7.
 - Exact scope: Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls.
 - Files/modules: admin/ (new); app/mailer.php; backend/src/.
 - Automated gates: Encryption/no echo/RBAC/CSRF/fake SMTP/invalid config tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1050,7 +1052,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.9 — Admin public Night Prayer defaults
 
-- Parent: Work package 18: Admin content/services; state: **NOT STARTED**; dependencies: 18.8.
+- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.8.
 - Exact scope: Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions.
 - Files/modules: admin/ (new); backend/src/NightPrayer/.
 - Automated gates: Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

@@ -15,6 +15,8 @@ if (($auditSearch ?? '') !== '' || ($auditPage ?? 1) > 1) {
 foreach (['events_page' => $lessonEventPageNumber ?? 1, 'event_edit' => $eventFocus ?? 0] as $key => $value) {
     if ($value > ($key === 'events_page' ? 1 : 0)) $userContext[$key] = $value;
 }
+if (($commentPage ?? 1) > 1) $userContext['comments_page']=$commentPage;
+if (($commentFilter ?? 'all') !== 'all') $userContext['comments_status']=$commentFilter;
 $chrome = $rtl ? [
     'dashboard' => 'لوحة الإدارة',
     'site' => 'فتح أثر',

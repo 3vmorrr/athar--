@@ -5,13 +5,30 @@
     {
       "id": "upcoming-admin-native",
       "state": "QUEUED",
-      "tasks": ["18.4"],
+      "tasks": [
+        "18.4"
+      ],
       "device": "Authorized Samsung API27 ARM32",
       "scenarios": [
         "An actual Admin scheduled edit and explicit confirmed-live transition reach the native Upcoming detail with the exact instant and truthful state; Watch obeys publication and parent visibility.",
         "AR/EN, timezone display, network loss/retry and retained event detail do not fabricate a fresh live-provider confirmation or discard protected owned state."
       ],
       "existing_evidence": "docs/testing/ADMIN_EVENTS.md: backend/service/HTTP and desktop/phone-sized browser acceptance; no new Android source change or physical playback claim."
+    },
+    {
+      "id": "editorial-public-defaults-native",
+      "state": "QUEUED",
+      "tasks": [
+        "18.6",
+        "18.9"
+      ],
+      "device": "Authorized Samsung API27 ARM32",
+      "scenarios": [
+        "Admin NULL-repeat Adhkar remains a no-fixed-count native item; fixed-count edit/deletion never erases owned progress or pending operations. Check AR/EN, offline retry and private target transitions.",
+        "Reconcile new public Night Prayer config with native8.6: actual supported calculation/high-latitude identifiers and attribution, enabled suggestions and explicit choices; never overwrite existing private preferences or infer automatic endpoint consumption. Check CAS/conflict, offline retained state and AR/EN."
+      ],
+      "existing_evidence": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md: relevant backend, actual HTTP and desktop/phone-sized browser checks; no new Android code or physical PASS."
     }
-  ]
+  ],
+  "device_availability": "2026-10-27 adb devices -l: no connected devices; no new physical acceptance claimed."
 }

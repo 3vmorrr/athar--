@@ -41,6 +41,12 @@ final class CatalogService
         if($includeRelations&&$type==='series')$item['lessons']=$this->list('lessons',['series_id'=>$id,'per_page'=>50])['items'];
         return $item;
     }
+    public function bookDownload(int $id): array
+    {
+        $q=$this->db->prepare('SELECT title,source_url,rights_basis,download_url,can_download FROM books WHERE id=? AND is_published=1');$q->execute([$id]);$book=$q->fetch();
+        if(!$book || !BookAccess::downloadable($book))throw new ApiError('not_found',404);
+        return ['url'=>$book['download_url'],'mode'=>'direct','title'=>$book['title']];
+    }
     public function home(int $userId): array
     {
         $q=$this->db->prepare('SELECT COALESCE(SUM(quran_sessions),0) quran_sessions,COALESCE(SUM(lesson_completions),0) lesson_completions,COALESCE(SUM(adhkar_completions),0) adhkar_completions,COALESCE(SUM(book_downloads),0) book_downloads,COUNT(*) active_days FROM account_daily_stats WHERE user_id=?');$q->execute([$userId]);
@@ -61,7 +67,7 @@ final class CatalogService
     {
         $row['id']=(int)$row['id'];
         if(array_key_exists('image_key',$row)){$row['image_url']=$row['image_key']?'/scholar-image?key='.rawurlencode($row['image_key']):null;unset($row['image_key']);}
-        if(isset($row['can_download'])){$row['can_download']=(bool)$row['can_download']&&trim($row['rights_basis'])!==''&&is_string($row['download_url'])&&filter_var($row['download_url'],FILTER_VALIDATE_URL)&&strtolower((string)parse_url($row['download_url'],PHP_URL_SCHEME))==='https';$row['download_endpoint']=$row['can_download']?'/api/v1/books/'.$row['id'].'/download':null;unset($row['download_url']);}
+        if(isset($row['can_download'])){$row['can_download']=BookAccess::downloadable($row);$row['download_endpoint']=$row['can_download']?'/api/v1/books/'.$row['id'].'/download':null;unset($row['download_url']);if(!BookAccess::https((string)$row['source_url']))$row['source_url']='';}
         return $row;
     }
 }

@@ -1,5 +1,9 @@
 # Implementation plan
 
+## WP18 content/services batch checkpoint �2026-10-27
+
+Reviewed17 consecutive source commits through e217cee15082e4e0a0585a5b9a715a88d47f88de. Code adopted9/9 WP18; strict validated6/9:18.4/18.6/18.9 remain queued for native acceptance, Samsung disconnected. Batch118 HTTP+142 browser;978 relevant backend;218 privacy HTTP;15 visual/keyboard PASS. [Reconciliation, focused tests and limits](../testing/ADMIN_CONTENT_SERVICES_BATCH.md). On reviewed commit/verified push,23/149 strictly validated,126 open. Exact implementation totals across branches remain unverified; historical51% estimate is frozen, not completion evidence. Audit snapshot at14d is preserved. Next19.1; WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task18.4
 
 Upcoming/Live Admin accepted with strict timezone/DST/precision handling, canonical CAS/transitions/context/audit, preserved actual confirmation provenance, explicit clearing, retained stale drafts, real global totals/paging and verified-email gating.20,791 backend;263 HTTP/260 browser authoring chain;independent149 HTTP/58 browser;privacy218 HTTP PASS. AR/EN light/dark phone/desktop captures reviewed. [Evidence and reconciliation](../testing/ADMIN_EVENTS.md). No migration/native source change or physical playback claim. Exact cursor2f800af4cd7e988c6d9e908e59efb39c3a58b692; next18.5 books/rights. WP18:4/9 (44%); overall51% (51.38 weighted,±10pp);128 open. WP02.8 remains deferred.

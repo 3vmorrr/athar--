@@ -101,7 +101,9 @@ final class ProgressService
     }
     public function saveAdhkar(int $user,array $data):array
     {
-        $id=$this->integer($data,'item_id',1,2147483647);$item=$this->catalog->detail('adhkar',$id);$repeat=max(1,(int)$item['repeat_count']);
+        $id=$this->integer($data,'item_id',1,2147483647);$item=$this->catalog->detail('adhkar',$id);
+        if($item['repeat_count']===null)throw new ApiError('invalid_fields',422,['repeat_count'=>'no_fixed_target']);
+        $repeat=(int)$item['repeat_count'];
         if($repeat>65535)throw new ApiError('invalid_fields',422,['repeat_count'=>'unsupported']);
         $count=$this->integer($data,'current_count',0,$repeat);$expected=$this->integer($data,'expected_revision',0,2147483647);$key='curated:'.$id;
         $this->db->beginTransaction();

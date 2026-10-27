@@ -1,0 +1,774 @@
+{
+  "date": "2026-10-27",
+  "basis": "Read-only checkpoint requested by user; source presence, commit ancestry, branch diffs and available execution logs cross-checked. This is a verified lower-bound audit, not a full149-task functional certification. No missing-code claim is inferred from tracking status.",
+  "branches": {
+    "codex/android-ecosystem": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+    "parallel/admin-foundation": "7392e93b088990c3478cf32197781f831eb10f83",
+    "uiux/athar-premium-v2": "0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32"
+  },
+  "committed_source_cursor": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
+  "counts": {
+    "VALIDATED": 20,
+    "UNVERIFIED": 125,
+    "INTEGRATED_ACCEPTANCE_PENDING": 1,
+    "WORKING_TREE_TARGETED_PASS": 3
+  },
+  "implementation_counts": {
+    "fully_implemented_verified_minimum": 21,
+    "exact_full_partial_absent_totals": "UNVERIFIED: no reliable exclusive three-way total until remaining task-level functional audits; code exists on parallel and UI branches.",
+    "implemented_elsewhere_not_integrated_exact": "UNVERIFIED"
+  },
+  "remaining_integration_review_acceptance": 129,
+  "known_working_evidence": {
+    "18.5": "24 focused HTTP assertions pass; uncommitted, batch/browser gate pending.",
+    "18.6-18.7": "35 focused HTTP plus155 relevant backend/migration assertions pass; uncommitted, combined UI/batch gate pending."
+  },
+  "correction": "Tracking previously reported21 complete. Task18.4 has a queued physical cross-system acceptance scenario, so strict fully validated count is20.",
+  "tasks": [
+    {
+      "task": "02.1",
+      "name": "Protected authoritative local reads",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.2",
+      "name": "Owned persistent-work foundation",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.3",
+      "name": "Disposable response-cache limits",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.4",
+      "name": "Authentication request ownership races",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "21.1",
+      "name": "Premium shared primitives and motion reconciliation",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.5",
+      "name": "Night Prayer conflict resolution",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.6",
+      "name": "Watch and account local recovery surfaces",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.7.1",
+      "name": "Captured-owner mutation dispatch guards",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "21.18",
+      "name": "Document immersive section heroes and original artwork",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.7.2",
+      "name": "Actionable permanent Night Prayer rejection recovery",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.7",
+      "name": "Cross-module lost-response and restart recovery",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "02.8",
+      "name": "OS reconnect and process/reboot acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.1",
+      "name": "Range and section navigation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.2",
+      "name": "Quran search journey",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.3",
+      "name": "Tafsir selection and source states",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.4",
+      "name": "Durable Quran bookmarks",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.5",
+      "name": "Quran typography preferences",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.6",
+      "name": "Verse copy and share",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.7",
+      "name": "Daily verse and Quran entry restoration",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.8",
+      "name": "Approved Dorar provider contract",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "03.9",
+      "name": "Native hadith and knowledge search",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "04.1",
+      "name": "Audio background and lockscreen",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "04.2",
+      "name": "Audio focus and interruption",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "04.3",
+      "name": "Audio network and recovery",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "04.4",
+      "name": "Follow-along timing and ayah clipping",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "04.5",
+      "name": "Radio catalog and playback acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "05.1",
+      "name": "Complete adhkar and dua discovery",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "05.2",
+      "name": "Adhkar daily counting and reset policy",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "05.3",
+      "name": "Adhkar personal statistics",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "05.4",
+      "name": "Adhkar one-handed accessibility",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "06.1",
+      "name": "Book rights and metadata journey",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "06.2",
+      "name": "Safe durable book download",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "06.3",
+      "name": "Book download cancellation and management",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "06.4",
+      "name": "Native PDF open and reading state",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "06.5",
+      "name": "Book offline integrity acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.1",
+      "name": "Account profile editing",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.2",
+      "name": "Account security journeys",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.3",
+      "name": "Private account export",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.4",
+      "name": "Account deletion and local ownership cleanup",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.5",
+      "name": "Saved content collections",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.6",
+      "name": "Personal activity dashboard",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.7",
+      "name": "Khatmah workload and plan editor",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.8",
+      "name": "Khatmah lifecycle actions",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "07.9",
+      "name": "Khatmah offline and conflicts",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.1",
+      "name": "Tonight dashboard and Islamic night identity",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.2",
+      "name": "Verse target and range workflow",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.3",
+      "name": "Exact prayer reading continuation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.4",
+      "name": "Measured prayer session timer",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.5",
+      "name": "Measured reading pace insights",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.6",
+      "name": "Saved city and prayer method",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.7",
+      "name": "Yearly prayer visualization",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.8",
+      "name": "Category streak and consistency views",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.9",
+      "name": "Personal records and milestone insights",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.10",
+      "name": "Prayer history edit and delete journeys",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.11",
+      "name": "Private exemption and export boundaries",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "08.12",
+      "name": "Night Prayer travel and edge acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "09.1",
+      "name": "Native model compatibility and license",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "09.2",
+      "name": "Verified optional model delivery",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "09.3",
+      "name": "Microphone lifecycle and local inference",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "09.4",
+      "name": "Recitation alignment and uncertainty feedback",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "09.5",
+      "name": "Measured review accuracy and latency",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.1",
+      "name": "Notification preference contract",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.2",
+      "name": "Channels and contextual permission",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.3",
+      "name": "Stable notification deep links",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.4",
+      "name": "Quiet hours expiry and dedup policy",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.5",
+      "name": "Persistent local reminder scheduler",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "10.6",
+      "name": "Boot and time-change reconciliation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "11.1",
+      "name": "Lesson reminder consent and controls",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "11.2",
+      "name": "Local lesson reminder schedule",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "11.3",
+      "name": "Lesson change and cancellation reconciliation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "11.4",
+      "name": "Server lesson reminder jobs",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "12.1",
+      "name": "Follow persistence and API",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "12.2",
+      "name": "Scholar follow journey",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "12.3",
+      "name": "Series follow journey",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "12.4",
+      "name": "New content subscription facts",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "13.1",
+      "name": "Quran wird reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "13.2",
+      "name": "Completion-aware adhkar reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "13.3",
+      "name": "Salawat and Friday reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "13.4",
+      "name": "Custom routine reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "13.5",
+      "name": "Unified reminder center",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "14.1",
+      "name": "Khatmah workload reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "14.2",
+      "name": "Night Prayer and last-third reminders",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "14.3",
+      "name": "Cross-routine suppression and user control",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "15.1",
+      "name": "Free push provider abstraction",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "15.2",
+      "name": "Device token lifecycle",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "15.3",
+      "name": "Authorized physical push delivery",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "16.1",
+      "name": "Private notification inbox API",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "16.2",
+      "name": "Native notification inbox",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "16.3",
+      "name": "Inbox offline badge and synchronization",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "16.4",
+      "name": "Notification policy diagnostics",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "17.1",
+      "name": "Independent Admin authentication",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "17.2",
+      "name": "Independent Admin bilingual shell",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "17.3",
+      "name": "Admin authorization matrix",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "17.4",
+      "name": "Admin user management",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "17.5",
+      "name": "Admin audit and analysis",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "17.6",
+      "name": "Owner recovery operations",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "18.1",
+      "name": "Admin scholar CRUD and portraits",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "18.2",
+      "name": "Admin series CRUD and ordering",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "18.3",
+      "name": "Admin lesson CRUD",
+      "audit_status": "VALIDATED"
+    },
+    {
+      "task": "18.4",
+      "name": "Admin upcoming and live editor",
+      "audit_status": "INTEGRATED_ACCEPTANCE_PENDING"
+    },
+    {
+      "task": "18.5",
+      "name": "Admin book CRUD and rights",
+      "audit_status": "WORKING_TREE_TARGETED_PASS"
+    },
+    {
+      "task": "18.6",
+      "name": "Admin adhkar CRUD and source control",
+      "audit_status": "WORKING_TREE_TARGETED_PASS"
+    },
+    {
+      "task": "18.7",
+      "name": "Admin discussion moderation",
+      "audit_status": "WORKING_TREE_TARGETED_PASS"
+    },
+    {
+      "task": "18.8",
+      "name": "Admin secure service settings",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "18.9",
+      "name": "Admin public Night Prayer defaults",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "19.1",
+      "name": "Push campaign composer and preview",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "19.2",
+      "name": "Consent-safe campaign audiences",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "19.3",
+      "name": "Push campaign queue and cancellation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "19.4",
+      "name": "Campaign history and delivery analytics",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "20.1",
+      "name": "Transactional email branding and reliability",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "20.2",
+      "name": "Email consent and unsubscribe",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "20.3",
+      "name": "Prioritized email queue",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "20.4",
+      "name": "Admin email and combined campaigns",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "20.5",
+      "name": "Authorized Gmail inbox proof",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.19",
+      "name": "Implement immersive hero and layered-content primitives",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.2",
+      "name": "Home and navigation premium reconciliation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.4",
+      "name": "Quran premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.8",
+      "name": "Night Prayer premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.9",
+      "name": "Watch premium reconciliation and provider hardware",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.5",
+      "name": "Audio premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.13",
+      "name": "Upcoming premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.7",
+      "name": "Adhkar premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.20",
+      "name": "Books immersive hero and editorial hierarchy",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.21",
+      "name": "Knowledge immersive hero and continuation hierarchy",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.3",
+      "name": "Auth and account premium reconciliation",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.6",
+      "name": "Tafsir premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.10",
+      "name": "Scholar premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.11",
+      "name": "Series premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.12",
+      "name": "Discussion premium reconciliation acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.14",
+      "name": "Screen-aware loading states",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.15",
+      "name": "Arabic English and theme acceptance matrix",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.16",
+      "name": "Large font tablet and landscape closure",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "21.17",
+      "name": "TalkBack and reduced-motion closure",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "22.1",
+      "name": "Release startup baseline",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "22.2",
+      "name": "Release watch and scrolling jank",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "22.3",
+      "name": "Low-memory and cache reliability",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "22.4",
+      "name": "Background battery and network budgets",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "22.5",
+      "name": "Backend query and rate budgets",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.1",
+      "name": "Android permissions and IPC security gate",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.2",
+      "name": "Backend and Admin security gate",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.3",
+      "name": "Dependency content and model rights gate",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.4",
+      "name": "Full encrypted backup restore rehearsal",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.5",
+      "name": "Final native API Admin end-to-end regression",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "23.6",
+      "name": "Final secret and recovery checkpoint",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "24.1",
+      "name": "Free-host capability proof",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "24.2",
+      "name": "Production configuration and operations",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "24.3",
+      "name": "Signed reproducible Android release",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "24.4",
+      "name": "Hosted device and monitoring acceptance",
+      "audit_status": "UNVERIFIED"
+    },
+    {
+      "task": "24.5",
+      "name": "Release artifacts and user operations handoff",
+      "audit_status": "UNVERIFIED"
+    }
+  ]
+}

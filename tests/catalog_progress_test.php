@@ -30,6 +30,10 @@ isolated_database(static function(PDO $db):void{
     reject_progress(fn()=>$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>3,'expected_revision'=>1,'event_id'=>$completion]),409,'counter replay cannot overwrite a newer revision');
     $progress->saveAdhkar($u,['item_id'=>1,'current_count'=>3,'expected_revision'=>2,'event_id'=>$completion]);assert_progress((int)$db->query('SELECT adhkar_completions FROM account_daily_stats')->fetchColumn()===1,'completed counter retries counted once');
     assert_progress($progress->adhkar($other)===[],'counter list belongs to account');
+    $db->exec('UPDATE adhkar_items SET repeat_count=NULL WHERE id=1');
+    reject_progress(fn()=>$progress->saveAdhkar($u,['item_id'=>1,'current_count'=>1,'expected_revision'=>3]),422,'optional source count never invents a fixed target of one');
+    assert_progress((int)$progress->adhkar($u,['item_id'=>1])[0]['current_count']===3,'source target removal preserves the owned counter');
+    $db->exec('UPDATE adhkar_items SET repeat_count=3 WHERE id=1');
     $db->exec("UPDATE adhkar_progress SET updated_at='2020-01-01 00:00:00' WHERE user_id=1");
     for($i=1000;$i<=1500;$i++)$db->prepare("INSERT INTO adhkar_progress(user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES(1,?,0,1,1,'2026-01-01 00:00:00')")->execute(['curated:'.$i]);
     assert_progress(count($progress->adhkar($u))===500,'legacy counter overview remains bounded');

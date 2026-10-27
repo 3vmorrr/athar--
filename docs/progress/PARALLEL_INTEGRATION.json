@@ -1,10 +1,10 @@
 {
-  "codex_head": "8e8c8eca26875eb887469f3714f81d7c9c2b0749",
+  "codex_head": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
-  "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
+  "LAST_PARALLEL_INTEGRATED_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+  "cursor_policy": "Cursor records contiguous reviewed source code adopted or explicitly superseded, with applicable batch checks passed. It does not close separately queued required device/provider gates; task acceptance remains independent. Cursor advance becomes effective with this stable batch commit and verified push.",
   "groups": [
     {
       "task_or_group": "17.1",
@@ -467,7 +467,7 @@
       "security_privacy": "Verified active content actor, canonical CAS/transition/audit/change writes, no fake confirmation refresh, strict DST/precision, retained corrupt/stale data, controlled event audit allowlist and private canary regression.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "COMPLETE + TESTED",
+      "state": "INTEGRATED / ADMIN-BACKEND TESTED / PHYSICAL CROSS-SYSTEM ACCEPTANCE PENDING",
       "secondary_task_attribution": [
         "17.6: preserve current owner email_verified_at exactly through recovery, including NULL; verified by67 recovery assertions.",
         "18.3: align lesson description bound with existing canonical event20,000; full authoring regressions pass."
@@ -500,7 +500,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Focused books handler preserves registered local files on ordinary edits; strict metadata/rights, credential-free HTTPS, CAS and transactional audit; post-commit reference-safe file retirement.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -509,11 +509,13 @@
         "app/Views/pages/admin-row-actions.php",
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
-      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "security_privacy": "Public native/web download eligibility and one-row URL selection unified; no private user data exposed or non-owned files retired.",
+      "tests_required": "Applicable local gates passed;18.6/18.9 queued physical scenarios; actual Gmail inbox acceptance separate20.5.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "integration_base": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+      "acceptance": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md:118 HTTP+142 browser combined;978 relevant backend;218 privacy HTTP;15 visual/keyboard;focused books28/editorial35/services32/defaults25. No real SMTP/device claim."
     },
     {
       "task_or_group": "18.6",
@@ -545,7 +547,7 @@
         "17.3",
         "migration016"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Exact source016 and snapshots; strict nullable repeat/source/review/order, CAS and atomic audit; focused localized retained editor.",
       "database_api_impact": [
         "database/migrations/016_admin_editorial_control.sql",
         "public/index.php"
@@ -554,11 +556,16 @@
       "ui_impact": [
         "app/Views/pages/admin-row-actions.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
-      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "security_privacy": "Owned string-key progress survives editorial delete. No-fixed-count writes cannot invent target1; native acceptance queued.",
+      "tests_required": "Applicable local gates passed;18.6/18.9 queued physical scenarios; actual Gmail inbox acceptance separate20.5.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "INTEGRATED / NATIVE ACCEPTANCE PENDING",
+      "secondary_task_attribution": [
+        "18.7: source016 adds moderation_reason for the canonical service.",
+        "08.6: no-fixed-count API mutation refuses unsupported counters without changing owned progress."
+      ],
+      "integration_base": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+      "acceptance": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md:118 HTTP+142 browser combined;978 relevant backend;218 privacy HTTP;15 visual/keyboard;focused books28/editorial35/services32/defaults25. No real SMTP/device claim."
     },
     {
       "task_or_group": "18.7",
@@ -590,7 +597,7 @@
         "17.3",
         "migration017"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Exact source017 and canonical service; reason/revision/verified capability, durable decision log and reply-first deletion; localized paging/filter controls.",
       "database_api_impact": [
         "backend/src/Learning/DiscussionService.php",
         "database/migrations/017_admin_comment_moderation.sql",
@@ -600,11 +607,13 @@
       "ui_impact": [
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
-      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "security_privacy": "Parent locks serialize existing child creation and deletion; no silent reply cascade. Reason/SQL failures remain controlled; audit transactional.",
+      "tests_required": "Applicable local gates passed;18.6/18.9 queued physical scenarios; actual Gmail inbox acceptance separate20.5.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "integration_base": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+      "acceptance": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md:118 HTTP+142 browser combined;978 relevant backend;218 privacy HTTP;15 visual/keyboard;focused books28/editorial35/services32/defaults25. No real SMTP/device claim."
     },
     {
       "task_or_group": "18.8",
@@ -625,7 +634,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Focused encrypted services/diagnostics; current Owner reauthentication, serialized settings, explicit authorized recipient and persistent quota.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -633,11 +642,15 @@
       "ui_impact": [
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
-      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "security_privacy": "Missing original key never replaced over ciphertext. No secret reflection/raw SMTP errors/Host-derived production links. Real provider inbox proof remains20.5.",
+      "tests_required": "Applicable local gates passed;18.6/18.9 queued physical scenarios; actual Gmail inbox acceptance separate20.5.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [
+        "20/24: explicit production email base URL and retained unreadable encrypted settings; no real inbox/provider acceptance inferred."
+      ],
+      "integration_base": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+      "acceptance": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md:118 HTTP+142 browser combined;978 relevant backend;218 privacy HTTP;15 visual/keyboard;focused books28/editorial35/services32/defaults25. No real SMTP/device claim."
     },
     {
       "task_or_group": "18.9",
@@ -668,7 +681,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Shared allowlisted public config and API; strict actual calculator identifiers, source attribution, CAS and localized public metadata editor.",
       "database_api_impact": [
         "backend/src/Http/ApiKernel.php",
         "backend/src/NightPrayer/NightPrayerService.php",
@@ -678,11 +691,13 @@
       "ui_impact": [
         "app/Views/pages/admin.php"
       ],
-      "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
-      "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
+      "security_privacy": "Private prayer preferences never queried/rewritten by Admin; disabled suggestions do not disable private saves. Native consumption not claimed; acceptance queued.",
+      "tests_required": "Applicable local gates passed;18.6/18.9 queued physical scenarios; actual Gmail inbox acceptance separate20.5.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "INTEGRATED / NATIVE ACCEPTANCE PENDING",
+      "secondary_task_attribution": [],
+      "integration_base": "14d46fc7f3c17ed2ae9f55962c28f423741072bc",
+      "acceptance": "docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md:118 HTTP+142 browser combined;978 relevant backend;218 privacy HTTP;15 visual/keyboard;focused books28/editorial35/services32/defaults25. No real SMTP/device claim."
     },
     {
       "task_or_group": "19-20 infrastructure",
@@ -3181,8 +3196,8 @@
     }
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
-  "LAST_REVIEWED_PARALLEL_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
-  "reviewed_cursor_scope": "18.4 four-commit range826f521..2f800af accepted with fixes and full applicable acceptance. Next source task18.5 starts937ae074.",
+  "LAST_REVIEWED_PARALLEL_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+  "reviewed_cursor_scope": "18.5-18.9:17 consecutive source commits937ae074..e217cee1 reviewed/adopted with fixes; backend/HTTP/browser/package gates PASS.18.6/18.9 native acceptance pending;18.4 remains pending. Next source WP19.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3491,8 +3506,8 @@
       }
     ]
   },
-  "LAST_INTEGRATED_PARALLEL_SHA": "2f800af4cd7e988c6d9e908e59efb39c3a58b692",
-  "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "LAST_INTEGRATED_PARALLEL_SHA": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
+  "review_worktree_checkout": "e217cee15082e4e0a0585a5b9a715a88d47f88de",
   "migration_reservations": {
     "027_lesson_provider_identity": {
       "state": "DISPOSABLE POPULATED-SCHEMA / LEGACY RECOVERY TESTED; PUSH VERIFIED",
@@ -3505,19 +3520,19 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
-      "18.5",
-      "18.6",
-      "18.7",
-      "18.8",
-      "18.9"
+      "19.1",
+      "19.2",
+      "19.3",
+      "19.4"
     ],
-    "scope": "remaining WP18 content/services",
+    "scope": "WP19 consent-safe push campaigns",
     "state": "REVIEW PENDING",
     "immediate_high_risk_gates": [
-      "book rights/download/file deletion/transaction boundaries",
-      "moderation deletion/revision/authorization",
-      "encrypted provider settings/diagnostics/secrets"
+      "audience consent/ownership/privacy",
+      "queue cancellation/delivery/concurrency",
+      "provider secret and payload boundaries"
     ],
-    "batch_gate": "targeted PHP syntax and content/services domain/HTTP/browser contracts; WP18 closure checks; no unrelated Android/global rerun"
-  }
+    "batch_gate": "Relevant campaign domain/schema/HTTP/browser gates; provider/device acceptance separate, never simulated as delivered."
+  },
+  "progress_audit": "Historic snapshot docs/progress/PROGRESS_AUDIT_2026-10-27.json at14d:20 strict validated. This stable WP18 batch adds3 applicable closures=>23/149,126 requiring integration/review/acceptance; exact implementation totals remain UNVERIFIED."
 }

@@ -8,6 +8,9 @@ require_once dirname(__DIR__) . '/admin/authorization.php';
 require_once dirname(__DIR__) . '/admin/scholars.php';
 require_once dirname(__DIR__) . '/admin/series.php';
 require_once dirname(__DIR__) . '/admin/lessons.php';
+require_once dirname(__DIR__) . '/admin/books.php';
+require_once dirname(__DIR__) . '/admin/editorial.php';
+require_once dirname(__DIR__) . '/admin/services.php';
 require_once dirname(__DIR__) . '/admin/events.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
@@ -289,9 +292,9 @@ if (in_array($path, ['/scholar-image','/admin/scholar-image'], true) && $method 
 if ($path === '/book-download' && $method === 'GET') {
     $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
     if (!$id || $id < 1) { http_response_code(404); exit('الملف غير موجود.'); }
-    $statement = db()->prepare('SELECT download_url FROM books WHERE id=? AND is_published=1 AND can_download=1 LIMIT 1');
+    $statement = db()->prepare('SELECT source_url,rights_basis,download_url,can_download FROM books WHERE id=? AND is_published=1 LIMIT 1');
     $statement->execute([$id]); $book = $statement->fetch();
-    if (!$book || !is_https_url((string) ($book['download_url'] ?? ''))) { http_response_code(404); exit('رابط تنزيل الكتاب غير متاح.'); }
+    if (!$book || !\Athar\Catalog\BookAccess::downloadable($book)) { http_response_code(404); exit('رابط تنزيل الكتاب غير متاح.'); }
     $downloadUser = current_user();
     if ($downloadUser) db()->prepare('INSERT INTO account_daily_stats (user_id,activity_date,book_downloads) VALUES (?,UTC_DATE(),1) ON DUPLICATE KEY UPDATE book_downloads=LEAST(65535,book_downloads+1)')->execute([(int) $downloadUser['id']]);
     header('Cache-Control: no-store, private'); header('Location: ' . (string) $book['download_url'], true, 302); exit;
@@ -664,45 +667,24 @@ if ($path === '/admin') {
             } elseif ($kind === 'lesson' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'lesson')) {
                 admin_mutate_lesson($admin, $_POST);
                 flash($kind === 'lesson' ? 'تم حفظ الدرس.' : 'تم تحديث الدرس.'); redirect('/admin#admin-content');
-            } elseif ($kind === 'comment-review') {
-                $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
-                if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
-                db()->prepare('UPDATE lesson_comments SET status=?,revision=revision+1,moderated_at=UTC_TIMESTAMP(),moderated_by=? WHERE id=?')->execute([$status,$admin['id'],$commentId]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-'.$status,'lesson-comment',(string)$commentId]);
-                flash($status==='visible'?'تم نشر التعليق بعد مراجعته.':'تم إخفاء التعليق.'); redirect('/admin');
-            } elseif ($kind === 'comment-delete') {
-                $commentId = filter_var($_POST['comment_id'] ?? null, FILTER_VALIDATE_INT);
-                if (!$commentId || $commentId < 1) throw new RuntimeException('التعليق المحدد غير صالح.');
-                $commentCheck = db()->prepare('SELECT id FROM lesson_comments WHERE id=?'); $commentCheck->execute([$commentId]);
-                if (!$commentCheck->fetchColumn()) throw new RuntimeException('التعليق غير موجود أو حُذف من قبل.');
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'comment-deleted','lesson-comment',(string)$commentId]);
-                db()->prepare('DELETE FROM lesson_comments WHERE id=?')->execute([$commentId]);
-                flash('تم حذف التعليق.'); redirect('/admin#admin-comments');
+            } elseif ($kind === 'book' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'book')) {
+                $bookResult=admin_mutate_book($admin,$_POST);
+                flash($bookResult['cleanup_pending'] ? 'تم حذف سجل الكتاب؛ تعذر تنظيف نسخته المحلية. راجع التخزين.' : ($kind === 'book' ? 'تم حفظ الكتاب.' : 'تم تحديث الكتاب.'), $bookResult['cleanup_pending'] ? 'error' : 'success'); redirect('/admin#admin-content');
+            } elseif ($kind === 'adhkar' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'adhkar')) {
+                admin_mutate_adhkar($admin,$_POST);
+                flash($kind === 'adhkar' ? 'تم حفظ الذكر مع توثيق نسخته.' : 'تم تحديث الذكر مع توثيق نسخته.');redirect('/admin#admin-content');
+            } elseif (in_array($kind,['comment-review','comment-delete'],true)) {
+                admin_moderate_comment($admin,$_POST);
+                flash($kind === 'comment-delete' || ($_POST['decision'] ?? '') === 'delete' ? 'تم حذف التعليق مع الاحتفاظ بسجل قرار المراجعة.' : 'تم حفظ قرار المراجعة وسببه.');redirect('/admin?'.http_build_query(['comments_page'=>max(1,min(10000,(int)(filter_var($_GET['comments_page'] ?? 1,FILTER_VALIDATE_INT) ?: 1))),'comments_status'=>is_string($_GET['comments_status'] ?? null) && in_array($_GET['comments_status'],['all','pending','visible','hidden'],true) ? $_GET['comments_status'] : 'all']).'#admin-comments');
+            } elseif ($kind === 'night-prayer-defaults') {
+                admin_save_night_defaults($admin,$_POST);
+                flash('تم حفظ الإعدادات العامة لقيام الليل.');redirect('/admin#admin-night-prayer');
             } elseif ($kind === 'gmail-settings') {
-                db()->beginTransaction();
-                $gmailEmail = strtolower(trim((string) ($_POST['gmail_email'] ?? '')));
-                $smtpPassword = preg_replace('/\s+/', '', (string) ($_POST['smtp_password'] ?? '')) ?? (string) ($_POST['smtp_password'] ?? '');
-                if (!filter_var($gmailEmail, FILTER_VALIDATE_EMAIL) || strlen($gmailEmail) > 190) throw new RuntimeException('أدخل بريد Gmail صالحًا.');
-                if ($smtpPassword === '' && platform_setting('smtp_password_cipher') === '') throw new RuntimeException('أدخل App Password الخاصة بالتطبيق.');
-                foreach (['smtp_host'=>'smtp.gmail.com','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>$gmailEmail,'smtp_from_email'=>$gmailEmail,'smtp_from_name'=>'أثر'] as $settingKey=>$settingValue) save_platform_setting($settingKey,$settingValue,(int)$admin['id']);
-                if ($smtpPassword !== '') save_platform_setting('smtp_password_cipher',seal_platform_secret($smtpPassword),(int)$admin['id']);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'gmail-smtp-settings-updated','platform',null]);
-                db()->commit();
-                if (isset($_POST['send_test_email'])) {
-                    if (!allow_session_rate('smtp_test_email',1,3600)) throw new RuntimeException('أُرسل اختبار بريد خلال الساعة الماضية. حاول لاحقًا.');
-                    $smtpFailure = '';
-                    if (!send_platform_email((string)$admin['email'],'اختبار إعدادات Gmail في أثر','تم إرسال رسالة الاختبار بنجاح.',$smtpFailure)) throw new RuntimeException('حُفظت الإعدادات، لكن تعذّر إرسال رسالة الاختبار: ' . ($smtpFailure !== '' ? $smtpFailure : 'تحقق من بريد Gmail وApp Password.'));
-                    flash('تم حفظ إعدادات Gmail ووصلت رسالة الاختبار إلى بريد المدير.');
-                } else flash('تم حفظ إعدادات Gmail.');
-                redirect('/admin#admin-services');
+                $serviceSaved=admin_save_gmail($admin,$_POST);
+                flash($serviceSaved['test'] === 'accepted' ? 'قبل خادم SMTP رسالة الاختبار. تحقق من صندوق المستلم المصرح به.' : 'تم حفظ إعدادات Gmail.');redirect('/admin#admin-services');
             } elseif ($kind === 'dorar-settings') {
-                db()->beginTransaction();
-                $dorarToken = trim((string) ($_POST['dorar_api_token'] ?? ''));
-                if ($dorarToken !== '') save_platform_setting('dorar_api_token_cipher',seal_platform_secret($dorarToken),(int)$admin['id']);
-                if (isset($_POST['clear_dorar_token'])) save_platform_setting('dorar_api_token_cipher','',(int)$admin['id']);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'],'dorar-api-settings-updated','platform',null]);
-                db()->commit();
-                flash('تم حفظ إعدادات بحث الدرر السنية.'); redirect('/admin#admin-services');
+                admin_save_dorar($admin,$_POST);
+                flash('تم حفظ إعدادات بحث الدرر السنية.');redirect('/admin#admin-services');
             } elseif ($kind === 'campaign-create') {
                 $subject = trim((string) ($_POST['subject'] ?? ''));
                 $body = trim((string) ($_POST['body'] ?? ''));
@@ -904,63 +886,7 @@ if ($path === '/admin') {
                 $savedEvent = admin_event_save($admin, $_POST);
                 flash('تم حفظ حالة الدرس القادم/المباشر وتسجيل التغيير.');
                 redirect('/admin?event_edit=' . (int)$savedEvent['id'] . '#admin-events');
-            } elseif ($kind === 'content') {
-                $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
-                $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
-                if ($table === '' || !$id || $id < 1) throw new RuntimeException('عنصر المحتوى غير صالح.');
-                $type = (string) $_POST['content_type'];
-                if (($_POST['content_action'] ?? '') === 'update') {
-                    $published = isset($_POST['publish']) ? 1 : 0;
-                    if ($type === 'book') {
-                        $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? '')); $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
-                        if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
-                        if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
-                        $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
-                        if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
-                        $legacyFileQuery = db()->prepare('SELECT file_key FROM books WHERE id=?'); $legacyFileQuery->execute([$id]); $legacyFileKey = $legacyFileQuery->fetchColumn();
-                        db()->prepare('UPDATE books SET title=?,author=?,description=?,keywords=?,language=?,publication_year=?,rights_holder=NULLIF(?,\'\'),source_url=?,download_url=?,rights_basis=?,file_key=NULL,file_size=NULL,can_download=1,is_published=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')), $source, $downloadUrl, $rights, $published, $id]);
-                        if (is_string($legacyFileKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $legacyFileKey)) { $legacyPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $legacyFileKey; if (is_file($legacyPath)) unlink($legacyPath); }
-                    } elseif ($type === 'adhkar') {
-                        $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if (!is_https_url($source) || trim((string) ($_POST['source_reference'] ?? '')) === '' || !isset($_POST['reviewed'])) throw new RuntimeException('أدخل مصدرًا آمنًا ومرجعًا وأكد المراجعة.');
-                        $count = ($_POST['repeat_count'] ?? '') === '' ? null : max(1, min(1000, (int) $_POST['repeat_count']));
-                        db()->prepare('UPDATE adhkar_items SET title=?,formula=?,source_reference=?,source_url=?,repeat_count=?,category=?,is_reviewed=1,is_published=?,sort_order=? WHERE id=?')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), $source, $count, trim((string) $_POST['category']), $published, (int) ($_POST['sort_order'] ?? 0), $id]);
-                    }
-                    $auditAction = 'update';
-                } elseif (($_POST['content_action'] ?? '') === 'toggle') {
-                    db()->prepare("UPDATE {$table} SET is_published=1-is_published WHERE id=?")->execute([$id]);
-                    $auditAction = 'toggle-publication';
-                } elseif (($_POST['content_action'] ?? '') === 'delete') {
-                    $fileKey = null;
-                    if (in_array($type, ['book','lesson'], true)) db()->prepare('DELETE FROM user_favorites WHERE target_type=? AND target_id=?')->execute([$type, $id]);
-                    if ($table === 'books') {
-                        $fileQuery = db()->prepare('SELECT file_key FROM books WHERE id=?'); $fileQuery->execute([$id]); $fileKey = $fileQuery->fetchColumn();
-                    }
-                    $scholarImageKey = null;
-                    if ($table === 'scholars') { $imageQuery = db()->prepare('SELECT image_key FROM scholars WHERE id=?'); $imageQuery->execute([$id]); $scholarImageKey = $imageQuery->fetchColumn(); }
-                    db()->prepare("DELETE FROM {$table} WHERE id=?")->execute([$id]);
-                    if ($table === 'scholars') delete_scholar_image(is_string($scholarImageKey) ? $scholarImageKey : null, dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars');
-                    if (is_string($fileKey) && preg_match('/^[a-f0-9]{40}\.pdf$/', $fileKey)) {
-                        $storedFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books' . DIRECTORY_SEPARATOR . $fileKey;
-                        if (is_file($storedFile)) unlink($storedFile);
-                    }
-                    $auditAction = 'delete';
-                } else throw new RuntimeException('الإجراء غير معروف.');
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
-                flash('تم تحديث المحتوى.'); redirect('/admin');
-            } elseif ($kind === 'book') {
-                if (trim((string) $_POST['rights_basis']) === '' || !is_https_url(trim((string) $_POST['source_url']))) throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
-                $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
-                if (!is_https_url($downloadUrl)) throw new RuntimeException('أدخل رابط تنزيل مباشر يبدأ بـ HTTPS.');
-                $language = (string) ($_POST['language'] ?? 'ar'); $yearRaw = trim((string) ($_POST['publication_year'] ?? '')); $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
-                if (!in_array($language, ['ar','en','other'], true) || ($yearRaw !== '' && ($year === false || $year < 1000 || $year > 2200))) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
-                db()->prepare('INSERT INTO books (title,author,description,keywords,language,publication_year,rights_holder,source_url,download_url,rights_basis,file_key,file_size,can_download,is_published) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,NULL,1,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['author']), trim((string) $_POST['description']), trim((string) ($_POST['keywords'] ?? '')) ?: null, $language, $year, trim((string) ($_POST['rights_holder'] ?? '')) ?: null, trim((string) $_POST['source_url']), $downloadUrl, trim((string) $_POST['rights_basis']), isset($_POST['publish']) ? 1 : 0]);
-            } elseif ($kind === 'adhkar') {
-                if (trim((string) $_POST['source_reference']) === '' || !is_https_url(trim((string) $_POST['source_url'])) || !isset($_POST['reviewed'])) throw new RuntimeException('لا يمكن نشر الذكر دون مصدر آمن ومراجعة موثقة.');
-                db()->prepare('INSERT INTO adhkar_items (title,formula,source_reference,source_url,repeat_count,category,is_reviewed,is_published,sort_order) VALUES (?,?,?,?,?,?,?,?,?)')->execute([trim((string) $_POST['title']), trim((string) $_POST['formula']), trim((string) $_POST['source_reference']), trim((string) $_POST['source_url']), ($_POST['repeat_count'] ?? '') === '' ? null : (int) $_POST['repeat_count'], trim((string) $_POST['category']), 1, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
             } else { throw new RuntimeException('نوع المحتوى غير مدعوم.'); }
-            db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'create', $kind, (string) db()->lastInsertId()]);
-            flash('تم حفظ المحتوى.'); redirect('/admin');
         } catch (Throwable $exception) {
             $eventDraftConflict = $exception instanceof AdminEventConflict;
             if (db()->inTransaction()) db()->rollBack();
@@ -1023,12 +949,19 @@ if ($path === '/admin') {
     $auditRowsQuery = db()->prepare("SELECT a.id,a.action,a.target_type,a.target_id,a.created_at,u.email AS actor_email,t.email AS target_email FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id LEFT JOIN users t ON a.target_type='user' AND t.id=CAST(a.target_id AS UNSIGNED)" . $auditWhere . " ORDER BY a.id DESC LIMIT {$auditPageSize} OFFSET {$auditOffset}");
     $auditRowsQuery->execute($auditParams);
     $auditRows = array_map('admin_audit_projection', $auditRowsQuery->fetchAll());
-    $commentCount = (int) db()->query('SELECT COUNT(*) FROM lesson_comments')->fetchColumn();
-    $commentPageSize = 50;
-    $commentPageCount = max(1, (int) ceil($commentCount / $commentPageSize));
-    $commentPage = max(1, min($commentPageCount, (int) (filter_var($_GET['comments_page'] ?? 1, FILTER_VALIDATE_INT) ?: 1)));
-    $commentOffset = ($commentPage - 1) * $commentPageSize;
-    $pendingComments = db()->query("SELECT c.id,c.body,c.status,c.created_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id ORDER BY (c.status='pending') DESC,c.created_at DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}")->fetchAll();
+    $commentFilter=is_string($_GET['comments_status'] ?? null) && in_array($_GET['comments_status'],['all','pending','visible','hidden'],true) ? $_GET['comments_status'] : 'all';
+    $commentCount=null;$commentPageSize=50;$commentPageCount=1;$commentPage=1;$pendingComments=[];
+    if (!empty($admin['email_verified_at'])) {
+        $q=db()->prepare("SELECT COUNT(*) FROM lesson_comments WHERE (?='all' OR status=?)");$q->execute([$commentFilter,$commentFilter]);$commentCount=(int)$q->fetchColumn();
+        $commentPageCount=max(1,(int)ceil($commentCount/$commentPageSize));
+        $commentPage=max(1,min($commentPageCount,(int)(filter_var($_GET['comments_page'] ?? 1,FILTER_VALIDATE_INT) ?: 1)));$commentOffset=($commentPage-1)*$commentPageSize;
+        $commentSelect='SELECT c.id,c.lesson_id,c.parent_id,c.body,c.status,c.revision,c.moderation_reason,c.created_at,l.title AS lesson_title,u.display_name,u.username FROM lesson_comments c JOIN lessons l ON l.id=c.lesson_id JOIN users u ON u.id=c.user_id';
+        $q=db()->prepare($commentSelect." WHERE (?='all' OR c.status=?) ORDER BY (c.status='pending') DESC,c.created_at DESC,c.id DESC LIMIT {$commentPageSize} OFFSET {$commentOffset}");$q->execute([$commentFilter,$commentFilter]);$pendingComments=$q->fetchAll();
+        $commentFocus=$adminError !== '' && in_array($_POST['kind'] ?? '',['comment-review','comment-delete'],true) ? (int)(filter_var($_POST['comment_id'] ?? 0,FILTER_VALIDATE_INT) ?: 0) : 0;
+        if ($commentFocus > 0 && !in_array($commentFocus,array_map('intval',array_column($pendingComments,'id')),true)) {
+            $q=db()->prepare($commentSelect.' WHERE c.id=?');$q->execute([$commentFocus]);if ($focusedComment=$q->fetch()) array_unshift($pendingComments,$focusedComment);
+        }
+    }
     $dashboardMetrics = [
         'users' => (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn(),
         'scholars' => (int) db()->query('SELECT COUNT(*) FROM scholars WHERE is_published=1')->fetchColumn(),
@@ -1062,7 +995,9 @@ if ($path === '/admin') {
     $managedUsers = $managedUsersQuery->fetchAll();
     $smtpConfig = ['smtp_host'=>'','smtp_port'=>'587','smtp_security'=>'tls','smtp_username'=>'','smtp_from_email'=>'','smtp_from_name'=>'أثر'];
     foreach ($smtpConfig as $key=>$fallback) $smtpConfig[$key] = platform_setting($key,$fallback);
-    $smtpPasswordConfigured = platform_setting('smtp_password_cipher') !== '';
+    $serviceDiagnostics=admin_service_diagnostics($admin);
+    $nightPrayerPublicDefaults=null;
+    if (admin_can($admin,'night_prayer_defaults')) { try { $nightPrayerPublicDefaults=\Athar\NightPrayer\PublicNightPrayerDefaults::load(db()); } catch (Throwable $configReadFailure) {} }
     $mailingOptInCount = (int) db()->query("SELECT COUNT(*) FROM users WHERE role='user' AND email_verified_at IS NOT NULL AND email_marketing_opt_in=1")->fetchColumn();
     $emailCampaigns = db()->query("SELECT c.*,u.email AS creator_email,
         (SELECT COUNT(*) FROM email_campaign_recipients r WHERE r.campaign_id=c.id) AS recipient_total,
@@ -1108,8 +1043,10 @@ try {
         $count = db()->prepare('SELECT COUNT(*)' . $where); $count->execute($searchParams); $curatedBookTotal = (int) $count->fetchColumn();
         $bookPageCount = max(1, (int) ceil($curatedBookTotal / 20)); $bookPage = min($bookPage, $bookPageCount);
         $offset = ($bookPage - 1) * 20;
-        $query = 'SELECT b.id,b.title,b.author,b.description,b.keywords,b.language,b.publication_year,b.rights_holder,b.source_url,b.download_url,b.can_download,b.file_key,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'book\' AND f.target_id=b.id) AS is_favorite' . $where . ' ORDER BY b.title LIMIT 20 OFFSET ' . $offset;
+        $query = 'SELECT b.id,b.title,b.author,b.description,b.keywords,b.language,b.publication_year,b.rights_holder,b.source_url,b.download_url,b.can_download,b.rights_basis,(SELECT COUNT(*) FROM user_favorites f WHERE f.user_id=? AND f.target_type=\'book\' AND f.target_id=b.id) AS is_favorite' . $where . ' ORDER BY b.title LIMIT 20 OFFSET ' . $offset;
         $statement = db()->prepare($query); $statement->execute(array_merge([(int) ($user['id'] ?? 0)], $searchParams)); $curatedBooks = $statement->fetchAll();
+        foreach ($curatedBooks as &$curatedBook) $curatedBook['can_download']=\Athar\Catalog\BookAccess::downloadable($curatedBook);
+        unset($curatedBook);
     }
     if ($path === '/lessons') {
         $user = current_user();

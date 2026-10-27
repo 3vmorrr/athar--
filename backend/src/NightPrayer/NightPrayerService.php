@@ -16,6 +16,11 @@ final class NightPrayerService
     private string $key;
     public function __construct(PDO $db,string $key) { $this->db=$db;$this->key=$key; }
 
+    public function publicConfig(): array
+    {
+        return PublicNightPrayerDefaults::response(PublicNightPrayerDefaults::load($this->db));
+    }
+
     public function write(int $user,string $id,array $input,bool $delete=false): array
     {
         $id=$this->uuid($id);$mutation=$this->uuid((string)($input['mutation_id']??''));

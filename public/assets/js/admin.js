@@ -143,6 +143,13 @@
         sync();
     });
 
+    document.querySelectorAll('[data-comment-form]').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            const message = event.submitter?.dataset.commentDeleteConfirm;
+            if (message && !window.confirm(message)) event.preventDefault();
+        });
+    });
+
     document.querySelectorAll('form[data-confirm]').forEach((form) => {
         form.addEventListener('submit', (event) => {
             if (!window.confirm(form.dataset.confirm || 'Confirm?')) event.preventDefault();

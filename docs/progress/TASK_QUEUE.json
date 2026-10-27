@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "18.5",
+  "current_task": "19.1",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -1836,7 +1836,7 @@
       "name": "Admin upcoming and live editor",
       "parent": "Work package 18: Admin content/services",
       "scope": "Edit localized course/topics/book pages/UTC schedules/status/replay with CAS and explicit audited transitions.",
-      "state": "COMPLETE",
+      "state": "PARTIAL",
       "dependencies": [
         "18.3"
       ],
@@ -1844,7 +1844,7 @@
         "admin/ (new)",
         "backend/src/Learning/"
       ],
-      "automated_tests": "COMPLETE:20,791 backend;263 actual HTTP/260 browser authoring chain;final independent149 HTTP/58 browser;privacy218 HTTP. Time/DST/precision/CAS/audit/confirmation, translation clearing, true totals/paging, verified-email gating and retained malformed data. Evidence:docs/testing/ADMIN_EVENTS.md.",
+      "automated_tests": "COMPLETE:20,791 backend;263 actual HTTP/260 browser authoring chain;final independent149 HTTP/58 browser;privacy218 HTTP. Time/DST/precision/CAS/audit/confirmation, translation clearing, true totals/paging, verified-email gating and retained malformed data. Evidence:docs/testing/ADMIN_EVENTS.md. Audit correction2026-10-27: implementation and committed Admin/backend acceptance passed; full task closure remains open for the queued physical cross-system scenario. Do not count as fully validated.",
       "physical_device": "Actual AR/EN light/dark Admin1440/360 browser create/edit/conflict-related feedback, retained precision and unchecked confirmation, no overflow/JS errors; captures visually inspected. Canonical native API regressions pass; no Android source change or physical provider-playback claim.",
       "definition_of_done": "Edit localized course/topics/book pages/UTC schedules/status/replay with CAS and explicit audited transitions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0
@@ -1854,7 +1854,7 @@
       "name": "Admin book CRUD and rights",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage metadata/source/rights/direct-download links and publication without forcing book uploads.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.4"
       ],
@@ -1865,7 +1865,8 @@
       "automated_tests": "URL/rights/publish/delete/native catalog/RBAC tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage metadata/source/rights/direct-download links and publication without forcing book uploads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0.4969,
+      "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
     },
     {
       "id": "18.6",
@@ -1883,14 +1884,15 @@
       "automated_tests": "Source/repeat/validation/RBAC/native category tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage approved source/category/repeat/NULL count content with attribution and versioning. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0.4969,
+      "acceptance": "Code integrated; backend/HTTP/browser gates PASS. Required native cross-system acceptance QUEUED; Samsung currently disconnected. See ADMIN_CONTENT_SERVICES_BATCH.md and DEVICE_ACCEPTANCE_QUEUE.json."
     },
     {
       "id": "18.7",
       "name": "Admin discussion moderation",
       "parent": "Work package 18: Admin content/services",
       "scope": "Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.6"
       ],
@@ -1901,14 +1903,15 @@
       "automated_tests": "Parent hiding/CAS/role/audit/paging/native pending states tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0.4969,
+      "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
     },
     {
       "id": "18.8",
       "name": "Admin secure service settings",
       "parent": "Work package 18: Admin content/services",
       "scope": "Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.7"
       ],
@@ -1920,14 +1923,15 @@
       "automated_tests": "Encryption/no echo/RBAC/CSRF/fake SMTP/invalid config tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0.4969,
+      "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
     },
     {
       "id": "18.9",
       "name": "Admin public Night Prayer defaults",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "18.8"
       ],
@@ -1938,7 +1942,8 @@
       "automated_tests": "Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0.4969,
+      "acceptance": "Code integrated; backend/HTTP/browser gates PASS. Required native cross-system acceptance QUEUED; Samsung currently disconnected. See ADMIN_CONTENT_SERVICES_BATCH.md and DEVICE_ACCEPTANCE_QUEUE.json."
     },
     {
       "id": "19.1",
@@ -2776,5 +2781,7 @@
     ]
   },
   "phase_completion_method": "Phase2 uses fixed task weights and is90%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance.",
-  "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md"
+  "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md",
+  "overall_estimate_status": "UNVERIFIED historic engineering estimate; frozen at51.38. Not an actual completed-task percentage; see PROGRESS_AUDIT_2026-10-27.json.",
+  "status_meaning": "Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified."
 }

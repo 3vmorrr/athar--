@@ -118,9 +118,7 @@ function redirect(string $path): void
 
 function is_https_url(string $url): bool
 {
-    if (strlen($url) > 500 || filter_var($url, FILTER_VALIDATE_URL) === false) return false;
-    $parts = parse_url($url);
-    return is_array($parts) && strtolower((string) ($parts['scheme'] ?? '')) === 'https' && isset($parts['host']);
+    return \Athar\Infrastructure\HttpsUrl::valid($url);
 }
 
 function quran_ayah_count(int $surah): int

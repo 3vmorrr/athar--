@@ -148,9 +148,8 @@ final class ApiKernel
             $this->method($r,'POST');if(!$this->rates->consume('comments',(string)$user,3,3600))throw new ApiError('rate_limited',429);return [$this->progress->addComment($user,(int)$m[1],$r->string('body',2000)),201];
         }
         if(preg_match('#^/books/([1-9][0-9]*)/download$#',$path,$m)){
-            $this->method($r,'GET');$book=$this->catalog->detail('books',(int)$m[1]);if(!$book['can_download'])throw new ApiError('not_found',404);
-            $q=$this->db->prepare('SELECT download_url FROM books WHERE id=?');$q->execute([(int)$m[1]]);$url=$q->fetchColumn();
-            if(isset($r->headers['idempotency-key']))$this->progress->activity($user,(string)$r->headers['idempotency-key'],'book_download');return [['url'=>$url,'mode'=>'direct','title'=>$book['title']],200];
+            $this->method($r,'GET');$download=$this->catalog->bookDownload((int)$m[1]);
+            if(isset($r->headers['idempotency-key']))$this->progress->activity($user,(string)$r->headers['idempotency-key'],'book_download');return [$download,200];
         }
         if($path==='/me/export'){
             $this->method($r,'GET');$export=['profile'=>$this->auth->profile($user)];
@@ -160,6 +159,7 @@ final class ApiKernel
         }
         if(str_starts_with($path,'/night-prayer/')){
             if(!$this->nightPrayer)throw new ApiError('service_unavailable',503);
+            if($path==='/night-prayer/config'){$this->method($r,'GET');return [$this->nightPrayer->publicConfig(),200];}
             if($path==='/night-prayer/sessions'){
                 if($r->method==='GET')return [$this->nightPrayer->sessions($user,$r->query),200];
                 $this->method($r,'POST');return [$this->nightPrayer->write($user,$r->string('id',36),$r->body),201];

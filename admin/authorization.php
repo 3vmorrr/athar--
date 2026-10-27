@@ -102,17 +102,18 @@ function admin_audit_actions(): array
         'admin-user-suspended','admin-user-restored','admin-user-profile-updated','admin-user-email-updated','admin-user-deleted',
         'user-role-changed-to-admin','user-role-changed-to-user',
         'comment-visible','comment-hidden','comment-deleted',
-        'gmail-smtp-settings-updated','dorar-api-settings-updated',
+        'gmail-smtp-settings-updated','dorar-api-settings-updated','smtp-test-accepted','smtp-test-failed','night-prayer-public-defaults-updated',
         'email-campaign-created','email-campaign-batch-sent','email-campaign-failures-requeued','email-campaign-unsubscribed',
         'backup-created-and-verified','backup-expired-and-deleted','backup-restored','backup-download-started','backup-downloaded','backup-download-grant-issued',
         'update','toggle-publication','delete','create',
+        'comment-published',
         'lesson-event-draft','lesson-event-scheduled','lesson-event-live','lesson-event-published','lesson-event-cancelled',
     ];
 }
 
 function admin_audit_target_types(): array
 {
-    return ['user','admin-user','admin-action','platform','backup','email-campaign','lesson-comment','scholar','series','lesson','book','adhkar','lesson_event'];
+    return ['user','admin-user','admin-action','platform','backup','email-campaign','lesson-comment','scholar','series','lesson','book','adhkar','lesson_event','comment'];
 }
 
 /** The view never receives raw emails or unconstrained historical target text. */

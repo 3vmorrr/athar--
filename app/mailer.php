@@ -25,6 +25,7 @@ function setting_cipher_key(): string
         if (is_file($path)) {
             $key = trim((string) @file_get_contents($path));
         } else {
+            if ((int)db()->query("SELECT COUNT(*) FROM platform_settings WHERE RIGHT(setting_key,7)='_cipher' AND setting_value<>''")->fetchColumn() > 0) throw new RuntimeException('الإعدادات المشفرة تتطلب مفتاحها الأصلي. استعد المفتاح قبل تعديلها.');
             $generated = bin2hex(random_bytes(32));
             $handle = @fopen($path, 'x');
             if ($handle !== false) {
@@ -64,7 +65,13 @@ function open_platform_secret(string $sealed): string
 function platform_email_base_url(): string
 {
     $configured = rtrim(trim((string) (getenv('ATHAR_BASE_URL') ?: '')), '/');
-    if ($configured !== '' && filter_var($configured, FILTER_VALIDATE_URL) && in_array(strtolower((string) parse_url($configured, PHP_URL_SCHEME)), ['http', 'https'], true)) return $configured;
+    $local = in_array(getenv('APP_ENV'),['local','development','test'],true);
+    if ($configured !== '') {
+        $parts=parse_url($configured);
+        if (filter_var($configured,FILTER_VALIDATE_URL) && is_array($parts) && !isset($parts['user']) && !isset($parts['pass']) && !isset($parts['query']) && !isset($parts['fragment']) && in_array(strtolower($parts['scheme'] ?? ''),$local ? ['http','https'] : ['https'],true)) return $configured;
+        throw new RuntimeException('اضبط ATHAR_BASE_URL على رابط عام صالح وآمن دون بيانات دخول أو query أو fragment.');
+    }
+    if (!$local) throw new RuntimeException('يلزم ATHAR_BASE_URL آمن ومحدد في إعدادات الإنتاج.');
     $host = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
     if ($host !== '' && preg_match('/^[a-z0-9.-]+(?::[0-9]{1,5})?$/i', $host)) {
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -120,8 +127,7 @@ function smtp_command($socket, string $command, array $expected): string
     fwrite($socket, $command . "\r\n");
     [$code, $reply] = smtp_read_response($socket);
     if (!in_array($code, $expected, true)) {
-        $diagnostic = preg_replace('/[\r\n]+/', ' ', $reply) ?? '';
-        throw new RuntimeException('رفض خادم البريد الطلب (' . $code . '): ' . substr($diagnostic, 0, 220));
+        throw new RuntimeException('SMTP command rejected (' . $code . ')');
     }
     return $reply;
 }
@@ -181,8 +187,9 @@ function send_platform_email(string $recipient, string $subject, string $body, ?
         catch (Throwable $logError) { error_log('[Athar] Email send event could not be recorded.'); }
         return true;
     } catch (Throwable $exception) {
-        $failureReason = preg_replace('/[\r\n]+/', ' ', $exception->getMessage()) ?? 'فشل اتصال البريد.';
-        error_log('[Athar] SMTP delivery failed: ' . $failureReason);
+        $status = preg_match('/^SMTP command rejected \(([0-9]{3})\)$/D',$exception->getMessage(),$match) ? $match[1] : null;
+        $failureReason = $status === null ? 'تعذر إكمال اتصال SMTP الآمن. راجع الإعدادات والمستلم.' : 'رفض خادم SMTP الطلب ('.$status.').';
+        error_log('[Athar] SMTP delivery failed'.($status === null ? '.' : ' ('.$status.').'));
         return false;
     } finally { fclose($socket); }
 }
