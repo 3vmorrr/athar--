@@ -236,6 +236,9 @@ private fun KhatmahContent(
             !start.isAfter(today.plusYears(1)) &&
             !target.isAfter(start.plusYears(5))
     }.getOrDefault(false)
+    val computedMetrics = remember(plan) {
+        plan?.let(repository::metrics)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -294,7 +297,7 @@ private fun KhatmahContent(
         }
 
         if (plan != null && !editing) {
-            val metrics = remember(plan) { repository.metrics(plan) }
+            val metrics = requireNotNull(computedMetrics)
 
             item(key = "khatmah-workload", contentType = "metrics") {
                 KhatmahWorkload(plan, metrics)
