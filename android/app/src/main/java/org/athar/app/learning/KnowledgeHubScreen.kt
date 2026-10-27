@@ -299,7 +299,7 @@ fun KnowledgeHubScreen(
                             "scholars" to R.string.scholars,
                             "books" to R.string.books,
                         ).forEach{tab->
-                            FilterChip(
+                            AtharFilterChip(
                                 selected=type==tab.first,
                                 onClick={
                                     if(tab.first=="books"){
@@ -311,28 +311,16 @@ fun KnowledgeHubScreen(
                                         page=1
                                     }
                                 },
-                                label={Text(stringResource(tab.second))},
+                                label=stringResource(tab.second),
                             )
                         }
                     }
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement=Arrangement.spacedBy(AtharSpacing.Sm),
-                    ){
-                        OutlinedTextField(
-                            value=input,
-                            onValueChange={input=it.take(100)},
-                            modifier=Modifier.weight(1f),
-                            singleLine=true,
-                            label={Text(stringResource(R.string.search))},
-                        )
-                        IconButton(
-                            onClick={query=input.trim();page=1},
-                            modifier=Modifier.sizeIn(minWidth=48.dp,minHeight=48.dp),
-                        ){
-                            Icon(AtharIcons.Search,stringResource(R.string.search))
-                        }
-                    }
+                    AtharSearchField(
+                        value=input,
+                        onValueChange={input=it.take(100)},
+                        onSearch={query=input.trim();page=1},
+                        label=stringResource(R.string.search),
+                    )
                 }
             }
 
@@ -357,22 +345,16 @@ fun KnowledgeHubScreen(
             }
 
             item(key="knowledge-pagination",contentType="pagination"){
-                Row(
-                    Modifier.fillMaxWidth().padding(horizontal=AtharSpacing.Lg),
-                    horizontalArrangement=Arrangement.SpaceBetween,
-                ){
-                    TextButton(
-                        onClick={page=(page-1).coerceAtLeast(1)},
-                        enabled=page>1,
-                        modifier=Modifier.heightIn(min=48.dp),
-                    ){Text(stringResource(R.string.back))}
-                    Text(page.toString(),Modifier.padding(AtharSpacing.Lg),style=MaterialTheme.typography.labelLarge)
-                    TextButton(
-                        onClick={page++},
-                        enabled=hasMore,
-                        modifier=Modifier.heightIn(min=48.dp),
-                    ){Text(stringResource(R.string.more))}
-                }
+                AtharPageControls(
+                    page=page,
+                    hasPrevious=page>1,
+                    hasNext=hasMore,
+                    previousLabel=stringResource(R.string.back),
+                    nextLabel=stringResource(R.string.more),
+                    onPrevious={page=(page-1).coerceAtLeast(1)},
+                    onNext={page++},
+                    modifier=Modifier.padding(horizontal=AtharSpacing.Lg),
+                )
             }
         }
     }
@@ -383,40 +365,49 @@ private fun KnowledgeCatalogCard(
     item:KnowledgeCatalogItem,
     onClick:()->Unit,
 ){
-    ElevatedCard(
-        modifier=Modifier.padding(horizontal=AtharSpacing.Lg).fillMaxWidth().clickable(onClick=onClick),
+    Surface(
+        onClick=onClick,
+        modifier=Modifier.padding(horizontal=AtharSpacing.Lg).fillMaxWidth(),
         shape=MaterialTheme.shapes.extraLarge,
+        color=MaterialTheme.colorScheme.surfaceContainerLow,
+        border=BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant),
+        tonalElevation=0.dp,
     ){
         Row(
-            Modifier.fillMaxWidth().heightIn(min=104.dp).padding(AtharSpacing.Lg),
+            Modifier.fillMaxWidth().heightIn(min=88.dp).padding(horizontal=AtharSpacing.Lg,vertical=AtharSpacing.Md),
             horizontalArrangement=Arrangement.spacedBy(AtharSpacing.Md),
+            verticalAlignment=androidx.compose.ui.Alignment.CenterVertically,
         ){
             Surface(
-                modifier=Modifier.size(48.dp),
+                modifier=Modifier.size(44.dp),
                 shape=MaterialTheme.shapes.medium,
                 color=MaterialTheme.colorScheme.primaryContainer,
-                border=BorderStroke(1.dp,MaterialTheme.colorScheme.primary.copy(alpha=0.18f)),
             ){
                 Icon(
                     AtharIcons.School,
                     contentDescription=null,
                     tint=MaterialTheme.colorScheme.primary,
-                    modifier=Modifier.padding(AtharSpacing.Md),
+                    modifier=Modifier.padding(10.dp),
                 )
             }
             Column(
                 Modifier.weight(1f),
-                verticalArrangement=Arrangement.spacedBy(AtharSpacing.Xs),
+                verticalArrangement=Arrangement.spacedBy(2.dp),
             ){
                 Text(item.title,style=MaterialTheme.typography.titleMedium,maxLines=2,overflow=TextOverflow.Ellipsis)
                 item.subtitle?.let{
-                    Text(it,style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=2,overflow=TextOverflow.Ellipsis)
+                    Text(it,style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
                 }
                 item.description?.let{
-                    Text(it,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=2,overflow=TextOverflow.Ellipsis)
+                    Text(it,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
                 }
             }
-            Icon(AtharIcons.ArrowForward,null,tint=MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(
+                AtharIcons.ArrowForward,
+                contentDescription=null,
+                tint=MaterialTheme.colorScheme.primary,
+                modifier=Modifier.size(20.dp),
+            )
         }
     }
 }
