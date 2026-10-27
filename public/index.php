@@ -853,24 +853,8 @@ if ($path === '/admin') {
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
                 if ((string) ($_POST['environment_confirmation'] ?? '') !== $environment || (string) ($_POST['reset_confirmation'] ?? '') !== 'RESET ATHAR DATA') throw new RuntimeException('أكد البيئة المحلية وعبارة الحذف حرفيًا.');
-                $recent = db()->query("SELECT id FROM backup_artifacts WHERE status IN ('ready','downloaded') AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) ORDER BY verified_at DESC LIMIT 1")->fetchColumn();
-                if (!$recent) throw new RuntimeException('أنشئ نسخة كاملة تم التحقق منها خلال آخر 24 ساعة قبل إعادة الضبط.');
-                append_owner_audit(['action' => 'local-reset-started', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
                 acquire_maintenance_lock();
-                try {
-                    $pdo = db(); $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
-                    try {
-                        $keep = ['users','schema_migrations','backup_artifacts'];
-                        $database = getenv('ATHAR_DB_NAME') ?: 'athar';
-                        $tables = $pdo->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=" . $pdo->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
-                        foreach ($tables as $table) if (!in_array($table, $keep, true)) $pdo->exec('DELETE FROM `' . $table . '`');
-                        $pdo->prepare('DELETE FROM users WHERE id<>?')->execute([$admin['id']]);
-                        $pdo->prepare('UPDATE users SET session_version=session_version+1 WHERE id=?')->execute([$admin['id']]);
-                    } finally { $pdo->exec('SET FOREIGN_KEY_CHECKS=1'); }
-                    $assets = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'books';
-                    foreach (glob($assets . DIRECTORY_SEPARATOR . '*.pdf') ?: [] as $pdf) if (preg_match('/^[a-f0-9]{40}\.pdf$/', basename($pdf))) @unlink($pdf);
-                    append_owner_audit(['action' => 'local-reset-completed', 'actor_id' => (int) $admin['id'], 'environment' => $environment, 'backup_id' => (int) $recent]);
-                } finally { release_maintenance_lock(); }
+                try { reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }
                 admin_start_authenticated_session((int) $admin['id']);
                 flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin');
             } elseif ($kind === 'backup-grant') {

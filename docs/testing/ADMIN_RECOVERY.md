@@ -15,3 +15,11 @@ Validation: `scripts/test-backend.ps1` PASS:20,711 assertions, including20 new i
 ## Remaining acceptance
 
 17.6 remains PARTIAL. Local reset safety, HTTP create/grant/single-use download/restore/reset journeys, bilingual recovery controls and actual browser acceptance remain open. Asset installation after DB commit still needs failure/retry review. The source cursor stays `5ad55efbb9d06d5c89395cf663c70da015b90257` until those gates are resolved or explicitly recorded as pending. WP17 remains5/6 accepted; overall estimate remains49% (48.78 weighted, ±10pp). WP02.8 retains its deferred checkpoint.
+
+## 17.6.2 — local reset transaction and recoverable-backup gate
+
+Base:`bf6b0b808e88cb05ffee7c463d5859d9859a8e81`. Reset now rechecks local/development environment inside its service, a current unexpired artifact, encrypted file integrity, the active decryption key and matching database/schema before deleting data. Deletes run in one transaction, preserve the active owner/migration ledger/artifacts, invalidate the owner's old cookies and clear dangling artifact-creator references. Cleanup is limited to registered book/scholar asset keys; unrelated files are preserved. Maintenance locking and password/literal confirmation remain at the HTTP boundary.
+
+Validation:`scripts/test-backend.ps1` PASS:20,732 assertions, including41 isolated recovery assertions. New evidence includes production/expired/missing/wrong-key reset denials, retained accounts, injected BEFORE DELETE trigger failure after earlier deletes (full rollback/FK/transaction/asset preservation), actual successful reset, owner/version/schema/artifact retention, registered-vs-unregistered file isolation, lock release and actual post-reset restoration of private records/PDF/portrait bytes. No production schema or existing development files were reset. Initial expanded37-check run also passed; final41-check run adds transactional failure evidence. Logs:`storage/engineering/admin-recovery-reset-backend.log`. No migration/native changes.
+
+Task17.6 remains PARTIAL pending HTTP/bilingual/browser and asset-install failure acceptance. Cursor unchanged. Restore increment17.6.1 pushed and remote SHA verified as`bf6b0b808e88cb05ffee7c463d5859d9859a8e81`.

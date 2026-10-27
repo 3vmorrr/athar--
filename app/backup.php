@@ -313,3 +313,69 @@ function restore_backup_archive(int $backupId, int $ownerId): int
         if ($zip instanceof ZipArchive) { try { $zip->close(); } catch (ValueError $ignored) {} } if (is_file($plain)) @unlink($plain); foreach ($staged as $stage) if (is_file($stage)) @unlink($stage);
     }
 }
+
+/** Refuse destructive reset unless its recovery artifact is still decryptable. */
+function verified_reset_backup(): int
+{
+    $artifact = db()->query("SELECT * FROM backup_artifacts WHERE status IN ('ready','downloaded') AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) AND expires_at>UTC_TIMESTAMP() ORDER BY verified_at DESC,id DESC LIMIT 1")->fetch();
+    if (!$artifact) throw new RuntimeException('أنشئ نسخة كاملة صالحة تم التحقق منها خلال آخر 24 ساعة قبل إعادة الضبط.');
+    $key = (string) $artifact['storage_key'];
+    if (!preg_match('/^[a-f0-9]{40}\.enc$/D', $key)) throw new RuntimeException('مسار النسخة الاحتياطية غير صالح.');
+    $path = backup_directory() . DIRECTORY_SEPARATOR . $key;
+    if (!is_file($path) || is_link($path) || !hash_equals((string) $artifact['sha256'], hash_file('sha256', $path) ?: '')) throw new RuntimeException('ملف النسخة الاحتياطية مفقود أو تالف.');
+    $plain = tempnam(ensure_backup_directory(), 'athar-reset-check-');
+    if ($plain === false) throw new RuntimeException('تعذر التحقق من نسخة الاسترداد.');
+    $zip = new ZipArchive();
+    try {
+        if (!unlink($plain)) throw new RuntimeException('تعذر إعداد ملف التحقق.');
+        decrypt_backup_file($path, $plain, backup_key());
+        if ($zip->open($plain, ZipArchive::CHECKCONS) !== true) throw new RuntimeException('حاوية النسخة غير صالحة.');
+        $manifest = json_decode((string) $zip->getFromName('manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+        $schema = (string) db()->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn();
+        if (($manifest['format'] ?? '') !== 'athar-full-backup-v1' || ($manifest['database_name'] ?? '') !== (getenv('ATHAR_DB_NAME') ?: 'athar') || ($manifest['schema_version'] ?? '') !== $schema) throw new RuntimeException('نسخة الاسترداد لا تطابق قاعدة البيانات والمخطط الحاليين.');
+        return (int) $artifact['id'];
+    } finally {
+        try { $zip->close(); } catch (ValueError $ignored) {}
+        if (is_file($plain)) unlink($plain);
+    }
+}
+
+/** Caller holds the maintenance lock and has confirmed the owner password/text. */
+function reset_local_data(int $ownerId): void
+{
+    $environment = strtolower((string) (getenv('APP_ENV') ?: 'production'));
+    if (!in_array($environment, ['local','development'], true)) throw new RuntimeException('إعادة الضبط متاحة فقط في بيئة محلية أو تطوير.');
+    $db = db();
+    $recent = verified_reset_backup();
+    $assetKeys = [
+        'books' => backup_asset_keys('books', $db->query('SELECT file_key FROM books')->fetchAll()),
+        'scholars' => backup_asset_keys('scholars', $db->query('SELECT image_key FROM scholars')->fetchAll()),
+    ];
+    append_owner_audit(['action'=>'local-reset-started','actor_id'=>$ownerId,'environment'=>$environment,'backup_id'=>$recent]);
+    $db->exec('SET FOREIGN_KEY_CHECKS=0');
+    try {
+        $db->beginTransaction();
+        $owner = $db->prepare("SELECT session_version FROM users WHERE id=? AND role='owner' AND suspended_at IS NULL FOR UPDATE");
+        $owner->execute([$ownerId]); $version = $owner->fetchColumn();
+        if ($version === false || (int) $version >= 4294967295) throw new RuntimeException('تعذر التحقق من حساب المالك وإبطال جلساته بأمان.');
+        $database = (string) $db->query('SELECT DATABASE()')->fetchColumn();
+        $tables = $db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=' . $db->quote($database) . " AND TABLE_TYPE='BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($tables as $table) {
+            if (!preg_match('/^[a-zA-Z0-9_]+$/D', $table)) throw new RuntimeException('اسم جدول غير صالح.');
+            if (!in_array($table, ['users','schema_migrations','backup_artifacts'], true)) $db->exec('DELETE FROM `' . $table . '`');
+        }
+        $db->prepare('UPDATE backup_artifacts SET created_by=NULL WHERE created_by<>?')->execute([$ownerId]);
+        $db->prepare('DELETE FROM users WHERE id<>?')->execute([$ownerId]);
+        $db->prepare('UPDATE users SET session_version=session_version+1 WHERE id=?')->execute([$ownerId]);
+        $db->commit();
+    } catch (Throwable $failure) {
+        if ($db->inTransaction()) $db->rollBack();
+        throw $failure;
+    } finally { $db->exec('SET FOREIGN_KEY_CHECKS=1'); }
+    // Delete only assets registered in this schema; never glob another environment's files.
+    foreach ($assetKeys as $kind => $keys) foreach ($keys as $key) {
+        $path = dirname(__DIR__) . '/storage/' . $kind . '/' . $key;
+        if (is_file($path) && !unlink($path)) throw new RuntimeException('أُعيد ضبط البيانات لكن تعذر حذف ملف مسجل. راجع سجل الصيانة.');
+    }
+    append_owner_audit(['action'=>'local-reset-completed','actor_id'=>$ownerId,'environment'=>$environment,'backup_id'=>$recent]);
+}
