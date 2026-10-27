@@ -843,8 +843,8 @@ if ($path === '/admin') {
                 $backupId = filter_var($_POST['backup_id'] ?? null, FILTER_VALIDATE_INT); if (!$backupId || $backupId < 1) throw new RuntimeException('اختر نسخة صالحة.');
                 append_owner_audit(['action' => 'backup-restore-started', 'actor_id' => (int) $admin['id'], 'backup_id' => $backupId]);
                 acquire_maintenance_lock();
-                try { restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
-                admin_start_authenticated_session((int) $admin['id']);
+                try { $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
+                admin_start_authenticated_session($restoredOwnerId);
                 flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin');
             } elseif ($kind === 'local-reset') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إعادة الضبط متاحة لمالك المنصة فقط.');

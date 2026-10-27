@@ -216,16 +216,18 @@ function expire_backup_artifacts(): void
     db()->exec('DELETE FROM backup_download_grants WHERE expires_at<=UTC_TIMESTAMP() OR consumed_at IS NOT NULL');
 }
 
-function restore_backup_archive(int $backupId, int $ownerId): void
+function restore_backup_archive(int $backupId, int $ownerId): int
 {
     $key = backup_key();
-    $query = db()->prepare("SELECT * FROM backup_artifacts WHERE id=? AND status IN ('ready','downloaded') AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR)");
+    $query = db()->prepare("SELECT * FROM backup_artifacts WHERE id=? AND status IN ('ready','downloaded') AND expires_at>UTC_TIMESTAMP() AND verified_at>=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR)");
     $query->execute([$backupId]); $artifact = $query->fetch();
     if (!$artifact) throw new RuntimeException('يلزم اختيار نسخة كاملة تم التحقق منها خلال آخر 24 ساعة.');
     $encrypted = backup_directory() . DIRECTORY_SEPARATOR . $artifact['storage_key'];
     if (!preg_match('/^[a-f0-9]{40}\.enc$/', (string) $artifact['storage_key']) || !is_file($encrypted) || !hash_equals((string) $artifact['sha256'], hash_file('sha256', $encrypted) ?: '')) throw new RuntimeException('ملف النسخة مفقود أو بصمته غير مطابقة.');
     $directory = ensure_backup_directory(); $plain = tempnam($directory, 'athar-restore-');
     if ($plain === false) throw new RuntimeException('تعذر إنشاء مساحة استعادة مؤقتة.'); @chmod($plain, 0600);
+    // decrypt_backup_file exclusively creates its destination; tempnam already created it.
+    if (!unlink($plain)) throw new RuntimeException('تعذر إعداد ملف الاستعادة الخاص.');
     $zip = new ZipArchive(); $staged = [];
     try {
         decrypt_backup_file($encrypted, $plain, $key);
@@ -259,8 +261,14 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             }
         }
         $zip->close(); $zip = new ZipArchive();
-        $oldOwner = $db->prepare("SELECT email,password_hash FROM users WHERE id=? AND role='owner'"); $oldOwner->execute([$ownerId]); $ownerCredentials = $oldOwner->fetch();
+        $oldOwner = $db->prepare("SELECT email,password_hash FROM users WHERE id=? AND role='owner' AND suspended_at IS NULL"); $oldOwner->execute([$ownerId]); $ownerCredentials = $oldOwner->fetch();
         if (!$ownerCredentials) throw new RuntimeException('تعذر التحقق من حساب المالك الحالي.');
+        // Restoring an older version must never make an old public/Admin cookie valid again.
+        $versionFloor = (int) $db->query('SELECT COALESCE(MAX(session_version),0) FROM users')->fetchColumn();
+        foreach ($restoreTables['users'] ?? [] as $restoredUser) {
+            $versionFloor = max($versionFloor, (int) ($restoredUser['session_version'] ?? 0));
+        }
+        if ($versionFloor >= 4294967295) throw new RuntimeException('تعذر تدوير إصدارات الجلسات بأمان.');
         $db->exec('SET FOREIGN_KEY_CHECKS=0');
         try {
             $db->beginTransaction();
@@ -274,9 +282,19 @@ function restore_backup_archive(int $backupId, int $ownerId): void
                     $db->prepare($sql)->execute(array_values($row));
                 }
             }
-            $preserve = $db->prepare("UPDATE users SET password_hash=?,role='owner',session_version=session_version+1 WHERE email=?");
+            $preserve = $db->prepare("UPDATE users SET password_hash=?,role='owner',suspended_at=NULL WHERE email=?");
             $preserve->execute([$ownerCredentials['password_hash'], $ownerCredentials['email']]);
-            if (!$preserve->rowCount()) $db->prepare("INSERT INTO users(email,password_hash,role,session_version) VALUES (?,?,'owner',2)")->execute([$ownerCredentials['email'], $ownerCredentials['password_hash']]);
+            $restoredOwner = $db->prepare('SELECT id FROM users WHERE email=?');
+            $restoredOwner->execute([$ownerCredentials['email']]);
+            $restoredOwnerId = (int) $restoredOwner->fetchColumn();
+            if (!$restoredOwnerId) {
+                $db->prepare("INSERT INTO users(email,password_hash,role) VALUES (?,?,'owner')")->execute([$ownerCredentials['email'], $ownerCredentials['password_hash']]);
+                $restoredOwnerId = (int) $db->lastInsertId();
+            }
+            $db->prepare('UPDATE users SET session_version=?')->execute([$versionFloor + 1]);
+            // These tables survive restoration; their old actor may no longer exist.
+            $db->exec('UPDATE backup_artifacts a LEFT JOIN users u ON u.id=a.created_by SET a.created_by=NULL WHERE u.id IS NULL');
+            $db->exec('UPDATE platform_settings s LEFT JOIN users u ON u.id=s.updated_by SET s.updated_by=NULL WHERE u.id IS NULL');
             $db->exec('DELETE FROM auth_tokens'); $db->exec('DELETE FROM backup_download_grants');
             foreach(['api_sessions','auth_rate_buckets'] as $securityTable)if(in_array($securityTable,$tables,true))$db->exec('DELETE FROM `'.$securityTable.'`');
             $db->commit();
@@ -288,8 +306,9 @@ function restore_backup_archive(int $backupId, int $ownerId): void
             if(!is_dir($assetsDir)&&!mkdir($assetsDir,0700,true))throw new RuntimeException('تعذر إعداد مجلد الاستعادة.');
             if (!rename($stage, $assetsDir . DIRECTORY_SEPARATOR . $key)) throw new RuntimeException('استعيدت البيانات لكن تعذر نقل ملف؛ أعد الاستعادة من النسخة.'); unset($staged[$assetKey]);
         }
-        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$ownerId, 'backup-restored', 'backup', (string) $backupId]);
-        append_owner_audit(['action' => 'backup-restored', 'actor_id' => $ownerId, 'backup_id' => $backupId]);
+        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$restoredOwnerId, 'backup-restored', 'backup', (string) $backupId]);
+        append_owner_audit(['action' => 'backup-restored', 'actor_id' => $restoredOwnerId, 'backup_id' => $backupId]);
+        return $restoredOwnerId;
     } finally {
         if ($zip instanceof ZipArchive) { try { $zip->close(); } catch (ValueError $ignored) {} } if (is_file($plain)) @unlink($plain); foreach ($staged as $stage) if (is_file($stage)) @unlink($stage);
     }

@@ -1,6 +1,6 @@
 {
-  "codex_head": "ddec0d350776dba293bbc60a5e8e61424f4434a9",
-  "parallel_head": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
+  "codex_head": "65e8296e5b890222b1c448f18a925abfd2bf880f",
+  "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
   "LAST_PARALLEL_INTEGRATED_SHA": "5ad55efbb9d06d5c89395cf663c70da015b90257",
@@ -289,7 +289,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Source session/route compatibility already adopted in17.1. Preserve newer central denial audit and authenticated session reset. Restore correctness/identity hardening added in17.6.1.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -300,8 +300,9 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "PARTIAL",
+      "secondary_task_attribution": [],
+      "acceptance": "docs/testing/ADMIN_RECOVERY.md;20 isolated restore/20,711 full backend assertions PASS. HTTP/reset/bilingual/browser gates still pending."
     },
     {
       "task_or_group": "18.1",
@@ -3116,5 +3117,315 @@
       "reason": "Branch-only CI experiment added then removed; net empty diff. Current local acceptance replaces this probe; no code imported."
     }
   ],
-  "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23"
+  "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
+  "LAST_REVIEWED_PARALLEL_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
+  "reviewed_cursor_scope": "Task17.6 source inspected; later mapped commits remain review pending. Reviewed is not accepted.",
+  "last_fetch_date": "2026-10-27",
+  "new_source_since_previous_review_head": {
+    "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
+    "to": "7392e93b088990c3478cf32197781f831eb10f83",
+    "state": "DISCOVERED / REVIEW PENDING",
+    "commits": [
+      {
+        "sha": "c896d50a9f5573ed3775801dc85c7732f46786a8",
+        "subject": "feat(engagement): add consent-aware server lesson reminder jobs"
+      },
+      {
+        "sha": "44f6b5ee78ca5edefbda78ec1be7dc66a147a259",
+        "subject": "fix(engagement): harden lesson reminder time and cancellation semantics"
+      },
+      {
+        "sha": "bf350f9031a16a95820b042449ea740e41e4193f",
+        "subject": "feat(engagement): add owner-scoped scholar and series follows"
+      },
+      {
+        "sha": "ed5139ffe13c7ab6ff62147cfb9d724c41f1069e",
+        "subject": "fix(android): initialize reminder coordinator before lesson manager"
+      },
+      {
+        "sha": "062257422a4652d718469317378481f9d9bbeac0",
+        "subject": "feat(learning): add resilient scholar follow journey"
+      },
+      {
+        "sha": "f645a2cf6684beb73cce32ebbb60d294d7674f2b",
+        "subject": "feat(learning): separate series follow from favorites"
+      },
+      {
+        "sha": "1f9fb3a22ddad60b202241912d0f651e7f4e2ebf",
+        "subject": "feat(engagement): add safe new-content subscription facts"
+      },
+      {
+        "sha": "4b28ae04c81e57e017b00999d7e261b762be4c20",
+        "subject": "fix(notifications): recheck consent at local delivery"
+      },
+      {
+        "sha": "24bce77e00f11dac5524c8fdf6c39d99ea3aa01f",
+        "subject": "feat(quran): add private progress-aware wird reminders"
+      },
+      {
+        "sha": "69684c9b70f2b6c019bf1ada51fd32d05e2d499d",
+        "subject": "fix(quran): harden wird DST fixture and saved state"
+      },
+      {
+        "sha": "3b9836007ce19162ce2530d236727d5b36d5bdb5",
+        "subject": "feat(adhkar): add completion-aware category reminders"
+      },
+      {
+        "sha": "5d2007811579fd85f3773c20632360195d226614",
+        "subject": "fix(adhkar): reconcile completion before returning counter writes"
+      },
+      {
+        "sha": "93f574d162c18720d6a3666cfa560e7d2ee55c33",
+        "subject": "fix(notifications): bound recurring routine work to next occurrence"
+      },
+      {
+        "sha": "e7c02b3b7b42a73a0dd677ed08cc9befe2c33719",
+        "subject": "feat(notifications): add Salawat and Friday reminder engine"
+      },
+      {
+        "sha": "246b3ecf73e90cb063acc3cfa3e87ba1a6348cd0",
+        "subject": "feat(notifications): expose Salawat and Friday reminder controls"
+      },
+      {
+        "sha": "39394e26f9dafc86be7e24f3d5c5231fc45375cf",
+        "subject": "feat(notifications): add private custom routine engine"
+      },
+      {
+        "sha": "f537b55636dae907fc110962500bf2aa6b254782",
+        "subject": "feat(notifications): add custom routine controls"
+      },
+      {
+        "sha": "4b23614f2c33be37ca31dc8fa5e93d845e981486",
+        "subject": "feat(notifications): observe lesson reminder collection"
+      },
+      {
+        "sha": "c6c845421bb7dd084eb0c4349bfcc85c1a886ad6",
+        "subject": "feat(notifications): unify reminder health and active controls"
+      },
+      {
+        "sha": "ae01993f78eeae08f2f02b1963a31baf81f401dc",
+        "subject": "test(notifications): cover unified reminder center semantics"
+      },
+      {
+        "sha": "fccbd6111d6559200a83b9b04eaeb56ed9536936",
+        "subject": "feat(khatmah): add workload reminder engine"
+      },
+      {
+        "sha": "d020c7a4f1e90a8c5997eb19805fe8c4a1883ce0",
+        "subject": "fix(khatmah): restore reminder maintenance after restart"
+      },
+      {
+        "sha": "4cba177c1d38ab7a63164edaa705308fa0d9d3c2",
+        "subject": "feat(khatmah): add consented workload reminder controls"
+      },
+      {
+        "sha": "209accc622d2927f64053e166a9763a275d96da0",
+        "subject": "test(khatmah): cover workload reminder suppression and center"
+      },
+      {
+        "sha": "4e34ee7f43d430f1755ef258430629a89b03ad3d",
+        "subject": "feat(night): add sourced night reminder engine"
+      },
+      {
+        "sha": "34acf58f5b483c52a6772490f6494f68899ac866",
+        "subject": "feat(night): expose sourced night reminder controls"
+      },
+      {
+        "sha": "eb75a1b1d50c616864fc2325ede3630fba09c0ad",
+        "subject": "test(night): cover sourced reminder boundaries and center"
+      },
+      {
+        "sha": "66d6b4a150397a7acd2288d847c4fcb28b2538c8",
+        "subject": "feat(notifications): enforce cross-routine delivery policy"
+      },
+      {
+        "sha": "3f624579903ff08bfb5d5b8e136593aaf508daa6",
+        "subject": "feat(notifications): add global quiet-hour controls and cross-rule tests"
+      },
+      {
+        "sha": "4a0816f359af793fd9f586016ba1dbaec7bace4d",
+        "subject": "feat(push): add FCM provider abstraction and strict envelope"
+      },
+      {
+        "sha": "e7c3176e311ba96a07c521bb44e420ec47fda0f1",
+        "subject": "fix(push): align provider contracts with PHP autoloading"
+      },
+      {
+        "sha": "f46caa549306c1a6899857b3cf46822b146ed6c7",
+        "subject": "feat(push): add encrypted multi-device token lifecycle"
+      },
+      {
+        "sha": "3f9580754f5e8cb484f6fec08a80351ab9ca9a86",
+        "subject": "feat(push): add Android token registration and retry lifecycle"
+      },
+      {
+        "sha": "65c5f551845227a9be55926ee92750031021bb01",
+        "subject": "feat(inbox): add private owner-scoped notification API"
+      },
+      {
+        "sha": "2192ec768e778458975b94e83aa973f6022b40a7",
+        "subject": "docs(progress): reconcile execution queue to inbox API checkpoint"
+      },
+      {
+        "sha": "d520fb169cc9f926acd77ad84cbfa30382330f20",
+        "subject": "feat(inbox): add native notification history surface"
+      },
+      {
+        "sha": "7e7f8259f8bcea9960dc9af6009decdc06e00100",
+        "subject": "docs(progress): advance inbox execution to 16.3"
+      },
+      {
+        "sha": "2c3c988733f9fc090649b8dc601f4ff8137c17f8",
+        "subject": "feat(inbox): persist offline history badge and mutations"
+      },
+      {
+        "sha": "c74102ccb043167b8503f1d4f0bdf116bdbe2844",
+        "subject": "docs(progress): advance inbox execution to policy diagnostics"
+      },
+      {
+        "sha": "192fb0054149e23af196557bb5d4866c1818be08",
+        "subject": "feat(notifications): add privacy-safe policy diagnostics"
+      },
+      {
+        "sha": "f671784880e7bb6b9daf79abbd3d3ec0fff216f7",
+        "subject": "docs(progress): reconcile WP16 and preexisting Admin execution"
+      },
+      {
+        "sha": "4c3ca400b13d72facb04ce11de64cdf2586cbe4b",
+        "subject": "feat(ui): complete adaptive immersive hero primitives"
+      },
+      {
+        "sha": "8eb04eca4de81a34cbfaf4786a131393f1dc08f7",
+        "subject": "docs(progress): advance immersive execution to books"
+      },
+      {
+        "sha": "cdad86bccc7946b6b21fce950b93fd2471360e19",
+        "subject": "feat(books): add immersive truthful catalog hierarchy"
+      },
+      {
+        "sha": "331dac2d993bf8a15fe3888eb09dd23340dff959",
+        "subject": "docs(progress): advance immersive execution to knowledge"
+      },
+      {
+        "sha": "0d60a6dfa6c45c0fd77a2548696aff4e1ea2b775",
+        "subject": "feat(learning): add truthful immersive Knowledge continuation"
+      },
+      {
+        "sha": "836fa6af8e2f29cfb7789ab0eee3936eba8a2af6",
+        "subject": "docs(progress): advance execution to startup baseline"
+      },
+      {
+        "sha": "35af781f1cbbb540611973be7b94e69311f916c4",
+        "subject": "perf(android): add release-like startup baseline harness"
+      },
+      {
+        "sha": "c210a90129ce16ce4c2e1fcb2a964e9b2c4705e8",
+        "subject": "docs(progress): advance execution to background budgets"
+      },
+      {
+        "sha": "67cbb27a17f6b6171381208c5c4438a660b8645f",
+        "subject": "perf(android): budget background work and add idle evidence harness"
+      },
+      {
+        "sha": "cb524e9fbeaf008a89cf494e87b3273eacdabd9d",
+        "subject": "feat(quran): add canonical ayah copy and share"
+      },
+      {
+        "sha": "c7cd77180b9966b4124811a0a0b53f61f5ab6f08",
+        "subject": "docs(progress): reconcile stale execution rows and advance to review model"
+      },
+      {
+        "sha": "1547e18ff2c5189e7662cb31e8cc478c59754993",
+        "subject": "feat(review): add verified optional model delivery core"
+      },
+      {
+        "sha": "34121064da6edcb754a4a65405fa74c9aaa3eb76",
+        "subject": "feat(review): add model consent and download management UI"
+      },
+      {
+        "sha": "f832432d510aacbb2e00918fbca86fffcef58394",
+        "subject": "fix(review): import model screen saveable state"
+      },
+      {
+        "sha": "bf8c93ecaaa358180b2171a072ddb014a3c35a68",
+        "subject": "docs(progress): advance review execution to microphone runtime"
+      },
+      {
+        "sha": "b12557918c1346567dd179878444a752a4c988d5",
+        "subject": "feat(review): add native runtime probe and bounded microphone core"
+      },
+      {
+        "sha": "9912b1bcad1e688b69ce79401fd3d0bfdb2c2e0e",
+        "subject": "feat(review): wire contextual microphone and native runtime UI"
+      },
+      {
+        "sha": "294611c2f9d207237db167b1553bffb5c7cf7f64",
+        "subject": "feat(review): add native streaming fbank and CTC inference"
+      },
+      {
+        "sha": "41c73e1488448e94db07658f7064f0e5fdfe7e2f",
+        "subject": "feat(review): stream microphone audio through local inference"
+      },
+      {
+        "sha": "01c751ac40bbb07135273f9c65e00218cf5900e2",
+        "subject": "docs(progress): advance recitation review to alignment"
+      },
+      {
+        "sha": "cf93dd341796d9368e4114241d354ccefc1ca4b0",
+        "subject": "feat(review): add conservative expected-passage alignment"
+      },
+      {
+        "sha": "97f26e53c4e8e4dad27423904a095553275d6bb9",
+        "subject": "feat(review): add truthful expected-ayah review surface"
+      },
+      {
+        "sha": "75ffee142bd15ce07dd9bd21a83b01261e4af618",
+        "subject": "fix(review): import recitation review lazy list"
+      },
+      {
+        "sha": "d8a3da128ab30580b81092ead0a3b0d49e2590b0",
+        "subject": "docs(progress): advance review execution to measured evaluation"
+      },
+      {
+        "sha": "33dacb2cd183aa541eeb813e20046c7bf53ed49a",
+        "subject": "test(review): add reproducible accuracy and latency harness"
+      },
+      {
+        "sha": "f99a822cb0ba943bfd2306f6534ae3058d6b562b",
+        "subject": "fix(review): make evaluation JSON and percentile calls explicit"
+      },
+      {
+        "sha": "9ac658562ce31706750f62319eff6961891e317e",
+        "subject": "docs(progress): advance execution to signed Android release"
+      },
+      {
+        "sha": "499ccef277c9e70ebd0fbf4a6250f6216c690c92",
+        "subject": "release(android): configure external signing and reproducible artifacts"
+      },
+      {
+        "sha": "e8a81d03a8d4b808deae00577a6ad7712e6670f6",
+        "subject": "fix(release): verify metadata across APK and AAB"
+      },
+      {
+        "sha": "56f4846dad61105f8caeb34c2f0418708e8a249b",
+        "subject": "docs(progress): advance execution to hosted acceptance"
+      },
+      {
+        "sha": "8f4c08f60d0bb8612fb4e0e3a3d6f59ca3d2502f",
+        "subject": "release: add consent-safe hosted acceptance and rollback harness"
+      },
+      {
+        "sha": "7f1035cfc3a246b00410ba04e2a6e46d4ac0cf98",
+        "subject": "docs(progress): advance execution to release handoff"
+      },
+      {
+        "sha": "d81eedcb6caf5168a3d75461d38ca87c1ef1b5f2",
+        "subject": "release: add deterministic artifact and operations handoff"
+      },
+      {
+        "sha": "7392e93b088990c3478cf32197781f831eb10f83",
+        "subject": "docs(progress): switch from implementation to acceptance closure"
+      }
+    ]
+  }
 }
