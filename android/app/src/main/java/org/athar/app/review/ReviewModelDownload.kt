@@ -8,7 +8,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import androidx.work.getWorkInfosForUniqueWorkFlow
 import androidx.work.workDataOf
 import java.io.File
 import java.io.FileOutputStream
@@ -18,6 +17,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -289,9 +289,17 @@ class ReviewModelDownloadWorker(
         val url = ReviewModelUrlPolicy.resolve(manager.apiBaseUrl, artifact)
         val call = client.newCall(Request.Builder().url(url).get().build())
         currentCall = call
-        call.execute().use { response ->
+        val cancellationWatcher = CoroutineScope(coroutineContext).launch {
+            try {
+                awaitCancellation()
+            } finally {
+                call.cancel()
+            }
+        }
+        try {
+            call.execute().use { response ->
             if (!response.isSuccessful) throw ReviewModelHttpException(response.code)
-            val body = response.body
+            val body = response.body ?: throw ReviewModelIntegrityException()
             val declared = body.contentLength()
             if (declared >= 0 && declared != artifact.sizeBytes) {
                 throw ReviewModelIntegrityException()
@@ -329,13 +337,11 @@ class ReviewModelDownloadWorker(
                 throw IOException("unable_to_commit_model_file")
             }
             currentTemporary = null
+            }
+        } finally {
+            cancellationWatcher.cancel()
+            currentCall = null
         }
-    }
-
-    override fun onStopped() {
-        currentCall?.cancel()
-        currentTemporary?.delete()
-        super.onStopped()
     }
 
     companion object {
