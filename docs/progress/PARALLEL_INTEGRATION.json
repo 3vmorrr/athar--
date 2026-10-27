@@ -1,5 +1,5 @@
 {
-  "codex_head": "6e8700981354b37378c8a3476277afe77b6bbaa6",
+  "codex_head": "b07dd7400e70d72c288cf1d217aa65f49cd3ebd2",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
@@ -370,7 +370,7 @@
       "state": "COMPLETE",
       "secondary_task_attribution": [],
       "integration_base": "6e8700981354b37378c8a3476277afe77b6bbaa6",
-      "acceptance": "docs/testing/ADMIN_SCHOLARS.md;20,752 backend;159 HTTP;68 actual browser. No migration/native change. Portrait publication/private preview, metadata/upload validation and actual deletion race accepted."
+      "acceptance": "docs/testing/ADMIN_SCHOLARS.md;20,752 backend;162 HTTP;68 browser. Corrective checkpoint restores accidentally removed adjacent lesson-update branch and adds actual save/readback/provider-rejection regression. No source cursor advance."
     },
     {
       "task_or_group": "18.2-18.3",

@@ -973,7 +973,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 17.6.
 - Exact scope: Manage scholar name/image/optional approved biography/source using existing model validation.
 - Files/modules: admin/ (new); backend/src/Catalog/.
-- Automated gates: COMPLETE:20,752 backend;159 HTTP (39 scholar/portrait +120 auth/RBAC/concurrency);68 actual browser. Actual PNG/JPEG/WebP, private draft/public published boundary, validators, referenced deletion and real concurrent deletion/no orphan upload. Evidence:docs/testing/ADMIN_SCHOLARS.md.
+- Automated gates: COMPLETE:20,752 backend;162 HTTP (42 scholar/portrait/adjacent lesson +120 auth/RBAC/concurrency);68 actual browser. Actual PNG/JPEG/WebP, private draft/public published boundary, validators, referenced deletion and real concurrent deletion/no orphan upload. Evidence:docs/testing/ADMIN_SCHOLARS.md.
 - Physical-device gate: Actual Admin AR/EN light/dark browser at1440/360; create/edit values, numeric RTL direction, touch spacing, preserved draft/error focus and captures reviewed. No native code/schema change or physical Android PASS claimed.
 - Definition of Done: Manage scholar name/image/optional approved biography/source using existing model validation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.00 overall percentage points.

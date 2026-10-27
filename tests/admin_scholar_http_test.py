@@ -129,6 +129,18 @@ try:
     check(set((root/'storage/scholars').glob('*')) == before_files, 'Losing a deletion race cannot orphan a new upload')
 finally: process.communicate(timeout=10)
 check(process.returncode == 0, 'Concurrent fixture transaction finishes cleanly')
+# Adjacent controller branches must survive scholar/series extraction.
+lesson_video = 'Q' + suffix
+lesson_url = 'https://www.youtube.com/watch?v=' + lesson_video
+lesson_id = fixture.service("$db->exec(\"INSERT INTO lessons(title,source_url,youtube_id,is_published) VALUES ('Adjacent lesson fixture','https://www.youtube.com/watch?v=" + lesson_video + "','" + lesson_video + "',0)\");echo json_encode((int)$db->lastInsertId());")
+lesson_fields = {'kind':'content','content_type':'lesson','content_action':'update','id':lesson_id,'title':'Saved adjacent lesson','description':'Retained lesson editing','source_url':lesson_url,'scholar_id':'0','series_id':'0','sort_order':'17','publish':'1'}
+status, _, _ = submit(lesson_fields)
+lesson = fixture.service("$q=$db->prepare('SELECT title,description,youtube_id,sort_order,is_published FROM lessons WHERE id=?');$q->execute([" + str(lesson_id) + "]);echo json_encode($q->fetch(PDO::FETCH_ASSOC));")
+check(status == 200 and lesson['title'] == lesson_fields['title'] and lesson['description'] == lesson_fields['description'], 'Adjacent Admin lesson update actually persists its title/description')
+check(lesson['youtube_id'] == lesson_video and int(lesson['sort_order']) == 17 and int(lesson['is_published']) == 1, 'Adjacent lesson update preserves official provider/order/publication behavior')
+_, _, rejected = submit({**lesson_fields,'source_url':'https://example.invalid/not-provider','title':'Must not save'})
+after = fixture.service("$q=$db->prepare('SELECT title FROM lessons WHERE id=?');$q->execute([" + str(lesson_id) + "]);echo json_encode($q->fetchColumn());")
+check('data-admin-form-error' in rejected and after == lesson_fields['title'], 'Invalid provider cannot overwrite the adjacent lesson')
 print(f'PASS: {checks} actual HTTP scholar/portrait assertions (plus120 existing HTTP).')
 if os.environ.get('ATHAR_TEST_NODE'):
     subprocess.run([os.environ['ATHAR_TEST_NODE'],str(root/'tests/admin_scholar_browser_test.cjs')],env=dict(os.environ,ATHAR_TEST_OWNER_EMAIL=session.account['email']),check=True,timeout=120)

@@ -1,3 +1,7 @@
+## Task18.1 correction — adjacent lesson editing
+
+Restored the lesson-update branch accidentally removed during scholar extraction.162 actual HTTP and68 browser checks PASS, now including real lesson save/readback of metadata/provider/order/publication and invalid-provider rejection retaining the previous row. [Correction and fixture notes](ADMIN_SCHOLARS.md).18.2 continues separately; no source cursor/estimate advance.
+
 ## Task18.1 — Admin scholars and portraits
 
 159 actual HTTP/68 actual browser/20,752 backend assertions PASS. Metadata, PNG/JPEG/WebP, private draft/public published boundary, dependency-safe deletion, real deletion race/no orphan upload,AR/EN light/dark desktop/phone editor/draft/error focus accepted. [Evidence and limits](ADMIN_SCHOLARS.md). No migration/native change or physical Android claim. Cursor393760b;18.2 follows;02.8 remains deferred.

@@ -897,7 +897,12 @@ if ($path === '/admin') {
                 $type = (string) $_POST['content_type'];
                 if (($_POST['content_action'] ?? '') === 'update') {
                     $published = isset($_POST['publish']) ? 1 : 0;
-                    if ($type === 'series') {
+                    if ($type === 'lesson') {
+                        $url = trim((string) ($_POST['source_url'] ?? '')); $videoId = youtube_video_id($url);
+                        if (!$videoId) throw new RuntimeException('رابط فيديو YouTube غير صالح.');
+                        [$lessonScholarId,$lessonSeriesId] = validated_lesson_scope((int)($_POST['scholar_id'] ?? 0),(int)($_POST['series_id'] ?? 0));
+                        db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
+                    } elseif ($type === 'series') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
                         if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
                         db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
