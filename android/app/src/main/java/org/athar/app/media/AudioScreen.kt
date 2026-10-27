@@ -135,29 +135,115 @@ import org.athar.app.quran.AyahText
             if (radio) {
                 // Station selection remains below the hero; playback state is owned by AudioViewModel.
             } else {
-                OutlinedButton(onClick = { surahSelector = true }, modifier = Modifier.testTag("audio-surah")) { Text(names.getOrNull(surah - 1)?.name ?: stringResource(R.string.surah)) }
-                OutlinedButton(onClick = { selector = true }, modifier = Modifier.testTag("audio-reciter")) { Text(selected?.text("name") ?: stringResource(R.string.choose_reciter)) }
-                if (selected != null) LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(selection.supported(), key = { it.text("id") }, contentType = { "edition" }) { item ->
-                        FilterChip(edition?.text("id") == item.text("id"), { update(selection.copy(edition = item)) }, label = { Text(item.text("name")) })
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    OutlinedButton(
+                        onClick = { surahSelector = true },
+                        modifier = Modifier.weight(1f).testTag("audio-surah"),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    ) {
+                        Text(
+                            names.getOrNull(surah - 1)?.name ?: stringResource(R.string.surah),
+                            maxLines = 1,
+                        )
+                        Spacer(Modifier.width(AtharSpacing.Xs))
+                        Icon(AtharIcons.ExpandMore, null, Modifier.size(18.dp))
+                    }
+                    OutlinedButton(
+                        onClick = { selector = true },
+                        modifier = Modifier.weight(1f).testTag("audio-reciter"),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    ) {
+                        Text(
+                            selected?.text("name") ?: stringResource(R.string.choose_reciter),
+                            maxLines = 1,
+                        )
+                        Spacer(Modifier.width(AtharSpacing.Xs))
+                        Icon(AtharIcons.ExpandMore, null, Modifier.size(18.dp))
                     }
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(!verseMode, { update(selection.copy(verseMode = false)) }, label = { Text(stringResource(R.string.full_surah)) })
-                    FilterChip(verseMode, { update(selection.copy(verseMode = true)) }, label = { Text(stringResource(R.string.one_ayah)) })
+                if (selected != null) LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                ) {
+                    items(selection.supported(), key = { it.text("id") }, contentType = { "edition" }) { item ->
+                        AtharFilterChip(
+                            selected = edition?.text("id") == item.text("id"),
+                            onClick = { update(selection.copy(edition = item)) },
+                            label = item.text("name"),
+                        )
+                    }
                 }
-                if (verseMode) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = { update(selection.copy(ayah = ayah - 1)) }, enabled = ayah > 1) { Text("−") }
-                    Text(stringResource(R.string.ayah) + " $ayah", Modifier.padding(12.dp))
-                    TextButton(onClick = { update(selection.copy(ayah = ayah + 1)) }, enabled = ayah < verses.size) { Text("+") }
+                Row(horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                    AtharFilterChip(
+                        selected = !verseMode,
+                        onClick = { update(selection.copy(verseMode = false)) },
+                        label = stringResource(R.string.full_surah),
+                    )
+                    AtharFilterChip(
+                        selected = verseMode,
+                        onClick = { update(selection.copy(verseMode = true)) },
+                        label = stringResource(R.string.one_ayah),
+                    )
+                    AtharFilterChip(
+                        selected = follow,
+                        onClick = { vm.select(selection.copy(follow = !follow)) },
+                        label = stringResource(R.string.follow_ayah),
+                    )
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { vm.playSelection() }, enabled = selected != null && edition != null && !state.loading) { Text(stringResource(if (selectedIsLoaded && state.playing) R.string.pause else R.string.play)) }
-                    OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) }
+                if (verseMode) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                        ),
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = AtharSpacing.Sm),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            IconButton(
+                                onClick = { update(selection.copy(ayah = ayah - 1)) },
+                                enabled = ayah > 1,
+                            ) {
+                                Text("−", style = MaterialTheme.typography.titleLarge)
+                            }
+                            Text(
+                                stringResource(R.string.ayah) + " $ayah",
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            IconButton(
+                                onClick = { update(selection.copy(ayah = ayah + 1)) },
+                                enabled = ayah < verses.size,
+                            ) {
+                                Text("+", style = MaterialTheme.typography.titleLarge)
+                            }
+                        }
+                    }
                 }
-                Row { Checkbox(follow, { vm.select(selection.copy(follow = it)) }); Text(stringResource(R.string.follow_ayah), Modifier.padding(top = 12.dp)) }
+                if (selectedIsLoaded && state.recording != null) {
+                    AudioTransportCard(vm = vm, state = state)
+                } else {
+                    Button(
+                        onClick = { vm.playSelection() },
+                        enabled = selected != null && edition != null && !state.loading,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    ) {
+                        Icon(AtharIcons.PlayArrow, null, Modifier.size(20.dp))
+                        Spacer(Modifier.width(AtharSpacing.Sm))
+                        Text(stringResource(R.string.play))
+                    }
+                }
             }
-            if (radio && state.radio && state.recording != null) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = vm::toggle) { Text(stringResource(if (state.playing) R.string.pause else R.string.play)) }; OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) } }
+            if (radio && state.radio && state.recording != null) {
+                AudioTransportCard(vm = vm, state = state)
+            }
             if (state.loading || state.buffer) LinearProgressIndicator(Modifier.fillMaxWidth())
             if (state.error) {
                 MessagePanel(stringResource(R.string.audio_failed), true) {
@@ -209,6 +295,150 @@ import org.athar.app.quran.AyahText
             }
         }
     }
+}
+
+@Composable
+private fun AudioTransportCard(
+    vm: AudioViewModel,
+    state: AudioUiState,
+) {
+    var position by remember(state.mediaKey) { mutableLongStateOf(0L) }
+    var duration by remember(state.mediaKey) { mutableLongStateOf(0L) }
+    var speed by remember(state.mediaKey) { mutableFloatStateOf(1f) }
+
+    LaunchedEffect(state.mediaKey, state.playing) {
+        while (isActive && state.mediaKey != null) {
+            position = vm.position().coerceAtLeast(0L)
+            duration = vm.duration().coerceAtLeast(0L)
+            speed = vm.playbackSpeed()
+            delay(if (state.playing) 350 else 800)
+        }
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant,
+        ),
+        shadowElevation = 2.dp,
+    ) {
+        Column(
+            Modifier.padding(AtharSpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+            ) {
+                Surface(
+                    modifier = Modifier.size(52.dp),
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                ) {
+                    Box(
+                        Modifier.fillMaxSize(),
+                        contentAlignment = androidx.compose.ui.Alignment.Center,
+                    ) {
+                        Icon(
+                            AtharIcons.PlayArrow,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(26.dp),
+                        )
+                    }
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        state.recording?.text("name")
+                            .orEmpty()
+                            .ifBlank { state.recording?.text("reciter_name").orEmpty() },
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                    )
+                    Text(
+                        stringResource(
+                            when {
+                                state.interrupted -> R.string.audio_interrupted
+                                state.buffer -> R.string.watch_buffering
+                                state.playing -> R.string.watch_playing
+                                else -> R.string.watch_paused
+                            },
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                FilledIconButton(
+                    onClick = vm::toggle,
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    if (state.playing) {
+                        Text("Ⅱ", style = MaterialTheme.typography.titleLarge)
+                    } else {
+                        Icon(AtharIcons.PlayArrow, stringResource(R.string.play))
+                    }
+                }
+            }
+
+            if (!state.radio && duration > 0L) {
+                Slider(
+                    value = position.coerceAtMost(duration).toFloat(),
+                    onValueChange = { position = it.toLong() },
+                    onValueChangeFinished = { vm.seekTo(position) },
+                    valueRange = 0f..duration.toFloat().coerceAtLeast(1f),
+                )
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        formatAudioTime(position),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        formatAudioTime(duration),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            ) {
+                if (!state.radio) {
+                    listOf(1f, 1.25f, 1.5f).forEach { value ->
+                        AtharFilterChip(
+                            selected = kotlin.math.abs(speed - value) < 0.01f,
+                            onClick = {
+                                vm.setPlaybackSpeed(value)
+                                speed = value
+                            },
+                            label = value.toString().removeSuffix(".0") + "×",
+                        )
+                    }
+                }
+                Spacer(Modifier.weight(1f))
+                TextButton(onClick = vm::stop) {
+                    Text(stringResource(R.string.stop))
+                }
+            }
+        }
+    }
+}
+
+private fun formatAudioTime(milliseconds: Long): String {
+    val seconds = (milliseconds.coerceAtLeast(0L) / 1000L)
+    val minutes = seconds / 60L
+    val remainder = seconds % 60L
+    return "%d:%02d".format(minutes, remainder)
 }
 
 @Composable
