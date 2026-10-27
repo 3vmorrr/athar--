@@ -101,8 +101,8 @@ private val darkColors = darkColorScheme(
 )
 
 private val typography = Typography(
-    displayLarge = Typography().displayLarge.copy(fontFamily = UiFont, fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
-    displayMedium = Typography().displayMedium.copy(fontFamily = UiFont, fontWeight = FontWeight.Bold, letterSpacing = (-0.25).sp),
+    displayLarge = Typography().displayLarge.copy(fontFamily = UiFont, fontWeight = FontWeight.Bold, letterSpacing = (-0.5f).sp),
+    displayMedium = Typography().displayMedium.copy(fontFamily = UiFont, fontWeight = FontWeight.Bold, letterSpacing = (-0.25f).sp),
     displaySmall = Typography().displaySmall.copy(fontFamily = UiFont, fontWeight = FontWeight.Bold),
     headlineLarge = Typography().headlineLarge.copy(fontFamily = UiFont, fontSize = 28.sp, fontWeight = FontWeight.Bold, lineHeight = 40.sp, letterSpacing = 0.sp),
     headlineMedium = Typography().headlineMedium.copy(fontFamily = UiFont, fontSize = 24.sp, fontWeight = FontWeight.Bold, lineHeight = 36.sp, letterSpacing = 0.sp),
