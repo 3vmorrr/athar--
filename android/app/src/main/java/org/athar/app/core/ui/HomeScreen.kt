@@ -133,74 +133,41 @@ private fun HomeQuickActions(
     open: (String) -> Unit,
 ) {
     AtharSectionHeader(stringResource(R.string.quick_actions))
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val twoColumns = maxWidth >= 360.dp
-        if (twoColumns) {
-            Column(verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md)) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
-                ) {
-                    AtharQuickAction(
-                        icon = AtharIcons.MenuBook,
-                        label = stringResource(R.string.quran),
-                        onClick = { navigate("quran") },
-                        modifier = Modifier.weight(1f),
-                        emphasized = true,
-                    )
-                    AtharQuickAction(
-                        icon = AtharIcons.School,
-                        label = stringResource(R.string.knowledge),
-                        onClick = { navigate("knowledge") },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
-                ) {
-                    AtharQuickAction(
-                        icon = AtharIcons.Spa,
-                        label = stringResource(R.string.adhkar),
-                        onClick = { navigate("adhkar") },
-                        modifier = Modifier.weight(1f),
-                    )
-                    AtharQuickAction(
-                        icon = AtharIcons.NightsStay,
-                        label = stringResource(R.string.night_prayer),
-                        onClick = { open("night-prayer") },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md)) {
-                AtharQuickAction(
-                    icon = AtharIcons.MenuBook,
-                    label = stringResource(R.string.quran),
-                    onClick = { navigate("quran") },
-                    modifier = Modifier.fillMaxWidth(),
-                    emphasized = true,
-                )
-                AtharQuickAction(
-                    icon = AtharIcons.School,
-                    label = stringResource(R.string.knowledge),
-                    onClick = { navigate("knowledge") },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                AtharQuickAction(
-                    icon = AtharIcons.Spa,
-                    label = stringResource(R.string.adhkar),
-                    onClick = { navigate("adhkar") },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                AtharQuickAction(
-                    icon = AtharIcons.NightsStay,
-                    label = stringResource(R.string.night_prayer),
-                    onClick = { open("night-prayer") },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+        ) {
+            AtharCompactAction(
+                icon = AtharIcons.MenuBook,
+                label = stringResource(R.string.quran),
+                onClick = { navigate("quran") },
+                modifier = Modifier.weight(1f),
+                emphasized = true,
+            )
+            AtharCompactAction(
+                icon = AtharIcons.School,
+                label = stringResource(R.string.knowledge),
+                onClick = { navigate("knowledge") },
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+        ) {
+            AtharCompactAction(
+                icon = AtharIcons.Spa,
+                label = stringResource(R.string.adhkar),
+                onClick = { navigate("adhkar") },
+                modifier = Modifier.weight(1f),
+            )
+            AtharCompactAction(
+                icon = AtharIcons.NightsStay,
+                label = stringResource(R.string.night_prayer),
+                onClick = { open("night-prayer") },
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
@@ -304,7 +271,7 @@ private fun HomeContentCard(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp)
+                        .height(136.dp)
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentScale = ContentScale.Crop,
                 )
