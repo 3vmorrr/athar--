@@ -1,12 +1,24 @@
 # Implementation plan
 
+## 2026-10-27 — implementation queue exhausted
+
+All queue rows now have implementation already landed, are COMPLETE, or are explicitly BLOCKED. There are **no NOT STARTED tasks remaining**.
+
+Do not start speculative feature work. The next phase is evidence closure:
+- run the task-defined automated/build/lint/integration gates for PARTIAL rows;
+- record authorized physical-device/provider/host evidence where required;
+- keep 02.8, 03.8, 15.3, 20.5 and 24.1 BLOCKED until their real prerequisites exist;
+- promote a row to COMPLETE only when its original Definition of Done is genuinely satisfied.
+
+Latest landed implementation: **24.5 — Release artifacts and user operations handoff** at `d81eedcb6caf`.
+
 ## 2026-10-27 — execution handoff checkpoint
 
 **WP17–20 reconciliation:** existing independent Admin/editorial/campaign/email implementation on this branch is PARTIAL/acceptance-pending per PARALLEL_ADMIN_TRACK; do not rebuild it. 20.5 remains externally blocked.
 
 - Source of truth branch: `parallel/admin-foundation`; verified head before this documentation commit: `65c5f551845227a9be55926ee92750031021bb01`.
 - Last landed implementation task: **16.4 — Notification policy diagnostics**.
-- Next implementation task: **24.5 — Release artifacts and user operations handoff**.
+- No next implementation task remains; proceed only with acceptance closure and real blocker prerequisites.
 - Tasks **11.1 through 16.1** listed in `TASK_QUEUE.json > implementation_checkpoint` have landed implementation and are marked **PARTIAL**, not COMPLETE, until their queue-defined build/test/device/integration gates pass.
 - **15.3** remains **BLOCKED** on an authorized free FCM project/configuration and approved physical test device. Never fabricate provider/device proof.
 - Downstream implementation may continue from landed PARTIAL code dependencies; acceptance closure remains a separate gate.
@@ -16,7 +28,7 @@
 
 The [ordered task queue](TASK_QUEUE.md) and editable [task records](TASK_QUEUE.json) refine the existing24-package roadmap. Exactly one implementation task is active; each record defines scope/state/dependencies/modules/tests/device gates/Definition of Done/contribution. Completed02.1–02.7.1 and the accepted21.1 shared premium slice are preserved. Detailed milestones live in [completion receipts](TASK_COMPLETIONS.md) and [the test report](../testing/TEST_REPORT.md). Latest native baseline:53 JVM/build/test APK/lint/306 resources and Arabic10/English32 hardware plus main API1 PASS throughd9edd6f.
 
-Completed21.18 documents the additive [immersive hero direction](../design/IMMERSIVE_SECTION_HERO.md), [motion/scroll](../design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md), [section language](../design/SECTION_VISUAL_LANGUAGE.md), [original artwork](../design/ARTWORK_LIBRARY.md) and [integration plan](../design/HERO_IMPLEMENTATION_PLAN.md). It changes no native UI/resources. Current implementation task is 24.5 (Native notification inbox); 11.1–16.1 implementation is landed/acceptance-pending, while 15.3 is externally blocked. Future21.19 primitives and21.20/21.21 Books/Knowledge remain explicit implementation units; visual tasks follow Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure. No completed feature is restarted or replaced by a static reference.
+Completed21.18 documents the additive [immersive hero direction](../design/IMMERSIVE_SECTION_HERO.md), [motion/scroll](../design/HERO_MOTION_AND_SCROLL_BEHAVIOR.md), [section language](../design/SECTION_VISUAL_LANGUAGE.md), [original artwork](../design/ARTWORK_LIBRARY.md) and [integration plan](../design/HERO_IMPLEMENTATION_PLAN.md). It changes no native UI/resources. Current implementation task pointer remains 24.5 for acceptance closure; no NOT STARTED implementation task remains (Native notification inbox); 11.1–16.1 implementation is landed/acceptance-pending, while 15.3 is externally blocked. Future21.19 primitives and21.20/21.21 Books/Knowledge remain explicit implementation units; visual tasks follow Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure. No completed feature is restarted or replaced by a static reference.
 
 Phase2 is83%; its former02.7 was split without changing the10-point budget. Overall engineering estimate45% (45.46 weighted, uncertainty±10pp);140 tasks remain open. Phase21 closure uses contribution budgets (6% rounded), so a documentation task is not credited like a completed screen. Blocked external gates remain open while independently ready work proceeds. Every successful task requires docs/tests/device where applicable, diff/secret review, logical commit, normal push, exact remote-SHA verification, required report and immediate continuation.
 

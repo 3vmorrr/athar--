@@ -1,10 +1,22 @@
 # Implementation tracker
 
+## 2026-10-27 — implementation queue exhausted
+
+All queue rows now have implementation already landed, are COMPLETE, or are explicitly BLOCKED. There are **no NOT STARTED tasks remaining**.
+
+Do not start speculative feature work. The next phase is evidence closure:
+- run the task-defined automated/build/lint/integration gates for PARTIAL rows;
+- record authorized physical-device/provider/host evidence where required;
+- keep 02.8, 03.8, 15.3, 20.5 and 24.1 BLOCKED until their real prerequisites exist;
+- promote a row to COMPLETE only when its original Definition of Done is genuinely satisfied.
+
+Latest landed implementation: **24.5 — Release artifacts and user operations handoff** at `d81eedcb6caf`.
+
 ## 2026-10-27 branch execution checkpoint
 
 Verified implementation head before this progress update: `192fb0054149e23af196557bb5d4866c1818be08` on `parallel/admin-foundation`. WP16 implementation is landed; existing WP17–20 implementation is reconciled as PARTIAL/acceptance-pending; the executable queue now points to **21.19** while 20.5 remains BLOCKED. Tasks 11.1–16.1 in the checkpoint are **PARTIAL / implementation landed / acceptance pending**; 15.3 remains externally BLOCKED. Do not restart these implementations or call them COMPLETE without the missing gates.
 
-Execution source of truth: [exact ordered queue](TASK_QUEUE.md), [editable task records](TASK_QUEUE.json). Queue states are NOT STARTED / PARTIAL / BLOCKED / COMPLETE; the legacy evidence/status table below remains historical/module-level. Current implementation task is 24.5; the prior 02.7.2 pointer was stale for this branch.18 immersive design specification. Previously tested O01/O02/O03 map to02.1/02.2/02.3;02.2 is the implemented foundation only, with real OS lifecycle acceptance separately required by02.8. No whole-phase completion follows from a foundation or documentation task.
+Execution source of truth: [exact ordered queue](TASK_QUEUE.md), [editable task records](TASK_QUEUE.json). Queue states are NOT STARTED / PARTIAL / BLOCKED / COMPLETE; the legacy evidence/status table below remains historical/module-level. No NOT STARTED implementation task remains; 24.5 is the current acceptance-closure pointer; the prior 02.7.2 pointer was stale for this branch.18 immersive design specification. Previously tested O01/O02/O03 map to02.1/02.2/02.3;02.2 is the implemented foundation only, with real OS lifecycle acceptance separately required by02.8. No whole-phase completion follows from a foundation or documentation task.
 Last updated: 2026-10-26. Status vocabulary: TODO, IN_PROGRESS, BLOCKED, IMPLEMENTED, TESTED, VERIFIED. Evidence is mandatory for VERIFIED. Source-based audit/estimates and original24 work packages: [formal checkpoint](../audit/CHECKPOINT_2026-10-25.md). Phase1 is tested; phase2 remains IN_PROGRESS. Current common verification:unchanged20,000 backend assertion baseline;53 JVM cases; focused task02.7.1 Arabic10/English32 physical cases plus main API1; build/test APK/lint;306 resources. Earlier per-task counts below retain the evidence from their original increments.
 
 | ID | Module / task | Priority | Dependencies | Status | Files / evidence | Tests / blockers |

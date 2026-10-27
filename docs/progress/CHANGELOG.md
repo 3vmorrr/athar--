@@ -1,5 +1,11 @@
 # Engineering change log
 
+## 2026-10-27 — implementation queue exhausted
+
+- Landed 24.5 deterministic release artifact and operations handoff at `d81eedcb6caf`.
+- Reconciled the queue: zero NOT STARTED tasks remain.
+- Remaining work is acceptance evidence for PARTIAL rows plus genuine external/physical prerequisites for BLOCKED rows; no speculative feature work should be added.
+
 ## 2026-10-27 — 09.5 reproducible review evaluation
 
 - Added frozen-WAV manifest and Android instrumentation that runs the same fbank/ONNX/alignment path as production.

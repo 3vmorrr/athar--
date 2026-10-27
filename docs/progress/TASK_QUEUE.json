@@ -2733,7 +2733,7 @@
       "name": "Release artifacts and user operations handoff",
       "parent": "Work package 24: Deployment/release",
       "scope": "Deliver verified APK/AAB/Admin/backend package, admin/user guides, known limits and maintenance/recovery runbook.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "24.4"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "8f4c08f60d0bb8612fb4e0e3a3d6f59ca3d2502f",
-    "last_landed_task": "24.4",
-    "next_task": "24.5",
+    "head": "d81eedcb6caf5168a3d75461d38ca87c1ef1b5f2",
+    "last_landed_task": "24.5",
+    "next_task": null,
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2845,7 +2845,8 @@
       "09.4",
       "09.5",
       "24.3",
-      "24.4"
+      "24.4",
+      "24.5"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2977,6 +2978,9 @@
       ],
       "24.4": [
         "8f4c08f60d0b"
+      ],
+      "24.5": [
+        "d81eedcb6caf"
       ]
     },
     "preexisting_parallel_admin": {
@@ -3037,6 +3041,8 @@
         "24.4",
         "24.5"
       ]
-    }
+    },
+    "implementation_phase": "NO_NOT_STARTED_TASKS_REMAIN",
+    "acceptance_next": "Close PARTIAL tasks with their recorded automated/device/integration evidence; blocked tasks require their named external/physical prerequisites."
   }
 }
