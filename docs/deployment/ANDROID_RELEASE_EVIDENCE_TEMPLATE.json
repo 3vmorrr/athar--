@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "TEMPLATE_ONLY_NO_SIGNED_RELEASE_EVIDENCE",
+  "task": "24.3",
+  "source": {
+    "git_sha": "required",
+    "clean_worktree": true
+  },
+  "release": {
+    "application_id": "org.athar.app",
+    "version_code": "positive integer",
+    "version_name": "semantic version",
+    "api_base_scheme": "https",
+    "signer_certificate_sha256": "approved public certificate fingerprint only"
+  },
+  "build_one": {
+    "apk_sha256": "generated",
+    "aab_sha256": "generated",
+    "apk_canonical_payload_sha256": "generated",
+    "aab_canonical_payload_sha256": "generated"
+  },
+  "build_two": {
+    "apk_sha256": "generated",
+    "aab_sha256": "generated",
+    "apk_canonical_payload_sha256": "generated",
+    "aab_canonical_payload_sha256": "generated"
+  },
+  "reproducibility": {
+    "apk_canonical_payload_equal": "required true",
+    "aab_canonical_payload_equal": "required true"
+  },
+  "physical_device": {
+    "authorized_api27_evidence": "pending"
+  }
+}

@@ -27,3 +27,12 @@ config/local.php
 /training/colab_bundle/
 /training/pilot/
 /training/synthetic-pilot/
+
+# Release signing and generated release evidence
+/android/release-signing.properties
+/android/**/*.pem
+/android/**/*.cer
+/android/**/*.crt
+/android/**/*.der
+/android/**/*.key
+/docs/deployment/results/

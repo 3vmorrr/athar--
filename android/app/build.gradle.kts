@@ -9,18 +9,67 @@ plugins {
     jacoco
 }
 
-val apiBase = providers.gradleProperty("ATHAR_API_BASE_URL").orElse("http://10.0.2.2:8002/api/v1/").get()
-require(apiBase.endsWith("/") && URI(apiBase).scheme in listOf("http", "https") && !URI(apiBase).host.isNullOrBlank()) { "ATHAR_API_BASE_URL must be an absolute API URL ending in /." }
-if (
-    gradle.startParameter.taskNames.any {
-        it.contains("release", ignoreCase = true) ||
-            it.contains("benchmark", ignoreCase = true)
-    }
+val apiBase = providers.gradleProperty("ATHAR_API_BASE_URL")
+    .orElse("http://10.0.2.2:8002/api/v1/")
+    .get()
+require(
+    apiBase.endsWith("/") &&
+        URI(apiBase).scheme in listOf("http", "https") &&
+        !URI(apiBase).host.isNullOrBlank(),
 ) {
+    "ATHAR_API_BASE_URL must be an absolute API URL ending in /."
+}
+
+val requestedTasks = gradle.startParameter.taskNames
+val releaseRequested = requestedTasks.any { it.contains("release", ignoreCase = true) }
+val releaseLikeRequested = releaseRequested ||
+    requestedTasks.any { it.contains("benchmark", ignoreCase = true) }
+
+fun releaseInput(name: String): String? =
+    providers.gradleProperty(name).orNull?.trim()?.takeIf { it.isNotEmpty() }
+        ?: providers.environmentVariable(name).orNull?.trim()?.takeIf { it.isNotEmpty() }
+
+val configuredVersionCode = releaseInput("ATHAR_VERSION_CODE")?.toIntOrNull()
+val configuredVersionName = releaseInput("ATHAR_VERSION_NAME")
+val releaseStorePath = releaseInput("ATHAR_RELEASE_STORE_FILE")
+val releaseStorePassword = releaseInput("ATHAR_RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = releaseInput("ATHAR_RELEASE_KEY_ALIAS")
+val releaseKeyPassword = releaseInput("ATHAR_RELEASE_KEY_PASSWORD")
+
+if (releaseLikeRequested) {
     require(apiBase.startsWith("https://")) {
         "Release-like builds require an HTTPS ATHAR_API_BASE_URL."
     }
 }
+if (releaseRequested) {
+    require(configuredVersionCode != null && configuredVersionCode > 0) {
+        "Release builds require a positive ATHAR_VERSION_CODE."
+    }
+    require(
+        configuredVersionName != null &&
+            configuredVersionName.matches(
+                Regex("[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?"),
+            )
+    ) {
+        "Release builds require ATHAR_VERSION_NAME in semantic-version form."
+    }
+    require(
+        listOf(
+            releaseStorePath,
+            releaseStorePassword,
+            releaseKeyAlias,
+            releaseKeyPassword,
+        ).all { !it.isNullOrBlank() }
+    ) {
+        "Release signing requires ATHAR_RELEASE_STORE_FILE, " +
+            "ATHAR_RELEASE_STORE_PASSWORD, ATHAR_RELEASE_KEY_ALIAS and " +
+            "ATHAR_RELEASE_KEY_PASSWORD outside the repository."
+    }
+    require(java.io.File(requireNotNull(releaseStorePath)).isFile) {
+        "ATHAR_RELEASE_STORE_FILE must point to an existing keystore."
+    }
+}
+
 
 val generatedReviewModelAssets = layout.buildDirectory.dir("generated/review-model-assets")
 val reviewModelSourceDirectory = rootProject.file("../public/assets/models")
@@ -35,12 +84,28 @@ val onnxRuntimeAarCheck by configurations.creating {
 android {
     namespace = "org.athar.app"
     compileSdk = 36
+
+    signingConfigs {
+        if (releaseRequested) {
+            create("productionRelease") {
+                storeFile = file(requireNotNull(releaseStorePath))
+                storePassword = requireNotNull(releaseStorePassword)
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+                enableV4Signing = true
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "org.athar.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = configuredVersionCode ?: 1
+        versionName = configuredVersionName ?: "0.1.0-dev"
         testInstrumentationRunner = "org.athar.app.AtharTestRunner"
         buildConfigField("String", "API_BASE_URL", "\"${apiBase.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
     }
@@ -49,8 +114,13 @@ android {
     buildTypes {
         debug { applicationIdSuffix = ".debug"; versionNameSuffix = "-debug" }
         release {
+            isDebuggable = false
+            isJniDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
+            if (releaseRequested) {
+                signingConfig = signingConfigs.getByName("productionRelease")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -177,6 +247,51 @@ tasks.named("preBuild") {
         generateReviewModelAssets,
         verifyOnnxRuntimeAndroidAbis,
     )
+}
+
+val verifyReleaseConfiguration by tasks.registering {
+    group = "verification"
+    description = "Checks release inputs without printing signing secrets."
+    doLast {
+        check(apiBase.startsWith("https://")) {
+            "Release API base must use HTTPS."
+        }
+        check(configuredVersionCode != null && configuredVersionCode > 0) {
+            "ATHAR_VERSION_CODE is missing or invalid."
+        }
+        check(
+            configuredVersionName != null &&
+                configuredVersionName.matches(
+                    Regex("[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?"),
+                ),
+        ) {
+            "ATHAR_VERSION_NAME is missing or invalid."
+        }
+        check(
+            listOf(
+                releaseStorePath,
+                releaseStorePassword,
+                releaseKeyAlias,
+                releaseKeyPassword,
+            ).all { !it.isNullOrBlank() },
+        ) {
+            "Release signing inputs are incomplete."
+        }
+        check(java.io.File(requireNotNull(releaseStorePath)).isFile) {
+            "Release keystore does not exist."
+        }
+    }
+}
+
+tasks.configureEach {
+    val lower = name.lowercase()
+    if (
+        lower == "assemblerelease" ||
+        lower == "bundlerelease" ||
+        lower == "packagerelease"
+    ) {
+        dependsOn(verifyReleaseConfiguration)
+    }
 }
 
 dependencies {
