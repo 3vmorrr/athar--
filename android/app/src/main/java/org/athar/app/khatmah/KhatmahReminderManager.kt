@@ -204,9 +204,14 @@ class KhatmahReminderManager(
             plan,
             now(),
             app.getString(R.string.khatmah_reminder_notification_title),
-        ) { daily, remaining ->
-            app.getString(R.string.khatmah_reminder_notification_body, daily, remaining)
-        }
+            body = { daily, remaining ->
+                app.getString(
+                    R.string.khatmah_reminder_notification_body,
+                    daily,
+                    remaining,
+                )
+            },
+        )
         val current = when (val read = reminderStore.list(owner)) {
             is ProtectedRead.Ready -> read.value.filter { it.id.startsWith("khatmah-") }
             ProtectedRead.Loading, ProtectedRead.Unreadable -> throw IllegalStateException("khatmah_reminder_state_unreadable")
