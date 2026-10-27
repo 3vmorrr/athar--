@@ -180,7 +180,11 @@ private fun AtharNavIcon(
                 CenterAlignedTopAppBar(
                     title = {
                         if (topLevel) {
-                            Brand(Modifier.height(44.dp).width(64.dp))
+                            Text(
+                                stringResource(R.string.app_name),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
                         } else {
                             Text(
                                 stringResource(
