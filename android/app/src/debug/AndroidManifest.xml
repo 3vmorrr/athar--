@@ -12,7 +12,8 @@
         <activity
             android:name=".showcase.ShowcaseActivity"
             android:exported="true"
-            android:label="Athar UI Preview">
+            android:label="Athar UI Preview"
+            android:theme="@style/Theme.Athar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
