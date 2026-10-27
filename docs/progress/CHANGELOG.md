@@ -1,5 +1,12 @@
 # Engineering change log
 
+## 2026-10-27 — background budgets, ayah share and stale-queue audit
+
+- Added 22.4 background work budgets/evidence harness at `67cbb27a17f6`.
+- Added 03.6 canonical Quran copy/share at `cb524e9fbeaf`.
+- Reconciled stale NOT STARTED rows 02.7.2, 06.2–06.5, 08.4, 08.7 and 10.1–10.6 to PARTIAL based on actual branch source.
+- Set 09.2 as the first verified missing implementation.
+
 ## 2026-10-27 — WP16 and Admin-track reconciliation
 
 - Landed 16.4 privacy-safe notification diagnostics at `192fb0054149`.

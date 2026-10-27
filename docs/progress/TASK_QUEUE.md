@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **22.4**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **09.2**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -100,7 +100,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 02.7.2 — Actionable permanent Night Prayer rejection recovery
 
-- Parent: Work package 2; state: **NOT STARTED**; dependencies: 02.5, 02.7.1.
+- Parent: Work package 2; state: **PARTIAL**; dependencies: 02.5, 02.7.1.
 - Exact scope: Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/androidTest/.
 - Automated gates: 422/404/429/503 operation outcomes; retained rejection after restart; explicit retry/repair/stale review; unreadable and owner isolation; healthy queue progress; native Arabic/English UI/build/lint/resources.
@@ -180,7 +180,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 03.6 — Verse copy and share
 
-- Parent: Work package 3: Quran reader/tools; state: **NOT STARTED**; dependencies: 03.5.
+- Parent: Work package 3: Quran reader/tools; state: **PARTIAL**; dependencies: 03.5.
 - Exact scope: Add bounded canonical text/reference/source copy/share with mixed-direction-safe presentation.
 - Files/modules: android/app/src/main/java/org/athar/app/quran/.
 - Automated gates: Reference/text fidelity and Android chooser/copy semantics tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -320,7 +320,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.2 — Safe durable book download
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.1.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.1.
 - Exact scope: Implement validated HTTPS download, bounded storage, progress and durable identity without bypassing rights.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); backend/src/Catalog/.
 - Automated gates: Redirect/SSRF/MIME/size/failure/resume eligibility tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -330,7 +330,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.3 — Book download cancellation and management
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.2.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.2.
 - Exact scope: Persist downloaded-file inventory; cancel/retry/remove only owned downloaded files safely.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new).
 - Automated gates: Interrupted download/process restart/space/path ownership tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -340,7 +340,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.4 — Native PDF open and reading state
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.3.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.3.
 - Exact scope: Open verified local PDFs with accessible native/file-provider flow and explicit retained reading position when supported.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); android/app/src/main/AndroidManifest.xml.
 - Automated gates: Malformed PDF/no viewer/provider grant/position tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -350,7 +350,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.5 — Book offline integrity acceptance
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.4.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.4.
 - Exact scope: Verify checksums/stale metadata/rights changes, corruption and file cleanup without deleting private progress.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); android/app/src/main/java/org/athar/app/core/data/.
 - Automated gates: Corrupt/truncated/missing/expired file and offline catalog cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -480,7 +480,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 08.4 — Measured prayer session timer
 
-- Parent: Work package 8: Night Prayer; state: **NOT STARTED**; dependencies: 08.3.
+- Parent: Work package 8: Night Prayer; state: **PARTIAL**; dependencies: 08.3.
 - Exact scope: Implement pause/resume/finish/cancel and durable measured duration without counting background wall time as recitation.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Monotonic/wall clock/process/interruption/save-once cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -510,7 +510,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 08.7 — Yearly prayer visualization
 
-- Parent: Work package 8: Night Prayer; state: **NOT STARTED**; dependencies: 08.6.
+- Parent: Work package 8: Night Prayer; state: **PARTIAL**; dependencies: 08.6.
 - Exact scope: Add accessible yearly activity/legend/year navigation without revealing private dates to Admin.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Leap year/date bounds/empty/deleted/exempt semantics tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -620,7 +620,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.1 — Notification preference contract
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 07.9, 08.6.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 07.9, 08.6.
 - Exact scope: Implement opt-in settings schema/API/local persistence with safe defaults and versioned consent.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Ownership/default-deny/version/retry/withdrawal tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -630,7 +630,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.2 — Channels and contextual permission
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 10.1.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 10.1.
 - Exact scope: Implement localized Android channels and contextual API33 permission/denial/revocation flows.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/AndroidManifest.xml.
 - Automated gates: Manifest/permission/channel and no-permission behavior tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -640,7 +640,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.3 — Stable notification deep links
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 10.2.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 10.2.
 - Exact scope: Implement authenticated safe destination restoration for lesson/series/Quran/adhkar/night/inbox.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/core/ui/.
 - Automated gates: Malformed/untrusted/removed target/verified access/back-stack tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -650,7 +650,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.4 — Quiet hours expiry and dedup policy
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 10.3.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 10.3.
 - Exact scope: Implement shared timezone-aware quiet windows/TTL/frequency/idempotent local policy; private data stays local.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); backend/src/Engagement/ (new).
 - Automated gates: DST/overnight/late/duplicate/rate/withdrawal policy vectors. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -660,7 +660,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.5 — Persistent local reminder scheduler
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 10.4.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 10.4.
 - Exact scope: Implement bounded owned local work/reconciliation and cancellation without unjustified exact-alarm privileges.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new).
 - Automated gates: Owner/retry/constraints/permission/duplicate schedule tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -670,7 +670,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 10.6 — Boot and time-change reconciliation
 
-- Parent: Work package 10: Notification foundation; state: **NOT STARTED**; dependencies: 10.5.
+- Parent: Work package 10: Notification foundation; state: **PARTIAL**; dependencies: 10.5.
 - Exact scope: Safely restore reminders after boot/time/timezone change with stale/permission/privacy checks.
 - Files/modules: android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/AndroidManifest.xml.
 - Automated gates: Receiver permission/input validation/reboot/timezone/TTL tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1370,7 +1370,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 22.4 — Background battery and network budgets
 
-- Parent: Work package 22: Performance/reliability; state: **NOT STARTED**; dependencies: 22.3.
+- Parent: Work package 22: Performance/reliability; state: **PARTIAL**; dependencies: 22.3.
 - Exact scope: Measure work frequency/media/routine battery/network behavior, quotas and cancellation under idle.
 - Files/modules: android/app/src/main/java/org/athar/app/core/sync/; android/app/src/main/java/org/athar/app/notifications/ (new); android/app/src/main/java/org/athar/app/media/.
 - Automated gates: Work/provider call counts/idle/background traces. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

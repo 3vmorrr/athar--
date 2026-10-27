@@ -40,7 +40,10 @@ Pre-existing WP17–20 implementation on this branch is tracked in `PARALLEL_ADM
 
 |22.1|35af781f1cbb|PARTIAL|
 
-Next implementation: **22.4**.
+|22.4|67cbb27a17f6|PARTIAL|
+|03.6|cb524e9fbeaf|PARTIAL|
+
+Next implementation: **09.2**.
 
 Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 
@@ -56,3 +59,7 @@ Each report follows implementation → tests/device → docs → review → comm
 |21.1 Premium shared primitives and controlled motion|981a9e1293b4270b5e9d2accc8f0a50174bd0763|47 JVM/build/lint; Arabic7/English8 component+regression, main API1, inspected captures/scoped startup; normal push and exact remote SHA verified |
 
 Task02.4's final executed gates are recorded in SESSION_OWNERSHIP.md and TEST_REPORT.md. Its source/diff is committed only after those gates; the completion report records the resulting verified SHA.
+
+## 2026-10-27 source audit reconciliation
+
+Rows 02.7.2, 06.2–06.5, 08.4, 08.7 and 10.1–10.6 were stale NOT STARTED labels. Actual source on this branch contains their implementation; they are now PARTIAL / acceptance pending, not COMPLETE. The first verified missing implementation is 09.2.

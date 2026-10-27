@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "22.4",
+  "current_task": "09.2",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -213,7 +213,7 @@
       "name": "Actionable permanent Night Prayer rejection recovery",
       "parent": "Work package 2",
       "scope": "Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "02.5",
         "02.7.1"
@@ -364,7 +364,7 @@
       "name": "Verse copy and share",
       "parent": "Work package 3: Quran reader/tools",
       "scope": "Add bounded canonical text/reference/source copy/share with mixed-direction-safe presentation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "03.5"
       ],
@@ -612,7 +612,7 @@
       "name": "Safe durable book download",
       "parent": "Work package 6: Books",
       "scope": "Implement validated HTTPS download, bounded storage, progress and durable identity without bypassing rights.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.1"
       ],
@@ -630,7 +630,7 @@
       "name": "Book download cancellation and management",
       "parent": "Work package 6: Books",
       "scope": "Persist downloaded-file inventory; cancel/retry/remove only owned downloaded files safely.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.2"
       ],
@@ -647,7 +647,7 @@
       "name": "Native PDF open and reading state",
       "parent": "Work package 6: Books",
       "scope": "Open verified local PDFs with accessible native/file-provider flow and explicit retained reading position when supported.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.3"
       ],
@@ -665,7 +665,7 @@
       "name": "Book offline integrity acceptance",
       "parent": "Work package 6: Books",
       "scope": "Verify checksums/stale metadata/rights changes, corruption and file cleanup without deleting private progress.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.4"
       ],
@@ -899,7 +899,7 @@
       "name": "Measured prayer session timer",
       "parent": "Work package 8: Night Prayer",
       "scope": "Implement pause/resume/finish/cancel and durable measured duration without counting background wall time as recitation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "08.3"
       ],
@@ -950,7 +950,7 @@
       "name": "Yearly prayer visualization",
       "parent": "Work package 8: Night Prayer",
       "scope": "Add accessible yearly activity/legend/year navigation without revealing private dates to Admin.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "08.6"
       ],
@@ -1145,7 +1145,7 @@
       "name": "Notification preference contract",
       "parent": "Work package 10: Notification foundation",
       "scope": "Implement opt-in settings schema/API/local persistence with safe defaults and versioned consent.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "07.9",
         "08.6"
@@ -1165,7 +1165,7 @@
       "name": "Channels and contextual permission",
       "parent": "Work package 10: Notification foundation",
       "scope": "Implement localized Android channels and contextual API33 permission/denial/revocation flows.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.1"
       ],
@@ -1183,7 +1183,7 @@
       "name": "Stable notification deep links",
       "parent": "Work package 10: Notification foundation",
       "scope": "Implement authenticated safe destination restoration for lesson/series/Quran/adhkar/night/inbox.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.2"
       ],
@@ -1201,7 +1201,7 @@
       "name": "Quiet hours expiry and dedup policy",
       "parent": "Work package 10: Notification foundation",
       "scope": "Implement shared timezone-aware quiet windows/TTL/frequency/idempotent local policy; private data stays local.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.3"
       ],
@@ -1219,7 +1219,7 @@
       "name": "Persistent local reminder scheduler",
       "parent": "Work package 10: Notification foundation",
       "scope": "Implement bounded owned local work/reconciliation and cancellation without unjustified exact-alarm privileges.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.4"
       ],
@@ -1236,7 +1236,7 @@
       "name": "Boot and time-change reconciliation",
       "parent": "Work package 10: Notification foundation",
       "scope": "Safely restore reminders after boot/time/timezone change with stale/permission/privacy checks.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "10.5"
       ],
@@ -2507,7 +2507,7 @@
       "name": "Background battery and network budgets",
       "parent": "Work package 22: Performance/reliability",
       "scope": "Measure work frequency/media/routine battery/network behavior, quotas and cancellation under idle.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "22.3"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "35af781f1cbbb540611973be7b94e69311f916c4",
-    "last_landed_task": "22.1",
-    "next_task": "22.4",
+    "head": "cb524e9fbeaf008a89cf494e87b3273eacdabd9d",
+    "last_landed_task": "03.6",
+    "next_task": "09.2",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2824,7 +2824,22 @@
       "21.19",
       "21.20",
       "21.21",
-      "22.1"
+      "22.1",
+      "22.4",
+      "03.6",
+      "02.7.2",
+      "06.2",
+      "06.3",
+      "06.4",
+      "06.5",
+      "08.4",
+      "08.7",
+      "10.1",
+      "10.2",
+      "10.3",
+      "10.4",
+      "10.5",
+      "10.6"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2923,6 +2938,12 @@
       ],
       "22.1": [
         "35af781f1cbb"
+      ],
+      "22.4": [
+        "67cbb27a17f6"
+      ],
+      "03.6": [
+        "cb524e9fbeaf"
       ]
     },
     "preexisting_parallel_admin": {
@@ -2953,6 +2974,39 @@
       ],
       "evidence": "Existing branch source plus docs/progress/PARALLEL_ADMIN_TRACK.md: independent Admin auth/shell/RBAC/user/audit/recovery, editorial CRUD/services/Night defaults, campaign composer/audience/queue/history, and email queue/campaign implementation are present; acceptance remains pending.",
       "blocked": "20.5 Authorized Gmail inbox proof remains BLOCKED and is not skipped as complete."
+    },
+    "source_audit_2026_10_27": {
+      "stale_rows_reconciled": [
+        "02.7.2",
+        "06.2",
+        "06.3",
+        "06.4",
+        "06.5",
+        "08.4",
+        "08.7",
+        "10.1",
+        "10.2",
+        "10.3",
+        "10.4",
+        "10.5",
+        "10.6"
+      ],
+      "evidence": {
+        "02.7.2": "NightPrayerRepository rejection retention/review/retry/account/repair plus NightRejectionDialog",
+        "06.2-06.5": "BookDownloads + BookReaderScreen implement HTTPS validation, owned durable inventory/cancel/remove, SHA-256/PDF integrity, native PdfRenderer and retained page position",
+        "08.4": "NightSessionTimer uses elapsedRealtime with pause/resume/background pause/finish/cancel and durable snapshots",
+        "08.7": "NightYearOverview implements year navigation, accessible legend and private local activity rendering",
+        "10.1-10.6": "Notification preferences/permission/deep links/policy/local scheduler/reconcile files are present and wired"
+      },
+      "true_missing": [
+        "09.2",
+        "09.3",
+        "09.4",
+        "09.5",
+        "24.3",
+        "24.4",
+        "24.5"
+      ]
     }
   }
 }
