@@ -151,6 +151,95 @@ fun AtharQuickAction(
     }
 }
 
+
+@Composable
+fun AtharCompactAction(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    emphasized: Boolean = false,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val reduced = reducedMotion()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed && !reduced) 0.985f else 1f,
+        animationSpec = if (reduced) snap() else spring(
+            stiffness = AtharMotion.SmallSpringStiffness,
+            dampingRatio = AtharMotion.SmallSpringDamping,
+        ),
+        label = "athar-compact-action",
+    )
+    Surface(
+        onClick = onClick,
+        modifier = modifier
+            .heightIn(min = 68.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
+        shape = MaterialTheme.shapes.large,
+        color = if (emphasized) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerLow
+        },
+        border = BorderStroke(
+            1.dp,
+            if (emphasized) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.20f)
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            },
+        ),
+        interactionSource = interaction,
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AtharSpacing.Md, vertical = AtharSpacing.Sm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            Surface(
+                modifier = Modifier.size(40.dp),
+                shape = MaterialTheme.shapes.medium,
+                color = if (emphasized) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                },
+            ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(21.dp),
+                        tint = if (emphasized) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        },
+                    )
+                }
+            }
+            Text(
+                label,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+            )
+            Icon(
+                AtharIcons.ArrowForward,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
 @Composable
 fun AtharStatusPill(
     text: String,
