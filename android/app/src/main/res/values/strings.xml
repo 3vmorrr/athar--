@@ -728,10 +728,10 @@
     <string name="review_model_download_progress">تم التحقق من %1$d من %2$d MB</string>
     <string name="review_model_download">تنزيل النموذج</string>
     <string name="review_model_verified_download">الحزمة كاملة ومتطابقة مع SHA-256</string>
-    <string name="review_model_inference_pending">التنزيل لا يعني أن مراجعة التلاوة جاهزة. سيظل الاستدلال والميكروفون معطلين حتى اكتمال التحقق المحلي في المرحلة التالية.</string>
+    <string name="review_model_inference_pending">الحزمة المتحققة جاهزة للتشغيل المحلي. اختبر التوافق هنا، ثم اضغط مطولًا على آية في القارئ لبدء مراجعة تلاوتها.</string>
     <string name="review_model_rollback">الرجوع إلى النسخة السابقة المتحققة</string>
     <string name="review_model_remove">حذف حزمة النموذج من الجهاز</string>
-    <string name="review_model_privacy_note">هذه المرحلة تنزّل ملفات النموذج فقط. لا تطلب إذن الميكروفون ولا ترفع أي صوت أو نص تلاوة.</string>
+    <string name="review_model_privacy_note">ملفات النموذج تبقى محلية. إذن الميكروفون لا يُطلب إلا عندما تبدأ اختبارًا أو مراجعة صراحة، ولا يُحفظ أو يُرفع الصوت.</string>
     <string name="review_runtime_title">اختبار التشغيل المحلي</string>
     <string name="review_runtime_probe_explainer">يشغّل هذا الاختبار استدلالًا واحدًا بمدخلات الحالة الصفرية للتحقق من أن نموذج ONNX والعمليات والأشكال تعمل محليًا. لا يعتبر اختبار دقة للتلاوة.</string>
     <string name="review_runtime_compatible">ONNX Runtime %1$s نفّذ النموذج محليًا</string>
@@ -753,4 +753,22 @@
     <string name="review_microphone_overloaded">توقف الالتقاط لأن الاستدلال المحلي لم يلحق بالصوت ضمن حد الذاكرة المسموح. لم يتم إسقاط الصوت بصمت.</string>
     <string name="review_local_inference_counts">إطارات النموذج المحلية: %1$d · رموز CTC الخام: %2$d</string>
     <string name="review_alignment_still_disabled">الاستدلال الصوتي المحلي يعمل حتى رموز CTC الخام فقط. مطابقة الآيات ومحاذاة الكلمات وأحكام «صحيح/غير واضح/خطأ» تظل معطلة حتى المرحلة 09.4، لذلك لا يعرض Athar أي حكم قرآني من هذه الأرقام.</string>
+    <string name="review_recitation_title">مراجعة التلاوة</string>
+    <string name="review_recitation_action">مراجعة تلاوة هذه الآية</string>
+    <string name="review_recitation_reference">الآية %1$d:%2$d</string>
+    <string name="review_recitation_expected_note">اقرأ الآية المحددة فقط. المطابقة محلية ومحافظة، والحالة «غير واضح» تعني أن التطبيق يمتنع عن الحكم.</string>
+    <string name="review_recitation_privacy">الصوت يبقى في الذاكرة على هذا الجهاز فقط، ولا يُحفظ ولا يُرفع. النتائج مؤقتة لهذه المحاولة.</string>
+    <string name="review_recitation_model_required">حزمة المراجعة المتحققة غير مثبتة. ثبّتها أولًا من أدوات القرآن ← إعداد نموذج مراجعة التلاوة.</string>
+    <string name="review_recitation_load_failed">تعذر قراءة الآية أو corpus المتحقق بأمان. لم تبدأ المراجعة.</string>
+    <string name="review_recitation_listening">يستمع محليًا</string>
+    <string name="review_recitation_start">ابدأ مراجعة هذه الآية</string>
+    <string name="review_recitation_possible_issue">يوجد اختلاف محتمل في كلمة أو أكثر. راجع العلامات؛ هذه ليست دعوى يقينية بأن التلاوة خاطئة.</string>
+    <string name="review_recitation_uncertain_summary">بعض الصوت غير واضح بما يكفي. امتنع التطبيق عن إصدار حكم على الأجزاء غير الموثوقة.</string>
+    <string name="review_recitation_clear_summary">المقطع المسموع طابق الآية بوضوح ضمن حدود النموذج المحلي.</string>
+    <string name="review_word_empty">لم يبدأ</string>
+    <string name="review_word_pending">في الانتظار</string>
+    <string name="review_word_confirmed">مطابقة واضحة</string>
+    <string name="review_word_uncertain">غير واضح</string>
+    <string name="review_word_possible_mismatch">اختلاف محتمل</string>
+    <string name="review_word_possible_skipped">تخطٍ محتمل</string>
 </resources>

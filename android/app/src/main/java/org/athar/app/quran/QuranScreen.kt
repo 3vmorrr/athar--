@@ -363,6 +363,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val reading=(storedReading as? ProtectedRead.Ready)?.value
     val mushafScrollState = rememberScrollState()
     var selectedAyah by remember { mutableStateOf<AyahText?>(null) }
+    var reviewAyah by remember { mutableStateOf<AyahText?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
     var navigationSheet by remember { mutableStateOf(false) }
     var searchMode by rememberSaveable { mutableStateOf(false) }
@@ -380,6 +381,16 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val snackbar = remember { SnackbarHostState() }
     val context = LocalContext.current
     val saved = stringResource(R.string.saved)
+    reviewAyah?.let { target ->
+        org.athar.app.review.ReviewRecitationScreen(
+            graph = graph,
+            surah = target.position.surah,
+            ayah = target.position.ayah,
+            quranFontSize = fontSize,
+            onBack = { reviewAyah = null },
+        )
+        return
+    }
     val failed = stringResource(R.string.network_error)
     val copied = stringResource(R.string.quran_ayah_copied)
     val shareTitle = stringResource(R.string.quran_share_ayah)
@@ -606,7 +617,12 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             bookmarked = ayah.position.globalIndex in bookmarks,
             canSavePosition = storedReading is ProtectedRead.Ready &&
                 reading?.conflict != true,
+            canReviewRecitation = graph.reviewModels.installed(),
             onDismiss = { selectedAyah = null },
+            onReviewRecitation = {
+                reviewAyah = ayah
+                selectedAyah = null
+            },
             onSavePosition = {
                 scope.launch {
                     try {

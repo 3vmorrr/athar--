@@ -245,7 +245,9 @@ internal fun QuranAyahActionSheet(
     ayah: AyahText,
     bookmarked: Boolean,
     canSavePosition: Boolean,
+    canReviewRecitation: Boolean,
     onDismiss: () -> Unit,
+    onReviewRecitation: () -> Unit,
     onSavePosition: () -> Unit,
     onToggleBookmark: () -> Unit,
     onCopy: () -> Unit,
@@ -305,6 +307,16 @@ internal fun QuranAyahActionSheet(
                         .heightIn(min = 52.dp),
                 ) {
                     Text(stringResource(R.string.set_reading_position))
+                }
+            }
+            if (canReviewRecitation) {
+                Button(
+                    onClick = onReviewRecitation,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp),
+                ) {
+                    Text(stringResource(R.string.review_recitation_action))
                 }
             }
             TextButton(

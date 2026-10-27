@@ -2,7 +2,7 @@
 
 Task: 09.4  
 Implementation branch: \`parallel/admin-foundation\`  
-Status: **ALIGNMENT CORE IMPLEMENTED / READER UI + PHYSICAL ACCEPTANCE PENDING**
+Status: **FUNCTIONAL EXPECTED-AYAH REVIEW IMPLEMENTED / PHYSICAL ACCEPTANCE PENDING**
 
 The Android review engine now has a conservative expected-passage alignment core on top of Task 09.3's raw CTC tokens.
 
@@ -42,3 +42,18 @@ The DP is bounded to 7,500 heard characters and 12 million cells. It never uploa
 Pure JVM coverage includes exact passage, insertion, deletion, substitution, repeated word, low-margin noisy audio, pending future words, empty take, multi-character token expansion, phonetic neighbor costs and bounded corpus extraction.
 
 The next 09.4 commit integrates this core into a Quran reader review surface and preserves the same uncertainty semantics in UI.
+
+
+## Quran reader integration
+
+Long-pressing a Quran ayah now offers **Review recitation of this ayah** only when the verified model package is installed.
+
+The review surface uses the selected canonical ayah as the expected passage. It never performs a whole-Quran guess. The canonical Tanzil text is shown above word-level corpus slots, and each slot starts empty before audio.
+
+During capture, raw CTC tokens are expanded and aligned in memory after each inference window. Word surfaces update through the conservative states above. On stop, the bounded inference queue drains, the model tail is finalized, and a final expected-passage alignment is shown.
+
+User-facing language intentionally says “clear match”, “unclear”, “possible mismatch” and “possible skipped word”. It never presents a low-confidence result as correct/incorrect fact.
+
+The screen inherits the same contextual microphone lifecycle as 09.3: explicit permission request, background/revocation stop, four-chunk queue, overload fail-closed, no audio persistence/upload.
+
+No haptic or success sound is enabled yet. Those cues are optional in Task 09.4 and remain omitted until physical accessibility/device validation can prove they are not misleading or disruptive.

@@ -700,10 +700,10 @@
     <string name="review_model_download_progress">Verified %1$d of %2$d MB</string>
     <string name="review_model_download">Download model</string>
     <string name="review_model_verified_download">Package is complete and matches SHA-256</string>
-    <string name="review_model_inference_pending">A verified download does not mean recitation review is ready. Microphone and inference remain disabled until local runtime verification is completed in the next stage.</string>
+    <string name="review_model_inference_pending">The verified package is ready for local runtime use. Test compatibility here, then long-press an ayah in the reader to review its recitation.</string>
     <string name="review_model_rollback">Roll back to previous verified version</string>
     <string name="review_model_remove">Remove model package from device</string>
-    <string name="review_model_privacy_note">This stage downloads model files only. It does not request microphone permission or upload any audio or recitation text.</string>
+    <string name="review_model_privacy_note">Model files stay local. Microphone permission is requested only when you explicitly start a test or review, and audio is never saved or uploaded.</string>
     <string name="review_runtime_title">Local runtime test</string>
     <string name="review_runtime_probe_explainer">This runs one zero-state graph inference to verify that the ONNX model, operators and tensor shapes execute locally. It is not a recitation accuracy test.</string>
     <string name="review_runtime_compatible">ONNX Runtime %1$s executed the model locally</string>
@@ -725,4 +725,22 @@
     <string name="review_microphone_overloaded">Capture stopped because local inference could not keep up within the memory budget. Audio was not silently dropped.</string>
     <string name="review_local_inference_counts">Local model frames: %1$d · raw CTC tokens: %2$d</string>
     <string name="review_alignment_still_disabled">Local acoustic inference now runs through raw CTC tokens only. Ayah matching, word alignment and “correct/unclear/wrong” verdicts remain disabled until Task 09.4, so Athar does not present these counts as Quran feedback.</string>
+    <string name="review_recitation_title">Recitation review</string>
+    <string name="review_recitation_action">Review recitation of this ayah</string>
+    <string name="review_recitation_reference">Ayah %1$d:%2$d</string>
+    <string name="review_recitation_expected_note">Read only the selected ayah. Matching is local and conservative; “unclear” means the app abstains from a verdict.</string>
+    <string name="review_recitation_privacy">Audio stays in memory on this device only and is never saved or uploaded. Results are temporary for this attempt.</string>
+    <string name="review_recitation_model_required">The verified review package is not installed. Install it first from Quran tools → Recitation review model setup.</string>
+    <string name="review_recitation_load_failed">The ayah or verified corpus could not be read safely. Review did not start.</string>
+    <string name="review_recitation_listening">Listening locally</string>
+    <string name="review_recitation_start">Start reviewing this ayah</string>
+    <string name="review_recitation_possible_issue">There is a possible mismatch in one or more words. Review the markers; this is not a definitive claim that the recitation is wrong.</string>
+    <string name="review_recitation_uncertain_summary">Some audio was not clear enough. The app abstained from judging the unreliable parts.</string>
+    <string name="review_recitation_clear_summary">The heard passage clearly matched the selected ayah within the local model's limits.</string>
+    <string name="review_word_empty">Not started</string>
+    <string name="review_word_pending">Waiting</string>
+    <string name="review_word_confirmed">Clear match</string>
+    <string name="review_word_uncertain">Unclear</string>
+    <string name="review_word_possible_mismatch">Possible mismatch</string>
+    <string name="review_word_possible_skipped">Possible skipped word</string>
 </resources>
