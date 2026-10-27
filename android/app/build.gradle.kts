@@ -4,6 +4,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import File
 import java.net.URI
 import java.security.MessageDigest
 
@@ -102,7 +103,7 @@ abstract class GenerateReviewModelAssetsTask : DefaultTask() {
             "Review model license/notice is missing."
         }
 
-        fun sha256(file: java.io.File): String {
+        fun sha256(file: File): String {
             val digest = MessageDigest.getInstance("SHA-256")
             file.inputStream().buffered().use { input ->
                 val buffer = ByteArray(64 * 1024)
