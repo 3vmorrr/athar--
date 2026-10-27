@@ -4,7 +4,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import File
+import java.io.File
 import java.net.URI
 import java.security.MessageDigest
 
