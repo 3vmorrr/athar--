@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "current_task": "24.3",
+  "current_task": "24.4",
   "overall_estimate_percent": 45,
   "overall_estimate_detail": "Execution checkpoint reconciled to parallel/admin-foundation head 65c5f551845227a9be55926ee92750031021bb01. Tasks 11.1–16.1 listed in implementation_checkpoint have landed code but remain PARTIAL until their queue-defined automated/device/integration acceptance gates pass. 15.3 remains externally BLOCKED. Do not infer COMPLETE from implementation commits alone.",
   "estimate_uncertainty_pp": 10,
@@ -2696,7 +2696,7 @@
       "name": "Signed reproducible Android release",
       "parent": "Work package 24: Deployment/release",
       "scope": "Configure approved signing/versioning/proguard/AAB/APK without committing keys or local settings.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "24.2"
       ],
@@ -2771,9 +2771,9 @@
   "implementation_checkpoint": {
     "date": "2026-10-27",
     "branch": "parallel/admin-foundation",
-    "head": "f99a822cb0ba943bfd2306f6534ae3058d6b562b",
-    "last_landed_task": "09.5",
-    "next_task": "24.3",
+    "head": "e8a81d03a8d4b808deae00577a6ad7712e6670f6",
+    "last_landed_task": "24.3",
+    "next_task": "24.4",
     "state_semantics": "PARTIAL means implementation landed on this branch but acceptance gates remain pending; downstream implementation may proceed when the code dependency exists unless a task is explicitly BLOCKED.",
     "implemented_acceptance_pending": [
       "11.1",
@@ -2843,7 +2843,8 @@
       "09.2",
       "09.3",
       "09.4",
-      "09.5"
+      "09.5",
+      "24.3"
     ],
     "blocked_external": {
       "15.3": "Authorized physical push delivery requires an authorized free FCM project/configuration and an approved physical test device; no delivery proof may be fabricated."
@@ -2968,6 +2969,10 @@
       "09.5": [
         "33dacb2cd183",
         "f99a822cb0ba"
+      ],
+      "24.3": [
+        "499ccef277c9",
+        "e8a81d03a8d4"
       ]
     },
     "preexisting_parallel_admin": {
