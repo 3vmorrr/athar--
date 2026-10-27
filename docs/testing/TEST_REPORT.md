@@ -1,3 +1,7 @@
+## Task18.1 — Admin scholars and portraits
+
+159 actual HTTP/68 actual browser/20,752 backend assertions PASS. Metadata, PNG/JPEG/WebP, private draft/public published boundary, dependency-safe deletion, real deletion race/no orphan upload,AR/EN light/dark desktop/phone editor/draft/error focus accepted. [Evidence and limits](ADMIN_SCHOLARS.md). No migration/native change or physical Android claim. Cursor393760b;18.2 follows;02.8 remains deferred.
+
 ## Task17.6 — owner recovery and interruption safety
 
 20,752 backend (61 recovery),189 actual HTTP and48 browser assertions PASS. Actual pre/post-COMMIT PHP kills, automatic next-request repair, corrupt original/journal preservation, maintenance exclusion, password/session/actor isolation, encrypted single-use downloads, real isolated reset/recovery and rollback accepted. AR/EN light/dark desktop/phone/error focus/cancellation inspected. [Evidence and scope](ADMIN_RECOVERY.md). No migration/native change; no physical Android claim. Source cursor8a06c84; WP17 closes6/6;18.1 follows;02.8 remains deferred.

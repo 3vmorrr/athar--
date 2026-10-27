@@ -1,5 +1,9 @@
 # Implementation plan
 
+## Parallel integration checkpoint — task18.1
+
+Scholar metadata/optional portraits and bilingual create/edit accepted. Added transactional row/audit/file controls, dependency-safe deletion, public publication checks/private Admin preview, strict validation and retained drafts.159 actual HTTP,68 browser and20,752 backend assertions PASS; actual PNG/JPEG/WebP and concurrent deletion without orphan upload. [Evidence and source reconciliation](../testing/ADMIN_SCHOLARS.md). No migration/native change or physical Android claim. Cursor393760bbef96caa95f31253c584cbdda10317edd; next18.2. WP18:1/9 (11%); overall50% (49.88 weighted,±10pp);131 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task17.6
 
 Owner-only bilingual backup/grant/download/restore/reset accepted with current-password/literal/CSRF gates, session isolation, all-user cookie revocation, recovered-owner identity, recoverable-backup checks and transactional/asset compensation. Durable journal repairs actual pre/post-COMMIT process termination; malformed/corrupt/foreign recovery data stays preserved and blocks service.20,752 backend,189 HTTP and48 browser assertions PASS; secret scan clear. [Evidence, source reconciliation and limits](../testing/ADMIN_RECOVERY.md). No migration/native change or physical Android claim. Source cursor8a06c84c1d021ad26b0f86791d78fc1e74adb1f4; next18.1. WP17:6/6 (100%); overall49% (49.38 weighted,±10pp);132 open. WP02.8 remains deferred.

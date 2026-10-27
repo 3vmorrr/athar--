@@ -24,3 +24,5 @@
 .admin-audit-search-form{margin-block:18px}.admin-audit-row details>summary{min-height:44px;padding-block:10px}.admin-audit-row p,.admin-audit-row strong{overflow-wrap:anywhere}.admin-audit-row time{font-size:.9rem;color:var(--muted)}
 
 .owner-operations .knowledge-card{padding:20px;margin-block:18px;border:1px solid var(--line);border-radius:16px;background:var(--surface2);min-width:0}.owner-operations .backup-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr);gap:24px}.owner-operations p,.owner-operations code{overflow-wrap:anywhere}.owner-operations input,.owner-operations select{min-width:0;max-width:100%}.owner-operations button{min-height:44px;white-space:normal}.owner-operations label code{display:block;font-size:.9rem;color:var(--muted);margin-block:4px}.owner-operations .backup-download-form{padding:16px;border:1px solid var(--primary);border-radius:14px}@media(max-width:680px){.owner-operations .backup-row{grid-template-columns:minmax(0,1fr);gap:12px}.owner-operations .knowledge-card{padding:14px}.owner-operations button{width:100%}}
+
+[data-scholar-form] .check-label{min-height:44px;align-items:center}

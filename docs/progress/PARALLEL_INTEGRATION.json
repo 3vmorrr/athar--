@@ -1,9 +1,9 @@
 {
-  "codex_head": "a0eb4de0c5f84630163af779f7498df0844d505f",
+  "codex_head": "6e8700981354b37378c8a3476277afe77b6bbaa6",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
+  "LAST_PARALLEL_INTEGRATED_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -326,7 +326,8 @@
         },
         {
           "id": "17.6.5",
-          "state": "BACKEND/HTTP/BROWSER/PROCESS-KILL TESTED; final commit receipt follows"
+          "state": "COMPLETE + TESTED / PUSH VERIFIED",
+          "commit": "6e8700981354b37378c8a3476277afe77b6bbaa6"
         }
       ]
     },
@@ -354,7 +355,7 @@
       "dependencies": [
         "17.3"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Selective three-commit port; semantic reconciliation into focused transactional handler/bilingual views preserves all newer main auth/privacy/recovery/journal and other content logic. No textual conflict.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -366,8 +367,10 @@
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
       "integration_decision": "KEEP WITH FIXES",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "state": "COMPLETE",
+      "secondary_task_attribution": [],
+      "integration_base": "6e8700981354b37378c8a3476277afe77b6bbaa6",
+      "acceptance": "docs/testing/ADMIN_SCHOLARS.md;20,752 backend;159 HTTP;68 actual browser. No migration/native change. Portrait publication/private preview, metadata/upload validation and actual deletion race accepted."
     },
     {
       "task_or_group": "18.2-18.3",
@@ -3144,8 +3147,8 @@
     }
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
-  "LAST_REVIEWED_PARALLEL_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4",
-  "reviewed_cursor_scope": "Task17.6 integrated and tested, including durable recovery; later source groups remain review pending.",
+  "LAST_REVIEWED_PARALLEL_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
+  "reviewed_cursor_scope": "Task18.1 source boundary reviewed and integrated with transactional/portrait safety fixes. Later source groups remain review pending.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3454,5 +3457,6 @@
       }
     ]
   },
-  "LAST_INTEGRATED_PARALLEL_SHA": "8a06c84c1d021ad26b0f86791d78fc1e74adb1f4"
+  "LAST_INTEGRATED_PARALLEL_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
+  "review_worktree_checkout": "393760bbef96caa95f31253c584cbdda10317edd"
 }

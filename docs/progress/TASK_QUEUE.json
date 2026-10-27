@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-27",
-  "current_task": "18.1",
-  "overall_estimate_percent": 49,
-  "overall_estimate_detail": 49.38,
+  "current_task": "18.2",
+  "overall_estimate_percent": 50,
+  "overall_estimate_detail": 49.88,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1782,7 +1782,7 @@
       "name": "Admin scholar CRUD and portraits",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage scholar name/image/optional approved biography/source using existing model validation.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "17.6"
       ],
@@ -1790,10 +1790,10 @@
         "admin/ (new)",
         "backend/src/Catalog/"
       ],
-      "automated_tests": "Image/path/MIME/RBAC/visibility/delete dependency tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "automated_tests": "COMPLETE:20,752 backend;159 HTTP (39 scholar/portrait +120 auth/RBAC/concurrency);68 actual browser. Actual PNG/JPEG/WebP, private draft/public published boundary, validators, referenced deletion and real concurrent deletion/no orphan upload. Evidence:docs/testing/ADMIN_SCHOLARS.md.",
+      "physical_device": "Actual Admin AR/EN light/dark browser at1440/360; create/edit values, numeric RTL direction, touch spacing, preserved draft/error focus and captures reviewed. No native code/schema change or physical Android PASS claimed.",
       "definition_of_done": "Manage scholar name/image/optional approved biography/source using existing model validation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0
     },
     {
       "id": "18.2",

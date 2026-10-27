@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|17.6 Owner recovery operations|6e8700981354b37378c8a3476277afe77b6bbaa6|20,752 backend;189 HTTP;48 browser;actual pre/post-COMMIT process kills/corruption preservation;normal push/exact remote verified|
 |17.5 Admin privacy and operational journal|65e8296e5b890222b1c448f18a925abfd2bf880f|218 HTTP;20,691 backend;private export canaries/global journal paging/redaction;AR/EN browser;remote HEAD confirmed at next fetch|
 |17.4 Admin user management|e42c891e46790f7219b5ec323f56d0d9722e9676|182 HTTP;20,683 backend; session revocation/retained progress/fixture deletion cleanup/global search; AR/EN browser; normal push/exact remote verified|
 |17.3 Admin action/target authorization|2d87b57de49981130675d35f5350495514d66c69|683 matrix/20,683 backend;120 HTTP incl actual concurrent promotion, durable rollback audit and revocation; normal push/exact remote verified|

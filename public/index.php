@@ -5,6 +5,7 @@ require_once dirname(__DIR__) . '/backend/bootstrap.php';
 require_once dirname(__DIR__) . '/app/helpers.php';
 require_once dirname(__DIR__) . '/admin/auth.php';
 require_once dirname(__DIR__) . '/admin/authorization.php';
+require_once dirname(__DIR__) . '/admin/scholars.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -267,13 +268,18 @@ if ($path === '/lesson-comment' && $method === 'POST') {
     flash('وصل تعليقك، وسيظهر بعد مراجعته.'); redirect($seriesId ? '/series?id='.(int)$seriesId.'&lesson='.(int)$lessonId : '/lessons?lesson='.(int)$lessonId);
 }
 
-if ($path === '/scholar-image' && $method === 'GET') {
-    $key = (string) ($_GET['key'] ?? '');
-    if (!preg_match('/^[a-f0-9]{40}\.(?:jpg|png|webp)$/', $key)) { http_response_code(404); exit; }
-    $imagePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars' . DIRECTORY_SEPARATOR . $key;
-    if (!is_file($imagePath)) { http_response_code(404); exit; }
-    $mime = match (pathinfo($key, PATHINFO_EXTENSION)) { 'jpg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp', default => 'application/octet-stream' };
-    header('Content-Type: ' . $mime); header('Cache-Control: public, max-age=86400, stale-while-revalidate=604800'); header('Content-Length: ' . filesize($imagePath));
+if (in_array($path, ['/scholar-image','/admin/scholar-image'], true) && $method === 'GET') {
+    $preview = $path === '/admin/scholar-image';
+    if ($preview) { $imageActor = admin_require_auth(); if (!admin_can($imageActor, 'content')) admin_deny_action($imageActor, 'admin-action', 'scholar'); }
+    $key = is_string($_GET['key'] ?? null) ? $_GET['key'] : '';
+    if (!preg_match('/^[a-f0-9]{40}\.(?:jpg|png|webp)$/D', $key)) { http_response_code(404); exit; }
+    $portrait = db()->prepare('SELECT id FROM scholars WHERE image_key=?' . ($preview ? '' : ' AND is_published=1') . ' LIMIT 1');
+    $portrait->execute([$key]);
+    if (!$portrait->fetchColumn()) { http_response_code(404); exit; }
+    $imagePath = dirname(__DIR__) . '/storage/scholars/' . $key;
+    if (!is_file($imagePath) || is_link($imagePath)) { http_response_code(404); exit; }
+    $mime = match (pathinfo($key, PATHINFO_EXTENSION)) { 'jpg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp' };
+    header('Content-Type: ' . $mime); header('Cache-Control: no-store, private'); header('Content-Length: ' . filesize($imagePath));
     readfile($imagePath); exit;
 }
 
@@ -645,7 +651,10 @@ if ($path === '/admin') {
         $kind = (string) ($_POST['kind'] ?? '');
         try {
             admin_authorize_kind($admin, $kind);
-            if ($kind === 'comment-review') {
+            if ($kind === 'scholar' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'scholar')) {
+                admin_mutate_scholar($admin, $_POST, $_FILES);
+                flash($kind === 'scholar' ? 'تم حفظ العالم.' : 'تم تحديث العالم.'); redirect('/admin#admin-content');
+            } elseif ($kind === 'comment-review') {
                 $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
                 if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
                 db()->prepare('UPDATE lesson_comments SET status=?,revision=revision+1,moderated_at=UTC_TIMESTAMP(),moderated_by=? WHERE id=?')->execute([$status,$admin['id'],$commentId]);
@@ -888,24 +897,7 @@ if ($path === '/admin') {
                 $type = (string) $_POST['content_type'];
                 if (($_POST['content_action'] ?? '') === 'update') {
                     $published = isset($_POST['publish']) ? 1 : 0;
-                    if ($type === 'scholar') {
-                        $current = db()->prepare('SELECT image_key FROM scholars WHERE id=?'); $current->execute([$id]); $previousImage = $current->fetchColumn();
-                        if ($previousImage === false) throw new RuntimeException('العالم غير موجود.');
-                        $nextImage = $previousImage ?: null; $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
-                        if (isset($_FILES['scholar_image']) && ($_FILES['scholar_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $nextImage = store_scholar_image($_FILES['scholar_image'], $imageStorage);
-                        try {
-                            db()->prepare('UPDATE scholars SET name=?,image_key=? WHERE id=?')->execute([trim((string) $_POST['name']), $nextImage, $id]);
-                        } catch (Throwable $saveFailure) {
-                            if ($nextImage !== $previousImage) delete_scholar_image(is_string($nextImage) ? $nextImage : null, $imageStorage);
-                            throw $saveFailure;
-                        }
-                        if ($nextImage !== $previousImage) delete_scholar_image(is_string($previousImage) ? $previousImage : null, $imageStorage);
-                    } elseif ($type === 'lesson') {
-                        $url = trim((string) ($_POST['source_url'] ?? '')); $videoId = youtube_video_id($url);
-                        if (!$videoId) throw new RuntimeException('رابط فيديو YouTube غير صالح.');
-                        [$lessonScholarId,$lessonSeriesId] = validated_lesson_scope((int)($_POST['scholar_id'] ?? 0),(int)($_POST['series_id'] ?? 0));
-                        db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
-                    } elseif ($type === 'series') {
+                    if ($type === 'series') {
                         $source = trim((string) ($_POST['source_url'] ?? ''));
                         if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
                         db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
@@ -946,14 +938,6 @@ if ($path === '/admin') {
                 } else throw new RuntimeException('الإجراء غير معروف.');
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
                 flash('تم تحديث المحتوى.'); redirect('/admin');
-            } elseif ($kind === 'scholar') {
-                $name = trim((string) ($_POST['name'] ?? ''));
-                if (mb_strlen($name, 'UTF-8') < 2) throw new RuntimeException('اكتب اسم العالم.');
-                $imageStorage = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'scholars';
-                $imageKey = store_scholar_image($_FILES['scholar_image'] ?? [], $imageStorage);
-                try {
-                    db()->prepare('INSERT INTO scholars (name,biography,language,source_url,rights_basis,image_key,is_published,sort_order) VALUES (?,NULL,\'ar\',NULL,NULL,?,1,0)')->execute([$name, $imageKey]);
-                } catch (Throwable $saveFailure) { delete_scholar_image($imageKey, $imageStorage); throw $saveFailure; }
             } elseif ($kind === 'series') {
                 $source = trim((string) ($_POST['source_url'] ?? ''));
                 if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
