@@ -1,0 +1,176 @@
+{
+  "date": "2026-10-27",
+  "node": "24.14.1",
+  "npm": "11.11.0",
+  "installation": "Reviewed built-in Python installer with pinned revisions; official Android sparse Git fallback after Windows archive path-length failure; documented m3-expressive text-only variant. Upstream scripts were not executed.",
+  "skills": [
+    {
+      "name": "jetpack-compose-performance",
+      "repo": "android/skills",
+      "revision": "45fd1739a4dbca5452c3e936570797f7f6261cd7",
+      "source_path": "jetpack-compose/jetpack-compose-performance",
+      "location": ".agents/skills/jetpack-compose-performance",
+      "skill_sha256": "3d2bd1c394c62123a9368afe824e5418a8e1e3ed1b387d6f0b6aaf683592248c",
+      "source_sha256": "a1680a1ae079faa47fc706bf034b88d4c4c4903dfa4187e98e0af8b056e1848b",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE.txt"
+      ]
+    },
+    {
+      "name": "edge-to-edge",
+      "repo": "android/skills",
+      "revision": "45fd1739a4dbca5452c3e936570797f7f6261cd7",
+      "source_path": "system/edge-to-edge",
+      "location": ".agents/skills/edge-to-edge",
+      "skill_sha256": "6bcd3515e20f94464928c77baa65eb789812e214e4d3f54fd094d27de453e0cc",
+      "source_sha256": "4ca04cb6a5330b96e51410bc815f878b4ca642fba46fe5e1ad724c94e04d6eb8",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE.txt"
+      ]
+    },
+    {
+      "name": "mobile-android-design",
+      "repo": "wshobson/agents",
+      "revision": "0874a27b17a22e2b7c2e2bcd725768e0803cad06",
+      "source_path": "plugins/ui-design/skills/mobile-android-design",
+      "location": ".agents/skills/mobile-android-design",
+      "skill_sha256": "0a209a1c45585ce0056548cc2f0fd352b7fde5980a3b5dd397a9daf5dff19fe7",
+      "source_sha256": "0a209a1c45585ce0056548cc2f0fd352b7fde5980a3b5dd397a9daf5dff19fe7",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "m3-expressive",
+      "repo": "abhixv/google-m3-expressive-design-skill",
+      "revision": "797764c24eb5f96d601f022bb9d3c8167140af7f",
+      "source_path": "skills/m3-expressive",
+      "location": ".agents/skills/m3-expressive",
+      "skill_sha256": "82bf71dff32f388793ae2524461be9741a91b405d2027b0c4660a3bf01f4a6d5",
+      "source_sha256": "82bf71dff32f388793ae2524461be9741a91b405d2027b0c4660a3bf01f4a6d5",
+      "verified_text_match": true,
+      "variant": "text-only",
+      "license_files": [
+        "LICENSE",
+        "NOTICE.md"
+      ]
+    },
+    {
+      "name": "animate-compose",
+      "repo": "rock3r/android-ux-skills",
+      "revision": "90fab0ac4684333c3374796b50ac2436a25a3754",
+      "source_path": "skills/animate-compose",
+      "location": ".agents/skills/animate-compose",
+      "skill_sha256": "0b5130ce11360bf5ed3f595e032abc02b834e5396740d53fcfdc142142909d7b",
+      "source_sha256": "0b5130ce11360bf5ed3f595e032abc02b834e5396740d53fcfdc142142909d7b",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE",
+        "NOTICE"
+      ]
+    },
+    {
+      "name": "compose-component-design",
+      "repo": "chrisbanes/skills",
+      "revision": "183cfc9bf112d7a27488e80f6e445e9556644866",
+      "source_path": "skills/compose-component-design",
+      "location": ".agents/skills/compose-component-design",
+      "skill_sha256": "1a3599e3d5feb9398ca4dbb5f093ef15cafdf2866f041d02538d3bc35c954c92",
+      "source_sha256": "1a3599e3d5feb9398ca4dbb5f093ef15cafdf2866f041d02538d3bc35c954c92",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "compose-state-and-effects",
+      "repo": "chrisbanes/skills",
+      "revision": "183cfc9bf112d7a27488e80f6e445e9556644866",
+      "source_path": "skills/compose-state-and-effects",
+      "location": ".agents/skills/compose-state-and-effects",
+      "skill_sha256": "9930eb2858e3d17fa1ecaf220e20b7bc88b3b1d975d21c9ae4db6f2849c0f0d0",
+      "source_sha256": "9930eb2858e3d17fa1ecaf220e20b7bc88b3b1d975d21c9ae4db6f2849c0f0d0",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "compose-animations",
+      "repo": "chrisbanes/skills",
+      "revision": "183cfc9bf112d7a27488e80f6e445e9556644866",
+      "source_path": "skills/compose-animations",
+      "location": ".agents/skills/compose-animations",
+      "skill_sha256": "eb94fc221017aad7c80b5414847379ac856b2f1c1363d1b67758701df2f5c217",
+      "source_sha256": "eb94fc221017aad7c80b5414847379ac856b2f1c1363d1b67758701df2f5c217",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "optimizing-lazy-layouts",
+      "repo": "skydoves/compose-performance-skills",
+      "revision": "1b32f81724c0d71fe9ef093ca44697f559fdab6e",
+      "source_path": "lists/optimizing-lazy-layouts",
+      "location": ".agents/skills/optimizing-lazy-layouts",
+      "skill_sha256": "b905f03a2961c4b6129c624312ad1682848c4e95873d45249ca00060fa7c57a9",
+      "source_sha256": "b905f03a2961c4b6129c624312ad1682848c4e95873d45249ca00060fa7c57a9",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "material-design-3-ui",
+      "repo": "skydashnet/material-design-3-ui-skill",
+      "revision": "82783f76de4a5b08a60421cae935cf8de7ca1ee8",
+      "source_path": ".",
+      "location": ".agents/skills/material-design-3-ui",
+      "skill_sha256": "7093c872b8b2692ad6225907b5d95f55dae0eab32035c17b44b616449bf2b6e7",
+      "source_sha256": "7093c872b8b2692ad6225907b5d95f55dae0eab32035c17b44b616449bf2b6e7",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "android-adb-control",
+      "repo": "robbin/android-adb-control",
+      "revision": "82b41743fa62dcc664aa643ffcaa10b69aacc303",
+      "source_path": ".",
+      "location": ".agents/skills/android-adb-control",
+      "skill_sha256": "83654d64401cc21490cf25a1c8a0b27997dd48551e0efe2e34dd4fec68d16470",
+      "source_sha256": "83654d64401cc21490cf25a1c8a0b27997dd48551e0efe2e34dd4fec68d16470",
+      "verified_text_match": true,
+      "variant": "selected-skill",
+      "license_files": [
+        "LICENSE"
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "name": "adaptive",
+      "source": "android/skills",
+      "reason": "Navigation3 prerequisite and newer experimental Compose Grid conflict with existing Navigation2/Compose BOM."
+    },
+    {
+      "name": "unrelated repository skills",
+      "reason": "No bulk agent/plugin setup, navigation migration, hot-reload tooling, or unrelated frameworks needed."
+    }
+  ],
+  "activation": "Manual SKILL.md loading now, AGENTS.md routing for future UI tasks. Automatic catalog discovery on next turn; no app reload claimed."
+}
