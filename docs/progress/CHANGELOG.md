@@ -1,5 +1,13 @@
 # Engineering change log
 
+## 2026-10-27 — 09.4 expected-ayah alignment and uncertainty
+
+- Added pinned CTC token vocabulary and bounded verified-corpus passage reader.
+- Added conservative phoneme alignment with empty/pending/clear/uncertain/possible-mismatch/possible-skip states and insertion/deletion/substitution/repetition/noise tests.
+- Added Quran long-press review surface using the selected canonical ayah as the expected passage; no whole-Quran guessing, audio persistence or upload.
+- Omitted optional sound/haptic cues pending physical accessibility validation.
+- 09.4 is PARTIAL pending build/device acceptance; execution advances to measured 09.5 evaluation.
+
 ## 2026-10-27 — 09.3 native microphone and local inference
 
 - Added contextual RECORD_AUDIO lifecycle and bounded 16 kHz mono PCM capture.
