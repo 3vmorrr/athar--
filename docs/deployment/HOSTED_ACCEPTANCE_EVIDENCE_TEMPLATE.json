@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "TEMPLATE_ONLY_NO_HOSTED_OR_DEVICE_EVIDENCE",
+  "task": "24.4",
+  "release_identity": {
+    "git_sha": "required",
+    "version_code": "required",
+    "version_name": "required",
+    "apk_sha256": "required",
+    "aab_sha256": "required",
+    "signer_certificate_sha256": "public fingerprint only"
+  },
+  "hosted": {
+    "api_origin": "https only",
+    "site_origin": "https only",
+    "health": "pending",
+    "authenticated_test_user": "pending",
+    "admin_browser": "manual authorized evidence pending"
+  },
+  "device": {
+    "api27": "pending",
+    "api33_notification_permission": "pending when required",
+    "private_app_data_recorded": false,
+    "device_settings_changed": false
+  },
+  "rollback": {
+    "backup_verified": "pending",
+    "previous_server_artifact_retained": "pending",
+    "migration_compatibility_reviewed": "pending",
+    "staging_rehearsal": "pending"
+  },
+  "privacy": {
+    "bearer_token_recorded": false,
+    "password_recorded": false,
+    "otp_recorded": false,
+    "admin_cookie_recorded": false
+  }
+}
