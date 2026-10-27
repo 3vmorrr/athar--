@@ -168,7 +168,7 @@ object AtharHeroLayoutPolicy {
                 if (largeText) 3 else 2
             },
             supportingMaxLines = if (largeText) 4 else if (collapse > 0.45f) 2 else 3,
-            minimumHeightDp = if (compact) 148 else if (largeText) 172 else 188,
+            minimumHeightDp = if (compact) 136 else if (largeText) 160 else 172,
         )
     }
 }
@@ -249,8 +249,8 @@ fun AtharImmersiveHero(
                 widthDp = maxWidth.value.coerceAtLeast(1f),
                 collapseFraction = animatedCollapse,
             )
-            val verticalPadding = if (layout.compact) 16.dp else 24.dp
-            val horizontalPadding = if (maxWidth < 360.dp) AtharSpacing.Lg else AtharSpacing.Xxl
+            val verticalPadding = if (layout.compact) 14.dp else 20.dp
+            val horizontalPadding = if (maxWidth < 360.dp) AtharSpacing.Lg else AtharSpacing.Xl
             val artAlpha = (1f - animatedCollapse * 0.42f).coerceIn(0f, 1f)
 
             if (layout.showArtwork) {
@@ -308,7 +308,7 @@ fun AtharImmersiveHero(
                     ?.let {
                         Text(
                             it,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.92f),
                             maxLines = layout.supportingMaxLines,
                             overflow = TextOverflow.Ellipsis,
@@ -337,7 +337,12 @@ fun AtharImmersiveHero(
                                     onClick = onPrimaryAction,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .heightIn(min = 48.dp),
+                                        .heightIn(min = 46.dp),
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                        containerColor = Color.White,
+                                        contentColor = Color(0xFF164D3D),
+                                    ),
                                 ) {
                                     Text(presentation.primaryActionLabel)
                                 }
@@ -371,7 +376,12 @@ fun AtharImmersiveHero(
                             ) {
                                 Button(
                                     onClick = onPrimaryAction,
-                                    modifier = Modifier.heightIn(min = 48.dp),
+                                    modifier = Modifier.heightIn(min = 46.dp),
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                        containerColor = Color.White,
+                                        contentColor = Color(0xFF164D3D),
+                                    ),
                                 ) {
                                     Text(presentation.primaryActionLabel)
                                 }
