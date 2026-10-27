@@ -305,6 +305,12 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                                 Modifier.weight(1f),
                             )
                         }
+                        AtharQuickAction(
+                            AtharIcons.Lock,
+                            stringResource(R.string.review_model_title),
+                            { mode = "review-model" },
+                            Modifier.fillMaxWidth(),
+                        )
                     }
                 }
                 item(key = "quran-wird", contentType = "routine") {
@@ -336,6 +342,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         initialSurah = reading?.surah ?: 1,
                         initialAyah = reading?.ayah ?: 1,
                     )
+                    "review-model" -> org.athar.app.review.ReviewModelScreen(graph)
                     else -> org.athar.app.media.AudioScreen(graph, mode == "radio")
                 }
             }

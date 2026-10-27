@@ -1,5 +1,5 @@
 # Recitation Review
-Status: initial approved specification. Existing behavior below is static-code evidence; native replacement is not yet verified.
+Status: native model delivery is implemented / acceptance pending. Local microphone/inference/alignment remain unverified and disabled.
 
 ## Purpose
 Provide private local recitation feedback with explicit uncertainty.
@@ -31,3 +31,18 @@ Use IO dispatchers, bounded payload/list sizes, cancellable requests, indexed qu
 Known correct/incorrect/noisy recordings; refusal/low storage/low memory; uncertainty never labeled confirmed correct. Also verify offline/error/Arabic-English/accessibility and authorization behavior. Acceptance requires working UI + domain + transport/data path with named executed checks. Documentation alone is insufficient.
 ## Extension points
 Add providers/editions/settings through the domain/repository boundary; extend APIs compatibly and update source/license decisions, schema and tests. Keep unrelated features and private records isolated.
+
+
+## Native model delivery status
+
+Task 09.2 now provides an optional Android model-management surface and a strict local delivery path.
+
+At Android build time, Gradle reads the repository's actual ONNX, Quran corpus and IO manifest files and generates a small trusted app asset containing each file's byte length and SHA-256. The large model files themselves are not bundled into the APK.
+
+The runtime resolves each generated relative path only against the current Athar API host's HTTPS origin. Redirects are disabled. Downloads are owner-scoped WorkManager jobs with connected-network, battery-not-low and storage-not-low constraints.
+
+The user must explicitly acknowledge and accept NPL-1.2 for the current manifest version before a download can start. Consent is owner-scoped. The full license text is shipped in the APK from the repository copy.
+
+Each artifact downloads to a private \`.part\` file, is size-bounded, hashed while streaming and renamed only after exact SHA-256 verification. Activation occurs only after all three artifacts verify. Failed/cancelled partials are removed and the previously active verified version remains untouched. The store retains at most the current and previous activated version so a verified rollback remains possible.
+
+The UI exposes package/version/storage/consent/download/cancel/remove/rollback state. It explicitly states that \`runtime_verified=false\`: Task 09.2 does not request microphone permission and does not run inference. Task 09.3 owns native runtime and microphone lifecycle proof.
