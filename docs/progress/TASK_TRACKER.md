@@ -1,5 +1,9 @@
 # Implementation tracker
 
+## Parallel integration checkpoint — task18.3
+
+Existing lesson authoring baseline accepted with strict provider/field/scope validation, row/parent locks and transactional audit, event-history protection, scoped dependent cleanup and bilingual retained editors.234 actual HTTP,202 browser and20,765 backend assertions PASS; actual native Watch/playlist/visibility/case-preserving identity and parent concurrency checked. Migration027 and complete-ledger legacy-compatible recovery separately tested/pushed. [Evidence and limits](../testing/ADMIN_LESSONS.md). No production migration/native code change or physical playback claim. No new source range consumed; cursor6bbfee5. Next18.4 Upcoming/Live; WP18:3/9 (33%); overall51% (50.88 weighted,±10pp);129 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task18.2
 
 Series metadata/scholar/order/publication and bilingual controls accepted with transactional row/audit/FK boundaries, conflicting lesson-scholar refusal, dependency-safe deletion and SQL error redaction.193 actual HTTP,135 browser and20,752 backend assertions PASS; actual native catalog and concurrent child insertion/delete checks. [Evidence and reconciliation](../testing/ADMIN_SERIES.md). No migration/native change or physical Android claim. Cursor6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b; next18.3 lesson CRUD. WP18:2/9 (22%); overall50% (50.38 weighted,±10pp);130 open. WP02.8 remains deferred.

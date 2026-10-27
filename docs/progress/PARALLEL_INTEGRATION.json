@@ -1,5 +1,5 @@
 {
-  "codex_head": "b252c8f43089001e7d06ba0b3b98df42b6050354",
+  "codex_head": "5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
@@ -402,6 +402,29 @@
       ],
       "integration_base": "30af099338ed2a3e37f5468c985520f206eb0a2b",
       "acceptance": "docs/testing/ADMIN_SERIES.md;20,752 backend;193 HTTP;135 actual browser. Real native catalog/child insertion/deletion race/SQL rollback redaction. No migration/native change."
+    },
+    {
+      "task_or_group": "18.3",
+      "source_commits": [],
+      "source_baseline": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+      "files": [
+        "public/index.php",
+        "app/helpers.php",
+        "app/Views/pages/admin.php",
+        "app/Views/pages/admin-row-actions.php"
+      ],
+      "dependencies": [
+        "18.2"
+      ],
+      "overlap": "Existing source/Codex lesson authoring baseline reviewed; focused transaction/bilingual UI reconciliation preserves all adjacent handlers and accepted identity/privacy/recovery logic. No new source SHA consumed.",
+      "database_api_impact": [
+        "027_lesson_provider_identity",
+        "authenticated full-ledger backup compatibility; existing native Watch contract retained"
+      ],
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "COMPLETE",
+      "integration_base": "5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc",
+      "acceptance": "docs/testing/ADMIN_LESSONS.md;20,765 backend;234 HTTP;202 actual browser. Migration027/legacy backup regression189 HTTP+48 browser separately passed. No native code or physical-device claim."
     },
     {
       "task_or_group": "18.4",
@@ -3153,7 +3176,7 @@
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
   "LAST_REVIEWED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
-  "reviewed_cursor_scope": "Source6bbfee5 series validation/dependency guards integrated with fixes; scholar guard superseded by18.1. Full18.3 lesson CRUD acceptance remains next; later source groups remain review pending.",
+  "reviewed_cursor_scope": "18.3 existing-baseline authoring accepted; no new source range consumed. Next new source task18.4 begins826f521 after source cursor6bbfee5.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3466,10 +3489,11 @@
   "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
   "migration_reservations": {
     "027_lesson_provider_identity": {
-      "state": "DISPOSABLE POPULATED-SCHEMA / RECOVERY TESTED; commit receipt follows",
+      "state": "DISPOSABLE POPULATED-SCHEMA / LEGACY RECOVERY TESTED; PUSH VERIFIED",
       "parallel_head_checked": "7392e93b088990c3478cf32197781f831eb10f83",
       "parallel_reserved_range": "016-026",
-      "policy": "Preserve incoming source numbers; full migration-ledger fingerprint detects lower-numbered additions after027. Re-fetch and reconcile any future collision explicitly."
+      "policy": "Preserve incoming source numbers; full migration-ledger fingerprint detects lower-numbered additions after027. Re-fetch and reconcile any future collision explicitly.",
+      "commit": "5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc"
     }
   }
 }

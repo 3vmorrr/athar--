@@ -2,7 +2,7 @@
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem integrates one logical task at a time from the recorded exact source cursor. Inspect both local worktrees, preserve newer security/offline logic and premium UI, integrate, fix, test, document, commit, push and verify the remote SHA before the next task. Never bulk merge or count source-only implementation as accepted. Keep the parallel worktree and classify every interleaved commit. WP02.8 remains PARTIAL and deferred until all available parallel work is integrated and stabilized, then complete it and audit WP1–WP24. External gates stay open while independent integration proceeds. No per-task permission is required.
 
-Snapshot: 2026-10-27. Current task: **18.3**. Open tasks: **130**. Overall estimate: **50%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **18.4**. Open tasks: **129**. Overall estimate: **51%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. The parallel branch leads implementation; this track accepts one integration task at a time under PARALLEL_INTEGRATION.json.
 
@@ -990,13 +990,13 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 18.3 — Admin lesson CRUD
 
-- Parent: Work package 18: Admin content/services; state: **PARTIAL**; dependencies: 18.2.
+- Parent: Work package 18: Admin content/services; state: **COMPLETE**; dependencies: 18.2.
 - Exact scope: Manage series and standalone lessons/provider IDs/descriptions/order/publication without media extraction.
 - Files/modules: admin/ (new); backend/src/Learning/.
-- Automated gates: Provider URL/series/order/visibility/rights/native watch tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
+- Automated gates: COMPLETE:20,765 backend;234 actual HTTP (41 lesson/native Watch +193 prior);202 actual browser (67 lesson +135 prior). Provider/scope/publication/order, populated migration027, exact-case IDs, event history and scoped cleanup, actual concurrent parent change. Evidence:docs/testing/ADMIN_LESSONS.md.
+- Physical-device gate: Actual AR/EN light/dark Admin browser1440/360; canonical editor state, RTL numbers, retained draft/error focus and captures inspected. Native Watch/playlist contracts checked via real HTTP; no real provider playback or physical Android PASS claimed. No native code change.
 - Definition of Done: Manage series and standalone lessons/provider IDs/descriptions/order/publication without media extraction. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
-- Estimated contribution: 0.50 overall percentage points.
+- Estimated contribution: 0.00 overall percentage points.
 
 ## 18.4 — Admin upcoming and live editor
 

@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-27",
-  "current_task": "18.3",
-  "overall_estimate_percent": 50,
-  "overall_estimate_detail": 50.38,
+  "current_task": "18.4",
+  "overall_estimate_percent": 51,
+  "overall_estimate_detail": 50.88,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1818,7 +1818,7 @@
       "name": "Admin lesson CRUD",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage series and standalone lessons/provider IDs/descriptions/order/publication without media extraction.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.2"
       ],
@@ -1826,10 +1826,10 @@
         "admin/ (new)",
         "backend/src/Learning/"
       ],
-      "automated_tests": "Provider URL/series/order/visibility/rights/native watch tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "automated_tests": "COMPLETE:20,765 backend;234 actual HTTP (41 lesson/native Watch +193 prior);202 actual browser (67 lesson +135 prior). Provider/scope/publication/order, populated migration027, exact-case IDs, event history and scoped cleanup, actual concurrent parent change. Evidence:docs/testing/ADMIN_LESSONS.md.",
+      "physical_device": "Actual AR/EN light/dark Admin browser1440/360; canonical editor state, RTL numbers, retained draft/error focus and captures inspected. Native Watch/playlist contracts checked via real HTTP; no real provider playback or physical Android PASS claimed. No native code change.",
       "definition_of_done": "Manage series and standalone lessons/provider IDs/descriptions/order/publication without media extraction. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0
     },
     {
       "id": "18.4",

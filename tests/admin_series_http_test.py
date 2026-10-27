@@ -97,7 +97,7 @@ finally: process.communicate(timeout=10)
 check(process.returncode == 0, 'Concurrent child insertion completes cleanly')
 _, _, failed_save = submit({**previous.lesson_fields,'source_url':'https://www.youtube.com/watch?v=M7lc1UVf-VE','title':'Must not overwrite on constraint failure'})
 after = fixture.service("$q=$db->prepare('SELECT title,youtube_id FROM lessons WHERE id=?');$q->execute([" + str(previous.lesson_id) + "]);echo json_encode($q->fetch(PDO::FETCH_ASSOC));")
-check('The content could not be saved.' in failed_save and 'SQLSTATE' not in failed_save and after['title'] == previous.lesson_fields['title'] and after['youtube_id'] == previous.lesson_video, 'Real constraint failure is localized without exposing SQL details or partially updating a lesson')
+check(('The content could not be saved.' in failed_save or 'already registered in another lesson' in failed_save) and 'SQLSTATE' not in failed_save and after['title'] == previous.lesson_fields['title'] and after['youtube_id'] == previous.lesson_video, 'Real constraint failure is localized without exposing SQL details or partially updating a lesson')
 print(f'PASS: {checks} actual series/association/native-catalog assertions (plus162 prior HTTP and68 prior browser).')
 if os.environ.get('ATHAR_TEST_NODE'):
     subprocess.run([os.environ['ATHAR_TEST_NODE'],str(root/'tests/admin_series_browser_test.cjs')],env=dict(os.environ,ATHAR_TEST_OWNER_EMAIL=session.account['email']),check=True,timeout=120)
