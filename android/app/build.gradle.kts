@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
+import java.security.MessageDigest
 
 plugins {
     id("com.android.application")
@@ -20,6 +21,9 @@ if (
         "Release-like builds require an HTTPS ATHAR_API_BASE_URL."
     }
 }
+
+val generatedReviewModelAssets = layout.buildDirectory.dir("generated/review-model-assets")
+val reviewModelSourceDirectory = rootProject.file("../public/assets/models")
 
 android {
     namespace = "org.athar.app"
@@ -54,6 +58,7 @@ android {
     }
     testOptions { unitTests.isIncludeAndroidResources = true }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+    sourceSets.getByName("main").assets.srcDir(generatedReviewModelAssets)
 }
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
@@ -71,7 +76,77 @@ val verifyReferenceAssets by tasks.registering {
         check(rootProject.file("../docs/design/assets/athar-official.png").readBytes().contentEquals(file("src/main/res/drawable-nodpi/athar_logo.png").readBytes())) { "Official logo integrity check failed" }
     }
 }
-tasks.named("preBuild") { dependsOn(verifyReferenceAssets) }
+
+val generateReviewModelAssets by tasks.registering {
+    val artifactSpecs = listOf(
+        "model" to "zipformer_a0w_ep1_a05.int8.onnx",
+        "corpus" to "zipformer_quran.json",
+        "io" to "zipformer_a0w_ep1_a05.io.json",
+    )
+    val sourceFiles = artifactSpecs.map { reviewModelSourceDirectory.resolve(it.second) }
+    val licenseFile = reviewModelSourceDirectory.resolve("NPL-1.2.txt")
+    val noticeFile = reviewModelSourceDirectory.resolve("NOTICE.md")
+    inputs.files(sourceFiles + listOf(licenseFile, noticeFile))
+    outputs.dir(generatedReviewModelAssets)
+
+    doLast {
+        sourceFiles.forEach { check(it.isFile) { "Missing review model artifact: " + it.name } }
+        check(licenseFile.isFile && noticeFile.isFile) {
+            "Review model license/notice is missing."
+        }
+
+        fun sha256(file: java.io.File): String {
+            val digest = MessageDigest.getInstance("SHA-256")
+            file.inputStream().buffered().use { input ->
+                val buffer = ByteArray(64 * 1024)
+                while (true) {
+                    val count = input.read(buffer)
+                    if (count < 0) break
+                    if (count > 0) digest.update(buffer, 0, count)
+                }
+            }
+            return digest.digest().joinToString("") { "%02x".format(it) }
+        }
+
+        val outputRoot = generatedReviewModelAssets.get().asFile
+        val reviewDirectory = outputRoot.resolve("review")
+        outputRoot.deleteRecursively()
+        check(reviewDirectory.mkdirs())
+
+        val entries = artifactSpecs.joinToString(",\n") { spec ->
+            val source = reviewModelSourceDirectory.resolve(spec.second)
+            "    {" +
+                "\"id\":\"" + spec.first + "\"," +
+                "\"file_name\":\"" + spec.second + "\"," +
+                "\"relative_path\":\"assets/models/" + spec.second + "\"," +
+                "\"size_bytes\":" + source.length() + "," +
+                "\"sha256\":\"" + sha256(source) + "\"" +
+                "}"
+        }
+        val manifest = "{\n" +
+            "  \"schema_version\":1,\n" +
+            "  \"version\":\"zipformer-a0w-ep1-a05\",\n" +
+            "  \"license\":{\"id\":\"NPL-1.2\",\"paid_feature_prohibited\":true},\n" +
+            "  \"runtime_verified\":false,\n" +
+            "  \"artifacts\":[\n" + entries + "\n  ]\n" +
+            "}\n"
+
+        reviewDirectory.resolve("model_manifest.json")
+            .writeText(manifest, Charsets.UTF_8)
+        licenseFile.copyTo(
+            reviewDirectory.resolve("NPL-1.2.txt"),
+            overwrite = true,
+        )
+        noticeFile.copyTo(
+            reviewDirectory.resolve("NOTICE.md"),
+            overwrite = true,
+        )
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn(verifyReferenceAssets, generateReviewModelAssets)
+}
 
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2025.08.00")

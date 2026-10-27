@@ -76,6 +76,16 @@ object BackgroundWorkBudgets {
         uniqueCoalesced = true,
     ).validated()
 
+    val REVIEW_MODEL_DOWNLOAD = BackgroundWorkBudget(
+        name = "review_model_download",
+        kind = BackgroundWorkKind.NETWORK_SYNC,
+        requiresNetwork = true,
+        requiresBatteryNotLow = true,
+        requiresStorageNotLow = true,
+        maxRetryAttempts = 3,
+        uniqueCoalesced = true,
+    ).validated()
+
     val ROUTINE_MAINTENANCE = BackgroundWorkBudget(
         name = "routine_maintenance",
         kind = BackgroundWorkKind.LOCAL_MAINTENANCE,
@@ -112,6 +122,7 @@ object BackgroundWorkBudgets {
         PRIVATE_SYNC,
         PUSH_DEVICE_SYNC,
         INBOX_SYNC,
+        REVIEW_MODEL_DOWNLOAD,
         ROUTINE_MAINTENANCE,
         REMINDER_DELIVERY,
         REMINDER_RECONCILE,

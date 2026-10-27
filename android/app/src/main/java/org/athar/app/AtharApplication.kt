@@ -27,6 +27,12 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val settings = SettingsStore(application)
     val session = SessionRepository(RetrofitTransport(apiBaseUrl), KeystoreTokenStore(application, cipher, namespace = partition), language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
     val content = ContentRepository(session, database.dao(), cipher, language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
+    val reviewModels = org.athar.app.review.ReviewModelManager(
+        application,
+        partition,
+        session,
+        apiBaseUrl,
+    )
     val notificationInbox = org.athar.app.notifications.NotificationInboxRepository(application, partition, database.dao(), session, cipher)
     val follows = org.athar.app.learning.FollowRepository(database.dao(), session, cipher)
     val notificationPreferences = org.athar.app.notifications.NotificationPreferenceRepository(database.dao(), session, cipher)
