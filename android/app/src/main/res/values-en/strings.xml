@@ -736,7 +736,7 @@
     <string name="review_recitation_start">Start reviewing this ayah</string>
     <string name="review_recitation_possible_issue">There is a possible mismatch in one or more words. Review the markers; this is not a definitive claim that the recitation is wrong.</string>
     <string name="review_recitation_uncertain_summary">Some audio was not clear enough. The app abstained from judging the unreliable parts.</string>
-    <string name="review_recitation_clear_summary">The heard passage clearly matched the selected ayah within the local model's limits.</string>
+    <string name="review_recitation_clear_summary">The heard passage clearly matched the selected ayah within the local model\'s limits.</string>
     <string name="review_word_empty">Not started</string>
     <string name="review_word_pending">Waiting</string>
     <string name="review_word_confirmed">Clear match</string>
