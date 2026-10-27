@@ -498,10 +498,10 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         onClick = { fontDialog = true },
                         modifier = Modifier.size(44.dp),
                     ) {
-                        Icon(
-                            AtharIcons.TextFields,
-                            contentDescription = stringResource(R.string.font_size),
-                            modifier = Modifier.size(20.dp),
+                        Text(
+                            "Aa",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
