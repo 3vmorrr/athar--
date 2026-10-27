@@ -50,7 +50,7 @@ class ImmersiveHeroPolicyTest {
         assertFalse(value.compact)
         assertTrue(value.showArtwork)
         assertFalse(value.stackActions)
-        assertEquals(188,value.minimumHeightDp)
+        assertEquals(172,value.minimumHeightDp)
         assertEquals(2,value.titleMaxLines)
         assertEquals(3,value.supportingMaxLines)
     }
@@ -82,7 +82,7 @@ class ImmersiveHeroPolicyTest {
     @Test fun collapsedHeroUsesCompactHeaderBudgetAndEventuallyHidesArt() {
         val compact=AtharHeroLayoutPolicy.resolve(1f,390f,0.8f)
         assertTrue(compact.compact)
-        assertEquals(148,compact.minimumHeightDp)
+        assertEquals(136,compact.minimumHeightDp)
         val almostGone=AtharHeroLayoutPolicy.resolve(1f,390f,0.95f)
         assertFalse(almostGone.showArtwork)
     }
