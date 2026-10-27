@@ -25,6 +25,7 @@ import org.athar.app.R
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 import org.athar.app.core.ui.*
+import org.athar.app.quran.QuranPosition
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -343,8 +344,11 @@ fun NightPlanScreen(
                         ) {
                             nightPlanContinuationIndex(plan, completedRanges)
                         }
-                        val continuation = remember(continuationIndex) {
-                            continuationIndex?.let { index ->
+                        val continuation by produceState<QuranPosition?>(
+                            initialValue = null,
+                            continuationIndex,
+                        ) {
+                            value = continuationIndex?.let { index ->
                                 runCatching {
                                     graph.quran.data().index.position(index)
                                 }.getOrNull()
