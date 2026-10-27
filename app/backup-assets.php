@@ -38,3 +38,39 @@ function backup_read_assets(ZipArchive $zip,string $kind,array $manifest,array $
     if($actual!==$expectedKeys)throw new RuntimeException('Backup asset manifest does not cover every registered asset.');
     return $assets;
 }
+
+/** Install staged files while preserving originals until the database commits. */
+function backup_install_staged_assets(array &$staged): array
+{
+    $installed = [];
+    try {
+        foreach ($staged as $assetKey => $stage) {
+            [$kind, $key] = explode('/', $assetKey, 2);
+            backup_asset_keys($kind, [[$kind === 'books' ? 'file_key' : 'image_key' => $key]]);
+            $directory = dirname(__DIR__) . '/storage/' . $kind;
+            if (is_link($directory) || (!is_dir($directory) && !mkdir($directory, 0700, true))) throw new RuntimeException('Restore asset directory is unavailable.');
+            $destination = $directory . '/' . $key;
+            if (is_link($destination) || is_dir($destination)) throw new RuntimeException('Restore asset destination is unsafe.');
+            $original = null;
+            if (is_file($destination)) {
+                $original = dirname($stage) . '/restore-original-' . bin2hex(random_bytes(16)) . '.asset';
+                if (!@rename($destination, $original)) throw new RuntimeException('The original asset could not be retained for rollback.');
+            }
+            $installed[$destination] = $original;
+            if (!@rename($stage, $destination)) throw new RuntimeException('A restored asset could not be installed.');
+            unset($staged[$assetKey]);
+        }
+        return $installed;
+    } catch (Throwable $failure) {
+        backup_rollback_installed_assets($installed);
+        throw $failure;
+    }
+}
+
+function backup_rollback_installed_assets(array $installed): void
+{
+    foreach (array_reverse($installed, true) as $destination => $original) {
+        if (is_file($destination) && !@unlink($destination)) throw new RuntimeException('Asset rollback requires manual recovery; original files are retained in backup storage.');
+        if ($original !== null && !@rename($original, $destination)) throw new RuntimeException('Asset rollback requires manual recovery; original files are retained in backup storage.');
+    }
+}

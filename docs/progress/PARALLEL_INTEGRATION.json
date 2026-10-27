@@ -1,5 +1,5 @@
 {
-  "codex_head": "22c025aab1f9b6b5dcc920efeaed50829084d7e2",
+  "codex_head": "de1737245e74b009881d8da3886731443ba7ca8e",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
@@ -302,7 +302,7 @@
       "integration_decision": "KEEP WITH FIXES",
       "state": "PARTIAL",
       "secondary_task_attribution": [],
-      "acceptance": "docs/testing/ADMIN_RECOVERY.md;41 isolated recovery/20,732 backend,162 HTTP,48 browser assertions PASS. API maintenance exclusion and asset-install failure hardening remain pending.",
+      "acceptance": "docs/testing/ADMIN_RECOVERY.md;51 isolated recovery/20,742 backend,172 HTTP,48 browser assertions PASS. Abrupt process termination between file replacement and DB commit remains pending.",
       "integration_subtasks": [
         {
           "id": "17.6.1",
@@ -316,7 +316,12 @@
         },
         {
           "id": "17.6.3",
-          "state": "HTTP/BROWSER TESTED; commit receipt follows"
+          "state": "COMPLETE + TESTED / PUSH VERIFIED",
+          "commit": "de1737245e74b009881d8da3886731443ba7ca8e"
+        },
+        {
+          "id": "17.6.4",
+          "state": "BACKEND/HTTP/BROWSER TESTED; commit receipt follows"
         }
       ]
     },

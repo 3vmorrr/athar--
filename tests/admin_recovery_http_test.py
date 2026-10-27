@@ -43,6 +43,31 @@ def panel(page):
     return re.search(r'<section[^>]*id="admin-backups"[\s\S]*?</section>', page).group(0)
 
 
+import subprocess
+for exclusive in [False, True]:
+    program = fixture.setup + "require 'app/backup.php';"
+    program += "acquire_maintenance_lock();" if exclusive else "$guard=\\Athar\\Infrastructure\\MaintenanceGuard::acquire();if(!$guard)exit(8);"
+    program += 'echo "LOCKED\\n";flush();fgets(STDIN);'
+    program += 'release_maintenance_lock();' if exclusive else '$guard=null;'
+    holder = subprocess.Popen([fixture.php, '-r', program], cwd=fixture.ROOT, env=fixture.environment, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        check(holder.stdout.readline().strip() == 'LOCKED', 'A separate process holds the request/recovery file barrier')
+        if exclusive:
+            for endpoint, body in [('/api/v1/health', None), ('/api/v1/auth/register', b'{}')]:
+                request = urllib.request.Request(fixture.base + endpoint, data=body, headers={'Accept-Language':'en','Content-Type':'application/json'})
+                try: response = urllib.request.urlopen(request, timeout=10)
+                except urllib.error.HTTPError as error: response = error
+                data = json.loads(response.read())
+                check(response.code == 503 and data['error']['code'] == 'maintenance', 'API read/write is refused while recovery holds the exclusive barrier')
+                check(response.headers.get('Retry-After') == '30' and 'maintenance' in data['error']['message'], 'Maintenance keeps the localized JSON/retry contract')
+            check(session.request('/admin')[0] == 503, 'Web dashboard cannot overlap recovery')
+        else:
+            status, _, page = post('backup-create', password=password, manifest_confirmation='CREATE FULL BACKUP')
+            check(status == 200 and 'Another maintenance operation' in page and not artifacts(), 'Backup cannot overtake an in-flight ordinary request')
+    finally:
+        holder.communicate('\n', timeout=10)
+    check(holder.returncode == 0, 'Recovery barrier process releases cleanly')
+
 _, _, page = session.request('/admin?lang=en')
 check('Create and verify backup' in panel(page) and 'Owner password' in panel(page), 'English recovery controls are localized')
 check('No unexpired backup is available' in panel(page), 'Empty restoration has a truthful state')

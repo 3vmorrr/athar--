@@ -35,6 +35,16 @@ header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https:
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
+$apiRequest = $path === '/api/v1' || str_starts_with($path, '/api/v1/');
+$recoveryRequest = $path === '/admin' && $method === 'POST' && in_array($_POST['kind'] ?? null, ['backup-create','backup-restore','local-reset'], true);
+if (!$apiRequest && !$recoveryRequest) {
+    $requestMaintenanceGuard = \Athar\Infrastructure\MaintenanceGuard::acquire();
+    if (!$requestMaintenanceGuard) {
+        http_response_code(503); header('Retry-After: 30'); header('Cache-Control: no-store, private');
+        exit('أثر في وضع صيانة مؤقت. حاول بعد انتهاء العملية.');
+    }
+}
+
 if ($path === '/api/v1' || str_starts_with($path, '/api/v1/')) require dirname(__DIR__) . '/backend/api.php';
 
 if ($path === '/email-unsubscribe') {
@@ -833,7 +843,8 @@ if ($path === '/admin') {
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
                 if ((string) ($_POST['manifest_confirmation'] ?? '') !== 'CREATE FULL BACKUP') throw new RuntimeException('اكتب عبارة التأكيد كما تظهر في نموذج النسخة.');
-                $artifact = build_backup_archive((int) $admin['id']);
+                acquire_maintenance_lock();
+                try { $admin = admin_require_auth(); $artifact = build_backup_archive((int) $admin['id']); } finally { release_maintenance_lock(); }
                 flash('أُنشئت نسخة كاملة مشفرة وتحققنا من محتوياتها. اطلب إذن تنزيل منفصلًا أدناه.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'backup-restore') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('الاستعادة متاحة لمالك المنصة فقط.');
@@ -843,7 +854,7 @@ if ($path === '/admin') {
                 $backupId = filter_var($_POST['backup_id'] ?? null, FILTER_VALIDATE_INT); if (!$backupId || $backupId < 1) throw new RuntimeException('اختر نسخة صالحة.');
                 append_owner_audit(['action' => 'backup-restore-started', 'actor_id' => (int) $admin['id'], 'backup_id' => $backupId]);
                 acquire_maintenance_lock();
-                try { $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
+                try { $admin = admin_require_auth(); $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
                 admin_start_authenticated_session($restoredOwnerId);
                 flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'local-reset') {
@@ -854,7 +865,7 @@ if ($path === '/admin') {
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
                 if ((string) ($_POST['environment_confirmation'] ?? '') !== $environment || (string) ($_POST['reset_confirmation'] ?? '') !== 'RESET ATHAR DATA') throw new RuntimeException('أكد البيئة المحلية وعبارة الحذف حرفيًا.');
                 acquire_maintenance_lock();
-                try { reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }
+                try { $admin = admin_require_auth(); reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }
                 admin_start_authenticated_session((int) $admin['id']);
                 flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'backup-grant') {

@@ -24,10 +24,27 @@ isolated_database(function (PDO $connection): void {
     putenv('ATHAR_DB_NAME=' . $schema);
     putenv('ATHAR_BACKUP_KEY=' . bin2hex(random_bytes(32)));
     $db = db();
+    $sharedOne = \Athar\Infrastructure\MaintenanceGuard::acquire();
+    $sharedTwo = \Athar\Infrastructure\MaintenanceGuard::acquire();
+    recovery_check($sharedOne !== null && $sharedTwo !== null, 'Normal requests can share the recovery barrier concurrently');
+    recovery_denied(fn() => acquire_maintenance_lock(), 'Recovery cannot overtake an in-flight shared request');
+    $sharedOne = null; $sharedTwo = null;
+    acquire_maintenance_lock();
+    try {
+        $otp = new \Athar\Identity\OtpService($db, random_bytes(32), static fn() => true);
+        $kernel = new \Athar\Http\ApiKernel($db, new \Athar\Identity\AuthService($db, $otp), new \Athar\Identity\RateLimiter($db, random_bytes(32)));
+        $response = $kernel->handle(new \Athar\Http\Request('GET', '/api/v1/health', [], ['Accept-Language'=>'en']));
+        recovery_check($response->status === 503 && $response->body['error']['code'] === 'maintenance', 'Canonical API refuses recovery overlap before dispatch');
+        recovery_check(str_contains($response->body['error']['message'], 'maintenance'), 'Maintenance error follows API language contract');
+    } finally { release_maintenance_lock(); }
+    recovery_check($kernel->handle(new \Athar\Http\Request('GET', '/api/v1/health'))->status === 200, 'API guard releases after maintenance');
     $artifacts = [];
     $bookKey = bin2hex(random_bytes(20)) . '.pdf';
     $bookPath = dirname(__DIR__) . '/storage/books/' . $bookKey;
+    $initialPhotoKey = bin2hex(random_bytes(20)) . '.png';
+    $initialPhotoPath = dirname(__DIR__) . '/storage/scholars/' . $initialPhotoKey;
     if (!is_dir(dirname($bookPath))) mkdir(dirname($bookPath), 0700, true);
+    if (!is_dir(dirname($initialPhotoPath))) mkdir(dirname($initialPhotoPath), 0700, true);
     $pdf = "%PDF-1.4\nRecovery fixture only\n%%EOF\n";
     try {
         $hash = password_hash('RecoveryFixture123!', PASSWORD_DEFAULT);
@@ -35,6 +52,8 @@ isolated_database(function (PDO $connection): void {
         $ownerId = (int) $db->query("SELECT id FROM users WHERE role='owner'")->fetchColumn();
         $db->exec("INSERT INTO quran_positions(user_id,surah,ayah,revision) VALUES (2,114,6,1)");
         file_put_contents($bookPath, $pdf);
+        file_put_contents($initialPhotoPath, "\x89PNG\r\n\x1a\ninitial fixture");
+        $db->prepare("INSERT INTO scholars(name,image_key) VALUES ('Initial recovery portrait',?)")->execute([$initialPhotoKey]);
         $db->prepare("INSERT INTO books(title,author,source_url,rights_basis,file_key,can_download,is_published) VALUES ('Recovery fixture','QA','https://example.invalid/source','Fixture only',?,1,1)")->execute([$bookKey]);
         $artifact = build_backup_archive($ownerId);
         $artifacts[] = $artifact['id'];
@@ -49,6 +68,18 @@ isolated_database(function (PDO $connection): void {
         recovery_check((int) $db->query('SELECT MIN(session_version) FROM users')->fetchColumn() === 84, 'Every restored user invalidates all historical cookie versions');
         recovery_check((int) $db->query('SELECT @@FOREIGN_KEY_CHECKS')->fetchColumn() === 1, 'Foreign keys reenabled');
         recovery_check(!$db->inTransaction(), 'No transaction remains open');
+
+        $currentPdf = '%PDF-current-before-failed-restore';
+        file_put_contents($bookPath, $currentPdf);
+        $db->exec('UPDATE quran_positions SET ayah=5,revision=2');
+        unlink($initialPhotoPath); mkdir($initialPhotoPath);
+        try {
+            recovery_denied(fn() => restore_backup_archive($artifact['id'], $ownerId), 'Unsafe second asset destination fails restoration');
+            recovery_check(file_get_contents($bookPath) === $currentPdf, 'Second asset failure restores the first original file');
+            recovery_check((int) $db->query('SELECT ayah FROM quran_positions')->fetchColumn() === 5, 'Asset install failure rolls back all restored database rows');
+            recovery_check((int) $db->query('SELECT MIN(session_version) FROM users')->fetchColumn() === 84, 'Asset failure retains current credential versions');
+            recovery_check(!glob(backup_directory() . '/restore-original-*.asset'), 'Successful compensation cleans original-file rollback copies');
+        } finally { rmdir($initialPhotoPath); file_put_contents($initialPhotoPath, "\x89PNG\r\n\x1a\ninitial fixture"); }
 
         $db->prepare('UPDATE backup_artifacts SET expires_at=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 SECOND) WHERE id=?')->execute([$artifact['id']]);
         recovery_denied(fn() => restore_backup_archive($artifact['id'], $ownerId), 'Expired artifact refused despite recent verification');
@@ -140,6 +171,7 @@ isolated_database(function (PDO $connection): void {
             if (is_string($key) && preg_match('/^[a-f0-9]{40}\.enc$/D', $key)) @unlink(backup_directory() . '/' . $key);
         }
         if (is_file($bookPath)) unlink($bookPath);
+        if (is_file($initialPhotoPath)) unlink($initialPhotoPath);
         putenv('ATHAR_BACKUP_KEY');
     }
 });

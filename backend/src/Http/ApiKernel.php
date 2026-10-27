@@ -19,10 +19,16 @@ final class ApiKernel
     public function handle(Request $r): Response
     {
         $id=bin2hex(random_bytes(8));
-        try { [$data,$status]=$this->dispatch($r);return new Response(['data'=>$data,'meta'=>['request_id'=>$id]],$status); }
+        $maintenanceGuard = null;
+        try {
+            $maintenanceGuard = \Athar\Infrastructure\MaintenanceGuard::acquire();
+            if (!$maintenanceGuard) throw new ApiError('maintenance',503);
+            [$data,$status]=$this->dispatch($r);return new Response(['data'=>$data,'meta'=>['request_id'=>$id]],$status);
+        }
         catch(ApiError $e) { return $this->error($r,$e->getMessage(),$e->status,$e->fields,$id); }
         catch(InvalidArgumentException $e) { return $this->error($r,'invalid_fields',422,['input'=>$e->getMessage()],$id); }
         catch(Throwable $e) { error_log('[Athar API '.$id.'] '.get_class($e).': '.$e->getMessage());return $this->error($r,'server_error',500,[],$id); }
+        finally { $maintenanceGuard = null; }
     }
     public function error(Request $r,string $code,int $status,array $fields=[],?string $id=null): Response
     {

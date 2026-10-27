@@ -48,13 +48,20 @@ function assert_no_maintenance_lock(): void
 
 function acquire_maintenance_lock(): void
 {
+    global $atharRecoveryGuard;
+    if ($atharRecoveryGuard instanceof \Athar\Infrastructure\MaintenanceGuard) throw new RuntimeException('هناك عملية صيانة أخرى جارية بالفعل.');
+    $guard = \Athar\Infrastructure\MaintenanceGuard::acquire(true);
+    if (!$guard) throw new RuntimeException('هناك عملية صيانة أخرى جارية بالفعل.');
     $acquired = db()->query("SELECT GET_LOCK('athar_maintenance_lock',0)")->fetchColumn();
     if ((string) $acquired !== '1') throw new RuntimeException('هناك عملية صيانة أخرى جارية بالفعل.');
+    $atharRecoveryGuard = $guard;
 }
 
 function release_maintenance_lock(): void
 {
-    db()->query("SELECT RELEASE_LOCK('athar_maintenance_lock')");
+    global $atharRecoveryGuard;
+    try { db()->query("SELECT RELEASE_LOCK('athar_maintenance_lock')"); }
+    finally { $atharRecoveryGuard = null; }
 }
 
 function write_encrypted_backup(string $sourcePath, string $targetPath, string $key): string
@@ -269,6 +276,8 @@ function restore_backup_archive(int $backupId, int $ownerId): int
             $versionFloor = max($versionFloor, (int) ($restoredUser['session_version'] ?? 0));
         }
         if ($versionFloor >= 4294967295) throw new RuntimeException('تعذر تدوير إصدارات الجلسات بأمان.');
+        $retainedActors = $db->query('SELECT id,email FROM users WHERE id IN (SELECT created_by FROM backup_artifacts UNION SELECT updated_by FROM platform_settings)')->fetchAll(PDO::FETCH_KEY_PAIR);
+        $installed = [];
         $db->exec('SET FOREIGN_KEY_CHECKS=0');
         try {
             $db->beginTransaction();
@@ -295,18 +304,26 @@ function restore_backup_archive(int $backupId, int $ownerId): int
             // These tables survive restoration; their old actor may no longer exist.
             $db->exec('UPDATE backup_artifacts a LEFT JOIN users u ON u.id=a.created_by SET a.created_by=NULL WHERE u.id IS NULL');
             $db->exec('UPDATE platform_settings s LEFT JOIN users u ON u.id=s.updated_by SET s.updated_by=NULL WHERE u.id IS NULL');
+            $retainedIdentity = $db->prepare('SELECT email FROM users WHERE id=?');
+            foreach ($retainedActors as $actorId => $email) {
+                $retainedIdentity->execute([$actorId]);
+                if ($retainedIdentity->fetchColumn() !== $email) {
+                    $db->prepare('UPDATE backup_artifacts SET created_by=NULL WHERE created_by=?')->execute([$actorId]);
+                    $db->prepare('UPDATE platform_settings SET updated_by=NULL WHERE updated_by=?')->execute([$actorId]);
+                }
+            }
             $db->exec('DELETE FROM auth_tokens'); $db->exec('DELETE FROM backup_download_grants');
             foreach(['api_sessions','auth_rate_buckets'] as $securityTable)if(in_array($securityTable,$tables,true))$db->exec('DELETE FROM `'.$securityTable.'`');
+            $installed = backup_install_staged_assets($staged);
+            $db->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$restoredOwnerId, 'backup-restored', 'backup', (string) $backupId]);
             $db->commit();
-        } catch (Throwable $failure) { if ($db->inTransaction()) $db->rollBack(); throw $failure; }
-        finally { $db->exec('SET FOREIGN_KEY_CHECKS=1'); }
-        foreach ($staged as $assetKey => $stage) {
-            [$kind,$key]=explode('/',$assetKey,2);
-            $assetsDir=dirname(__DIR__).DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.$kind;
-            if(!is_dir($assetsDir)&&!mkdir($assetsDir,0700,true))throw new RuntimeException('تعذر إعداد مجلد الاستعادة.');
-            if (!rename($stage, $assetsDir . DIRECTORY_SEPARATOR . $key)) throw new RuntimeException('استعيدت البيانات لكن تعذر نقل ملف؛ أعد الاستعادة من النسخة.'); unset($staged[$assetKey]);
+        } catch (Throwable $failure) {
+            if ($db->inTransaction()) $db->rollBack();
+            backup_rollback_installed_assets($installed);
+            throw $failure;
         }
-        db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$restoredOwnerId, 'backup-restored', 'backup', (string) $backupId]);
+        finally { $db->exec('SET FOREIGN_KEY_CHECKS=1'); }
+        foreach ($installed as $original) if ($original !== null && is_file($original)) @unlink($original);
         append_owner_audit(['action' => 'backup-restored', 'actor_id' => $restoredOwnerId, 'backup_id' => $backupId]);
         return $restoredOwnerId;
     } finally {
