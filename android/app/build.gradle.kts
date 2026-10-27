@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.io.File
 import java.net.URI
 import java.security.MessageDigest
 
@@ -66,7 +65,7 @@ if (releaseRequested) {
             "ATHAR_RELEASE_STORE_PASSWORD, ATHAR_RELEASE_KEY_ALIAS and " +
             "ATHAR_RELEASE_KEY_PASSWORD outside the repository."
     }
-    require(File(requireNotNull(releaseStorePath)).isFile) {
+    require(rootProject.file(requireNotNull(releaseStorePath)).isFile) {
         "ATHAR_RELEASE_STORE_FILE must point to an existing keystore."
     }
 }
@@ -173,7 +172,7 @@ val generateReviewModelAssets by tasks.registering {
             "Review model license/notice is missing."
         }
 
-        fun sha256(file: File): String {
+        fun sha256(file: java.io.File): String {
             val digest = MessageDigest.getInstance("SHA-256")
             file.inputStream().buffered().use { input ->
                 val buffer = ByteArray(64 * 1024)
@@ -278,7 +277,7 @@ val verifyReleaseConfiguration by tasks.registering {
         ) {
             "Release signing inputs are incomplete."
         }
-        check(File(requireNotNull(releaseStorePath)).isFile) {
+        check(rootProject.file(requireNotNull(releaseStorePath)).isFile) {
             "Release keystore does not exist."
         }
     }
