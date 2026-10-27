@@ -85,6 +85,16 @@ data class ReviewModelIoSpec(
                 longArrayOf(1, 12, vocabSize.toLong()),
             ),
         )
+
+        val stateInputs = inputs.filterNot { it.name == "x" }
+        require(outputs.size == stateInputs.size + 1)
+        stateInputs.forEach { input ->
+            val output = outputs.single {
+                it.name == "new_" + input.name
+            }
+            require(output.dtype == input.dtype)
+            require(output.dims.contentEquals(input.dims))
+        }
         return this
     }
 }

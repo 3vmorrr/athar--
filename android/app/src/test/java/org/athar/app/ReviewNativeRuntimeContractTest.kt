@@ -17,7 +17,8 @@ class ReviewNativeRuntimeContractTest {
             {"name":"processed_lens","dims":[1],"dtype":"int64"}
           ],
           "outputs":[
-            {"name":"log_probs","dims":[1,12,251],"dtype":"float32"}
+            {"name":"log_probs","dims":[1,12,251],"dtype":"float32"},
+            {"name":"new_processed_lens","dims":[1],"dtype":"int64"}
           ]
         }
         """.trimIndent()
@@ -38,7 +39,8 @@ class ReviewNativeRuntimeContractTest {
             {"name":"processed_lens","dims":[1],"dtype":"int64"}
           ],
           "outputs":[
-            {"name":"log_probs","dims":[1,12,251],"dtype":"float32"}
+            {"name":"log_probs","dims":[1,12,251],"dtype":"float32"},
+            {"name":"new_processed_lens","dims":[1],"dtype":"int64"}
           ]
         }
         """.trimIndent()
