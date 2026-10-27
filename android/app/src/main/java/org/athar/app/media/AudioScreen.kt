@@ -308,7 +308,7 @@ private fun AudioTransportCard(
 
     LaunchedEffect(state.mediaKey, state.playing) {
         while (isActive && state.mediaKey != null) {
-            position = vm.position().coerceAtLeast(0L)
+            position = vm.playbackPosition()
             duration = vm.duration().coerceAtLeast(0L)
             speed = vm.playbackSpeed()
             delay(if (state.playing) 350 else 800)
