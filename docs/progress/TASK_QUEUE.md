@@ -2,7 +2,7 @@
 
 Execute exactly one implementation task at a time in listed order among dependency-ready tasks. Preserve codex/android-ecosystem and the approved24-package roadmap. Never restart completed work. A blocked external gate remains open while independent ready work proceeds. UI branch is reviewed incrementally at overlapping files; preserve latest logic/security/tests and premium presentation. Each completion requires implementation → tests/device → docs → diff/secret review → commit → push/remote-SHA verification → requested report → next task. On this branch, a PARTIAL task listed in implementation_checkpoint has landed implementation but pending acceptance; its landed code may satisfy downstream implementation dependencies. Do not promote it to COMPLETE without the task's recorded acceptance evidence.
 
-Snapshot: 2026-10-27. Current task: **24.4**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
+Snapshot: 2026-10-27. Current task: **24.5**. Open tasks: **140**. Overall estimate: **45%** (engineering estimate, not test coverage).
 
 The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. No parallel implementation tasks.
 
@@ -1480,7 +1480,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 24.4 — Hosted device and monitoring acceptance
 
-- Parent: Work package 24: Deployment/release; state: **NOT STARTED**; dependencies: 24.3.
+- Parent: Work package 24: Deployment/release; state: **PARTIAL**; dependencies: 24.3.
 - Exact scope: Verify signed app against hosted API/Admin with consent-safe diagnostics and recoverable rollout.
 - Files/modules: docs/deployment/; docs/testing/.
 - Automated gates: Actual device/auth/content/media/notification/restore hosted matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
