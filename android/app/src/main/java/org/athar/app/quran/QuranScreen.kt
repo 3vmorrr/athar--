@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -460,51 +461,86 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                     }
                 }
             }
-            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(!searchMode, { searchMode = false; vm.select(state.surah.takeIf { it > 0 } ?: 1) }, label = { Text(stringResource(R.string.read)) })
-                FilterChip(searchMode, { searchMode = true }, label = { Text(stringResource(R.string.search)) })
-                TextButton(onClick = { fontDialog = true }) { Text(stringResource(R.string.font_size)) }
-            }
-            if (searchMode) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Xs),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
                 Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AtharSpacing.Sm, vertical = AtharSpacing.Xs),
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                 ) {
-                    OutlinedTextField(
-                        value = query,
-                        onValueChange = { query = it.take(80) },
+                    AtharFilterChip(
+                        selected = !searchMode,
+                        label = stringResource(R.string.read),
+                        onClick = {
+                            searchMode = false
+                            vm.select(state.surah.takeIf { it > 0 } ?: 1)
+                        },
                         modifier = Modifier.weight(1f),
-                        label = { Text(stringResource(R.string.search_hint)) },
-                        singleLine = true,
                     )
-                    Button(
-                        onClick = { vm.search(query) },
-                        enabled = QuranSearchNormalizer.normalize(query).length >= 2,
+                    AtharFilterChip(
+                        selected = searchMode,
+                        label = stringResource(R.string.search),
+                        onClick = { searchMode = true },
+                        modifier = Modifier.weight(1f),
+                    )
+                    FilledTonalIconButton(
+                        onClick = { fontDialog = true },
+                        modifier = Modifier.size(44.dp),
                     ) {
-                        Text(stringResource(R.string.search))
+                        Icon(
+                            AtharIcons.TextFields,
+                            contentDescription = stringResource(R.string.font_size),
+                            modifier = Modifier.size(20.dp),
+                        )
                     }
                 }
+            }
+            if (searchMode) {
+                AtharSearchField(
+                    value = query,
+                    onValueChange = { query = it.take(80) },
+                    onSearch = {
+                        if (QuranSearchNormalizer.normalize(query).length >= 2) {
+                            vm.search(query)
+                        }
+                    },
+                    label = stringResource(R.string.search_hint),
+                    modifier = Modifier.padding(horizontal = AtharSpacing.Lg),
+                )
             } else {
-                FlowRow(
-                    Modifier.padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = AtharSpacing.Lg),
+                    horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
                 ) {
-                    listOf(
-                        "surah" to R.string.surah,
-                        "juz" to R.string.juz,
-                        "hizb" to R.string.hizb,
-                        "page" to R.string.page,
-                        "range" to R.string.quran_range,
-                    ).forEach { (kind, label) ->
-                        FilterChip(
+                    items(
+                        listOf(
+                            "surah" to R.string.surah,
+                            "juz" to R.string.juz,
+                            "hizb" to R.string.hizb,
+                            "page" to R.string.page,
+                            "range" to R.string.quran_range,
+                        ),
+                        key = { it.first },
+                    ) { (kind, label) ->
+                        AtharFilterChip(
                             selected = state.sectionKind == kind,
                             onClick = {
                                 if (kind == "range") navigationSheet = true
                                 else vm.section(kind, 1)
                             },
-                            label = { Text(stringResource(label)) },
+                            label = stringResource(label),
                         )
                     }
                 }
@@ -532,22 +568,57 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                     } ?: stringResource(R.string.quran_range)
                     else -> stringResource(R.string.quran_go_to)
                 }
-                Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Xs),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    ),
                 ) {
-                    TextButton(
-                        onClick = { vm.section(state.sectionKind, state.sectionNumber - 1) },
-                        enabled = stepEnabled && state.sectionNumber > 1,
-                    ) { Text(stringResource(R.string.back)) }
-                    TextButton(onClick = { navigationSheet = true }) {
-                        Text(selectionLabel, maxLines = 2)
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Xs, vertical = AtharSpacing.Xs),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    ) {
+                        IconButton(
+                            onClick = {
+                                vm.section(state.sectionKind, state.sectionNumber - 1)
+                            },
+                            enabled = stepEnabled && state.sectionNumber > 1,
+                        ) {
+                            Icon(
+                                AtharIcons.ArrowBack,
+                                contentDescription = stringResource(R.string.back),
+                            )
+                        }
+                        TextButton(
+                            onClick = { navigationSheet = true },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(
+                                selectionLabel,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                vm.section(state.sectionKind, state.sectionNumber + 1)
+                            },
+                            enabled = stepEnabled && state.sectionNumber < maximum,
+                        ) {
+                            Icon(
+                                AtharIcons.ArrowForward,
+                                contentDescription = stringResource(R.string.more),
+                            )
+                        }
                     }
-                    TextButton(
-                        onClick = { vm.section(state.sectionKind, state.sectionNumber + 1) },
-                        enabled = stepEnabled && state.sectionNumber < maximum,
-                    ) { Text(stringResource(R.string.more)) }
                 }
             }
             if (searchMode) {
