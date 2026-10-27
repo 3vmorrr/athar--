@@ -1,5 +1,9 @@
 # Implementation tracker
 
+## Parallel integration checkpoint — task18.2
+
+Series metadata/scholar/order/publication and bilingual controls accepted with transactional row/audit/FK boundaries, conflicting lesson-scholar refusal, dependency-safe deletion and SQL error redaction.193 actual HTTP,135 browser and20,752 backend assertions PASS; actual native catalog and concurrent child insertion/delete checks. [Evidence and reconciliation](../testing/ADMIN_SERIES.md). No migration/native change or physical Android claim. Cursor6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b; next18.3 lesson CRUD. WP18:2/9 (22%); overall50% (50.38 weighted,±10pp);130 open. WP02.8 remains deferred.
+
 ## Parallel integration checkpoint — task18.1
 
 Scholar metadata/optional portraits and bilingual create/edit accepted. Added transactional row/audit/file controls, dependency-safe deletion, public publication checks/private Admin preview, strict validation and retained drafts.159 actual HTTP,68 browser and20,752 backend assertions PASS; actual PNG/JPEG/WebP and concurrent deletion without orphan upload. [Evidence and source reconciliation](../testing/ADMIN_SCHOLARS.md). No migration/native change or physical Android claim. Cursor393760bbef96caa95f31253c584cbdda10317edd; next18.2. WP18:1/9 (11%); overall50% (49.88 weighted,±10pp);131 open. WP02.8 remains deferred.

@@ -1,9 +1,9 @@
 {
-  "codex_head": "b07dd7400e70d72c288cf1d217aa65f49cd3ebd2",
+  "codex_head": "30af099338ed2a3e37f5468c985520f206eb0a2b",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
-  "LAST_PARALLEL_INTEGRATED_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
+  "LAST_PARALLEL_INTEGRATED_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
   "cursor_policy": "Only advance past source commits when integrated/tested or explicitly superseded with rationale. Reviewed-but-pending is not integrated. Secondary task attribution prevents skipping interleaved corrections.",
   "groups": [
     {
@@ -373,7 +373,7 @@
       "acceptance": "docs/testing/ADMIN_SCHOLARS.md;20,752 backend;162 HTTP;68 browser. Corrective checkpoint restores accidentally removed adjacent lesson-update branch and adds actual save/readback/provider-rejection regression. No source cursor advance."
     },
     {
-      "task_or_group": "18.2-18.3",
+      "task_or_group": "18.2",
       "source_commits": [
         {
           "sha": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
@@ -386,7 +386,7 @@
       "dependencies": [
         "18.1"
       ],
-      "overlap": "Direct dual-branch changes: NightPrayerScreen and both localized string files; preserve all main-only sync/schema/test changes. Shared service and UI coupling requires per-task semantic review.",
+      "overlap": "Manual series handler/view port preserves corrected adjacent lesson update and newer auth/privacy/recovery. Source scholar guard superseded by18.1; row/FK locking and conflicting explicit lesson association fixes added.",
       "database_api_impact": [
         "public/index.php"
       ],
@@ -394,9 +394,14 @@
       "ui_impact": [],
       "security_privacy": "Preserve actor/environment isolation, protected reads, ciphertext, pending operations and source/rights. OTP payloads need encryption; book worker/file keys need environment partition and race review.",
       "tests_required": "Applicable syntax/build, disposable migration/backend/HTTP/RBAC, AR/EN browser/device, ownership/offline/retry/corruption/concurrency and accessibility gates before closure.",
-      "integration_decision": "PARTIAL INTEGRATION",
-      "state": "REVIEW PENDING",
-      "secondary_task_attribution": []
+      "integration_decision": "KEEP WITH FIXES",
+      "state": "COMPLETE",
+      "secondary_task_attribution": [
+        "18.1: source scholar delete guard superseded by accepted transactional handler",
+        "18.3: existing lesson associations preserved; full lesson CRUD/provider/UI acceptance remains next"
+      ],
+      "integration_base": "30af099338ed2a3e37f5468c985520f206eb0a2b",
+      "acceptance": "docs/testing/ADMIN_SERIES.md;20,752 backend;193 HTTP;135 actual browser. Real native catalog/child insertion/deletion race/SQL rollback redaction. No migration/native change."
     },
     {
       "task_or_group": "18.4",
@@ -3147,8 +3152,8 @@
     }
   ],
   "previous_inspected_parallel_head": "29028f5d7cde176b92f23f0aee27153628942d23",
-  "LAST_REVIEWED_PARALLEL_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
-  "reviewed_cursor_scope": "Task18.1 source boundary reviewed and integrated with transactional/portrait safety fixes. Later source groups remain review pending.",
+  "LAST_REVIEWED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "reviewed_cursor_scope": "Source6bbfee5 series validation/dependency guards integrated with fixes; scholar guard superseded by18.1. Full18.3 lesson CRUD acceptance remains next; later source groups remain review pending.",
   "last_fetch_date": "2026-10-27",
   "new_source_since_previous_review_head": {
     "from": "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee",
@@ -3457,6 +3462,6 @@
       }
     ]
   },
-  "LAST_INTEGRATED_PARALLEL_SHA": "393760bbef96caa95f31253c584cbdda10317edd",
-  "review_worktree_checkout": "393760bbef96caa95f31253c584cbdda10317edd"
+  "LAST_INTEGRATED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b"
 }

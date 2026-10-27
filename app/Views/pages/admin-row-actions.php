@@ -1,3 +1,4 @@
+<?php if ($contentType === 'series') { $seriesDraft=$row; $seriesFormMode='edit'; require dirname(__DIR__,3).'/admin/Views/series-form.php'; return; } ?>
 <?php if ($contentType === 'scholar') { $scholarDraft=$row; $scholarFormMode='edit'; require dirname(__DIR__,3).'/admin/Views/scholar-form.php'; return; } ?>
 <div class="inventory-actions">
     <form method="post"><?= csrf_field() ?><input type="hidden" name="kind" value="content"><input type="hidden" name="content_type" value="<?= e($contentType) ?>"><input type="hidden" name="content_action" value="toggle"><input type="hidden" name="id" value="<?= $rowId ?>"><button class="text-button" type="submit">تبديل النشر</button></form>

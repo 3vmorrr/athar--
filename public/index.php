@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/app/helpers.php';
 require_once dirname(__DIR__) . '/admin/auth.php';
 require_once dirname(__DIR__) . '/admin/authorization.php';
 require_once dirname(__DIR__) . '/admin/scholars.php';
+require_once dirname(__DIR__) . '/admin/series.php';
 require_once dirname(__DIR__) . '/app/backup.php';
 require_once dirname(__DIR__) . '/app/mailer.php';
 ini_set('display_errors', '0');
@@ -654,6 +655,9 @@ if ($path === '/admin') {
             if ($kind === 'scholar' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'scholar')) {
                 admin_mutate_scholar($admin, $_POST, $_FILES);
                 flash($kind === 'scholar' ? 'تم حفظ العالم.' : 'تم تحديث العالم.'); redirect('/admin#admin-content');
+            } elseif ($kind === 'series' || ($kind === 'content' && ($_POST['content_type'] ?? '') === 'series')) {
+                admin_mutate_series($admin, $_POST);
+                flash($kind === 'series' ? 'تم حفظ السلسلة.' : 'تم تحديث السلسلة.'); redirect('/admin#admin-content');
             } elseif ($kind === 'comment-review') {
                 $commentId = filter_var($_POST['comment_id'] ?? null,FILTER_VALIDATE_INT); $status = (string)($_POST['status'] ?? '');
                 if (!$commentId || !in_array($status,['visible','hidden'],true)) throw new RuntimeException('حالة التعليق غير صالحة.');
@@ -902,10 +906,6 @@ if ($path === '/admin') {
                         if (!$videoId) throw new RuntimeException('رابط فيديو YouTube غير صالح.');
                         [$lessonScholarId,$lessonSeriesId] = validated_lesson_scope((int)($_POST['scholar_id'] ?? 0),(int)($_POST['series_id'] ?? 0));
                         db()->prepare('UPDATE lessons SET scholar_id=NULLIF(?,0),series_id=NULLIF(?,0),title=?,description=?,youtube_id=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([$lessonScholarId, $lessonSeriesId, trim((string) $_POST['title']), trim((string) $_POST['description']), $videoId, $url, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
-                    } elseif ($type === 'series') {
-                        $source = trim((string) ($_POST['source_url'] ?? ''));
-                        if ($source !== '' && !is_https_url($source)) throw new RuntimeException('رابط المصدر يجب أن يبدأ بـ HTTPS.');
-                        db()->prepare('UPDATE series SET scholar_id=NULLIF(?,0),title=?,description=?,source_url=?,is_published=?,sort_order=? WHERE id=?')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, $published, (int) ($_POST['sort_order'] ?? 0), $id]);
                     } elseif ($type === 'book') {
                         $source = trim((string) ($_POST['source_url'] ?? '')); $rights = trim((string) ($_POST['rights_basis'] ?? '')); $downloadUrl = trim((string)($_POST['download_url'] ?? ''));
                         if (!is_https_url($source) || $rights === '') throw new RuntimeException('أدخل مصدرًا آمنًا وأساس الحقوق.');
@@ -943,10 +943,6 @@ if ($path === '/admin') {
                 } else throw new RuntimeException('الإجراء غير معروف.');
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $auditAction, $type, (string) $id]);
                 flash('تم تحديث المحتوى.'); redirect('/admin');
-            } elseif ($kind === 'series') {
-                $source = trim((string) ($_POST['source_url'] ?? ''));
-                if (strlen(trim((string) $_POST['title'])) < 2 || ($source !== '' && !is_https_url($source))) throw new RuntimeException('أدخل عنوانًا ورابط مصدر HTTPS صالحًا عند الحاجة.');
-                db()->prepare('INSERT INTO series (scholar_id,title,description,source_url,is_published,sort_order) VALUES (NULLIF(?,0),?,?,?,?,?)')->execute([(int) ($_POST['scholar_id'] ?? 0), trim((string) $_POST['title']), trim((string) $_POST['description']), $source ?: null, isset($_POST['publish']) ? 1 : 0, (int) ($_POST['sort_order'] ?? 0)]);
             } elseif ($kind === 'lesson') {
                 $url = trim((string) $_POST['source_url']); $id = youtube_video_id($url);
                 if (!$id || strlen(trim((string) $_POST['title'])) < 2) throw new RuntimeException('رابط الفيديو أو العنوان غير صالح.');
@@ -967,7 +963,7 @@ if ($path === '/admin') {
             flash('تم حفظ المحتوى.'); redirect('/admin');
         } catch (Throwable $exception) {
             if (db()->inTransaction()) db()->rollBack();
-            $adminError = $exception instanceof RuntimeException ? $exception->getMessage() : 'تعذر حفظ المحتوى. راجع الحقول أو الاتصال بقاعدة البيانات.';
+            $adminError = $exception instanceof RuntimeException && !($exception instanceof PDOException) ? $exception->getMessage() : 'تعذر حفظ المحتوى. راجع الحقول أو الاتصال بقاعدة البيانات.';
             if (isset($_POST['ajax_campaign_batch'])) { http_response_code(422); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>false,'error'=>$adminError], JSON_UNESCAPED_UNICODE); exit; }
         }
     }

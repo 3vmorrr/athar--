@@ -1,3 +1,7 @@
+## Task18.2 — Admin series and associations
+
+193 actual HTTP/135 browser/20,752 backend assertions PASS. Canonical native catalog visibility/order, association validation, explicit lesson-scholar conflict refusal, dependency/FK race, SQL constraint rollback/redaction and retained bilingual editor/error state accepted. [Evidence and limits](ADMIN_SERIES.md). No migration/native code change or physical Android claim. Cursor6bbfee5;18.3 follows;02.8 remains deferred.
+
 ## Task18.1 correction — adjacent lesson editing
 
 Restored the lesson-update branch accidentally removed during scholar extraction.162 actual HTTP and68 browser checks PASS, now including real lesson save/readback of metadata/provider/order/publication and invalid-provider rejection retaining the previous row. [Correction and fixture notes](ADMIN_SCHOLARS.md).18.2 continues separately; no source cursor/estimate advance.

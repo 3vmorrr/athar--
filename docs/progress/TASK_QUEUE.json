@@ -1,8 +1,8 @@
 {
   "updated": "2026-10-27",
-  "current_task": "18.2",
+  "current_task": "18.3",
   "overall_estimate_percent": 50,
-  "overall_estimate_detail": 49.88,
+  "overall_estimate_detail": 50.38,
   "estimate_uncertainty_pp": 10,
   "phase2_weights": {
     "02.1": 20,
@@ -1800,7 +1800,7 @@
       "name": "Admin series CRUD and ordering",
       "parent": "Work package 18: Admin content/services",
       "scope": "Manage series metadata/scholar/order/publication and safe delete dependencies.",
-      "state": "PARTIAL",
+      "state": "COMPLETE",
       "dependencies": [
         "18.1"
       ],
@@ -1808,10 +1808,10 @@
         "admin/ (new)",
         "backend/src/Learning/"
       ],
-      "automated_tests": "Order/association/visibility/RBAC/native catalog tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "automated_tests": "COMPLETE:20,752 backend;193 actual HTTP (31 series/native catalog +162 auth/scholar/adjacent lesson);135 actual browser (67 series +68 scholar). Includes real child insertion/FK/delete race, associations/visibility/order, SQL rollback/redaction. Evidence:docs/testing/ADMIN_SERIES.md.",
+      "physical_device": "Actual Admin AR/EN light/dark browser at1440/360; retained form/editor values, numeric RTL direction, truthful statuses, error focus and captures inspected. Canonical native catalog checked via actual HTTP. No native code/schema change or physical Android PASS claimed.",
       "definition_of_done": "Manage series metadata/scholar/order/publication and safe delete dependencies. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "estimated_contribution_pp": 0.4969
+      "estimated_contribution_pp": 0
     },
     {
       "id": "18.3",
