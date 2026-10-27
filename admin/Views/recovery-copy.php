@@ -2,6 +2,7 @@
 declare(strict_types=1);
 $recoveryTranslation = static function (string $message) use ($adminLocale): string {
     static $english = [
+        'سجل ترحيلات النسخة غير صالح.' => 'The authenticated backup migration ledger is invalid.',
         'كلمة المرور غير صحيحة.' => 'The password is incorrect.',
         'اكتب عبارة التأكيد كما تظهر في نموذج النسخة.' => 'Enter CREATE FULL BACKUP exactly as shown.',
         'اكتب عبارة الاستعادة كما تظهر في النموذج.' => 'Enter RESTORE FULL BACKUP exactly as shown.',

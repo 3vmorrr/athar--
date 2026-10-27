@@ -18,6 +18,36 @@ function backup_key(): string
     return $key;
 }
 
+/** All applied versions matter when independent lanes land migrations out of order. */
+function backup_schema_version(PDO $db): string
+{
+    return backup_version_fingerprint($db->query('SELECT version FROM schema_migrations')->fetchAll(PDO::FETCH_COLUMN));
+}
+
+function backup_version_fingerprint(array $versions): string
+{
+    if (!$versions) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    foreach ($versions as $version) if (!is_string($version) || !preg_match('/^[0-9]{3}_[a-zA-Z0-9_]{1,76}$/D', $version)) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    sort($versions, SORT_STRING);
+    if (count(array_unique($versions)) !== count($versions)) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    return 'ledger:' . hash('sha256', json_encode($versions, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+}
+
+/** Legacy v1 archives also include their authenticated full migration ledger. */
+function backup_archive_schema_version(ZipArchive $zip, array $manifest): string
+{
+    $entry = 'database/schema_migrations.json';
+    $bytes = $zip->getFromName($entry); $expected = $manifest['checksums_sha256'][$entry] ?? null;
+    if (!is_string($bytes) || !is_string($expected) || !preg_match('/^[a-f0-9]{64}$/D', $expected) || !hash_equals($expected, hash('sha256', $bytes))) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    $rows = json_decode($bytes, true, 512, JSON_THROW_ON_ERROR);
+    if (!is_array($rows)) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    $versions = [];
+    foreach ($rows as $row) { if (!is_array($row) || !isset($row['version'])) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.'); $versions[] = $row['version']; }
+    $fingerprint = backup_version_fingerprint($versions);
+    if (str_starts_with((string)($manifest['schema_version'] ?? ''), 'ledger:') && $manifest['schema_version'] !== $fingerprint) throw new RuntimeException('سجل ترحيلات النسخة غير صالح.');
+    return $fingerprint;
+}
+
 function ensure_backup_directory(): string
 {
     $directory = backup_directory();
@@ -170,7 +200,7 @@ function build_backup_archive(int $ownerId): array
         }
         $assetManifest = backup_add_assets($zip,dirname(__DIR__).DIRECTORY_SEPARATOR.'storage','books',$assetKeys['books']);
         $scholarManifest = backup_add_assets($zip,dirname(__DIR__).DIRECTORY_SEPARATOR.'storage','scholars',$assetKeys['scholars']);
-        $migration = $pdo->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn();
+        $migration = backup_schema_version($pdo);
         $manifest = [
             'format' => 'athar-full-backup-v1', 'created_at_utc' => gmdate('c'), 'schema_version' => (string) ($migration ?: 'unknown'),
             'database_name' => $database, 'tables' => $counts, 'checksums_sha256' => $checksums, 'book_assets' => $assetManifest, 'scholar_assets'=>$scholarManifest,
@@ -252,8 +282,8 @@ function restore_backup_archive_locked(int $backupId, int $ownerId): int
         if (($manifest['format'] ?? '') !== 'athar-full-backup-v1' || !is_array($manifest['tables'] ?? null) || !is_array($manifest['checksums_sha256'] ?? null)) throw new RuntimeException('بيانات النسخة غير مكتملة.');
         $db = db(); $database = getenv('ATHAR_DB_NAME') ?: 'athar';
         if (($manifest['database_name'] ?? '') !== $database) throw new RuntimeException('اسم قاعدة البيانات في النسخة لا يطابق البيئة الحالية.');
-        $currentVersion = (string) ($db->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn() ?: 'unknown');
-        if (($manifest['schema_version'] ?? '') !== $currentVersion) throw new RuntimeException('إصدار مخطط النسخة لا يطابق التطبيق الحالي؛ حدّث أو اختر نسخة متوافقة.');
+        $currentVersion = backup_schema_version($db);
+        if (backup_archive_schema_version($zip, $manifest) !== $currentVersion) throw new RuntimeException('إصدار مخطط النسخة لا يطابق التطبيق الحالي؛ حدّث أو اختر نسخة متوافقة.');
         foreach ($manifest['checksums_sha256'] as $entry => $expected) {
             if (!is_string($entry) || str_contains($entry, '..') || str_starts_with($entry, '/') || !is_string($expected)) throw new RuntimeException('مسار داخل النسخة غير صالح.');
             $contents = $zip->getFromName($entry);
@@ -360,8 +390,8 @@ function verified_reset_backup(): int
         decrypt_backup_file($path, $plain, backup_key());
         if ($zip->open($plain, ZipArchive::CHECKCONS) !== true) throw new RuntimeException('حاوية النسخة غير صالحة.');
         $manifest = json_decode((string) $zip->getFromName('manifest.json'), true, 512, JSON_THROW_ON_ERROR);
-        $schema = (string) db()->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn();
-        if (($manifest['format'] ?? '') !== 'athar-full-backup-v1' || ($manifest['database_name'] ?? '') !== (getenv('ATHAR_DB_NAME') ?: 'athar') || ($manifest['schema_version'] ?? '') !== $schema) throw new RuntimeException('نسخة الاسترداد لا تطابق قاعدة البيانات والمخطط الحاليين.');
+        $schema = backup_schema_version(db());
+        if (($manifest['format'] ?? '') !== 'athar-full-backup-v1' || ($manifest['database_name'] ?? '') !== (getenv('ATHAR_DB_NAME') ?: 'athar') || backup_archive_schema_version($zip, $manifest) !== $schema) throw new RuntimeException('نسخة الاسترداد لا تطابق قاعدة البيانات والمخطط الحاليين.');
         return (int) $artifact['id'];
     } finally {
         try { $zip->close(); } catch (ValueError $ignored) {}

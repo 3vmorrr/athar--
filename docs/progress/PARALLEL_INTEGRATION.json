@@ -1,5 +1,5 @@
 {
-  "codex_head": "30af099338ed2a3e37f5468c985520f206eb0a2b",
+  "codex_head": "b252c8f43089001e7d06ba0b3b98df42b6050354",
   "parallel_head": "7392e93b088990c3478cf32197781f831eb10f83",
   "merge_base": "5e46b37cfdba6ed64c27273f0aaafa1ce3eaaa4e",
   "parallel_worktree": "C:/xampp/athar-parallel",
@@ -3463,5 +3463,13 @@
     ]
   },
   "LAST_INTEGRATED_PARALLEL_SHA": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
-  "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b"
+  "review_worktree_checkout": "6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b",
+  "migration_reservations": {
+    "027_lesson_provider_identity": {
+      "state": "DISPOSABLE POPULATED-SCHEMA / RECOVERY TESTED; commit receipt follows",
+      "parallel_head_checked": "7392e93b088990c3478cf32197781f831eb10f83",
+      "parallel_reserved_range": "016-026",
+      "policy": "Preserve incoming source numbers; full migration-ledger fingerprint detects lower-numbered additions after027. Re-fetch and reconcile any future collision explicitly."
+    }
+  }
 }

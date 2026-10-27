@@ -58,6 +58,33 @@ isolated_database(function (PDO $connection): void {
         $artifact = build_backup_archive($ownerId);
         $artifacts[] = $artifact['id'];
         recovery_check($artifact['byte_size'] > 0, 'Real encrypted database/asset backup built');
+        $beforeMax = $db->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn();
+        $db->exec("INSERT INTO schema_migrations(version) VALUES ('016_fixture_ledger_probe')");
+        recovery_check($beforeMax === $db->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn(), 'Lower-numbered migration fixture leaves MAX(version) unchanged');
+        recovery_denied(fn() => restore_backup_archive($artifact['id'], $ownerId), 'Full migration ledger detects lower-numbered schema changes before restore');
+        recovery_denied(fn() => verified_reset_backup(), 'Reset refuses backups missing a lower-numbered applied migration');
+        $db->exec("DELETE FROM schema_migrations WHERE version='016_fixture_ledger_probe'");
+        // Exercise an actual legacy v1 archive label while retaining its authenticated
+        // complete ledger. Later restores in this suite must still recover this file.
+        $legacyQuery = $db->prepare('SELECT storage_key FROM backup_artifacts WHERE id=?'); $legacyQuery->execute([$artifact['id']]);
+        $oldCipher = backup_directory() . '/' . $legacyQuery->fetchColumn();
+        $legacyPlain = tempnam(backup_directory(), 'legacy-ledger-'); unlink($legacyPlain);
+        $legacyKey = bin2hex(random_bytes(20)) . '.enc'; $legacyCipher = backup_directory() . '/' . $legacyKey;
+        $legacyRegistered = false;
+        try {
+            decrypt_backup_file($oldCipher, $legacyPlain, backup_key());
+            $legacyZip = new ZipArchive(); $legacyZip->open($legacyPlain);
+            $legacyManifest = json_decode($legacyZip->getFromName('manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+            $legacyManifest['schema_version'] = $beforeMax;
+            recovery_check(backup_archive_schema_version($legacyZip, $legacyManifest) === backup_schema_version($db), 'Legacy maximum-version labels retain full-ledger compatibility');
+            $legacyZip->addFromString('manifest.json', json_encode($legacyManifest, JSON_THROW_ON_ERROR)); $legacyZip->close();
+            $legacyHash = write_encrypted_backup($legacyPlain, $legacyCipher, backup_key());
+            $db->prepare('UPDATE backup_artifacts SET storage_key=?,sha256=?,byte_size=?,schema_version=? WHERE id=?')->execute([$legacyKey,$legacyHash,filesize($legacyCipher),$beforeMax,$artifact['id']]);
+            $legacyRegistered = true; unlink($oldCipher);
+        } finally {
+            if (is_file($legacyPlain)) unlink($legacyPlain);
+            if (!$legacyRegistered && is_file($legacyCipher)) unlink($legacyCipher);
+        }
         $db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([password_hash('NewerOwnerPassword123!', PASSWORD_DEFAULT), $ownerId]);
         $db->exec('UPDATE users SET session_version=83');
         $db->exec('UPDATE quran_positions SET ayah=5,revision=2');
