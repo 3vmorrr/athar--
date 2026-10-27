@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.ImeAction
 
 object AtharSpacing {
     val Xs = 4.dp
@@ -29,7 +32,7 @@ object AtharSpacing {
     val Lg = 16.dp
     val Xl = 20.dp
     val Xxl = 24.dp
-    val Section = 28.dp
+    val Section = 32.dp
 }
 
 @Composable
@@ -113,7 +116,7 @@ fun AtharQuickAction(
         enabled = enabled,
         modifier = modifier
             .widthIn(min = 48.dp)
-            .heightIn(min = 92.dp)
+            .heightIn(min = 82.dp)
             .semantics { role=Role.Button }
             .graphicsLayer { scaleX = scale; scaleY = scale; alpha=if(enabled)1f else 0.38f },
         shape = MaterialTheme.shapes.large,
@@ -126,8 +129,8 @@ fun AtharQuickAction(
         interactionSource = interaction,
     ) {
         Column(
-            Modifier.padding(AtharSpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+            Modifier.padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Md),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
         ) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
@@ -187,6 +190,137 @@ fun AtharMetric(
         ) {
             Text(value, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
             Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+
+@Composable
+fun AtharSearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        placeholder = {
+            Text(
+                label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
+        trailingIcon = {
+            FilledTonalIconButton(
+                onClick = onSearch,
+                modifier = Modifier.size(42.dp),
+            ) {
+                Icon(
+                    AtharIcons.Search,
+                    contentDescription = label,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+        ),
+    )
+}
+
+@Composable
+fun AtharFilterChip(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        modifier = modifier.heightIn(min = 40.dp),
+        label = {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+            )
+        },
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = selected,
+            borderColor = MaterialTheme.colorScheme.outlineVariant,
+            selectedBorderColor = Color.Transparent,
+        ),
+    )
+}
+
+@Composable
+fun AtharPageControls(
+    page: Int,
+    hasPrevious: Boolean,
+    hasNext: Boolean,
+    previousLabel: String,
+    nextLabel: String,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AtharSpacing.Sm, vertical = AtharSpacing.Xs),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TextButton(
+                onClick = onPrevious,
+                enabled = hasPrevious,
+                modifier = Modifier.weight(1f).heightIn(min = 44.dp),
+            ) {
+                Text(previousLabel)
+            }
+            Surface(
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.primaryContainer,
+            ) {
+                Text(
+                    page.toString(),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+            TextButton(
+                onClick = onNext,
+                enabled = hasNext,
+                modifier = Modifier.weight(1f).heightIn(min = 44.dp),
+            ) {
+                Text(nextLabel)
+            }
         }
     }
 }
