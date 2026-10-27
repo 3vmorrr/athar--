@@ -39,6 +39,11 @@ environment["ATHAR_ADMIN_PASSWORD"] = "AdminFixture123!"
 environment["ATHAR_USER_PASSWORD"] = "UserFixture123!"
 
 php = os.environ.get("ATHAR_TEST_PHP", r"C:\xampp\php\php.exe")
+php_ini_args = []
+if os.environ.get('ATHAR_TEST_SESSION_DIR'):
+    session_directory = Path(os.environ['ATHAR_TEST_SESSION_DIR']).resolve()
+    assert session_directory == (ROOT / 'storage/sessions').resolve()
+    php_ini_args = ['-d', 'session.save_path=' + str(session_directory)]
 setup = r'''
 require 'backend/bootstrap.php';
 if(!preg_match('/^athar_test_native_[a-f0-9]{12}$/',getenv('ATHAR_DB_NAME')))exit(2);
@@ -56,7 +61,7 @@ $auth=new \Athar\Identity\AuthService($db,$otp);
 
 def service(statement):
     result = subprocess.run(
-        [php, "-r", setup + statement],
+        [php, *php_ini_args, "-r", setup + statement],
         cwd=ROOT,
         env=environment,
         capture_output=True,

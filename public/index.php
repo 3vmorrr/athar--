@@ -834,7 +834,7 @@ if ($path === '/admin') {
                 if (!password_verify((string) ($_POST['password'] ?? ''), (string) $passwordCheck->fetchColumn())) throw new RuntimeException('كلمة المرور غير صحيحة.');
                 if ((string) ($_POST['manifest_confirmation'] ?? '') !== 'CREATE FULL BACKUP') throw new RuntimeException('اكتب عبارة التأكيد كما تظهر في نموذج النسخة.');
                 $artifact = build_backup_archive((int) $admin['id']);
-                flash('أُنشئت نسخة كاملة مشفرة وتحققنا من محتوياتها. اطلب إذن تنزيل منفصلًا أدناه.'); redirect('/admin');
+                flash('أُنشئت نسخة كاملة مشفرة وتحققنا من محتوياتها. اطلب إذن تنزيل منفصلًا أدناه.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'backup-restore') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('الاستعادة متاحة لمالك المنصة فقط.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
@@ -845,7 +845,7 @@ if ($path === '/admin') {
                 acquire_maintenance_lock();
                 try { $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }
                 admin_start_authenticated_session($restoredOwnerId);
-                flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin');
+                flash('اكتملت الاستعادة وتحققنا من ملفاتها. أُبطلت جلسات الدخول الأخرى.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'local-reset') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إعادة الضبط متاحة لمالك المنصة فقط.');
                 $environment = strtolower((string) (getenv('APP_ENV') ?: 'production'));
@@ -856,7 +856,7 @@ if ($path === '/admin') {
                 acquire_maintenance_lock();
                 try { reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }
                 admin_start_authenticated_session((int) $admin['id']);
-                flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin');
+                flash('اكتملت إعادة الضبط المحلية. بقي المخطط والمالك والنسخ الاحتياطية.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'backup-grant') {
                 if (($admin['role'] ?? '') !== 'owner') throw new RuntimeException('إذن التنزيل متاح لمالك المنصة فقط.');
                 $passwordCheck = db()->prepare('SELECT password_hash FROM users WHERE id=?'); $passwordCheck->execute([$admin['id']]);
@@ -869,7 +869,7 @@ if ($path === '/admin') {
                 $grant->execute([$backupId, $admin['id'], hash('sha256', $token)]);
                 $_SESSION['backup_grant_id'] = (int) db()->lastInsertId(); $_SESSION['backup_grant_token'] = $token;
                 db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], 'backup-download-grant-issued', 'backup', (string) $backupId]);
-                flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin');
+                flash('إذن تنزيل أحادي الاستخدام جاهز لمدة 15 دقيقة. نزّل النسخة الآن من الزر التالي.'); redirect('/admin#admin-backups');
             } elseif ($kind === 'content') {
                 $table = ['scholar' => 'scholars', 'series' => 'series', 'lesson' => 'lessons', 'book' => 'books', 'adhkar' => 'adhkar_items'][(string) ($_POST['content_type'] ?? '')] ?? '';
                 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
