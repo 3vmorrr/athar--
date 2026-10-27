@@ -1,5 +1,13 @@
 # Engineering change log
 
+## 2026-10-27 — 09.3 native microphone and local inference
+
+- Added contextual RECORD_AUDIO lifecycle and bounded 16 kHz mono PCM capture.
+- Added pinned Android ONNX Runtime compatibility/ABI gate and real local graph probe.
+- Ported the pinned Tilawa-compatible 80-bin Kaldi fbank, stateful 61/48 Zipformer runner and greedy CTC token boundary.
+- Wired microphone chunks through a four-chunk bounded in-memory inference queue with explicit overload stop; no audio upload/persistence and no Quran verdict yet.
+- 09.3 is PARTIAL pending build/physical ARM32+microphone acceptance; execution advances to 09.4 alignment/uncertainty.
+
 ## 2026-10-27 — background budgets, ayah share and stale-queue audit
 
 - Added 22.4 background work budgets/evidence harness at `67cbb27a17f6`.
