@@ -2,7 +2,7 @@
 
 Task: 09.3  
 Implementation branch: \`parallel/admin-foundation\`  
-Status: **CORE IMPLEMENTED / USER RUNTIME PROBE + PHYSICAL ACCEPTANCE PENDING**
+Status: **FUNCTIONAL LOCAL INFERENCE IMPLEMENTED / PHYSICAL ACCEPTANCE PENDING**
 
 This stage deliberately separates three claims that must not be conflated:
 
@@ -39,13 +39,17 @@ The caller-side buffering contract is capped at four chunks / 6,400 samples. Per
 
 Capture is not a foreground/background recorder and must be stopped by the screen lifecycle when the UI leaves the active foreground.
 
-## Why recognition remains disabled
+## Native streaming inference
 
-The shipped web feature delegates streaming fbank/state handling, CTC decoding, Quran phoneme search and per-word tracking to \`@tilawa/core\`. That TypeScript engine is not present in this Android repository.
+The microphone path is now connected to the verified native model through the pinned Tilawa-compatible frontend: 16 kHz Float32 PCM → 80-bin Kaldi fbank → 61-frame/48-hop stateful Zipformer → greedy CTC token IDs.
 
-Feeding raw PCM directly into this ONNX graph would be incorrect because the graph expects 80-dimensional feature frames plus 98 streaming state inputs. Therefore this task does not invent a PCM-to-feature transform or display a fake verse/correction result.
+The microphone callback never runs ONNX work directly. It offers each 100 ms chunk to a channel capped at four chunks / 6,400 samples. A dedicated inference coroutine consumes the queue. If the queue is full, capture stops fail-closed with an overload state instead of growing memory or silently dropping audio.
 
-The next implementation work must port or otherwise provide an approved equivalent of that frontend/decoder before Task 09.4 may expose alignment feedback.
+Model state tensors are copied from every `new_<state>` output, including model-owned `processed_lens`. The host does not synthesize state advancement.
+
+Stopping capture closes the input queue, drains the bounded backlog, appends the configured local silence tail and finalizes CTC. The UI keeps only sample/frame/token counters and the latest input peak.
+
+This completes Task 09.3's local-inference boundary. Quran corpus search, ayah matching, word alignment and uncertainty/correction verdicts remain Task 09.4.
 
 ## Privacy
 

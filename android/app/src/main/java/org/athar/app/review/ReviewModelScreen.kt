@@ -483,11 +483,17 @@ fun ReviewModelScreen(graph: AppGraph) {
                         )
                     }
 
+                    val microphoneBusy =
+                        runtimeState.microphoneStatus in setOf(
+                            ReviewMicrophoneStatus.STARTING,
+                            ReviewMicrophoneStatus.CAPTURING,
+                            ReviewMicrophoneStatus.FINALIZING,
+                        )
+
                     Button(
                         onClick = runtimeVm::probe,
                         enabled = !runtimeState.probing &&
-                            runtimeState.microphoneStatus !=
-                            ReviewMicrophoneStatus.CAPTURING,
+                            !microphoneBusy,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 52.dp),
@@ -511,6 +517,24 @@ fun ReviewModelScreen(graph: AppGraph) {
                     )
 
                     when (runtimeState.microphoneStatus) {
+                        ReviewMicrophoneStatus.STARTING -> {
+                            LinearProgressIndicator(Modifier.fillMaxWidth())
+                            Text(
+                                stringResource(
+                                    R.string.review_microphone_starting,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            OutlinedButton(
+                                onClick = runtimeVm::stopMicrophone,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 52.dp),
+                            ) {
+                                Text(stringResource(R.string.cancel))
+                            }
+                        }
                         ReviewMicrophoneStatus.CAPTURING -> {
                             LinearProgressIndicator(
                                 progress = { runtimeState.peak },
@@ -524,6 +548,15 @@ fun ReviewModelScreen(graph: AppGraph) {
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
+                            Text(
+                                stringResource(
+                                    R.string.review_local_inference_counts,
+                                    runtimeState.inferenceModelFrames,
+                                    runtimeState.inferenceTokens,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                             OutlinedButton(
                                 onClick = runtimeVm::stopMicrophone,
                                 modifier = Modifier
@@ -532,6 +565,25 @@ fun ReviewModelScreen(graph: AppGraph) {
                             ) {
                                 Text(stringResource(R.string.review_microphone_stop))
                             }
+                        }
+                        ReviewMicrophoneStatus.FINALIZING -> {
+                            LinearProgressIndicator(Modifier.fillMaxWidth())
+                            Text(
+                                stringResource(
+                                    R.string.review_microphone_finalizing,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.review_local_inference_counts,
+                                    runtimeState.inferenceModelFrames,
+                                    runtimeState.inferenceTokens,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                         else -> {
                             val statusText = when (
@@ -547,8 +599,12 @@ fun ReviewModelScreen(graph: AppGraph) {
                                     R.string.review_microphone_failed
                                 ReviewMicrophoneStatus.BACKGROUNDED ->
                                     R.string.review_microphone_background_stopped
+                                ReviewMicrophoneStatus.OVERLOADED ->
+                                    R.string.review_microphone_overloaded
                                 ReviewMicrophoneStatus.IDLE,
-                                ReviewMicrophoneStatus.CAPTURING -> null
+                                ReviewMicrophoneStatus.STARTING,
+                                ReviewMicrophoneStatus.CAPTURING,
+                                ReviewMicrophoneStatus.FINALIZING -> null
                             }
                             statusText?.let {
                                 MessagePanel(
@@ -556,7 +612,22 @@ fun ReviewModelScreen(graph: AppGraph) {
                                     runtimeState.microphoneStatus in setOf(
                                         ReviewMicrophoneStatus.ERROR,
                                         ReviewMicrophoneStatus.REVOKED,
+                                        ReviewMicrophoneStatus.OVERLOADED,
                                     ),
+                                )
+                            }
+                            if (
+                                runtimeState.inferenceModelFrames > 0 ||
+                                runtimeState.inferenceTokens > 0
+                            ) {
+                                Text(
+                                    stringResource(
+                                        R.string.review_local_inference_counts,
+                                        runtimeState.inferenceModelFrames,
+                                        runtimeState.inferenceTokens,
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                             Button(
@@ -590,7 +661,9 @@ fun ReviewModelScreen(graph: AppGraph) {
                     }
 
                     MessagePanel(
-                        stringResource(R.string.review_recognition_still_disabled),
+                        stringResource(
+                            R.string.review_alignment_still_disabled,
+                        ),
                         false,
                     )
                 }

@@ -1,7 +1,7 @@
 # Review runtime UI and lifecycle
 
 Task: 09.3  
-Implementation status: **PARTIAL — mic + native graph probe landed; recognizer frontend still missing**
+Implementation status: **FUNCTIONAL 09.3 IMPLEMENTATION LANDED / PHYSICAL ACCEPTANCE PENDING**
 
 The model-management screen now exposes two explicit local tests after the verified model package is installed.
 
@@ -23,8 +23,12 @@ Audio is read at 16 kHz mono PCM16 in 100 ms chunks and converted to Float32. Th
 
 There is no HTTP call in the capture/runtime path and no transcript/recording persistence.
 
-## Remaining functional gap
+## Local inference counters
 
-The shipped web feature obtains the full recognizer from @tilawa/core. That engine performs feature extraction, streaming cache propagation, CTC decode, Quran candidate search and word tracking. It is not present as Kotlin code in Athar.
+After the compatibility probe succeeds, starting the microphone opens a verified streaming recognizer and then begins capture. The UI reports only cumulative model-frame and raw CTC-token counts. These diagnostics prove that microphone audio reached the local model; they are not a Quran match or correctness score.
 
-Because the ONNX model input is 80-dimensional fbank frames rather than PCM samples, connecting microphone PCM directly to the model would be technically wrong. This task therefore remains PARTIAL, not acceptance-only. The next change must implement or import an approved native-equivalent frontend/decoder before 09.3 can be considered functionally implemented and before 09.4 feedback can be truthful.
+Audio chunks cross a four-chunk bounded channel. If local inference cannot consume within that bound, capture stops with an explicit overload state. The app never grows an unbounded audio queue and never silently discards a chunk while continuing to claim recognition.
+
+## Remaining semantic boundary
+
+Task 09.3 ends at raw CTC tokens. Task 09.4 must consume the verified Quran phoneme corpus, implement expected-passage alignment and preserve uncertainty before any ayah/word feedback is shown.

@@ -748,5 +748,9 @@
     <string name="review_microphone_interrupted">انقطع جهاز أو مسار الصوت، لذلك توقف الالتقاط.</string>
     <string name="review_microphone_failed">تعذر تشغيل الميكروفون بالتنسيق المحلي المطلوب.</string>
     <string name="review_microphone_background_stopped">توقف الميكروفون تلقائيًا عند مغادرة الشاشة أو انتقال التطبيق للخلفية.</string>
-    <string name="review_recognition_still_disabled">لم يتم بعد نقل محرك 16kHz→fbank→CTC والتتبع الخاص بـ Tilawa إلى Kotlin. لذلك لا يعرض Athar أي حكم «صحيح/خطأ» أو آية متوقعة من هذا الاختبار.</string>
+    <string name="review_microphone_starting">جارٍ فتح محرك الاستدلال المحلي المتحقق منه. لن يبدأ الميكروفون قبل نجاح ذلك.</string>
+    <string name="review_microphone_finalizing">جارٍ إنهاء آخر أجزاء الاستدلال المحلي في الذاكرة.</string>
+    <string name="review_microphone_overloaded">توقف الالتقاط لأن الاستدلال المحلي لم يلحق بالصوت ضمن حد الذاكرة المسموح. لم يتم إسقاط الصوت بصمت.</string>
+    <string name="review_local_inference_counts">إطارات النموذج المحلية: %1$d · رموز CTC الخام: %2$d</string>
+    <string name="review_alignment_still_disabled">الاستدلال الصوتي المحلي يعمل حتى رموز CTC الخام فقط. مطابقة الآيات ومحاذاة الكلمات وأحكام «صحيح/غير واضح/خطأ» تظل معطلة حتى المرحلة 09.4، لذلك لا يعرض Athar أي حكم قرآني من هذه الأرقام.</string>
 </resources>

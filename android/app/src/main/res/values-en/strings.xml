@@ -720,5 +720,9 @@
     <string name="review_microphone_interrupted">The audio device or route was interrupted, so capture stopped.</string>
     <string name="review_microphone_failed">The microphone could not run with the required local capture format.</string>
     <string name="review_microphone_background_stopped">The microphone stopped automatically when the screen/app left the foreground.</string>
-    <string name="review_recognition_still_disabled">Tilawa's 16 kHz→fbank→CTC and tracking engine has not yet been ported to Kotlin. Athar therefore shows no “correct/incorrect” verdict or inferred ayah from this test.</string>
+    <string name="review_microphone_starting">Opening the verified local inference runtime. The microphone will not start until this succeeds.</string>
+    <string name="review_microphone_finalizing">Finishing the last bounded in-memory local inference chunks.</string>
+    <string name="review_microphone_overloaded">Capture stopped because local inference could not keep up within the memory budget. Audio was not silently dropped.</string>
+    <string name="review_local_inference_counts">Local model frames: %1$d · raw CTC tokens: %2$d</string>
+    <string name="review_alignment_still_disabled">Local acoustic inference now runs through raw CTC tokens only. Ayah matching, word alignment and “correct/unclear/wrong” verdicts remain disabled until Task 09.4, so Athar does not present these counts as Quran feedback.</string>
 </resources>

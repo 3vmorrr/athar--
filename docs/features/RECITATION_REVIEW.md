@@ -56,4 +56,4 @@ The app requests RECORD_AUDIO only after the user presses the local microphone-t
 
 The pinned ONNX Runtime Android dependency is checked at build time for both armeabi-v7a and arm64-v8a shared libraries. After the Task 09.2 package is installed, the user may run a native CPU compatibility probe. It constructs every declared current Zipformer input/state tensor within a bounded memory budget and executes the graph for log_probs.
 
-This still does not constitute recitation recognition. The upstream @tilawa/core TypeScript package owns the audio feature extraction, streaming state propagation, CTC decoding and Quran tracking. Until an approved native equivalent is implemented, Athar does not show verse matches or word verdicts from microphone audio.
+The Android runtime now implements the acoustic half of that pipeline locally: Tilawa-compatible fbank, model-owned streaming state propagation and greedy CTC token decoding. Athar still does not show verse matches or word verdicts from microphone audio because Quran corpus search/alignment and uncertainty handling remain Task 09.4.
