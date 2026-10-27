@@ -212,23 +212,51 @@ private fun AtharNavIcon(
                 )
             }, bottomBar = {
                 if (!wide && topLevel) {
-                    NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        tonalElevation = 0.dp,
-                    ) {
-                        destinations.forEach { destination ->
-                            val active = selected == destination.key
-                            NavigationBarItem(
-                                selected = active,
-                                onClick = { navigateTab(destination.key) },
-                                icon = { AtharNavIcon(destination.icon, active) },
-                                label = { Text(stringResource(destination.title), maxLines = 1) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                ),
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .windowInsetsPadding(
+                                WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
                             )
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.98f),
+                            shadowElevation = 10.dp,
+                            tonalElevation = 0.dp,
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(64.dp)
+                                    .padding(horizontal = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                destinations.forEach { destination ->
+                                    val active = selected == destination.key
+                                    NavigationBarItem(
+                                        selected = active,
+                                        onClick = { navigateTab(destination.key) },
+                                        icon = { AtharNavIcon(destination.icon, active) },
+                                        label = {
+                                            Text(
+                                                stringResource(destination.title),
+                                                maxLines = 1,
+                                                style = MaterialTheme.typography.labelSmall,
+                                            )
+                                        },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        ),
+                                    )
+                                }
+                            }
                         }
                     }
                 }
