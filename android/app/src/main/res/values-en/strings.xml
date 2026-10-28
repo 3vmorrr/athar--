@@ -239,4 +239,6 @@
     <string name="daily_ayah">Ayah of the day</string>
     <string name="daily_ayah_local">Daily selection from the verified Quran stored on this device.</string>
     <string name="cached_content_retry">Showing a saved copy. Try again to refresh it.</string>
+    <string name="audio_interrupted">Playback is temporarily interrupted.</string>
+    <string name="quran_text_unavailable">The verified Quran text could not be loaded. Try again.</string>
 </resources>

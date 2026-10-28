@@ -1,11 +1,11 @@
 # Task completion receipts
 
-Each report follows implementation → tests/device → docs → review → commit → normal push → remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
+Each report follows implementation â†’ tests/device â†’ docs â†’ review â†’ commit â†’ normal push â†’ remote SHA verification. A commit cannot contain its own hash; its full SHA is reported immediately and added to this ledger in the following checkpoint. The queue is the current state, not a substitute for actual evidence.
 
 | Task | Implementation commit | Verification |
 |---|---|---|
 |20.1/20.2/20.3 branded consent-safe Email queue|c6a0c13e7a00e068aec51592f33d6c846a287ec0 +645d09bb6c4a1585aca336b36ed55c974150697f|Tested component commit plus previously unstaged public wiring;both normal pushes/exact remote verified;EMAIL_OUTBOX.md.26 validated;20.4 partial/20.5 real Gmail blocked. Native queue-wording reconciliation follows next UI batch.|
-|19.1–19.4 campaign foundation (partial)|f69557ece577af17358f85586494d8a0fcc57b18|Normal push/exact remote verified;local gates in ADMIN_CAMPAIGNS.md. Push/follow acceptance remains open;excluded from validated count. Adjacent view regression corrected in the following WP20 checkpoint.|
+|19.1â€“19.4 campaign foundation (partial)|f69557ece577af17358f85586494d8a0fcc57b18|Normal push/exact remote verified;local gates in ADMIN_CAMPAIGNS.md. Push/follow acceptance remains open;excluded from validated count. Adjacent view regression corrected in the following WP20 checkpoint.|
 |18.5/18.7/18.8 content and secure services|1167b847ff081f4e3546c908c6956e8d52fa98a1|Applicable gates in ADMIN_CONTENT_SERVICES_BATCH.md;normal push/exact remote verified.18.6/18.9 share code commit but remain native-acceptance pending. Strict count23/149.|
 |18.4 Admin Upcoming/Live|14d46fc7f3c17ed2ae9f55962c28f423741072bc|Normal push/exact remote verified; Admin/backend/browser evidence in ADMIN_EVENTS.md. Required physical cross-system gate remains QUEUED; task PARTIAL, excluded from strict completed count.|
 |18.3 Admin lessons/provider identity|5a0ca7271f0ead4d09cc475e6bb42398e96c6bfc +8e8c8eca26875eb887469f3714f81d7c9c2b0749|20,765 backend;234 HTTP;202 browser;populated migration/legacy recovery;both normal pushes/exact remote verified|
@@ -38,3 +38,5 @@ Task02.4's final executed gates are recorded in SESSION_OWNERSHIP.md and TEST_RE
 2026-10-28:03.3/03.7 daily-entry checkpoint `f6ccdf8aff4e4c5f42603cf402b6506ec6fbff7a` pushed/verified.28 targeted JVM, debug/test APK/lint, PHP Quran13352 +tafsir34 and354 resources PASS. No task promoted COMPLETE; lifecycle/device acceptance remains open.
 
 2026-10-28:03.7 reader restoration repair `a7d162f8e580f0a891f0b3a20a50a64c88da9365` pushed/verified;8 focused JVM cases/main Kotlin compile PASS. Actual process-death and next batch APK/lint acceptance remain open; queue advanced to independent WP04 while approved Dorar/provider gates stay open.
+
+2026-10-28:04.1 ownership repair `8d20a958cfcc4f8f591a0dec90cc74aa1383d928` pushed/verified. Related04.1–04.5 reconciliation batch:29 JVM/debug/test APK/lint/356 resources and31 PHP media assertions PASS. Physical and live-provider acceptance remains open; no task promoted COMPLETE. Batch SHA recorded after commit in the next receipt.

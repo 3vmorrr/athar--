@@ -267,4 +267,6 @@
     <string name="daily_ayah">آية اليوم</string>
     <string name="daily_ayah_local">اختيار اليوم من النسخة القرآنية الموثّقة المحفوظة على جهازك.</string>
     <string name="cached_content_retry">تُعرض نسخة محفوظة. أعد المحاولة لتحديثها.</string>
+    <string name="audio_interrupted">التشغيل متوقف مؤقتًا.</string>
+    <string name="quran_text_unavailable">تعذّر تحميل نص القرآن الموثّق. أعد المحاولة.</string>
 </resources>

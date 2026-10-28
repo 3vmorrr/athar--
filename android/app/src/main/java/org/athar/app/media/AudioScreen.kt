@@ -35,16 +35,27 @@ import org.athar.app.quran.AyahText
     val verseMode = selection.verseMode; val follow = selection.follow
     var selector by rememberSaveable { mutableStateOf(false) }; var surahSelector by rememberSaveable { mutableStateOf(false) }
     val selectedIsLoaded = !state.radio && state.mediaKey == selection.mediaKey
+    val showsPlayer = state.hasMedia && (expandedOnly || state.radio == radio)
     fun update(value: AudioSelection) = vm.select(value)
     var verses by remember { mutableStateOf<List<AyahText>>(emptyList()) }
     var names by remember { mutableStateOf<List<org.athar.app.quran.SurahReference>>(emptyList()) }
-    LaunchedEffect(surah) { val data = graph.quran.data(); verses = data.surah(surah); names = data.index.surahs }
+    var referenceFailed by remember { mutableStateOf(false) }
+    var referenceRetry by remember { mutableIntStateOf(0) }
+    LaunchedEffect(surah, radio, expandedOnly, referenceRetry) {
+        if (radio || expandedOnly) return@LaunchedEffect
+        verses = emptyList(); referenceFailed = false
+        try {
+            val data = graph.quran.data()
+            verses = data.surah(surah); names = data.index.surahs
+        } catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { referenceFailed = true }
+    }
     BoxWithConstraints(Modifier.fillMaxSize()) {
       val controlsHeight = maxHeight * if (radio) 0.4f else if (follow && selectedIsLoaded) 0.6f else 1f
       Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().heightIn(max = controlsHeight).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             AtharScreenIdentity(stringResource(if (radio) R.string.radio else R.string.listen), AtharIcons.Headphones)
-            if (state.hasMedia && (expandedOnly || state.radio == radio)) AtharExpandedPlayer(vm, state)
+            if (showsPlayer) AtharExpandedPlayer(vm, state)
             if (expandedOnly && !state.hasMedia) QuietEmptyState(stringResource(R.string.empty_state))
             if (expandedOnly) {
                 // This route controls the existing session, without creating a second selection/player.
@@ -68,16 +79,21 @@ import org.athar.app.quran.AyahText
                     TextButton(onClick = { update(selection.copy(ayah = ayah + 1)) }, enabled = ayah < verses.size) { Text("+") }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { vm.playSelection() }, enabled = selected != null && edition != null && !state.loading) { Text(stringResource(if (selectedIsLoaded && state.playing) R.string.pause else R.string.play)) }
+                    Button(onClick = { vm.playSelection() }, enabled = selection.mediaKey != null && verses.isNotEmpty() && !state.loading) { Text(stringResource(if (selectedIsLoaded && state.playing) R.string.pause else R.string.play)) }
                     OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) }
+                }
+                if (referenceFailed) MessagePanel(stringResource(R.string.quran_text_unavailable), true) {
+                    TextButton(onClick = { referenceRetry++ }) { Text(stringResource(R.string.retry)) }
                 }
                 Row { Checkbox(follow, { vm.select(selection.copy(follow = it)) }); Text(stringResource(R.string.follow_ayah), Modifier.padding(top = 12.dp)) }
             }
             if (state.loading || state.buffer) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (state.error) MessagePanel(stringResource(R.string.audio_failed), true)
+            if (state.error && !showsPlayer) MessagePanel(stringResource(R.string.audio_failed), true) {
+                TextButton(onClick = vm::retry, enabled = !state.loading) { Text(stringResource(R.string.retry)) }
+            } else if (state.interrupted && !showsPlayer) MessagePanel(stringResource(R.string.audio_interrupted), false)
             if (!radio && selectedIsLoaded && state.recording != null && state.timings.isEmpty() && !state.loading) Text(stringResource(R.string.no_timing), style = MaterialTheme.typography.bodySmall)
         }
-        if (radio && !expandedOnly) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
+        if (radio && !expandedOnly) Box(Modifier.weight(1f)) { RadioCatalog(graph, vm, state) }
         else if (!expandedOnly && follow && selectedIsLoaded) Box(Modifier.weight(1f)) { FollowAlong(vm, state, verses) }
       }
     }

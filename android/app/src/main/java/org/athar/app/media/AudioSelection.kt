@@ -21,7 +21,10 @@ data class AudioSelection(
         return next.copy(edition = available.firstOrNull { it.text("id") == edition?.text("id") } ?: available.firstOrNull())
     }
     fun supported(value: JsonElement? = reader): List<JsonElement> = value?.array("editions")?.filter { edition ->
-        edition.array("surahs").any { it.asInt == surah }
-    }.orEmpty()
-    val mediaKey: String? get() = reader?.let { r -> edition?.let { e -> "${r.text("id")}:${e.text("id")}:$surah:${if (verseMode) ayah else 0}" } }
+        (edition.text("id").toIntOrNull() ?: 0) in 1..1_000_000 &&
+            edition.array("surahs").any { runCatching { it.asInt }.getOrNull() == surah }
+    }?.distinctBy { it.text("id").toIntOrNull() }.orEmpty()
+    val mediaKey: String? get() = reader?.let { r -> edition?.let { e ->
+        runCatching { QuranAudioSource(r.text("id").toInt(), e.text("id").toInt(), surah, ayah.takeIf { verseMode }).mediaKey }.getOrNull()
+    } }
 }

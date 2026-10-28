@@ -2133,7 +2133,7 @@
       "external_blockers": null,
       "remaining_acceptance": "Actual preference restart/process restore, large-font/landscape/RTL/accessibility journeys.",
       "acceptance_evidence": [],
-      "reconciled": "SettingsStore is identical on both branches: DataStore retains18–48 font preference and canonical QuranFont. Preserve existing reading layout and no sacred-text animation."
+      "reconciled": "SettingsStore is identical on both branches: DataStore retains18Ã¢â‚¬â€œ48 font preference and canonical QuranFont. Preserve existing reading layout and no sacred-text animation."
     },
     {
       "id": "03.6",
@@ -2438,7 +2438,7 @@
       "name": "Audio background and lockscreen",
       "work_package": "Work package 4: Recitation/radio",
       "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
-      "review_state": "OWNERSHIP INCREMENT TESTED / METADATA AND DEVICE GATES OPEN",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2484,23 +2484,24 @@
       "tests_required": "Service/controller/lifecycle/source identity tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Related metadata hydration, focus/network recovery; batch APK/test-APK/lint; actual background/notification/lockscreen/noisy/focus/account-switch/device journeys.",
+      "remaining_acceptance": "Actual authorized background/lockscreen/focus/headphone/network/account-switch/retained-session/clip/radio journeys; Arabic/English accessibility and live provider response.",
       "acceptance_evidence": [
-        "Immediate main compile +17 ownership/session JVM cases PASS; then5 wired media-command ownership cases PASS. docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md"
+        "31 combined PHP media fixture assertions PASS;356 paired resources PASS; no device transports, live public catalog read unavailable (URLError). See docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md.",
+        "29 targeted JVM cases/debug APK/test APK/lint PASS in4m30s. Tasks remain PARTIAL."
       ],
       "parallel_implementation_commits": [
         "c61e58c635e855084186380a332d7849f40475dc",
         "435d8a1c8f7965f54ffc041e0aa7e89a7a49ba73",
         "9747b58a35e1539d8943476f841dcca017103e52"
       ],
-      "reconciled": "Adopted immutable session activity; retained current premium mini/expanded player. Fixed direct account-switch queue retention, stale application controller hints and live command/media authorization; trusted system controls retained but cannot replace sources. Current method signatures verified in installed Media3 1.8 AAR."
+      "reconciled": "Retained actual queue metadata and clip origin hydrate the current premium player without restarting the service; account/controller ownership repair committed at8d20a958cfcc4f8f591a0dec90cc74aa1383d928."
     },
     {
       "id": "04.2",
       "name": "Audio focus and interruption",
       "work_package": "Work package 4: Recitation/radio",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2546,15 +2547,19 @@
       "tests_required": "Focus/interruption route-change controller tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Handle focus loss, call/interruption, headphones and resume without surprise autoplay. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual authorized background/lockscreen/focus/headphone/network/account-switch/retained-session/clip/radio journeys; Arabic/English accessibility and live provider response.",
+      "acceptance_evidence": [
+        "31 combined PHP media fixture assertions PASS;356 paired resources PASS; no device transports, live public catalog read unavailable (URLError). See docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md.",
+        "29 targeted JVM cases/debug APK/test APK/lint PASS in4m30s. Tasks remain PARTIAL."
+      ],
+      "reconciled": "Actual Media3 suppression state is visible; existing focus/noisy handling retained. No call/headphone/system acceptance inferred."
     },
     {
       "id": "04.3",
       "name": "Audio network and recovery",
       "work_package": "Work package 4: Recitation/radio",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2600,15 +2605,19 @@
       "tests_required": "Offline/source-race/buffering/error recovery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Handle buffering/network loss/retry/cancel and source changes without stale requests. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual authorized background/lockscreen/focus/headphone/network/account-switch/retained-session/clip/radio journeys; Arabic/English accessibility and live provider response.",
+      "acceptance_evidence": [
+        "31 combined PHP media fixture assertions PASS;356 paired resources PASS; no device transports, live public catalog read unavailable (URLError). See docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md.",
+        "29 targeted JVM cases/debug APK/test APK/lint PASS in4m30s. Tasks remain PARTIAL."
+      ],
+      "reconciled": "Explicit requested-source retry, canonical cold-session resolution and account/generation fences. Selection changes invalidate noncooperative stale replies; whole-surah audio does not wait for optional timing."
     },
     {
       "id": "04.4",
       "name": "Follow-along timing and ayah clipping",
       "work_package": "Work package 4: Recitation/radio",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2654,15 +2663,19 @@
       "tests_required": "Timing/source matching/endpoints/seek races and real provider cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Close physical timing/seek/clip/reciter-switch accuracy; unsupported timing remains explicit. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual authorized background/lockscreen/focus/headphone/network/account-switch/retained-session/clip/radio journeys; Arabic/English accessibility and live provider response.",
+      "acceptance_evidence": [
+        "31 combined PHP media fixture assertions PASS;356 paired resources PASS; no device transports, live public catalog read unavailable (URLError). See docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md.",
+        "29 targeted JVM cases/debug APK/test APK/lint PASS in4m30s. Tasks remain PARTIAL."
+      ],
+      "reconciled": "Adopted isolated source timing validator and public clip origin; reject duplicate/overlapping/out-of-surah/oversized intervals, preserve gaps without invented highlights and reduced-motion behavior."
     },
     {
       "id": "04.5",
       "name": "Radio catalog and playback acceptance",
       "work_package": "Work package 4: Recitation/radio",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2708,8 +2721,12 @@
       "tests_required": "Catalog/source disappearance/radio-switch/offline tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete searchable radio selection, source/error identity and premium audio selector reconciliation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual authorized background/lockscreen/focus/headphone/network/account-switch/retained-session/clip/radio journeys; Arabic/English accessibility and live provider response.",
+      "acceptance_evidence": [
+        "31 combined PHP media fixture assertions PASS;356 paired resources PASS; no device transports, live public catalog read unavailable (URLError). See docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md.",
+        "29 targeted JVM cases/debug APK/test APK/lint PASS in4m30s. Tasks remain PARTIAL."
+      ],
+      "reconciled": "Integrated source search/paging independently. Fixed backend ignoring q: filter before pagination; reject malformed inputs and ambiguous provider identifiers while retaining safe URL boundaries."
     },
     {
       "id": "05.1",
@@ -7042,7 +7059,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "HTTP session/CSRF/fixation/denial/logout tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7071,7 +7088,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Routes/RTL/LTR/keyboard/focus/phone/tablet shell tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7236,7 +7253,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Every role/action, bypass, owner/self-lockout and CSRF matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Enforce action-level roles/owner boundaries server-side and reflect permitted navigation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7275,7 +7292,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Validation/owner/self protection/audit/session revoke tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7440,7 +7457,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "RBAC/paging/redaction/filter/no private payload tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7675,7 +7692,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "URL/rights/publish/delete/native catalog/RBAC tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Manage metadata/source/rights/direct-download links and publication without forcing book uploads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7714,7 +7731,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Source/repeat/validation/RBAC/native category tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Manage approved source/category/repeat/NULL count content with attribution and versioning. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7754,7 +7771,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Parent hiding/CAS/role/audit/paging/native pending states tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7924,7 +7941,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Encryption/no echo/RBAC/CSRF/fake SMTP/invalid config tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7963,7 +7980,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -7993,7 +8010,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Draft/escaping/payload/role/confirmation/no implicit send tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Build localized draft/preview/test-recipient workflow with explicit final-send confirmation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8023,7 +8040,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Audience opt-in/unfollow/withdrawal/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8093,7 +8110,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Fake provider races/retry/cancel/quotas/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8123,7 +8140,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "RBAC/redaction/paging/reconciliation/retry counts tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Expose permitted counts/status/reasons and audit without sensitive recipient payloads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8166,7 +8183,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "HTML/plaintext/escaping/OTP no-account-before-verification/fake SMTP tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8229,7 +8246,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Tamper/expiry/idempotency/withdrawal/no auth bypass tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8299,7 +8316,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Fake SMTP priority/duplicate/concurrency/cancel/retry/limits tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -8329,7 +8346,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Role/audience/unsubscribe/preview/cancel/queue integration tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Implement localized preview/test/confirmed scheduled email or push+email campaigns with independent channel consent. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -11107,7 +11124,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Permission/UID/exported/deep-link/file-provider hostile caller tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Audit final manifest/services/receivers/providers/exported flags/grants and runtime permissions across supported APIs. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -11332,7 +11349,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Adversarial HTTP/role/ownership/upload/provider tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Verify auth/CSRF/rates/SSRF/uploads/output encoding/owner/private-data boundaries for final routes. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -12000,7 +12017,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Lock/build/license/attribution artifact checks. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Pin/review dependencies/licenses/source attribution/download/book/model rights and document actual zero-cost restrictions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -12134,7 +12151,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Archive tamper/wrong key/assets/foreign keys/count/hash/restore tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Create and restore disposable encrypted complete backup/assets to isolated schema/path; compare integrity/ownership without touching corrupt original. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -12269,7 +12286,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Full cross-stack matrix plus documented external delivery evidence. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -12314,7 +12331,7 @@
       ],
       "conflict_risk": "Shared contracts diverged; semantic review required before transfer.",
       "tests_required": "Reachable-history/candidate scan, Git integrity, artifact no-secret assertions. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
+      "device_acceptance_required": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneÃ¢â€ â€™API journey when public/native behavior changes. No real campaign send.",
       "external_blockers": null,
       "remaining_acceptance": "Scan candidate/history/config/artifacts; verify clean recoverable branch and release rollback instructions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": []
@@ -14048,7 +14065,7 @@
     "evidence": "ADB discovery on2026-10-28; serial inventory retained only in ignored local artifact."
   },
   "migration_inventory": {
-    "identical_versions": "001–019",
+    "identical_versions": "001Ã¢â‚¬â€œ019",
     "source_only": [
       "020_khatmah_revision.sql",
       "021_notification_preferences.sql",
@@ -14062,7 +14079,7 @@
       "027_lesson_provider_identity.sql",
       "028_email_delivery_attempts.sql"
     ],
-    "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained."
+    "decision": "No current version/name collisions. Incoming020Ã¢â‚¬â€œ026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained."
   },
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
@@ -14072,12 +14089,11 @@
   },
   "next_batch": {
     "tasks": [
-      "04.1",
-      "04.2",
-      "04.3"
+      "05.1",
+      "05.2",
+      "05.3",
+      "05.4"
     ],
-    "state": "SOURCE REVIEW / OWNERSHIP GAP IDENTIFIED",
-    "source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
-    "rule": "Immediate focused ownership/security checks before stacking further audio changes."
+    "state": "SOURCE INSPECTION ONLY; PRESERVE PROTECTED COUNTERS; REVIEW DAILY CONTRACT BEFORE TRANSFER"
   }
 }

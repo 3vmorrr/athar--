@@ -71,6 +71,7 @@ fun AtharMiniPlayer(vm: AudioViewModel, expand: () -> Unit, modifier: Modifier =
                         Text(state.title.ifBlank { stringResource(R.string.listen) }, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         if (state.artist.isNotBlank()) Text(state.artist, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         if (state.error) Text(stringResource(R.string.audio_failed), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                        else if (state.interrupted) Text(stringResource(R.string.audio_interrupted), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 IconButton(onClick = vm::toggle, enabled = !state.loading && !state.error) {
@@ -138,7 +139,9 @@ fun AtharExpandedPlayer(vm: AudioViewModel, state: AudioUiState, modifier: Modif
                 }
             }
             if (state.buffer || state.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (state.error) MessagePanel(stringResource(R.string.audio_failed), true)
+            if (state.error) MessagePanel(stringResource(R.string.audio_failed), true) {
+                TextButton(onClick = vm::retry, enabled = !state.loading) { Text(stringResource(R.string.retry)) }
+            } else if (state.interrupted) MessagePanel(stringResource(R.string.audio_interrupted), false)
         }
     }
 }

@@ -3529,7 +3529,7 @@
       "policy": "Preserve source019 unchanged;local028 adds delivery attempts/dispatch boundary and explicit locale provenance. Fetch before any future migration collision."
     }
   },
-  "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
+  "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3Ã¢â‚¬â€œ6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
       "04.1",
@@ -3595,13 +3595,18 @@
     "tasks": [
       "04.1",
       "04.2",
-      "04.3"
+      "04.3",
+      "04.4",
+      "04.5"
     ],
-    "state": "SOURCE REVIEW / NOT ACCEPTED",
+    "state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
     "findings": [
-      "Retain current persistent premium mini-player state and supported controls.",
-      "Source session activity is useful; both branches need direct A-to-B queue clearing and stale-controller/request ownership guards."
+      "Retained actual queue metadata and clip origin hydrate the current premium player without restarting the service; account/controller ownership repair committed at8d20a958cfcc4f8f591a0dec90cc74aa1383d928.",
+      "Actual Media3 suppression state is visible; existing focus/noisy handling retained. No call/headphone/system acceptance inferred.",
+      "Explicit requested-source retry, canonical cold-session resolution and account/generation fences. Selection changes invalidate noncooperative stale replies; whole-surah audio does not wait for optional timing.",
+      "Adopted isolated source timing validator and public clip origin; reject duplicate/overlapping/out-of-surah/oversized intervals, preserve gaps without invented highlights and reduced-motion behavior.",
+      "Integrated source search/paging independently. Fixed backend ignoring q: filter before pagination; reject malformed inputs and ambiguous provider identifiers while retaining safe URL boundaries."
     ]
   },
   "previous_visual_review": {
