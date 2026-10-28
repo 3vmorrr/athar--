@@ -1678,7 +1678,7 @@
         "public/assets/js/admin-auth.js"
       ],
       "automated_tests": "HTTP session/CSRF/fixation/denial/logout tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.5963,
       "acceptance_evidence": "docs/testing/ADMIN_AUTHENTICATION.md; 49 HTTP assertions, 20,000 isolated backend assertions, PHP/Python/JS syntax, actual Arabic/English browser login/logout/password visibility and clean screenshots. No Android/schema changes. Shell/matrix/recovery acceptance remains17.2/17.3/17.6."
@@ -1696,7 +1696,7 @@
         "admin/ (new)"
       ],
       "automated_tests": "Routes/RTL/LTR/keyboard/focus/phone/tablet shell tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.5963,
       "acceptance_evidence": "docs/testing/ADMIN_SHELL.md:60 HTTP;20,000 backend; actual desktop1440/1024,tablet768,phone360/320 AR/EN light/dark/keyboard/modal/breakpoint/panel persistence; syntax/security review. No migration or native change."
@@ -1715,7 +1715,7 @@
         "backend/src/"
       ],
       "automated_tests": "Every role/action, bypass, owner/self-lockout and CSRF matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Enforce action-level roles/owner boundaries server-side and reflect permitted navigation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.5963,
       "acceptance_evidence": "docs/testing/ADMIN_AUTHORIZATION.md:683 authorization/20,683 full backend;60 action/target HTTP +60 auth/shell; actual row-lock promotion race, rollback audit, role revocation, browser role-aware controls. No migration/native change."
@@ -1734,7 +1734,7 @@
         "backend/src/Identity/"
       ],
       "automated_tests": "Validation/owner/self protection/audit/session revoke tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.5963,
       "acceptance_evidence": "docs/testing/ADMIN_USERS.md:62 user checks +120 prior HTTP,20,683 backend; actual access/refresh/public/Admin revocation, retained progress, fixture-only deletion/dependent cleanup,50/10 search paging and AR/EN desktop/phone feedback. No migration/native change; privacy analytics17.5 stays open."
@@ -1753,7 +1753,7 @@
         "backend/src/"
       ],
       "automated_tests": "RBAC/paging/redaction/filter/no private payload tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.5963,
       "acceptance_evidence": "docs/testing/ADMIN_PRIVACY.md:218 HTTP including private-data canaries/unchanged self export/205 journal entries100/100/5;20,691 backend; actual bilingual phone/desktop operational UI and masked detail. No migration/native change."
@@ -1863,7 +1863,7 @@
         "backend/src/Catalog/"
       ],
       "automated_tests": "URL/rights/publish/delete/native catalog/RBAC tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage metadata/source/rights/direct-download links and publication without forcing book uploads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4969,
       "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
@@ -1882,7 +1882,7 @@
         "backend/src/Catalog/"
       ],
       "automated_tests": "Source/repeat/validation/RBAC/native category tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage approved source/category/repeat/NULL count content with attribution and versioning. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4969,
       "acceptance": "Code integrated; backend/HTTP/browser gates PASS. Required native cross-system acceptance QUEUED; Samsung currently disconnected. See ADMIN_CONTENT_SERVICES_BATCH.md and DEVICE_ACCEPTANCE_QUEUE.json."
@@ -1901,7 +1901,7 @@
         "backend/src/Learning/"
       ],
       "automated_tests": "Parent hiding/CAS/role/audit/paging/native pending states tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4969,
       "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
@@ -1921,7 +1921,7 @@
         "backend/src/"
       ],
       "automated_tests": "Encryption/no echo/RBAC/CSRF/fake SMTP/invalid config tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4969,
       "acceptance": "Applicable local Admin/API/security/browser gates PASS; docs/testing/ADMIN_CONTENT_SERVICES_BATCH.md. Closure effective upon reviewed normal push and exact remote SHA verification."
@@ -1940,7 +1940,7 @@
         "backend/src/NightPrayer/"
       ],
       "automated_tests": "Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4969,
       "acceptance": "Code integrated; backend/HTTP/browser gates PASS. Required native cross-system acceptance QUEUED; Samsung currently disconnected. See ADMIN_CONTENT_SERVICES_BATCH.md and DEVICE_ACCEPTANCE_QUEUE.json."
@@ -1959,7 +1959,7 @@
         "backend/src/Engagement/ (new)"
       ],
       "automated_tests": "Draft/escaping/payload/role/confirmation/no implicit send tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Build localized draft/preview/test-recipient workflow with explicit final-send confirmation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
       "acceptance": "Integrated source campaign engine/Admin with repairs and applicable local gates. Missing canonical WP15 campaign dispatcher and later explicit follows/subscriptions remain dependencies. See ADMIN_CAMPAIGNS.md; no provider/device acceptance claimed."
@@ -1978,7 +1978,7 @@
         "admin/ (new)"
       ],
       "automated_tests": "Audience opt-in/unfollow/withdrawal/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
       "acceptance": "Integrated source campaign engine/Admin with repairs and applicable local gates. Missing canonical WP15 campaign dispatcher and later explicit follows/subscriptions remain dependencies. See ADMIN_CAMPAIGNS.md; no provider/device acceptance claimed."
@@ -1998,7 +1998,7 @@
         "database/migrations/"
       ],
       "automated_tests": "Fake provider races/retry/cancel/quotas/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
       "acceptance": "Integrated source campaign engine/Admin with repairs and applicable local gates. Missing canonical WP15 campaign dispatcher and later explicit follows/subscriptions remain dependencies. See ADMIN_CAMPAIGNS.md; no provider/device acceptance claimed."
@@ -2017,7 +2017,7 @@
         "backend/src/Engagement/ (new)"
       ],
       "automated_tests": "RBAC/redaction/paging/reconciliation/retry counts tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Expose permitted counts/status/reasons and audit without sensitive recipient payloads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
       "acceptance": "Integrated source campaign engine/Admin with repairs and applicable local gates. Missing canonical WP15 campaign dispatcher and later explicit follows/subscriptions remain dependencies. See ADMIN_CAMPAIGNS.md; no provider/device acceptance claimed."
@@ -2036,7 +2036,7 @@
         "backend/src/Identity/"
       ],
       "automated_tests": "HTML/plaintext/escaping/OTP no-account-before-verification/fake SMTP tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3578,
       "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
@@ -2055,7 +2055,7 @@
         "database/migrations/"
       ],
       "automated_tests": "Tamper/expiry/idempotency/withdrawal/no auth bypass tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3578,
       "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
@@ -2075,7 +2075,7 @@
         "database/migrations/"
       ],
       "automated_tests": "Fake SMTP priority/duplicate/concurrency/cancel/retry/limits tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3578,
       "acceptance": "Applicable local backend/identity/recovery/HTTP/browser gates PASS;docs/testing/EMAIL_OUTBOX.md. Closure effective upon reviewed commit and verified normal push. No inbox/provider claim."
@@ -2094,7 +2094,7 @@
         "backend/src/Engagement/ (new)"
       ],
       "automated_tests": "Role/audience/unsubscribe/preview/cancel/queue integration tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Implement localized preview/test/confirmed scheduled email or push+email campaigns with independent channel consent. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3578,
       "acceptance": "Email queue/Owner confirmation/authorized tests/cancellation accepted locally;combined Push atomically unavailable until canonical WP15 dispatcher and acceptance. EMAIL_OUTBOX.md."
@@ -2575,7 +2575,7 @@
         "android/app/src/androidTest/"
       ],
       "automated_tests": "Permission/UID/exported/deep-link/file-provider hostile caller tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Audit final manifest/services/receivers/providers/exported flags/grants and runtime permissions across supported APIs. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },
@@ -2594,7 +2594,7 @@
         "tests/"
       ],
       "automated_tests": "Adversarial HTTP/role/ownership/upload/provider tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Verify auth/CSRF/rates/SSRF/uploads/output encoding/owner/private-data boundaries for final routes. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },
@@ -2614,7 +2614,7 @@
         "docs/legal/"
       ],
       "automated_tests": "Lock/build/license/attribution artifact checks. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Pin/review dependencies/licenses/source attribution/download/book/model rights and document actual zero-cost restrictions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },
@@ -2634,7 +2634,7 @@
         "docs/testing/"
       ],
       "automated_tests": "Archive tamper/wrong key/assets/foreign keys/count/hash/restore tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Create and restore disposable encrypted complete backup/assets to isolated schema/path; compare integrity/ownership without touching corrupt original. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },
@@ -2653,7 +2653,7 @@
         "admin/ (new)"
       ],
       "automated_tests": "Full cross-stack matrix plus documented external delivery evidence. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },
@@ -2671,7 +2671,7 @@
         "docs/deployment/"
       ],
       "automated_tests": "Reachable-history/candidate scan, Git integrity, artifact no-secret assertions. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.",
+      "physical_device": "Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.",
       "definition_of_done": "Scan candidate/history/config/artifacts; verify clean recoverable branch and release rollback instructions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.3727
     },

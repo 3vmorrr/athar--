@@ -916,7 +916,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections.
 - Files/modules: admin/auth.php; admin/Views/login.php; public/index.php; public/assets/css/admin-auth.css; public/assets/js/admin-auth.js.
 - Automated gates: HTTP session/CSRF/fixation/denial/logout tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Create separate Admin entry/session/login/logout using shared identity with CSRF/fixation/role protections. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.60 overall percentage points.
 
@@ -926,7 +926,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign.
 - Files/modules: admin/ (new).
 - Automated gates: Routes/RTL/LTR/keyboard/focus/phone/tablet shell tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Create responsive sidebar/navigation/localization/theme/loading/error shell without public-web redesign. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.60 overall percentage points.
 
@@ -936,7 +936,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Enforce action-level roles/owner boundaries server-side and reflect permitted navigation.
 - Files/modules: admin/ (new); backend/src/.
 - Automated gates: Every role/action, bypass, owner/self-lockout and CSRF matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Enforce action-level roles/owner boundaries server-side and reflect permitted navigation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.60 overall percentage points.
 
@@ -946,7 +946,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation.
 - Files/modules: admin/ (new); backend/src/Identity/.
 - Automated gates: Validation/owner/self protection/audit/session revoke tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement full user lookup/detail/edit/suspension/role/deletion safe flows and session revocation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.60 overall percentage points.
 
@@ -956,7 +956,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data.
 - Files/modules: admin/ (new); backend/src/.
 - Automated gates: RBAC/paging/redaction/filter/no private payload tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement paginated redacted logs/filter/detail and permitted aggregate metrics without private prayer data. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.60 overall percentage points.
 
@@ -1016,7 +1016,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Manage metadata/source/rights/direct-download links and publication without forcing book uploads.
 - Files/modules: admin/ (new); backend/src/Catalog/.
 - Automated gates: URL/rights/publish/delete/native catalog/RBAC tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Manage metadata/source/rights/direct-download links and publication without forcing book uploads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.50 overall percentage points.
 
@@ -1026,7 +1026,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Manage approved source/category/repeat/NULL count content with attribution and versioning.
 - Files/modules: admin/ (new); backend/src/Catalog/.
 - Automated gates: Source/repeat/validation/RBAC/native category tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Manage approved source/category/repeat/NULL count content with attribution and versioning. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.50 overall percentage points.
 
@@ -1036,7 +1036,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit.
 - Files/modules: admin/ (new); backend/src/Learning/.
 - Automated gates: Parent hiding/CAS/role/audit/paging/native pending states tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement first-party top-level/reply queues, publish/hide/delete with reason/revision and audit. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.50 overall percentage points.
 
@@ -1046,7 +1046,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls.
 - Files/modules: admin/ (new); app/mailer.php; backend/src/.
 - Automated gates: Encryption/no echo/RBAC/CSRF/fake SMTP/invalid config tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Provide Gmail App Password/encrypted provider settings, permission-safe diagnostics and test-recipient controls. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.50 overall percentage points.
 
@@ -1056,7 +1056,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions.
 - Files/modules: admin/ (new); backend/src/NightPrayer/.
 - Automated gates: Role/validation/explicit private-data exclusion tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Manage public calculation/source/text defaults only; prohibit access to private sessions/notes/exemptions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.50 overall percentage points.
 
@@ -1066,7 +1066,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Build localized draft/preview/test-recipient workflow with explicit final-send confirmation.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: Draft/escaping/payload/role/confirmation/no implicit send tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Build localized draft/preview/test-recipient workflow with explicit final-send confirmation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.45 overall percentage points.
 
@@ -1076,7 +1076,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices.
 - Files/modules: backend/src/Engagement/ (new); admin/ (new).
 - Automated gates: Audience opt-in/unfollow/withdrawal/privacy tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Resolve only approved content follows/engagement consent; exclude private worship signals and revoked devices. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.45 overall percentage points.
 
@@ -1086,7 +1086,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send.
 - Files/modules: backend/src/Engagement/ (new); bin/; database/migrations/.
 - Automated gates: Fake provider races/retry/cancel/quotas/dedup tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement scheduled batches/idempotency/retries/cancel/TTL/quiet/frequency limits with no duplicate send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.45 overall percentage points.
 
@@ -1096,7 +1096,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Expose permitted counts/status/reasons and audit without sensitive recipient payloads.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: RBAC/redaction/paging/reconciliation/retry counts tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Expose permitted counts/status/reasons and audit without sensitive recipient payloads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.45 overall percentage points.
 
@@ -1106,7 +1106,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send.
 - Files/modules: app/mailer.php; backend/src/Identity/.
 - Automated gates: HTML/plaintext/escaping/OTP no-account-before-verification/fake SMTP tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Verify existing logo/AR/EN templates/OTP/reset MIME and transport failure handling without live send. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.36 overall percentage points.
 
@@ -1116,7 +1116,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages.
 - Files/modules: backend/src/Engagement/ (new); database/migrations/.
 - Automated gates: Tamper/expiry/idempotency/withdrawal/no auth bypass tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement engagement consent/preferences/signed unsubscribe independent of transactional identity messages. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.36 overall percentage points.
 
@@ -1126,7 +1126,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations.
 - Files/modules: backend/src/Engagement/ (new); bin/; database/migrations/.
 - Automated gates: Fake SMTP priority/duplicate/concurrency/cancel/retry/limits tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement durable transactional-priority batches/retries/quotas/idempotency and safe worker operations. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.36 overall percentage points.
 
@@ -1136,7 +1136,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Implement localized preview/test/confirmed scheduled email or push+email campaigns with independent channel consent.
 - Files/modules: admin/ (new); backend/src/Engagement/ (new).
 - Automated gates: Role/audience/unsubscribe/preview/cancel/queue integration tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Implement localized preview/test/confirmed scheduled email or push+email campaigns with independent channel consent. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.36 overall percentage points.
 
@@ -1396,7 +1396,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Audit final manifest/services/receivers/providers/exported flags/grants and runtime permissions across supported APIs.
 - Files/modules: android/app/src/main/AndroidManifest.xml; android/app/src/androidTest/.
 - Automated gates: Permission/UID/exported/deep-link/file-provider hostile caller tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Audit final manifest/services/receivers/providers/exported flags/grants and runtime permissions across supported APIs. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
@@ -1406,7 +1406,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Verify auth/CSRF/rates/SSRF/uploads/output encoding/owner/private-data boundaries for final routes.
 - Files/modules: backend/; admin/ (new); tests/.
 - Automated gates: Adversarial HTTP/role/ownership/upload/provider tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Verify auth/CSRF/rates/SSRF/uploads/output encoding/owner/private-data boundaries for final routes. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
@@ -1416,7 +1416,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Pin/review dependencies/licenses/source attribution/download/book/model rights and document actual zero-cost restrictions.
 - Files/modules: android/; composer.lock; docs/security/; docs/legal/.
 - Automated gates: Lock/build/license/attribution artifact checks. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Pin/review dependencies/licenses/source attribution/download/book/model rights and document actual zero-cost restrictions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
@@ -1426,7 +1426,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Create and restore disposable encrypted complete backup/assets to isolated schema/path; compare integrity/ownership without touching corrupt original.
 - Files/modules: app/backup.php; app/backup-assets.php; tests/; docs/testing/.
 - Automated gates: Archive tamper/wrong key/assets/foreign keys/count/hash/restore tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Create and restore disposable encrypted complete backup/assets to isolated schema/path; compare integrity/ownership without touching corrupt original. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
@@ -1436,7 +1436,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures.
 - Files/modules: android/app/src/androidTest/; tests/; admin/ (new).
 - Automated gates: Full cross-stack matrix plus documented external delivery evidence. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
@@ -1446,7 +1446,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 - Exact scope: Scan candidate/history/config/artifacts; verify clean recoverable branch and release rollback instructions.
 - Files/modules: scripts/checkpoint-security.py; docs/deployment/.
 - Automated gates: Reachable-history/candidate scan, Git integrity, artifact no-secret assertions. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
-- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phoneâ†’API journey when public/native behavior changes. No real campaign send.
+- Physical-device gate: Independent Admin browser: Arabic RTL/English LTR, narrow/desktop keyboard/touch; phone→API journey when public/native behavior changes. No real campaign send.
 - Definition of Done: Scan candidate/history/config/artifacts; verify clean recoverable branch and release rollback instructions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.37 overall percentage points.
 
