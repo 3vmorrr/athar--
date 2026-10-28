@@ -83,10 +83,23 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
     Column(Modifier.fillMaxSize()) {
         if (mode == null) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.quran), style = MaterialTheme.typography.headlineMedium)
-                listOf("read" to R.string.read, "listen" to R.string.listen, "tafsir" to R.string.tafsir, "radio" to R.string.radio).forEach { (key, label) ->
-                    OutlinedButton(onClick = { mode = key }, Modifier.fillMaxWidth().heightIn(min = 64.dp)) { Text(stringResource(label)) }
+            LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                item(key = "quran-identity", contentType = "heading") {
+                    AtharScreenIdentity(stringResource(R.string.quran), AtharIcons.MenuBook, subtitle = stringResource(R.string.quran_invitation))
+                }
+                item(key = "quran-actions", contentType = "controls") {
+                    BoxWithConstraints(Modifier.fillMaxWidth()) {
+                        val columns = if (maxWidth >= 320.dp && androidx.compose.ui.platform.LocalDensity.current.fontScale < 1.3f) 2 else 1
+                        val actions = listOf("read" to R.string.read, "listen" to R.string.listen, "tafsir" to R.string.tafsir, "radio" to R.string.radio)
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            actions.chunked(columns).forEach { row -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                row.forEach { (key, label) -> AtharQuickAction(
+                                    icon = when (key) { "read" -> AtharIcons.MenuBook; "listen" -> AtharIcons.Headphones; "tafsir" -> AtharIcons.School; else -> AtharIcons.PlayArrow },
+                                    label = stringResource(label), onClick = { mode = key }, modifier = Modifier.weight(1f).testTag("quran-action-$key"), emphasized = key == "read",
+                                ) }
+                            } }
+                        }
+                    }
                 }
             }
         } else {

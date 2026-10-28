@@ -4,6 +4,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|20.1/20.2/20.3 branded consent-safe Email queue|c6a0c13e7a00e068aec51592f33d6c846a287ec0 +645d09bb6c4a1585aca336b36ed55c974150697f|Tested component commit plus previously unstaged public wiring;both normal pushes/exact remote verified;EMAIL_OUTBOX.md.26 validated;20.4 partial/20.5 real Gmail blocked. Native queue-wording reconciliation follows next UI batch.|
 |19.1–19.4 campaign foundation (partial)|f69557ece577af17358f85586494d8a0fcc57b18|Normal push/exact remote verified;local gates in ADMIN_CAMPAIGNS.md. Push/follow acceptance remains open;excluded from validated count. Adjacent view regression corrected in the following WP20 checkpoint.|
 |18.5/18.7/18.8 content and secure services|1167b847ff081f4e3546c908c6956e8d52fa98a1|Applicable gates in ADMIN_CONTENT_SERVICES_BATCH.md;normal push/exact remote verified.18.6/18.9 share code commit but remain native-acceptance pending. Strict count23/149.|
 |18.4 Admin Upcoming/Live|14d46fc7f3c17ed2ae9f55962c28f423741072bc|Normal push/exact remote verified; Admin/backend/browser evidence in ADMIN_EVENTS.md. Required physical cross-system gate remains QUEUED; task PARTIAL, excluded from strict completed count.|

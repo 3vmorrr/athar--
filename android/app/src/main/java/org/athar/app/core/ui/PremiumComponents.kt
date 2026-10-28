@@ -30,6 +30,8 @@ object AtharSpacing {
     val Xl = 20.dp
     val Xxl = 24.dp
     val Section = 28.dp
+    val Screen = 20.dp
+    val Feature = 32.dp
 }
 
 @Composable

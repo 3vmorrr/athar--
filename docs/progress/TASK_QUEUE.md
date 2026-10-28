@@ -1,3 +1,13 @@
+# Active priority: Athar Premium Android UI
+
+The user has paused unrelated backend/integration execution. The original ordered queue below is retained as history and acceptance scope, not the active execution order.
+
+Paused task: **21.19**. Active work packages and visual-task dispositions: [premium UI milestone](PREMIUM_UI_MILESTONE.json).
+
+The [Athar Premium Design System](../design/ATHAR_PREMIUM.md) supersedes obsolete visual specifications. Reuse completed functionality; do not mark superseded visuals complete or resume backend work before the user reviews the running app.
+
+---
+
 # Ordered execution queue
 
 Parallel/admin-foundation leads implementation; codex/android-ecosystem reviews every task from the exact recorded source SHA and integrates selectively in logical batches of roughly3–6 related tasks. Fast review covers correctness/contracts/schema/ownership/protected data/privacy/offline/concurrency/accessibility/RTL/premium UI and compile risks. Fix immediately; deep-test high-risk changes immediately. Reuse unchanged reviewed evidence; batch relevant expensive validation, run Work Package gates, broader milestone gates and one exhaustive final WP1–24 audit. Queue physical scenarios for shared device sessions. Commit/push/verify after stable integration batches, record exact reviewed/integrated cursors and each task status honestly. No bulk merge or source-only acceptance. WP02.8 stays deferred until available parallel batches stabilize. Continue without per-task permission.

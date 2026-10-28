@@ -2792,5 +2792,12 @@
   "phase_completion_method": "Phase2 uses fixed task weights and is90%. Phase21 now uses its estimated_contribution_pp budgets, so a small documentation task is not credited like a full screen: complete0.1879/total3.1143 is6% rounded. Other closure packages use COMPLETE task share. The immersive-hero addendum adds four explicit21.* tasks and orders later visual work Home/Quran/Night/Watch/Audio/Upcoming/Adhkar/Books/Knowledge before remaining closure, preserving functional work. These are remaining-package gates, not full-product area estimates or native hero acceptance.",
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md",
   "overall_estimate_status": "UNVERIFIED historic engineering estimate; frozen at51.38. Not an actual completed-task percentage; see PROGRESS_AUDIT_2026-10-27.json.",
-  "status_meaning": "Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified."
+  "status_meaning": "Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.",
+  "execution_override": {
+    "active": true,
+    "directive": "Premium Android UI first, then device visual review; unrelated work paused until user approval.",
+    "milestone": "PREMIUM_UI_MILESTONE.json",
+    "paused_current_task": "21.19",
+    "superseded_visual_queue": "Replaced by PUI1-PUI7; original requirements and states retained for acceptance traceability."
+  }
 }

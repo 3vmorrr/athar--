@@ -1,0 +1,11 @@
+{
+  "repository": "google/material-design-icons",
+  "revision": "10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+  "icons": {
+    "Pause": "pause",
+    "Stop": "stop",
+    "Headphones": "headphones",
+    "Repeat": "repeat",
+    "Speed": "speed"
+  }
+}

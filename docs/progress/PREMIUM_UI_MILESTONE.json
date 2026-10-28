@@ -1,0 +1,236 @@
+{
+  "updated": "2026-10-27",
+  "status": "IN_PROGRESS",
+  "base_branch": "codex/android-ecosystem",
+  "base_commit": "645d09b",
+  "implementation_branch": "codex/athar-premium-ui",
+  "checkpoint": "artifacts/premium-ui/checkpoint/pre-directive-files.zip and tracked.patch (ignored local backup); codex/premium-ui-baseline-20261027 pins committed baseline.",
+  "paused_execution": {
+    "current_task": "21.19",
+    "total_tasks": 149,
+    "open_tasks": 123,
+    "visual_tasks": 21,
+    "visual_open": 19,
+    "resume_rule": "Resume this point only after explicit user approval of the on-device premium UI. Preserve recorded integration cursors and unrelated dirty work."
+  },
+  "work_packages": [
+    {
+      "id": "PUI1",
+      "name": "Preserve checkpoint, inspect/pin skills and source research",
+      "state": "VERIFIED"
+    },
+    {
+      "id": "PUI2",
+      "name": "Global theme, surfaces, typography, navigation",
+      "state": "IMPLEMENTED"
+    },
+    {
+      "id": "PUI3",
+      "name": "Home, catalogs, book/detail identity and cover continuity",
+      "state": "IMPLEMENTED"
+    },
+    {
+      "id": "PUI4",
+      "name": "Quran tools/reading, tafsir, adhkar presentation",
+      "state": "IMPLEMENTED"
+    },
+    {
+      "id": "PUI5",
+      "name": "Persistent Media3 mini-player and expanded controls",
+      "state": "IMPLEMENTED"
+    },
+    {
+      "id": "PUI6",
+      "name": "Prayer/calendar, learning, account, dialogs/state consistency",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "id": "PUI7",
+      "name": "Build, device journeys, captures, review checkpoint",
+      "state": "IN_PROGRESS"
+    }
+  ],
+  "visual_dispositions": [
+    {
+      "task": "21.1",
+      "name": "Premium shared primitives and motion reconciliation",
+      "recorded_state": "COMPLETE",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.18",
+      "name": "Document immersive section heroes and original artwork",
+      "recorded_state": "COMPLETE",
+      "classification": "A",
+      "reason": "Old visual specification replaced by ATHAR_PREMIUM.md; historical completion preserved, no new completion credit.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.19",
+      "name": "Implement immersive hero and layered-content primitives",
+      "recorded_state": "NOT STARTED",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.2",
+      "name": "Home and navigation premium reconciliation",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.4",
+      "name": "Quran premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.8",
+      "name": "Night Prayer premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.9",
+      "name": "Watch premium reconciliation and provider hardware",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.5",
+      "name": "Audio premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.13",
+      "name": "Upcoming premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.7",
+      "name": "Adhkar premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.20",
+      "name": "Books immersive hero and editorial hierarchy",
+      "recorded_state": "NOT STARTED",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.21",
+      "name": "Knowledge immersive hero and continuation hierarchy",
+      "recorded_state": "NOT STARTED",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.3",
+      "name": "Auth and account premium reconciliation",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.6",
+      "name": "Tafsir premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.10",
+      "name": "Scholar premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.11",
+      "name": "Series premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.12",
+      "name": "Discussion premium reconciliation acceptance",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.14",
+      "name": "Screen-aware loading states",
+      "recorded_state": "PARTIAL",
+      "classification": "C",
+      "reason": "Appearance follows the new design system; existing functionality, data contracts, tests and device gates remain required.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.15",
+      "name": "Arabic English and theme acceptance matrix",
+      "recorded_state": "PARTIAL",
+      "classification": "D",
+      "reason": "Localization/theme, adaptive layouts, TalkBack and reduced-motion acceptance remains necessary under the new design.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.16",
+      "name": "Large font tablet and landscape closure",
+      "recorded_state": "PARTIAL",
+      "classification": "D",
+      "reason": "Localization/theme, adaptive layouts, TalkBack and reduced-motion acceptance remains necessary under the new design.",
+      "active_visual_queue": false
+    },
+    {
+      "task": "21.17",
+      "name": "TalkBack and reduced-motion closure",
+      "recorded_state": "PARTIAL",
+      "classification": "D",
+      "reason": "Localization/theme, adaptive layouts, TalkBack and reduced-motion acceptance remains necessary under the new design.",
+      "active_visual_queue": false
+    }
+  ],
+  "reusable_nonvisual_requirements": [
+    "Existing session/account/environment isolation",
+    "Room/protected-read/sync and retained Quran progress",
+    "Media3 service, provider URL policy, actual timing/clipping",
+    "Quran reference text/fonts and native icon license assets",
+    "Accessibility, tests, functional navigation and backend dependencies"
+  ],
+  "validation": {
+    "baseline": "assembleDebug/testDebugUnitTest/assembleDebugAndroidTest/lintDebug passed before edits",
+    "device_detected": "Samsung SM-M105G, Android8.1/API27 ARM32; serial retained only in ignored local evidence.",
+    "new_ui": "Validation running; not accepted or complete."
+  },
+  "review_approval": "PENDING"
+}

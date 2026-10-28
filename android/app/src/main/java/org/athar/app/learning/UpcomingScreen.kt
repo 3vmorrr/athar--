@@ -46,6 +46,7 @@ import java.time.format.FormatStyle
 @Composable internal fun UpcomingContent(state:UpcomingState,detail:Boolean,refresh:()->Unit,more:()->Unit,open:(String)->Unit) {
     Box(Modifier.fillMaxSize(),contentAlignment=Alignment.TopCenter) {
         LazyColumn(Modifier.widthIn(max=800.dp).fillMaxSize().testTag("upcoming-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+            item(key="identity",contentType="heading") { AtharScreenIdentity(stringResource(R.string.upcoming_lessons), AtharIcons.CalendarMonth) }
             item(key="controls",contentType="controls") {
                 Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.End,verticalAlignment=Alignment.CenterVertically){
                     TextButton(onClick=refresh,enabled=!state.loading){Text(stringResource(R.string.upcoming_refresh))}

@@ -41,7 +41,7 @@ import org.athar.app.core.ui.*
             }
             if (invalid) Text(stringResource(R.string.invalid_input), color = MaterialTheme.colorScheme.error)
         }
-        if (book == null) Box(Modifier.padding(20.dp)) { Text(stringResource(R.string.choose_tafsir)) }
+        if (book == null) Box(Modifier.padding(20.dp)) { AtharScreenIdentity(stringResource(R.string.tafsir), AtharIcons.MenuBook, subtitle = stringResource(R.string.choose_tafsir)) }
         else DataScreen(graph, "quran/tafsir", mapOf("surah" to "${reference.first}", "ayah" to "${reference.second}", "book" to book!!.text("id"))) { data, _ ->
             val uri = LocalUriHandler.current
             LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {

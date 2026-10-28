@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = {
+    'Pause': 'pause', 'Stop': 'stop', 'Headphones': 'headphones', 'Repeat': 'repeat', 'Speed': 'speed',
     'Share': 'share', 'PlayArrow': 'play_arrow', 'CheckCircle': 'check_circle', 'Fullscreen': 'fullscreen', 'Close': 'close', 'ChatBubble': 'chat_bubble', 'ExpandMore': 'expand_more',
     'Home': 'home', 'MenuBook': 'menu_book', 'School': 'school', 'Spa': 'spa',
     'Person': 'person', 'ArrowBack': 'arrow_back', 'ArrowForward': 'arrow_forward',

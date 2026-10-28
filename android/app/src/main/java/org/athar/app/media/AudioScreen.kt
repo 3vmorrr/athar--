@@ -26,9 +26,8 @@ import org.athar.app.R
 import org.athar.app.core.ui.*
 import org.athar.app.quran.AyahText
 
-@Composable fun AudioScreen(graph: AppGraph, radio: Boolean = false) {
-    val app = LocalContext.current.applicationContext as android.app.Application
-    val vm: AudioViewModel = viewModel(key = "audio:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = AudioViewModel(graph, app) as T })
+@Composable fun AudioScreen(graph: AppGraph, radio: Boolean = false, expandedOnly: Boolean = false) {
+    val vm = audioViewModel(graph)
     val state by vm.state.collectAsStateWithLifecycle()
     val selection by vm.selection.collectAsStateWithLifecycle()
     val surah = selection.surah; val ayah = selection.ayah
@@ -44,8 +43,12 @@ import org.athar.app.quran.AyahText
       val controlsHeight = maxHeight * if (radio) 0.4f else if (follow && selectedIsLoaded) 0.6f else 1f
       Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().heightIn(max = controlsHeight).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(if (radio) R.string.radio else R.string.listen), style = MaterialTheme.typography.headlineSmall)
-            if (radio) {
+            AtharScreenIdentity(stringResource(if (radio) R.string.radio else R.string.listen), AtharIcons.Headphones)
+            if (state.hasMedia && (expandedOnly || state.radio == radio)) AtharExpandedPlayer(vm, state)
+            if (expandedOnly && !state.hasMedia) QuietEmptyState(stringResource(R.string.empty_state))
+            if (expandedOnly) {
+                // This route controls the existing session, without creating a second selection/player.
+            } else if (radio) {
                 if (state.radio) Text(state.recording?.text("name").orEmpty(), style = MaterialTheme.typography.titleMedium)
             } else {
                 OutlinedButton(onClick = { surahSelector = true }, modifier = Modifier.testTag("audio-surah")) { Text(names.getOrNull(surah - 1)?.name ?: stringResource(R.string.surah)) }
@@ -70,13 +73,12 @@ import org.athar.app.quran.AyahText
                 }
                 Row { Checkbox(follow, { vm.select(selection.copy(follow = it)) }); Text(stringResource(R.string.follow_ayah), Modifier.padding(top = 12.dp)) }
             }
-            if (radio && state.radio && state.recording != null) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = vm::toggle) { Text(stringResource(if (state.playing) R.string.pause else R.string.play)) }; OutlinedButton(onClick = vm::stop) { Text(stringResource(R.string.stop)) } }
             if (state.loading || state.buffer) LinearProgressIndicator(Modifier.fillMaxWidth())
             if (state.error) MessagePanel(stringResource(R.string.audio_failed), true)
             if (!radio && selectedIsLoaded && state.recording != null && state.timings.isEmpty() && !state.loading) Text(stringResource(R.string.no_timing), style = MaterialTheme.typography.bodySmall)
         }
-        if (radio) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
-        else if (follow && selectedIsLoaded) Box(Modifier.weight(1f)) { FollowAlong(vm, state, verses) }
+        if (radio && !expandedOnly) Box(Modifier.weight(1f)) { DataScreen(graph, "quran/radios", mapOf("per_page" to "50")) { data, _ -> LazyColumn(contentPadding = PaddingValues(16.dp)) { items(data.array("items"), key = { it.text("id") }, contentType = { "station" }) { station -> TextButton(onClick = { vm.radio(station) }, Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(station.text("name")) } } } } }
+        else if (!expandedOnly && follow && selectedIsLoaded) Box(Modifier.weight(1f)) { FollowAlong(vm, state, verses) }
       }
     }
     if (selector) ReaderDialog(graph, surah, { selector = false }) { reader -> update(selection.withReader(reader)); selector = false }
@@ -84,6 +86,7 @@ import org.athar.app.quran.AyahText
 }
 
 @Composable private fun FollowAlong(vm: AudioViewModel, state: AudioUiState, verses: List<AyahText>) {
+    val reduced = reducedMotion()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var current by remember { mutableIntStateOf(0) }
     LaunchedEffect(vm, state.timings, lifecycle) {
@@ -92,7 +95,10 @@ import org.athar.app.quran.AyahText
         }
     }
     val scroll = androidx.compose.foundation.lazy.rememberLazyListState()
-    LaunchedEffect(current) { if (current > 0) scroll.animateScrollToItem((current - 1).coerceIn(0, (verses.size - 1).coerceAtLeast(0))) }
+    LaunchedEffect(current, reduced) { if (current > 0) {
+        val target = (current - 1).coerceIn(0, (verses.size - 1).coerceAtLeast(0))
+        if (reduced) scroll.scrollToItem(target) else scroll.animateScrollToItem(target)
+    } }
     LazyColumn(state = scroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { items(verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { verse -> Surface(color = if (verse.position.ayah == current) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) { Text(verse.text, Modifier.fillMaxWidth().padding(12.dp), fontFamily = QuranFont, style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 50.sp)) } } }
 }
 

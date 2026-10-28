@@ -1,5 +1,7 @@
 # Athar design system
 
+> 27 October priority override: the approved Athar Premium Android UI milestone is active. Unrelated development is paused at task21.19 pending on-device visual review. Use the new premium specification and project-local athar-premium-compose-design skill; earlier visual directions below are historical. Functional requirements and evidence remain valid. See [Athar Premium](ATHAR_PREMIUM.md) and [source research](PREMIUM_SOURCE_RESEARCH.md).
+
 ## Additive immersive direction — task21.18
 
 The [Immersive Section Hero](IMMERSIVE_SECTION_HERO.md), [section language](SECTION_VISUAL_LANGUAGE.md), [hero motion/scroll](HERO_MOTION_AND_SCROLL_BEHAVIOR.md), [artwork specification](ARTWORK_LIBRARY.md) and [integration plan](HERO_IMPLEMENTATION_PLAN.md) extend the accepted system. They do not replace the logo/fonts/tokens or newer functional/ownership/protected-data logic. These are specifications; native implementation and physical acceptance remain21.19 and each screen task. Default Arabic RTL/Light and immediate private-auth gating are unchanged.

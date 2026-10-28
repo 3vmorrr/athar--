@@ -46,7 +46,7 @@ import java.time.LocalDate
     }
     when(tool) {
         "export" -> Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.export_data), style = MaterialTheme.typography.headlineSmall)
+            AtharScreenIdentity(stringResource(R.string.export_data), AtharIcons.Lock)
             Text(stringResource(R.string.export_explanation))
             Button(onClick = { exporter.launch("athar-data-${LocalDate.now()}.json") }, enabled = !busy) { Text(stringResource(R.string.export_data)) }
             if (saved) MessagePanel(stringResource(R.string.saved))
@@ -60,7 +60,7 @@ import java.time.LocalDate
             var completed by remember(data) { mutableStateOf(data.text("completed_pages").ifBlank { "0" }) }
             var status by remember(data) { mutableStateOf(data.text("status").ifBlank { "active" }) }
             LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                item { Text(stringResource(R.string.khatmah), style = MaterialTheme.typography.headlineSmall) }
+                item(key = "identity", contentType = "heading") { AtharScreenIdentity(stringResource(R.string.khatmah), AtharIcons.MenuBook) }
                 item { DateField(target, { target = it }, stringResource(R.string.target_date)) }
                 item { OutlinedTextField(completed, { completed = it.filter(Char::isDigit).take(3) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.completed_pages)) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }
                 item { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("active" to R.string.active, "paused" to R.string.paused, "finished" to R.string.finished).forEach { (key,label) -> FilterChip(status == key, { status = key }, label = { Text(stringResource(label)) }) } } }
@@ -80,7 +80,8 @@ import java.time.LocalDate
                 if(!AccountPayloads.valid(tool,data)){AccountDataFailure(reload);return@DataScreen}
                 val rows = data.asJsonArray.toList()
                 LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state)) }
+                    item(key = "identity", contentType = "heading") { AtharScreenIdentity(stringResource(if (tool == "bookmarks") R.string.bookmarks else R.string.favorites), if (tool == "bookmarks") AtharIcons.Bookmark else AtharIcons.Favorite) }
+                    if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
                     items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
                         Column {
                             if (tool == "bookmarks") Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)

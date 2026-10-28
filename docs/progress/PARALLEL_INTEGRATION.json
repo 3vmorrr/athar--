@@ -3589,5 +3589,23 @@
     "state": "INTEGRATED / LOCAL GATES PASSED; COMBINED PUSH AND REAL GMAIL ACCEPTANCE OPEN",
     "acceptance": "docs/testing/EMAIL_OUTBOX.md;193 combined backend;final35 focused;42 HTTP/worker+32 service+15 browser;219 Admin privacy/auth. Actual owned worker process kills;no SMTP/provider receipt.",
     "integration_commit": "Receipt follows next checkpoint."
+  },
+  "active_review": {
+    "tasks": [
+      "21.19",
+      "21.2"
+    ],
+    "classification": "KEEP WITH FIXES",
+    "baseline": "645d09bb6c4a1585aca336b36ed55c974150697f",
+    "source_range": "73537f2a..797d2b5b",
+    "secondary_source": "4c3ca400 adaptive immersive primitive/test correction adopted early; no cursor leap over intervening code",
+    "findings": [
+      "Preserve shared21.1 protected ownership/motion contracts; only presentation files match source base.",
+      "Use later adaptive hero policy for large fonts/stacked actions instead of redoing earlier primitive fixes.",
+      "Fix landscape/large-text bottom navigation clipping and unknown activity values; no fabricated continuation.",
+      "Align20.1 native/web mail message with queued delivery; provider-accepted wording is no longer accurate.",
+      "Samsung reconnected:queue a shared native proof session;no uninstall/data clearing."
+    ],
+    "state": "IN PROGRESS / NOT COUNTED COMPLETE"
   }
 }

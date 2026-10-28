@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,7 @@ import org.athar.app.core.ui.*
         LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
             item(key="series-summary",contentType="summary") {
             Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
-            Text(series.text("title"),style=MaterialTheme.typography.headlineSmall)
+            AtharScreenIdentity(series.text("title"), AtharIcons.School, Modifier.testTag("series-identity"))
             MarkToggle("series-$id",series.text("is_favorite")=="true",true,snackbar){saved->graph.session.request(if(saved)"PUT" else "DELETE","me/favorites",mapOf("target_type" to "series","target_id" to id),expectedUser=owner);graph.content.invalidate("me/favorites",owner)}
             if(series.text("scholar_id").toIntOrNull()!=null)TextButton(onClick={open("scholars/${series.text("scholar_id")}")}){Text(series.text("scholar_name"))}
             val count=series.text("lesson_count").toIntOrNull()?:0;val complete=series.text("completed_count").toIntOrNull()?:0

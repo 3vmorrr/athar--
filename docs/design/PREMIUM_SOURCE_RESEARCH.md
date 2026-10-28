@@ -8,7 +8,7 @@ These are inspected source snapshots, not screenshot imitation. Downloads live p
 | [Compose samples / Jetcaster](https://github.com/android/compose-samples/tree/25631e8f544a9a1e3f01e296eaf1b4c28428196c/Jetcaster) | `25631e8f544a9a1e3f01e296eaf1b4c28428196c` | Apache-2.0 |
 | [Wonderous](https://github.com/gskinnerTeam/flutter-wonderous-app) | `747b945a7e5239356bf2664261aa2f3b020b8898` | MIT; artwork has separate rights, not imported |
 | [Liquid Glass Widgets](https://github.com/sdegenaar/liquid_glass_widgets) | `6478c02ec6540cda296ba9c441e33826d65cdcc1` | MIT |
-| [Flutter Animations Gallery](https://github.com/bizz84/flutter_animations_gallery) | `c841df92a68e2d1beeb82b3c70bf31b58eaf7bda` | Check upstream license before any reuse; no code/assets copied |
+| [Flutter Animations Gallery](https://github.com/bizz84/flutter_animations_gallery) | `c841df92a68e2d1beeb82b3c70bf31b58eaf7bda` | MIT (`LICENSE.md` inspected); no code/assets copied |
 
 ## Findings and source mapping
 

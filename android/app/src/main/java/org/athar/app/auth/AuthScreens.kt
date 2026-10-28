@@ -39,7 +39,7 @@ import org.athar.app.core.ui.*
     Box(Modifier.fillMaxSize().safeDrawingPadding().imePadding(), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 480.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Brand(Modifier.align(Alignment.CenterHorizontally))
-            Text(stringResource(when (mode) { "register" -> R.string.create_account; "forgot" -> R.string.recover_password; "reset" -> R.string.reset_password; else -> R.string.welcome_back }), style = MaterialTheme.typography.headlineMedium)
+            AtharScreenIdentity(stringResource(when (mode) { "register" -> R.string.create_account; "forgot" -> R.string.recover_password; "reset" -> R.string.reset_password; else -> R.string.welcome_back }), AtharIcons.Lock)
             Text(stringResource(R.string.auth_description), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Feedback(state)
             if (mode == "register") {
@@ -71,7 +71,7 @@ import org.athar.app.core.ui.*
     Box(Modifier.fillMaxSize().safeDrawingPadding().imePadding(), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 480.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Brand(Modifier.align(Alignment.CenterHorizontally))
-            Text(stringResource(R.string.verify_title), style = MaterialTheme.typography.headlineMedium)
+            AtharScreenIdentity(stringResource(R.string.verify_title), AtharIcons.Lock)
             Text(stringResource(R.string.verify_body, pending.user.email))
             if (state.message == null && state.error == null && pending.deliveryStatus != null) MessagePanel(stringResource(if (pending.deliveryStatus == "accepted") R.string.mail_accepted else R.string.mail_unavailable), pending.deliveryStatus != "accepted")
             Feedback(state)

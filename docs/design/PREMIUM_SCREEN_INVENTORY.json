@@ -1,0 +1,303 @@
+{
+  "scope": "33 user-visible screen/mode entries: 32 existing plus expanded player. Dialogs are state variants, not inflated into additional screens.",
+  "global_design_system": "AtharTheme / AtharIcons / AtharSpacing / AtharMotion; all entries use it. Direct presentation changes are distinguished from retained functional layouts.",
+  "entries": [
+    {
+      "id": "onboarding",
+      "name": "Onboarding",
+      "source": "android/app/src/main/java/org/athar/app/auth/OnboardingScreen.kt",
+      "route_or_mode": "four pages",
+      "presentation_change": "theme",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "login",
+      "name": "Login",
+      "source": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "route_or_mode": "login",
+      "presentation_change": "direct",
+      "capture_suffix": "login",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "register",
+      "name": "Register",
+      "source": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "route_or_mode": "register",
+      "presentation_change": "direct",
+      "capture_suffix": "register",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "forgot",
+      "name": "Recover password",
+      "source": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "route_or_mode": "forgot",
+      "presentation_change": "direct",
+      "capture_suffix": "forgot",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "reset",
+      "name": "Reset password",
+      "source": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "route_or_mode": "reset",
+      "presentation_change": "direct",
+      "capture_suffix": "reset",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "verification",
+      "name": "Verify email",
+      "source": "android/app/src/main/java/org/athar/app/auth/AuthScreens.kt",
+      "route_or_mode": "pending",
+      "presentation_change": "direct",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/HomeScreen.kt",
+      "route_or_mode": "home",
+      "presentation_change": "direct",
+      "capture_suffix": "home",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "knowledge",
+      "name": "Lessons catalog",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "knowledge:lessons",
+      "presentation_change": "direct",
+      "capture_suffix": "knowledge",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "library-series",
+      "name": "Series catalog",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "knowledge:series",
+      "presentation_change": "direct",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "library-scholars",
+      "name": "Scholar catalog",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "knowledge:scholars",
+      "presentation_change": "direct",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "books",
+      "name": "Books catalog",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "knowledge:books / catalog/books",
+      "presentation_change": "direct",
+      "capture_suffix": "books",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "book-detail",
+      "name": "Book detail/download",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "content/books/{id}",
+      "presentation_change": "direct",
+      "capture_suffix": "book-detail",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "quran-tools",
+      "name": "Quran tools",
+      "source": "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+      "route_or_mode": "quran:index",
+      "presentation_change": "direct",
+      "capture_suffix": "quran-tools",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "quran-reader",
+      "name": "Quran reader/search",
+      "source": "android/app/src/main/java/org/athar/app/quran/QuranScreen.kt",
+      "route_or_mode": "quran:read",
+      "presentation_change": "theme; specialized typography preserved",
+      "capture_suffix": "quran-reader",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "tafsir",
+      "name": "Tafsir",
+      "source": "android/app/src/main/java/org/athar/app/quran/TafsirScreen.kt",
+      "route_or_mode": "quran:tafsir",
+      "presentation_change": "direct",
+      "capture_suffix": "tafsir-selection",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "audio",
+      "name": "Quran audio",
+      "source": "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+      "route_or_mode": "quran:listen",
+      "presentation_change": "direct",
+      "capture_suffix": "audio-selection",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "radio",
+      "name": "Radio",
+      "source": "android/app/src/main/java/org/athar/app/media/AudioScreen.kt",
+      "route_or_mode": "quran:radio",
+      "presentation_change": "direct",
+      "capture_suffix": "radio-state",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "adhkar",
+      "name": "Adhkar reader/counter",
+      "source": "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt",
+      "route_or_mode": "adhkar",
+      "presentation_change": "direct",
+      "capture_suffix": "adhkar-state",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "night-history",
+      "name": "Night Prayer history and recovery dialogs",
+      "source": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+      "route_or_mode": "night-prayer:history",
+      "presentation_change": "theme; functional layout retained",
+      "capture_suffix": "night-history",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "calendar",
+      "name": "Night Prayer calendar",
+      "source": "android/app/src/main/java/org/athar/app/nightprayer/NightCalendarScreen.kt",
+      "route_or_mode": "night-prayer:calendar",
+      "presentation_change": "theme; accessible calendar retained",
+      "capture_suffix": "calendar",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "night-tools",
+      "name": "Prayer calculations and tools",
+      "source": "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
+      "route_or_mode": "night-prayer:tools",
+      "presentation_change": "theme; functional fields retained",
+      "capture_suffix": "night-tools",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "watch",
+      "name": "Lesson Watch",
+      "source": "android/app/src/main/java/org/athar/app/learning/WatchScreen.kt",
+      "route_or_mode": "content/lessons/{id}",
+      "presentation_change": "direct",
+      "capture_suffix": "watch-provider-state",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "series",
+      "name": "Series detail/playlist",
+      "source": "android/app/src/main/java/org/athar/app/learning/SeriesScreen.kt",
+      "route_or_mode": "content/series/{id}",
+      "presentation_change": "direct",
+      "capture_suffix": "series",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "scholar",
+      "name": "Scholar profile",
+      "source": "android/app/src/main/java/org/athar/app/learning/ScholarScreen.kt",
+      "route_or_mode": "content/scholars/{id}",
+      "presentation_change": "direct",
+      "capture_suffix": "scholar",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "discussion",
+      "name": "Lesson discussion",
+      "source": "android/app/src/main/java/org/athar/app/learning/DiscussionPanel.kt",
+      "route_or_mode": "Watch inline/full discussion",
+      "presentation_change": "theme; moderation/form layout retained",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "upcoming",
+      "name": "Upcoming list",
+      "source": "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+      "route_or_mode": "upcoming",
+      "presentation_change": "direct",
+      "capture_suffix": "upcoming",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "event-detail",
+      "name": "Upcoming detail",
+      "source": "android/app/src/main/java/org/athar/app/learning/UpcomingScreen.kt",
+      "route_or_mode": "upcoming/{id}",
+      "presentation_change": "direct",
+      "capture_suffix": null,
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "profile",
+      "name": "Profile/settings/security",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+      "route_or_mode": "account:profile",
+      "presentation_change": "direct",
+      "capture_suffix": "account-fixture",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "khatmah",
+      "name": "Khatmah plan",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+      "route_or_mode": "account:khatmah",
+      "presentation_change": "direct",
+      "capture_suffix": "khatmah",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "bookmarks",
+      "name": "Bookmarks",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+      "route_or_mode": "account:bookmarks",
+      "presentation_change": "direct",
+      "capture_suffix": "bookmarks",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "favorites",
+      "name": "Favorites",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+      "route_or_mode": "account:favorites",
+      "presentation_change": "direct",
+      "capture_suffix": "favorites",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "export",
+      "name": "Private export form",
+      "source": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
+      "route_or_mode": "account:export",
+      "presentation_change": "direct",
+      "capture_suffix": "export-form",
+      "visual_approval": "PENDING"
+    },
+    {
+      "id": "player",
+      "name": "Expanded persistent player",
+      "source": "android/app/src/main/java/org/athar/app/media/PremiumPlayer.kt",
+      "route_or_mode": "player",
+      "presentation_change": "new native route",
+      "capture_suffix": "expanded-player",
+      "visual_approval": "PENDING"
+    }
+  ]
+}

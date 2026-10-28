@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -49,7 +50,7 @@ fun ScholarScreen(graph: AppGraph, id: Int, open: (String) -> Unit) {
                                 contentScale = ContentScale.Crop
                             )
                         }
-                        Text(scholar.text("name"), style = MaterialTheme.typography.headlineMedium)
+                        AtharScreenIdentity(scholar.text("name"), AtharIcons.Person, Modifier.testTag("scholar-identity"))
                         ExpandableDescription(scholar.text("biography"))
                         val source = scholar.text("source_url")
                         if (runCatching { java.net.URI(source).scheme == "https" && java.net.URI(source).host != null }.getOrDefault(false)) {

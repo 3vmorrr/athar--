@@ -78,7 +78,7 @@ import org.athar.app.core.data.ProtectedRead
                     if(commentsOpen&&!fullComments)Box(Modifier.weight(1f)){DiscussionPanel(discussion,false,{fullComments=true},{commentsOpen=false})}
                     else LazyColumn(Modifier.weight(1f).testTag("watch-details"),state=detailsScroll,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
                         item(key="information",contentType="metadata") {
-                            Text(lesson.text("title"),Modifier.testTag("watch-title"),style=MaterialTheme.typography.headlineSmall)
+                            AtharScreenIdentity(lesson.text("title"), AtharIcons.School, Modifier.testTag("watch-title"))
                             val scholar=lesson.text("scholar_id").toIntOrNull()
                             if(scholar!=null)TextButton(onClick={vm.flush();open("scholars/$scholar")}){Text(lesson.text("scholar_name").ifBlank{stringResource(R.string.scholars)})}
                             lesson["series"]?.takeUnless{it.isJsonNull}?.let{series->TextButton(onClick={open("series/${series.text("id")}")}){Text(series.text("title"))}};if(lesson.text("lesson_number").isNotBlank())Text(stringResource(R.string.watch_position,lesson.text("lesson_number"),lesson["series"].text("lesson_count")),style=MaterialTheme.typography.bodySmall)

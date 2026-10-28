@@ -35,7 +35,21 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.snap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import org.athar.app.media.LocalAtharAudio
+import org.athar.app.media.AtharMiniPlayer
+import org.athar.app.media.audioViewModel
 
 internal fun JsonElement.text(key: String): String = runCatching { asJsonObject[key]?.takeUnless { it.isJsonNull }?.asString.orEmpty() }.getOrDefault("")
 internal fun JsonElement.array(key: String): List<JsonElement> = runCatching { asJsonObject[key]?.asJsonArray?.toList().orEmpty() }.getOrDefault(emptyList())
@@ -43,8 +57,33 @@ internal fun JsonElement.array(key: String): List<JsonElement> = runCatching { a
 private data class Destination(val key: String, val title: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 private val destinations = listOf(Destination("home", R.string.home, AtharIcons.Home), Destination("quran", R.string.quran, AtharIcons.MenuBook), Destination("knowledge", R.string.knowledge, AtharIcons.School), Destination("adhkar", R.string.adhkar, AtharIcons.Spa), Destination("account", R.string.account, AtharIcons.Person))
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AtharNavIcon(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    selected: Boolean,
+) {
+    val reduced = reducedMotion()
+    val scale by animateFloatAsState(
+        targetValue = if (selected && !reduced) 1.08f else 1f,
+        animationSpec = if (reduced) snap() else spring(
+            stiffness = AtharMotion.SmallSpringStiffness,
+            dampingRatio = AtharMotion.SmallSpringDamping,
+        ),
+        label = "athar-nav-icon",
+    )
+    Icon(
+        icon,
+        contentDescription = null,
+        modifier = Modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable fun MainShell(vm: AppViewModel, auth: AuthState.SignedIn) {
+    val audio = audioViewModel(vm.graph)
     var selected by rememberSaveable { mutableStateOf("home") }
     val navigation = rememberNavController()
     val currentEntry by navigation.currentBackStackEntryAsState()
@@ -58,7 +97,7 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "night-prayer" || path == "upcoming") navigation.navigate(path) { launchSingleTop = true }
+        if (path == "night-prayer" || path == "upcoming" || path == "player") navigation.navigate(path) { launchSingleTop = true }
         else if (path == "catalog-books") navigation.navigate("catalog/books") { launchSingleTop = true }
         else {
             val parts = path.split('/')
@@ -67,34 +106,120 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
         }
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val wide = maxWidth >= 840.dp
+        val navigationLayout = AtharNavigationLayoutPolicy.resolve(maxWidth.value, maxHeight.value, LocalDensity.current.fontScale)
+        val wide = navigationLayout.rail
+        CompositionLocalProvider(LocalAtharAudio provides audio) {
         Row(Modifier.fillMaxSize()) {
-            if (wide) NavigationRail(Modifier.fillMaxHeight().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)), header = { Brand(Modifier.size(76.dp)) }) {
+            if (wide) NavigationRail(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                header = { Brand(Modifier.size(76.dp)) },
+            ) {
                 Spacer(Modifier.height(24.dp))
-                destinations.forEach { destination -> NavigationRailItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title)) }) }
+                destinations.forEach { destination ->
+                    val active = selected == destination.key
+                    NavigationRailItem(
+                        modifier = Modifier.testTag("nav-${destination.key}"),
+                        selected = active,
+                        onClick = { navigateTab(destination.key) },
+                        icon = { AtharNavIcon(destination.icon, active) },
+                        label = { Text(stringResource(destination.title)) },
+                        colors = NavigationRailItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    )
+                }
             }
             Scaffold(modifier = Modifier.weight(1f), topBar = {
-                CenterAlignedTopAppBar(title = { if (topLevel) Brand(Modifier.height(44.dp).width(64.dp)) else Text(stringResource(when { route == "night-prayer" -> R.string.night_prayer; route.startsWith("upcoming") -> R.string.upcoming_lessons; currentEntry?.arguments?.getString("kind") == "books" -> R.string.books; currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars; currentEntry?.arguments?.getString("kind") == "series" -> R.string.series; else -> R.string.lessons })) }, navigationIcon = { if (!topLevel) IconButton(onClick = { navigation.popBackStack() }) { Icon(AtharIcons.ArrowBack, stringResource(R.string.back)) } })
+                CenterAlignedTopAppBar(
+                    title = {
+                        if (topLevel) {
+                            Brand(Modifier.height(44.dp).width(64.dp))
+                        } else {
+                            Text(
+                                stringResource(
+                                    when {
+                                        route == "night-prayer" -> R.string.night_prayer
+                                        route == "player" -> R.string.listen
+                                        route.startsWith("upcoming") -> R.string.upcoming_lessons
+                                        currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
+                                        currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars
+                                        currentEntry?.arguments?.getString("kind") == "series" -> R.string.series
+                                        else -> R.string.lessons
+                                    },
+                                ),
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        if (!topLevel) {
+                            IconButton(onClick = { navigation.popBackStack() }) {
+                                Icon(AtharIcons.ArrowBack, stringResource(R.string.back))
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                    ),
+                )
             }, bottomBar = {
-                if (!wide && topLevel) NavigationBar {
-                    destinations.forEach { destination -> NavigationBarItem(selected == destination.key, { navigateTab(destination.key) }, icon = { Icon(destination.icon, null) }, label = { Text(stringResource(destination.title), maxLines = 1) }) }
+                Column(Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))) {
+                if (route != "player") AtharMiniPlayer(audio, { open("player") },
+                    Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+                if (!wide && topLevel) {
+                    AtharFloatingSurface(Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
+                    NavigationBar(
+                        modifier = Modifier.heightIn(min = navigationLayout.minimumBarHeightDp.dp),
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        tonalElevation = 0.dp,
+                        windowInsets = WindowInsets(0, 0, 0, 0),
+                    ) {
+                        destinations.forEach { destination ->
+                            val active = selected == destination.key
+                            NavigationBarItem(
+                                modifier = Modifier.testTag("nav-${destination.key}"),
+                                selected = active,
+                                onClick = { navigateTab(destination.key) },
+                                icon = { AtharNavIcon(destination.icon, active) },
+                                label = { Text(stringResource(destination.title), maxLines = 2, overflow = TextOverflow.Ellipsis) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                ),
+                            )
+                        }
+                    }
+                    }
+                }
                 }
             }) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding)) {
+                Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+                    SharedTransitionLayout {
+                    CompositionLocalProvider(LocalAtharSharedScope provides this) {
                     NavHost(navigation, startDestination = "home", enterTransition = { fadeIn(tween(if (reduced) 0 else AtharMotion.Normal, easing = AtharMotion.Enter)) }, exitTransition = { fadeOut(tween(if (reduced) 0 else AtharMotion.Fast, easing = AtharMotion.Exit)) }) {
-                        composable("home") { HomeScreen(vm.graph, auth, navigateTab, open) }
+                        composable("home") { CompositionLocalProvider(LocalAtharVisibilityScope provides this) { HomeScreen(vm.graph, auth, navigateTab, open) } }
                         composable("quran") { QuranScreen(vm.graph, settings?.quranFontSize ?: 28) }
-                        composable("knowledge") { KnowledgeScreen(vm.graph, open) }
+                        composable("knowledge") { CompositionLocalProvider(LocalAtharVisibilityScope provides this) { KnowledgeScreen(vm.graph, open) } }
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }
                         composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph) }
+                        composable("player") { org.athar.app.media.AudioScreen(vm.graph, expandedOnly = true) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
-                        composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") }
-                        composable("content/{kind}/{id}", arguments = listOf(navArgument("kind") { type = NavType.StringType }, navArgument("id") { type = NavType.IntType })) { entry -> CatalogDetail(vm.graph, "${entry.arguments?.getString("kind")}/${entry.arguments?.getInt("id")}", open) }
+                        composable("catalog/{kind}", arguments = listOf(navArgument("kind") { type = NavType.StringType })) { entry -> CompositionLocalProvider(LocalAtharVisibilityScope provides this) { KnowledgeScreen(vm.graph, open, entry.arguments?.getString("kind")?.takeIf { it in listOf("books","lessons","series","scholars") } ?: "lessons") } }
+                        composable("content/{kind}/{id}", arguments = listOf(navArgument("kind") { type = NavType.StringType }, navArgument("id") { type = NavType.IntType })) { entry -> CompositionLocalProvider(LocalAtharVisibilityScope provides this) { CatalogDetail(vm.graph, "${entry.arguments?.getString("kind")}/${entry.arguments?.getInt("id")}", open) } }
+                    }
+                    }
                     }
                 }
             }
+        }
         }
     }
 }
@@ -115,17 +240,22 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     var query by rememberSaveable { mutableStateOf("") }
     var page by rememberSaveable { mutableIntStateOf(1) }
     Column(Modifier.fillMaxSize()) {
+        if (androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp > 520 && LocalDensity.current.fontScale < 1.3f) {
+            AtharScreenIdentity(stringResource(if (type == "books") R.string.books else R.string.knowledge),
+                if (type == "books") AtharIcons.MenuBook else AtharIcons.School,
+                Modifier.padding(horizontal = 20.dp, vertical = 16.dp), stringResource(R.string.library_invitation))
+        }
         TextButton(onClick={open("upcoming")},modifier=Modifier.padding(horizontal=16.dp)){Icon(AtharIcons.CalendarMonth,null);Spacer(Modifier.width(8.dp));Text(stringResource(R.string.upcoming_lessons))}
-        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) { tabs.forEach { tab -> FilterChip(type == tab.first, { type = tab.first; page = 1; query = ""; input = "" }, label = { Text(stringResource(tab.second)) }) } }
+        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) { tabs.forEach { tab -> FilterChip(type == tab.first, { type = tab.first; page = 1; query = ""; input = "" }, modifier = Modifier.testTag("catalog-category-${tab.first}"), label = { Text(stringResource(tab.second)) }) } }
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(input, { input = it.take(100) }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.search)) })
             IconButton(onClick = { query = input.trim(); page = 1 }) { Icon(AtharIcons.Search, stringResource(R.string.search)) }
         }
         DataScreen(graph, type, mapOf("q" to query, "page" to "$page")) { data, _ ->
-            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
+            LazyColumn(contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 val rows = data.array("items")
-                if (rows.isEmpty()) item { Text(stringResource(R.string.empty_state), Modifier.padding(16.dp)) }
-                items(rows, key = { it.text("id") }, contentType = { type }) { item -> ContentRow(item, { open("$type/${item.text("id")}") }) }
+                if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
+                items(rows, key = { it.text("id") }, contentType = { type }) { item -> AtharCatalogCard(item, type, { open("$type/${item.text("id")}") }) }
                 item(key = "pagination", contentType = "controls") { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     TextButton(onClick = { page-- }, enabled = page > 1) { Text(stringResource(R.string.back)) }
                     Text("$page", Modifier.padding(16.dp))
@@ -154,9 +284,17 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     }
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Box(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize()) {
+    // Render the native identity before the detail request so a selected cover can actually match.
+    if (path.startsWith("books/")) Box(Modifier.fillMaxWidth().padding(top = 16.dp), contentAlignment = Alignment.Center) {
+        val compact = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp < 500 || LocalDensity.current.fontScale >= 1.3f
+        AtharBookCover(path.substringAfter('/'), Modifier.width(if (compact) 56.dp else 88.dp).height(if (compact) 76.dp else 116.dp))
+    }
+    Box(Modifier.weight(1f)) {
     DataScreen(graph, path) { item, _ ->
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item(key = "heading", contentType = "heading") { Text(item.text("title").ifBlank { item.text("name") }, style = MaterialTheme.typography.headlineMedium) }
+            if (item.text("author").isNotBlank()) item(key = "author", contentType = "metadata") { Text(item.text("author"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             item(key = "description", contentType = "text") { Text(item.text("description").ifBlank { item.text("biography") }, style = MaterialTheme.typography.bodyLarge) }
             if (item.text("youtube_id").matches(Regex("[A-Za-z0-9_-]{11}"))) item(key = "youtube", contentType = "action") { Button(onClick = { uri.openUri("https://www.youtube.com/watch?v=${item.text("youtube_id")}") }) { Text(stringResource(R.string.open_youtube)) } }
             if (path.startsWith("books/") && item.text("can_download") == "true") item(key = "download", contentType = "action") { Button(onClick = { scope.launch {
@@ -171,6 +309,8 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
             items(item.array("series"), key = { "series-${it.text("id")}" }, contentType = { "series" }) { row -> ContentRow(row, { open("series/${row.text("id")}") }) }
             items(item.array("lessons"), key = { "lesson-${it.text("id")}" }, contentType = { "lesson" }) { row -> ContentRow(row, { open("lessons/${row.text("id")}") }) }
         }
+    }
+    }
     }
     SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
@@ -195,7 +335,7 @@ private val destinations = listOf(Destination("home", R.string.home, AtharIcons.
     var current by remember { mutableStateOf("") }; var password by remember { mutableStateOf("") }; var confirmation by remember { mutableStateOf("") }
     var delete by remember { mutableStateOf(false) }; var deletePassword by remember { mutableStateOf("") }
     LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item(key = "profile", contentType = "heading") { Text(stringResource(R.string.profile), style = MaterialTheme.typography.headlineSmall) }
+        item(key = "profile", contentType = "heading") { AtharScreenIdentity(stringResource(R.string.profile), AtharIcons.Person) }
         item(key = "email", contentType = "text") { Text(auth.user.email) }
         item(key = "name", contentType = "field") { OutlinedTextField(name, { name = it.take(120) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true) }
         item(key = "username", contentType = "field") { OutlinedTextField(username, { username = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, singleLine = true) }

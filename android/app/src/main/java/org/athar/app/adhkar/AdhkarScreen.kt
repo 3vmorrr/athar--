@@ -58,8 +58,7 @@ fun AdhkarScreen(graph: AppGraph) {
                         LazyColumn(modifier = Modifier.testTag("adhkar-entries"), state = entriesScroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             item(key = "heading", contentType = "heading") {
                                 Column(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
-                                    Text(selected, style = MaterialTheme.typography.headlineSmall)
-                                    Text(stringResource(R.string.adhkar_item_position, (page - 1) * 20 + index + 1, catalog.asJsonObject["pagination"].text("total").toIntOrNull() ?: 0), style = MaterialTheme.typography.bodySmall)
+                                    AtharScreenIdentity(selected, AtharIcons.Spa, subtitle = stringResource(R.string.adhkar_item_position, (page - 1) * 20 + index + 1, catalog.asJsonObject["pagination"].text("total").toIntOrNull() ?: 0))
                                 }
                             }
                             if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }

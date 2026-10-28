@@ -1,5 +1,60 @@
 [
   {
+    "name": "Pause",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "style": "Material Symbols Outlined",
+    "optical_size": 24,
+    "weight": 400,
+    "fill": 0,
+    "source_url": "https://github.com/google/material-design-icons/blob/master/symbols/web/pause/materialsymbolsoutlined/pause_24px.svg",
+    "sha256": "ccd6c3a92f3c4f8b5b59e1e35ccbdd4fb27c5afed311abbee4225800f4c2e567"
+  },
+  {
+    "name": "Stop",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "style": "Material Symbols Outlined",
+    "optical_size": 24,
+    "weight": 400,
+    "fill": 0,
+    "source_url": "https://github.com/google/material-design-icons/blob/master/symbols/web/stop/materialsymbolsoutlined/stop_24px.svg",
+    "sha256": "34b51c2ec96ced6f87cd63fef4adb93bfe0add1d08846a2e9cea787678f6e356"
+  },
+  {
+    "name": "Headphones",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "style": "Material Symbols Outlined",
+    "optical_size": 24,
+    "weight": 400,
+    "fill": 0,
+    "source_url": "https://github.com/google/material-design-icons/blob/master/symbols/web/headphones/materialsymbolsoutlined/headphones_24px.svg",
+    "sha256": "1db3c8bfb7a0271b7e23cc52b683e89dcb0d1ec674cd9459f17df44661262d8a"
+  },
+  {
+    "name": "Repeat",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "style": "Material Symbols Outlined",
+    "optical_size": 24,
+    "weight": 400,
+    "fill": 0,
+    "source_url": "https://github.com/google/material-design-icons/blob/master/symbols/web/repeat/materialsymbolsoutlined/repeat_24px.svg",
+    "sha256": "96daad841add17ebe430ae7087096ea1976c47c6795e6c44f79c3f9d9cf69112"
+  },
+  {
+    "name": "Speed",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "style": "Material Symbols Outlined",
+    "optical_size": 24,
+    "weight": 400,
+    "fill": 0,
+    "source_url": "https://github.com/google/material-design-icons/blob/master/symbols/web/speed/materialsymbolsoutlined/speed_24px.svg",
+    "sha256": "8bc7560c91a3b04183520be7c266d308c2f1fb82126789cfe35e421a93997a0a"
+  },
+  {
     "name": "Share",
     "author": "Google",
     "license": "Apache-2.0",

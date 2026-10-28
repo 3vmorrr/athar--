@@ -1,5 +1,7 @@
 # Implementation tracker
 
+> 27 October priority override: the approved Athar Premium Android UI milestone is active. Unrelated development is paused at task21.19 pending on-device visual review. Use the new premium specification and project-local athar-premium-compose-design skill; earlier visual directions below are historical. Functional requirements and evidence remain valid. See [milestone](PREMIUM_UI_MILESTONE.json) and [design system](../design/ATHAR_PREMIUM.md).
+
 ## WP20 Email checkpoint —2026-10-27
 
 Source infrastructure reviewed through0748860ff54ab7b0399613458f36eed0f8da5205. Encrypted priority outbox, token/recipient binding, signed consent, Owner template tests and safe worker recovery accepted locally.193 combined backend+final35 focused;42 HTTP/worker+32 service+15 browser;219 Admin privacy/auth PASS. Restored adjacent overview/recovery/create panels removed in preceding campaign view replacement;navigation and actual authoring verified. [Evidence and limits](../testing/EMAIL_OUTBOX.md). On reviewed push:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Real Gmail20.5 and canonical Push/combined acceptance remain open. Next21.19/21.2;WP02.8 preserved.

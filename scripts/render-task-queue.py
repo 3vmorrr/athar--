@@ -35,6 +35,15 @@ for row in tasks:
         f"- Definition of Done: {row['definition_of_done']}",
         f"- Estimated contribution: {row['estimated_contribution_pp']:.2f} overall percentage points.",''])
 rendered='\n'.join(lines)
+override=data.get('execution_override')
+if override and override.get('active'):
+    rendered = '\n'.join([
+        '# Active priority: Athar Premium Android UI', '',
+        'The user has paused unrelated backend/integration execution. The original ordered queue below is retained as history and acceptance scope, not the active execution order.', '',
+        f"Paused task: **{data['current_task']}**. Active work packages and visual-task dispositions: [premium UI milestone](PREMIUM_UI_MILESTONE.json).", '',
+        'The [Athar Premium Design System](../design/ATHAR_PREMIUM.md) supersedes obsolete visual specifications. Reuse completed functionality; do not mark superseded visuals complete or resume backend work before the user reviews the running app.', '',
+        '---', '', rendered,
+    ])
 if '--check' in sys.argv:
     assert source.with_suffix('.md').read_text(encoding='utf-8')==rendered,'Queue Markdown is stale; render it again.'
 else:

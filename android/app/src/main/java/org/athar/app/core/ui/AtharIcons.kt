@@ -9,6 +9,36 @@ import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.unit.dp
 
 object AtharIcons {
+    val Pause: ImageVector by lazy {
+        ImageVector.Builder(name = "Pause", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
+            .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)
+            .addPath(pathData = PathParser().parsePathString("M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z").toNodes(), fill = SolidColor(Color.Black))
+            .clearGroup().build()
+    }
+    val Stop: ImageVector by lazy {
+        ImageVector.Builder(name = "Stop", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
+            .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)
+            .addPath(pathData = PathParser().parsePathString("M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z").toNodes(), fill = SolidColor(Color.Black))
+            .clearGroup().build()
+    }
+    val Headphones: ImageVector by lazy {
+        ImageVector.Builder(name = "Headphones", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
+            .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)
+            .addPath(pathData = PathParser().parsePathString("M360-120H200q-33 0-56.5-23.5T120-200v-280q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480v280q0 33-23.5 56.5T760-120H600v-320h160v-40q0-117-81.5-198.5T480-760q-117 0-198.5 81.5T200-480v40h160v320Zm-80-240h-80v160h80v-160Zm400 0v160h80v-160h-80Zm-400 0h-80 80Zm400 0h80-80Z").toNodes(), fill = SolidColor(Color.Black))
+            .clearGroup().build()
+    }
+    val Repeat: ImageVector by lazy {
+        ImageVector.Builder(name = "Repeat", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
+            .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)
+            .addPath(pathData = PathParser().parsePathString("M280-80 120-240l160-160 56 58-62 62h406v-160h80v240H274l62 62-56 58Zm-80-440v-240h486l-62-62 56-58 160 160-160 160-56-58 62-62H280v160h-80Z").toNodes(), fill = SolidColor(Color.Black))
+            .clearGroup().build()
+    }
+    val Speed: ImageVector by lazy {
+        ImageVector.Builder(name = "Speed", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
+            .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)
+            .addPath(pathData = PathParser().parsePathString("M418-340q24 24 62 23.5t56-27.5l224-336-336 224q-27 18-28.5 55t22.5 61Zm62-460q59 0 113.5 16.5T696-734l-76 48q-33-17-68.5-25.5T480-720q-133 0-226.5 93.5T160-400q0 42 11.5 83t32.5 77h552q23-38 33.5-79t10.5-85q0-36-8.5-70T766-540l48-76q30 47 47.5 100T880-406q1 57-13 109t-41 99q-11 18-30 28t-40 10H204q-21 0-40-10t-30-28q-26-45-40-95.5T80-400q0-83 31.5-155.5t86-127Q252-737 325-768.5T480-800Zm7 313Z").toNodes(), fill = SolidColor(Color.Black))
+            .clearGroup().build()
+    }
     val Share: ImageVector by lazy {
         ImageVector.Builder(name = "Share", defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 960.0f, viewportHeight = 960.0f, autoMirror = false)
             .addGroup(name = "sourceViewport", translationX = -0.0f, translationY = 960.0f)

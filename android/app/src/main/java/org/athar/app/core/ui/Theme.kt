@@ -48,9 +48,9 @@ private val completeDarkColors = darkColors.copy(
     onError = Color(0xFF421A16), onErrorContainer = Color(0xFFFFDAD5), scrim = Color(0xFF000000),
 )
 private val typography = Typography(
-    displayLarge = Typography().displayLarge.copy(fontFamily = UiFont),
-    displayMedium = Typography().displayMedium.copy(fontFamily = UiFont),
-    displaySmall = Typography().displaySmall.copy(fontFamily = UiFont),
+    displayLarge = Typography().displayLarge.copy(fontFamily = UiFont, fontSize = 48.sp, lineHeight = 68.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.sp),
+    displayMedium = Typography().displayMedium.copy(fontFamily = UiFont, fontSize = 40.sp, lineHeight = 56.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.sp),
+    displaySmall = Typography().displaySmall.copy(fontFamily = UiFont, fontSize = 34.sp, lineHeight = 48.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.sp),
     headlineLarge = Typography().headlineLarge.copy(fontFamily = UiFont, fontSize = 30.sp, fontWeight = FontWeight.Bold, lineHeight = 44.sp),
     headlineMedium = Typography().headlineMedium.copy(fontFamily = UiFont, fontSize = 26.sp, fontWeight = FontWeight.Bold, lineHeight = 38.sp),
     headlineSmall = Typography().headlineSmall.copy(fontFamily = UiFont, fontSize = 23.sp, fontWeight = FontWeight.SemiBold, lineHeight = 34.sp),
@@ -60,9 +60,9 @@ private val typography = Typography(
     bodyLarge = Typography().bodyLarge.copy(fontFamily = UiFont, fontSize = 16.sp, fontWeight = FontWeight.Normal, lineHeight = 28.sp, letterSpacing = 0.sp),
     bodyMedium = Typography().bodyMedium.copy(fontFamily = UiFont, fontSize = 14.sp, fontWeight = FontWeight.Normal, lineHeight = 25.sp, letterSpacing = 0.sp),
     bodySmall = Typography().bodySmall.copy(fontFamily = UiFont, fontSize = 12.sp, fontWeight = FontWeight.Normal, lineHeight = 22.sp, letterSpacing = 0.sp),
-    labelLarge = Typography().labelLarge.copy(fontFamily = UiFont, fontWeight = FontWeight.SemiBold, lineHeight = 24.sp, letterSpacing = 0.sp),
-    labelMedium = Typography().labelMedium.copy(fontFamily = UiFont, lineHeight = 22.sp, letterSpacing = 0.sp),
-    labelSmall = Typography().labelSmall.copy(fontFamily = UiFont, lineHeight = 20.sp, letterSpacing = 0.sp),
+    labelLarge = Typography().labelLarge.copy(fontFamily = UiFont, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 24.sp, letterSpacing = 0.sp),
+    labelMedium = Typography().labelMedium.copy(fontFamily = UiFont, fontSize = 12.sp, fontWeight = FontWeight.Medium, lineHeight = 22.sp, letterSpacing = 0.sp),
+    labelSmall = Typography().labelSmall.copy(fontFamily = UiFont, fontSize = 11.sp, fontWeight = FontWeight.Medium, lineHeight = 20.sp, letterSpacing = 0.sp),
 )
 @Composable fun AtharTheme(theme: String, content: @Composable () -> Unit) {
     val dark = theme == "dark" || (theme == "system" && isSystemInDarkTheme())
