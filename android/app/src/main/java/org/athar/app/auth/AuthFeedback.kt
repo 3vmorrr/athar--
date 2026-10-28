@@ -18,6 +18,9 @@ import org.athar.app.R
     "mail_unavailable" -> R.string.mail_unavailable
     "reset_sent" -> R.string.reset_sent
     "password_updated" -> R.string.password_updated
+    "account_password_updated" -> R.string.account_password_updated
+    "other_sessions_revoked" -> R.string.other_sessions_revoked
+    "session_changed" -> R.string.auth_session_expired
     "saved" -> R.string.saved
     else -> R.string.network_error
 }

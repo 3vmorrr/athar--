@@ -285,4 +285,9 @@
     <string name="book_zoom_out">Zoom out</string>
     <string name="book_reader_controls">Reading controls</string>
     <string name="book_storage_full">There is not enough space to finish this download. Remove a saved copy or free space, then retry.</string>
+    <string name="display_name_hint">Use 2 to 80 characters.</string>
+    <string name="revoke_other_sessions">Sign out other sessions</string>
+    <string name="revoke_other_sessions_hint">End your other account sessions and keep this session signed in.</string>
+    <string name="other_sessions_revoked">Other sessions were signed out.</string>
+    <string name="account_password_updated">Your password was updated and other sessions were signed out.</string>
 </resources>

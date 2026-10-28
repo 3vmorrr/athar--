@@ -1,0 +1,17 @@
+# Account functional integration
+
+## WP07.1–07.2 source reconciliation — 2026-10-29
+
+Source head7392e93b088990c3478cf32197781f831eb10f83 remains the reviewed implementation input. Profile/security commits1b3174ad, f2ff5e4d,9e25d1f2,3c58ceac,8477c78e and shared AccountInput/operation feedback are reviewed separately from future push hooks and Khatmah work. Preserve the current profile identity, theme/language controls and private data ownership.
+
+Native profile edits validate display names by Unicode code points (2–80), ASCII usernames (3–24 with reserved-name rejection) and normalize Arabic/Persian username digits independently of device locale. Failed input/duplicate responses keep the draft; successful server profiles must match the captured owner. Password fields remain memory-only and are keyed by owner. Password change and deliberate other-session revocation retain this session; revocation receipts require a nonnegative integer and never replace credentials.
+
+The source backend revocation only updates other families without rechecking its caller. Reconciliation locks the user first, then revalidates the current full, verified, unexpired, nonrevoked session inside the transaction. Other owners remain untouched. The POST endpoint has an account-scoped5-per5-minute rate limit and audits success. Rotation/password-change/logout snapshots cannot revoke newer legitimate sessions.
+
+Review also found an inherited login race: credential verification and rehash could precede a concurrent reset, then issue a bearer at the newer revocation version. Login now rechecks the verified password snapshot under the user lock before rehash/session creation. Password change and deletion likewise recheck the current password, revocation version and bearer under that lock. Refresh uses the same user-before-session lock order. OTP verification/reset lock the user before consuming OTP rows, matching issuance order. Cookie adapters retain their no-unused-bearer behavior.
+
+Focused backend gates PASS:46 identity +34 new session/profile/credential checks +35 learning assertions. The new suite uses independent PHP processes and real MariaDB row locks: an old-password login waits behind an uncommitted replacement, then must return401 without overwriting the new hash; refresh racing family revocation must complete without deadlock and cannot leave a usable other-family credential. All schemas are disposable. No test hooks, live email or genuine account mutations.
+
+Real HTTP compatibility PASS:15 cookie/API OTP/reset assertions;61 independent Admin authentication/shell and60 Admin authorization/action/target/rollback/concurrency assertions. Runs use copied disposable fixtures and fake delivery only. Original unrelated public/index.php and scripts/test-admin-recovery.ps1 changes stay unstaged.
+
+Registration/recovery use shared profile/email/password validation; OTP digits are normalized at the session transport boundary, with malformed lengths rejected before dispatch. Native debug APK/test APK/lint PASS (0 errors;59 warnings);22 focused JVM cases and405 paired unique resources PASS. A reused Gradle daemon reported metaspace pressure and retired after the successful build; no global settings changed. Export and deletion recovery are next. Physical API27 journeys, real Gmail delivery and complete package acceptance remain open; no task is promoted COMPLETE from local fixtures.

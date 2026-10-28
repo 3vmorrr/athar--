@@ -313,4 +313,9 @@
     <string name="book_zoom_out">تصغير</string>
     <string name="book_reader_controls">أدوات القراءة</string>
     <string name="book_storage_full">لا توجد مساحة كافية لإكمال التنزيل. أزل نسخة محفوظة أو وفّر مساحة ثم أعد المحاولة.</string>
+    <string name="display_name_hint">الاسم من حرفين إلى 80 حرفًا.</string>
+    <string name="revoke_other_sessions">تسجيل خروج الجلسات الأخرى</string>
+    <string name="revoke_other_sessions_hint">تنتهي جلسات حسابك الأخرى، وتبقى هذه الجلسة متصلة.</string>
+    <string name="other_sessions_revoked">تم تسجيل خروج الجلسات الأخرى.</string>
+    <string name="account_password_updated">تم تحديث كلمة المرور وتسجيل خروج الجلسات الأخرى.</string>
 </resources>

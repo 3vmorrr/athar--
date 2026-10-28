@@ -46,10 +46,20 @@ final class AuthService
         $dummy ??= password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
         $matches = password_verify($password, $user['password_hash'] ?? $dummy);
         if (!$user || !$matches || !empty($user['suspended_at'])) throw new ApiError('invalid_credentials', 401);
-        if (password_needs_rehash($user['password_hash'], $this->algorithm())) $this->db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([$this->passwordHash($password),$user['id']]);
-        $scope = empty($user['email_verified_at']) ? 'verification' : 'full';
-        $this->audit((int) $user['id'], 'api-login-succeeded');
-        return ['user' => $this->publicProfile($user), 'session' => $issueSession ? $this->newSession((int) $user['id'], $scope) : null];
+        $owns=!$this->db->inTransaction();
+        if($owns)$this->db->beginTransaction();
+        try {
+            // Credential verification can be expensive: recheck its snapshot under the user lock
+            // before rehashing or issuing a session with the current revocation version.
+            $q=$this->db->prepare('SELECT * FROM users WHERE id=? FOR UPDATE');$q->execute([$user['id']]);$fresh=$q->fetch(PDO::FETCH_ASSOC);
+            if(!$fresh||!empty($fresh['suspended_at'])||($fresh['password_hash']!==$user['password_hash']&&!password_verify($password,$fresh['password_hash'])))throw new ApiError('invalid_credentials',401);
+            if(password_needs_rehash($fresh['password_hash'],$this->algorithm()))$this->db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([$this->passwordHash($password),$fresh['id']]);
+            $scope=empty($fresh['email_verified_at'])?'verification':'full';
+            $this->audit((int)$fresh['id'],'api-login-succeeded');
+            $session=$issueSession?$this->newSession((int)$fresh['id'],$scope):null;
+            if($owns)$this->db->commit();
+            return ['user'=>$this->publicProfile($fresh),'session'=>$session];
+        }catch(Throwable $error){if($owns&&$this->db->inTransaction())$this->db->rollBack();throw $error;}
     }
 
     public function authenticate(string $token, bool $full = true): array
@@ -66,6 +76,8 @@ final class AuthService
     {
         $this->db->beginTransaction();
         try {
+            $guard=$this->db->prepare('SELECT id FROM users WHERE id=? FOR UPDATE');$guard->execute([$userId]);
+            if($guard->fetchColumn()===false)throw new ApiError('unauthenticated',401);
             $valid = $this->otp->consume($userId, 'verify_email', $code);
             if (!$valid) { $this->db->commit(); throw new ApiError('invalid_or_expired_code',422); }
             $this->db->prepare('UPDATE users SET email_verified_at=UTC_TIMESTAMP() WHERE id=?')->execute([$userId]);
@@ -82,6 +94,10 @@ final class AuthService
         if (!preg_match('/^[a-f0-9]{64}$/i',$refresh)) throw new ApiError('unauthenticated',401);
         $this->db->beginTransaction();
         try {
+            // All session-family mutations lock the user before locking session rows.
+            $lookup=$this->db->prepare('SELECT user_id FROM api_sessions WHERE refresh_hash=? LIMIT 1');$lookup->execute([hash('sha256',$refresh)]);$owner=$lookup->fetchColumn();
+            if($owner===false)throw new ApiError('unauthenticated',401);
+            $guard=$this->db->prepare('SELECT id FROM users WHERE id=? FOR UPDATE');$guard->execute([(int)$owner]);if($guard->fetchColumn()===false)throw new ApiError('unauthenticated',401);
             $q=$this->db->prepare('SELECT s.*,u.email_verified_at,u.suspended_at,u.session_version AS current_version FROM api_sessions s JOIN users u ON u.id=s.user_id WHERE s.refresh_hash=? LIMIT 1 FOR UPDATE'); $q->execute([hash('sha256',$refresh)]); $row=$q->fetch(PDO::FETCH_ASSOC);
             if ($row && $row['revoked_reason']==='rotated') {
                 $this->db->prepare("UPDATE api_sessions SET revoked_at=UTC_TIMESTAMP(),revoked_reason='replay' WHERE family_id=? AND revoked_at IS NULL")->execute([$row['family_id']]);
@@ -100,6 +116,18 @@ final class AuthService
         $this->audit((int)$actor['id'],'api-logout');
     }
 
+    public function revokeOtherSessions(array $actor):int
+    {
+        $this->db->beginTransaction();
+        try {
+            $guard=$this->db->prepare('SELECT session_version,email_verified_at,suspended_at FROM users WHERE id=? FOR UPDATE');$guard->execute([(int)$actor['id']]);$user=$guard->fetch(PDO::FETCH_ASSOC);
+            $q=$this->db->prepare('SELECT family_id,session_version,scope,expires_at,revoked_at FROM api_sessions WHERE id=? AND user_id=? FOR UPDATE');$q->execute([(string)$actor['session_id'],(int)$actor['id']]);$session=$q->fetch(PDO::FETCH_ASSOC);
+            if(!$user||!$session||$user['suspended_at']!==null||empty($user['email_verified_at'])||$session['scope']!=='full'||$session['revoked_at']!==null||(int)$session['session_version']!==(int)$user['session_version']||$session['family_id']!==$actor['family_id']||strtotime($session['expires_at'].' UTC')<=time())throw new ApiError('unauthenticated',401);
+            $q=$this->db->prepare("UPDATE api_sessions SET revoked_at=UTC_TIMESTAMP(),revoked_reason='user_revoked' WHERE user_id=? AND family_id<>? AND revoked_at IS NULL");$q->execute([(int)$actor['id'],$session['family_id']]);$count=$q->rowCount();
+            $this->audit((int)$actor['id'],'api-other-sessions-revoked');$this->db->commit();return $count;
+        }catch(Throwable $error){if($this->db->inTransaction())$this->db->rollBack();throw $error;}
+    }
+
     public function requestReset(string $email): void
     {
         $q=$this->db->prepare('SELECT id FROM users WHERE email=? AND suspended_at IS NULL LIMIT 1'); $q->execute([strtolower(trim($email))]); $id=$q->fetchColumn();
@@ -110,7 +138,7 @@ final class AuthService
     {
         $this->validatePassword($password,$confirmation); $this->db->beginTransaction();
         try {
-            $q=$this->db->prepare('SELECT id FROM users WHERE email=? AND suspended_at IS NULL LIMIT 1'); $q->execute([strtolower(trim($email))]); $id=$q->fetchColumn();
+            $q=$this->db->prepare('SELECT id FROM users WHERE email=? AND suspended_at IS NULL LIMIT 1 FOR UPDATE'); $q->execute([strtolower(trim($email))]); $id=$q->fetchColumn();
             if (!$id || !$this->otp->consume((int)$id,'password_reset',$code)) { $this->db->commit(); throw new ApiError('invalid_or_expired_code',422); }
             $this->db->prepare('UPDATE users SET password_hash=?,session_version=session_version+1 WHERE id=?')->execute([$this->passwordHash($password),$id]);
             $this->revokeAll((int)$id,'password_reset'); $this->audit((int)$id,'api-password-reset'); $this->db->commit();
@@ -119,9 +147,9 @@ final class AuthService
 
     public function changePassword(array $actor,string $current,string $password,string $confirmation,bool $issueSession=true): array
     {
-        if (!password_verify($current,$actor['password_hash'])) throw new ApiError('invalid_credentials',422);
         $this->validatePassword($password,$confirmation); $this->db->beginTransaction();
         try {
+            $this->lockPasswordActor($actor,$current);
             $this->db->prepare('UPDATE users SET password_hash=?,session_version=session_version+1 WHERE id=?')->execute([$this->passwordHash($password),$actor['id']]);
             $this->revokeAll((int)$actor['id'],'password_changed'); $session=$issueSession?$this->newSession((int)$actor['id'],'full'):null; $this->audit((int)$actor['id'],'api-password-changed'); $this->db->commit(); return ['session'=>$session];
         } catch(Throwable $e) { if($this->db->inTransaction())$this->db->rollBack();throw $e; }
@@ -137,9 +165,9 @@ final class AuthService
 
     public function delete(array $actor,string $password): void
     {
-        if(!password_verify($password,$actor['password_hash']))throw new ApiError('invalid_credentials',422);
         $this->db->beginTransaction();
         try {
+            $this->lockPasswordActor($actor,$password);
             $this->db->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='Account deleted' WHERE user_id=?")->execute([$actor['id']]);
             $this->audit((int)$actor['id'],'api-account-deleted'); $this->db->prepare('DELETE FROM users WHERE id=?')->execute([$actor['id']]); $this->db->commit();
         } catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
@@ -149,6 +177,18 @@ final class AuthService
     {
         $q=$this->db->prepare('SELECT id,email,display_name,username,role,email_verified_at,preferences_json FROM users WHERE id=?');$q->execute([$userId]);$user=$q->fetch(PDO::FETCH_ASSOC);
         if(!$user)throw new ApiError('unauthenticated',401); return $this->publicProfile($user);
+    }
+
+    /** Caller holds a transaction; use a current credential and revocation snapshot. */
+    private function lockPasswordActor(array $actor,string $password):void
+    {
+        $q=$this->db->prepare('SELECT * FROM users WHERE id=? FOR UPDATE');$q->execute([(int)$actor['id']]);$fresh=$q->fetch(PDO::FETCH_ASSOC);
+        if(!$fresh||$fresh['suspended_at']!==null||(int)$fresh['session_version']!==(int)$actor['session_version'])throw new ApiError('unauthenticated',401);
+        if(isset($actor['session_id'])){
+            $q=$this->db->prepare('SELECT scope,revoked_at,expires_at,session_version FROM api_sessions WHERE id=? AND user_id=? FOR UPDATE');$q->execute([$actor['session_id'],$actor['id']]);$session=$q->fetch(PDO::FETCH_ASSOC);
+            if(!$session||$session['revoked_at']!==null||$session['scope']!=='full'||empty($fresh['email_verified_at'])||(int)$session['session_version']!==(int)$fresh['session_version']||strtotime($session['expires_at'].' UTC')<=time())throw new ApiError('unauthenticated',401);
+        }
+        if(!password_verify($password,$fresh['password_hash']))throw new ApiError('invalid_credentials',422);
     }
 
     private function publicProfile(array $row): array

@@ -44,7 +44,7 @@ import org.athar.app.core.ui.*
             Feedback(state)
             if (mode == "register") {
                 OutlinedTextField(name, { name = it }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true)
-                OutlinedTextField(username, { username = it.lowercase().take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, supportingText = { Text(stringResource(R.string.username_hint)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii))
+                OutlinedTextField(username, { username = AccountInput.normalizeUsernameInput(it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, supportingText = { Text(stringResource(R.string.username_hint)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii))
             }
             OutlinedTextField(email, { email = it.take(190) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.email)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
             if (mode == "reset") OutlinedTextField(code, { code = OtpInput.normalize(it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.verification_code)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword))

@@ -50,6 +50,7 @@ class SessionRepositoryTest {
             runCatching{repo.changePassword("old","new password","new password",1)},
             runCatching{repo.delete("fixture password",1)},
             runCatching{repo.logout(1)},
+            runCatching{repo.revokeOtherSessions(1)},
             runCatching{repo.verify("123456",1)},
             runCatching{repo.resend(1)},
             runCatching{repo.request("DELETE","me/favorites",expectedUser=1)}
@@ -64,6 +65,37 @@ class SessionRepositoryTest {
         assertTrue(runCatching{repo.request("PUT","me/lesson-progress",expectedUser=2)}.isFailure)
         assertEquals(0,writes);assertTrue(repo.state.value is AuthState.SignedIn)
         repo.request("PUT","me/lesson-progress",expectedUser=1);assertEquals(1,writes)
+    }
+    @Test fun revocationKeepsCurrentCredentialsAndRejectsMalformedReceipts()=runTest {
+        var response="{\"revoked_count\":2}";val store=MemoryStore()
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply()else JsonParser.parseString(response)},store)
+        repo.login("reader@example.test","Fixture123!");val before=store.value
+        assertEquals(2,repo.revokeOtherSessions(1));assertEquals(before,store.value)
+        for(invalid in listOf("{}","{\"revoked_count\":-1}","{\"revoked_count\":true}","{\"revoked_count\":\"2\"}","{\"revoked_count\":1.5}","{\"revoked_count\":2147483648}")){
+            response=invalid;assertTrue(runCatching{repo.revokeOtherSessions(1)}.isFailure);assertEquals(before,store.value)
+        }
+    }
+    @Test fun lateRevocationCannotChangeANewAccountsCredentials()=runTest {
+        var actor=1;val started=CompletableDeferred<Unit>();val finish=CompletableDeferred<Unit>();val store=MemoryStore()
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply(id=actor)else{started.complete(Unit);finish.await();JsonParser.parseString("{\"revoked_count\":1}")}},store)
+        repo.login("reader@example.test","Fixture123!")
+        val pending=async{runCatching{repo.revokeOtherSessions(1)}};started.await()
+        actor=2;repo.login("other@example.test","Fixture123!");finish.complete(Unit)
+        assertTrue(pending.await().exceptionOrNull() is ApiException);assertEquals(2L,store.value!!.user.id)
+    }
+    @Test fun otpIsNormalizedAtTransportBoundaryAndInvalidLengthNeverDispatches()=runTest {
+        val codes=mutableListOf<String>();val transport=object:ApiTransport{
+            override suspend fun request(method:String,path:String,body:Map<String,Any?>,query:Map<String,String>,bearer:String?,language:String):JsonElement{
+                if(path=="auth/verify-email"||path=="auth/reset-password")codes.add(body["code"] as String)
+                return reply()
+            }
+        }
+        val repo=SessionRepository(transport,MemoryStore());repo.login("reader@example.test","Fixture123!")
+        repo.verify("٠١۲٣۴٥",1);repo.reset("reader@example.test","۰١۲٣٤۵","NewFixture123!","NewFixture123!")
+        assertEquals(listOf("012345","012345"),codes)
+        assertTrue(runCatching{repo.verify("12",1)}.isFailure)
+        assertTrue(runCatching{repo.reset("reader@example.test","12","NewFixture123!","NewFixture123!")}.isFailure)
+        assertEquals(2,codes.size)
     }
     private class MemoryStore : TokenStore {
         var value: StoredSession? = null

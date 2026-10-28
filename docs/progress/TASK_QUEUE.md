@@ -2,7 +2,7 @@
 
 Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.
 
-Snapshot: 2026-10-29. Current task: **07.1**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+Snapshot: 2026-10-29. Current task: **07.3**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
 
 Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 

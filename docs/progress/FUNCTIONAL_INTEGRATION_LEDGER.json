@@ -3379,7 +3379,7 @@
       "name": "Account profile editing",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL AND HTTP GATES PASSED / PHYSICAL AND PROVIDER ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3464,15 +3464,30 @@
       "tests_required": "Username bounds/duplicate/owner/AR numeric/mixed-content UI/API tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete display-name/username editing and validation/error recovery; reconcile premium profile/auth presentation where touched. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Physical API27 AR/EN profile/security/error/offline/recreation/accessibility journeys and authorized real Gmail delivery remain open;07.3 export and07.4 durable deletion recovery follow independently. No completion credit from fake delivery.",
+      "acceptance_evidence": [
+        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md:22 focused JVM/debug APK/test APK/lint/405 paired resources PASS.",
+        "46 identity +34 session/profile/credential/concurrency +35 learning assertions PASS; independent real PHP/MariaDB concurrency.",
+        "Real HTTP:15 cookie/API OTP/reset +61 Admin auth/shell +60 Admin authorization/action/target/concurrency PASS; fake delivery only."
+      ],
+      "parallel_implementation_commits": [
+        "1b3174ad0245101f3b0b0137d3b48437bf0a5b2e",
+        "f2ff5e4da2bf3c5ab4aa60e4dc3b9c37b53de5f5",
+        "9e25d1f2ac06b8e22a7519e52682a5bbcc4b1f62",
+        "3c58ceacff2871226bcdfe349314e04e37502fba",
+        "8477c78e2ff9335da957d4ad18a8a8ddca6723d1",
+        "76076b5cecce2c9783250f05e70b37be4a98824c",
+        "d7ab041855b580a4ee738278bad62d391169ad65",
+        "1ce54475ca68de7ddea8392c9febb077829a8694"
+      ],
+      "reconciled": "Current premium account UI retained; Unicode profile/input validation, duplicate recovery, captured owner and response checks, shared registration/recovery/OTP boundary validation and explicit feedback integrated. New other-session revocation rechecks the current full caller under user/session locks; inherited password snapshot/rehash races fixed for login/change/deletion. Refresh and OTP lock order reconciled."
     },
     {
       "id": "07.2",
       "name": "Account security journeys",
       "work_package": "Work package 7: Account/Khatmah",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL AND HTTP GATES PASSED / PHYSICAL AND PROVIDER ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3520,8 +3535,23 @@
       "tests_required": "OTP Arabic digits/expiry/rate/session/password/failed submit tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete registration/verification/password reset/change/revocation UI; verify Gmail OTP using isolated/fake transport until explicit recipient gate. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Physical API27 AR/EN profile/security/error/offline/recreation/accessibility journeys and authorized real Gmail delivery remain open;07.3 export and07.4 durable deletion recovery follow independently. No completion credit from fake delivery.",
+      "acceptance_evidence": [
+        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md:22 focused JVM/debug APK/test APK/lint/405 paired resources PASS.",
+        "46 identity +34 session/profile/credential/concurrency +35 learning assertions PASS; independent real PHP/MariaDB concurrency.",
+        "Real HTTP:15 cookie/API OTP/reset +61 Admin auth/shell +60 Admin authorization/action/target/concurrency PASS; fake delivery only."
+      ],
+      "parallel_implementation_commits": [
+        "1b3174ad0245101f3b0b0137d3b48437bf0a5b2e",
+        "f2ff5e4da2bf3c5ab4aa60e4dc3b9c37b53de5f5",
+        "9e25d1f2ac06b8e22a7519e52682a5bbcc4b1f62",
+        "3c58ceacff2871226bcdfe349314e04e37502fba",
+        "8477c78e2ff9335da957d4ad18a8a8ddca6723d1",
+        "76076b5cecce2c9783250f05e70b37be4a98824c",
+        "d7ab041855b580a4ee738278bad62d391169ad65",
+        "1ce54475ca68de7ddea8392c9febb077829a8694"
+      ],
+      "reconciled": "Current premium account UI retained; Unicode profile/input validation, duplicate recovery, captured owner and response checks, shared registration/recovery/OTP boundary validation and explicit feedback integrated. New other-session revocation rechecks the current full caller under user/session locks; inherited password snapshot/rehash races fixed for login/change/deletion. Refresh and OTP lock order reconciled."
     },
     {
       "id": "07.3",
@@ -14222,18 +14252,16 @@
   },
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
-    "date": "2026-10-28",
-    "codex_remote": "070997cb7fba5bf726cab84ca5f7e2dca19b059a",
+    "date": "2026-10-29",
+    "codex_remote": "5290bfc2784cba90301539d5e9f309b166bce542",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
-      "07.1",
-      "07.2",
       "07.3",
       "07.4"
     ],
-    "state": "SOURCE REVIEW NEXT; PRESERVE CURRENT OWNER/PRIVATE EXPORT CONTRACTS AND NEW BOOK DATA"
+    "state": "SOURCE REVIEWED; EXPORT PREFLIGHT AND DURABLE OWNED DELETION RECOVERY NEXT"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",

@@ -1,5 +1,6 @@
 package org.athar.app.core.ui
 
+import org.athar.app.auth.AccountInput
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -334,7 +335,7 @@ private fun AtharNavIcon(
 }
 
 @Composable private fun AccountScreen(vm: AppViewModel, auth: AuthState.SignedIn, open: (String) -> Unit) {
-    var tool by rememberSaveable { mutableStateOf("profile") }
+    var tool by rememberSaveable(auth.user.id) { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"downloads" to R.string.book_downloads,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
@@ -350,14 +351,14 @@ private fun AtharNavIcon(
     val scope = rememberCoroutineScope()
     var name by remember(auth.user) { mutableStateOf(auth.user.displayName.orEmpty()) }
     var username by remember(auth.user) { mutableStateOf(auth.user.username.orEmpty()) }
-    var current by remember { mutableStateOf("") }; var password by remember { mutableStateOf("") }; var confirmation by remember { mutableStateOf("") }
-    var delete by remember { mutableStateOf(false) }; var deletePassword by remember { mutableStateOf("") }
+    var current by remember(auth.user.id) { mutableStateOf("") }; var password by remember(auth.user.id) { mutableStateOf("") }; var confirmation by remember(auth.user.id) { mutableStateOf("") }
+    var delete by remember(auth.user.id) { mutableStateOf(false) }; var deletePassword by remember(auth.user.id) { mutableStateOf("") }
     LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item(key = "profile", contentType = "heading") { AtharScreenIdentity(stringResource(R.string.profile), AtharIcons.Person) }
         item(key = "email", contentType = "text") { Text(auth.user.email) }
-        item(key = "name", contentType = "field") { OutlinedTextField(name, { name = it.take(120) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, singleLine = true) }
-        item(key = "username", contentType = "field") { OutlinedTextField(username, { username = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, singleLine = true) }
-        item(key = "save", contentType = "action") { Button(onClick = { vm.perform { vm.graph.session.updateProfile(name, username,auth.user.id) } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) } }
+        item(key = "name", contentType = "field") { OutlinedTextField(name, { name = it; if (!operation.busy) vm.clearFeedback() }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.display_name)) }, supportingText = { Text(stringResource(R.string.display_name_hint)) }, isError = name.isNotBlank() && !AccountInput.validDisplayName(name), singleLine = true) }
+        item(key = "username", contentType = "field") { OutlinedTextField(username, { username = AccountInput.normalizeUsernameInput(it); if (!operation.busy) vm.clearFeedback() }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.username)) }, supportingText = { Text(stringResource(R.string.username_hint)) }, isError = !AccountInput.validUsername(username) || operation.error == "account_conflict", singleLine = true) }
+        item(key = "save", contentType = "action") { Button(onClick = { vm.perform(successMessage = "saved") { vm.graph.session.updateProfile(name.trim(), username.trim(),auth.user.id) } }, enabled = !operation.busy && AccountInput.validProfile(name, username) && (name.trim() != auth.user.displayName || username.trim() != auth.user.username)) { Text(stringResource(R.string.save)) } }
         item(key = "settings", contentType = "heading") { HorizontalDivider(); Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge) }
         item(key = "language", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("ar" to R.string.arabic, "en" to R.string.english).forEach { (tag, label) -> OutlinedButton(onClick = { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag)) }) { Text(stringResource(label)) } } } }
         item(key = "theme", contentType = "controls") { FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("light" to R.string.light, "dark" to R.string.dark, "system" to R.string.system_theme).forEach { (key, label) -> FilterChip(settings?.theme == key, { scope.launch { vm.graph.settings.theme(key) } }, label = { Text(stringResource(label)) }) } } }
@@ -366,7 +367,11 @@ private fun AtharNavIcon(
             PasswordField(current, { current = it }, stringResource(R.string.current_password))
             PasswordField(password, { password = it }, stringResource(R.string.new_password))
             PasswordField(confirmation, { confirmation = it }, stringResource(R.string.confirm_password))
-            Button(onClick = { if (password != confirmation) vm.invalid("password_mismatch") else vm.perform { vm.graph.session.changePassword(current, password, confirmation,auth.user.id); current = ""; password = ""; confirmation = "" } }, enabled = !operation.busy) { Text(stringResource(R.string.save)) }
+            Button(onClick = { if (password != confirmation) vm.invalid("password_mismatch") else vm.perform(successMessage = "account_password_updated") { vm.graph.session.changePassword(current, password, confirmation,auth.user.id); current = ""; password = ""; confirmation = "" } }, enabled = !operation.busy && current.isNotEmpty() && AccountInput.validPassword(password) && password == confirmation) { Text(stringResource(R.string.save)) }
+        } }
+        item(key = "sessions", contentType = "action") { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.revoke_other_sessions_hint))
+            OutlinedButton(onClick = { vm.perform(successMessage = "other_sessions_revoked") { vm.graph.session.revokeOtherSessions(auth.user.id) } }, enabled = !operation.busy) { Text(stringResource(R.string.revoke_other_sessions)) }
         } }
         if (operation.error != null || operation.message != null) item(key = "feedback", contentType = "feedback") { org.athar.app.auth.Feedback(operation) }
         item(key = "signout", contentType = "action") { OutlinedButton(onClick = {vm.logout(auth.user.id)}) { Text(stringResource(R.string.logout)) } }

@@ -60,10 +60,10 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     private suspend fun beginAuthentication():Long=sessionMutex.withLock{generation.incrementAndGet()}
     suspend fun login(email: String, password: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/login", mapOf("email" to email.trim(), "password" to password), language = language()), epoch, true) }
     suspend fun register(name: String, username: String, email: String, password: String, confirmation: String) { val epoch = beginAuthentication(); accept(transport.request("POST", "auth/register", mapOf("display_name" to name.trim(), "username" to username.trim(), "email" to email.trim(), "password" to password, "password_confirmation" to confirmation), language = language()), epoch, true) }
-    suspend fun verify(code: String,expectedUser:Long?=userId) { val epoch = generation.get(); accept(request("POST", "auth/verify-email", mapOf("code" to code),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun verify(code: String,expectedUser:Long?=userId) { val epoch = generation.get(); accept(request("POST", "auth/verify-email", mapOf("code" to OtpInput.normalize(code).also { require(it.length == 6) }),expectedUser=requireNotNull(expectedUser)), epoch) }
     suspend fun resend(expectedUser:Long?=userId): String = request("POST", "auth/resend",expectedUser=requireNotNull(expectedUser)).asJsonObject.get("delivery_status").asString
     suspend fun forgot(email: String) { transport.request("POST", "auth/forgot-password", mapOf("email" to email.trim()), language = language()) }
-    suspend fun reset(email: String, code: String, password: String, confirmation: String) { transport.request("POST", "auth/reset-password", mapOf("email" to email.trim(), "code" to code, "password" to password, "password_confirmation" to confirmation), language = language()) }
+    suspend fun reset(email: String, code: String, password: String, confirmation: String) { transport.request("POST", "auth/reset-password", mapOf("email" to email.trim(), "code" to OtpInput.normalize(code).also { require(it.length == 6) }, "password" to password, "password_confirmation" to confirmation), language = language()) }
 
     suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {
         val epoch = generation.get()
@@ -101,11 +101,20 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
 
     suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {
         requireVerifiedOwner(expectedUser)
+        require(AccountInput.validProfile(name, username))
         val epoch = generation.get()
-        val user = gson.fromJson(request("PATCH", "me", mapOf("display_name" to name, "username" to username),expectedUser=requireNotNull(expectedUser)), UserProfile::class.java)
+        val user = gson.fromJson(request("PATCH", "me", mapOf("display_name" to name.trim(), "username" to username.trim()),expectedUser=requireNotNull(expectedUser)), UserProfile::class.java)
+        if(user.id!=expectedUser)throw IOException("Invalid profile owner")
         stored?.let { save(it.copy(user = user), epoch) }
     }
-    suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); accept(request("PUT", "me/password", mapOf("current_password" to current, "password" to password, "password_confirmation" to confirmation),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);require(current.isNotEmpty()&&AccountInput.validPassword(password)&&password==confirmation);val epoch = generation.get(); accept(request("PUT", "me/password", mapOf("current_password" to current, "password" to password, "password_confirmation" to confirmation),expectedUser=requireNotNull(expectedUser)), epoch) }
+    suspend fun revokeOtherSessions(expectedUser:Long?=userId):Int {
+        requireVerifiedOwner(expectedUser)
+        val data=request("POST","me/sessions/revoke-others",expectedUser=requireNotNull(expectedUser))
+        val count=if(data.isJsonObject)data.asJsonObject.get("revoked_count") else null
+        if(count==null||!count.isJsonPrimitive||!count.asJsonPrimitive.isNumber||!count.toString().matches(Regex("0|[1-9][0-9]*")))throw IOException("Invalid session revocation response")
+        return count.asString.toIntOrNull()?:throw IOException("Invalid session revocation response")
+    }
     suspend fun delete(password: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password),expectedUser=requireNotNull(expectedUser)); clear(epoch) }
     suspend fun logout(expectedUser:Long?=userId) {
         if(expectedUser!=userId)throw ApiException(401,"session_changed","")
