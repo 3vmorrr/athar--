@@ -25,7 +25,7 @@ import org.athar.app.core.ui.*
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 
-data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val scrollTarget: Int? = null, val scrollRequest: Long = 0)
+data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val range: QuranRange? = null, val scrollTarget: Int? = null, val scrollRequest: Long = 0)
 class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     private val mutable = MutableStateFlow(QuranState())
     val state = mutable.asStateFlow()
@@ -54,9 +54,48 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     }
     fun section(kind: String, number: Int) {
         if (kind == "surah") { select(number); return }
-        load?.cancel(); load = viewModelScope.launch {
-            try { val data = graph.quran.data(); mutable.value = QuranState(false, data.index, data.section(kind, number), 0, sectionKind = kind, sectionNumber = number, scrollRequest = mutable.value.scrollRequest + 1) }
-            catch (failure: CancellationException) { throw failure }
+        load?.cancel()
+        load = viewModelScope.launch {
+            try {
+                val data = graph.quran.data()
+                val interval = data.index.section(kind, number)
+                mutable.value = QuranState(
+                    loading = false,
+                    index = data.index,
+                    verses = data.section(kind, number),
+                    surah = 0,
+                    sectionKind = kind,
+                    sectionNumber = number,
+                    scrollTarget = interval.first,
+                    scrollRequest = mutable.value.scrollRequest + 1,
+                )
+            } catch (failure: CancellationException) { throw failure }
+            catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
+        }
+    }
+    fun range(target: QuranRange) {
+        load?.cancel()
+        load = viewModelScope.launch {
+            try {
+                val data = graph.quran.data()
+                val canonical = data.index.range(
+                    target.start.surah,
+                    target.start.ayah,
+                    target.end.surah,
+                    target.end.ayah,
+                )
+                mutable.value = QuranState(
+                    loading = false,
+                    index = data.index,
+                    verses = data.range(canonical),
+                    surah = 0,
+                    sectionKind = "range",
+                    sectionNumber = 0,
+                    range = canonical,
+                    scrollTarget = canonical.start.globalIndex,
+                    scrollRequest = mutable.value.scrollRequest + 1,
+                )
+            } catch (failure: CancellationException) { throw failure }
             catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
         }
     }
@@ -78,7 +117,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     }
 }
 
-@Composable fun QuranScreen(graph: AppGraph, fontSize: Int) {
+@Composable fun QuranScreen(graph: AppGraph, fontSize: Int, initialSurah: Int? = null, initialAyah: Int? = null) {
+    if (initialSurah != null && initialAyah != null) {
+        QuranReaderScreen(graph, fontSize, initialSurah, initialAyah)
+        return
+    }
     var mode by rememberSaveable { mutableStateOf<String?>(null) }
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
     Column(Modifier.fillMaxSize()) {
@@ -109,22 +152,26 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     }
 }
 
-@Composable private fun QuranReaderScreen(graph: AppGraph, fontSize: Int) {
+@Composable private fun QuranReaderScreen(graph: AppGraph, fontSize: Int, initialSurah: Int? = null, initialAyah: Int? = null) {
     val vm: QuranViewModel = viewModel(key = "reader:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = QuranViewModel(graph) as T })
+    LaunchedEffect(vm, initialSurah, initialAyah) {
+        if (initialSurah != null && initialAyah != null) vm.select(initialSurah, initialAyah)
+    }
     val state by vm.state.collectAsStateWithLifecycle()
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
     val listState = rememberLazyListState()
-    LaunchedEffect(state.scrollRequest) {
-        if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0))
+    val unreadablePosition = storedReading == ProtectedRead.Unreadable
+    LaunchedEffect(state.scrollRequest, unreadablePosition) {
+        if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0) + if (unreadablePosition) 1 else 0)
     }
     var query by rememberSaveable { mutableStateOf("") }
-    var selector by remember { mutableStateOf(false) }
+    var navigationSheet by remember { mutableStateOf(false) }
+    var navigationKind by remember { mutableStateOf("surah") }
     var searchMode by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(vm) { if(searchMode && query.trim().length >= 2)vm.search(query) }
     var fontDialog by remember { mutableStateOf(false) }
-    var numberDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
@@ -161,14 +208,68 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 OutlinedTextField(query, { query = it.take(80) }, Modifier.weight(1f), label = { Text(stringResource(R.string.search_hint)) }, singleLine = true)
                 Button(onClick = { vm.search(query) }, enabled = query.trim().length >= 2, modifier = Modifier.align(androidx.compose.ui.Alignment.CenterVertically)) { Text(stringResource(R.string.search)) }
             } else {
-                FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("surah" to R.string.surah,"juz" to R.string.juz,"hizb" to R.string.hizb,"page" to R.string.page).forEach { (kind,label) -> FilterChip(state.sectionKind == kind, { vm.section(kind, 1) }, label = { Text(stringResource(label)) }) }
+                FlowRow(
+                    Modifier.padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    listOf(
+                        "surah" to R.string.surah,
+                        "juz" to R.string.juz,
+                        "hizb" to R.string.hizb,
+                        "page" to R.string.page,
+                        "range" to R.string.quran_range,
+                    ).forEach { (kind, label) ->
+                        FilterChip(
+                            selected = state.sectionKind == kind,
+                            onClick = {
+                                if (kind == "range") { navigationKind = kind; navigationSheet = true }
+                                else vm.section(kind, 1)
+                            },
+                            label = { Text(stringResource(label)) },
+                        )
+                    }
                 }
-                val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; "hizb" -> 60; else -> 114 }
-                Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TextButton(onClick = { vm.section(state.sectionKind, state.sectionNumber - 1) }, enabled = state.sectionNumber > 1) { Text(stringResource(R.string.back)) }
-                    TextButton(onClick = { if (state.sectionKind == "surah") selector = true else numberDialog = true }) { Text(state.index?.surahs?.getOrNull(state.surah - 1)?.name ?: "${state.sectionNumber}") }
-                    TextButton(onClick = { vm.section(state.sectionKind, state.sectionNumber + 1) }, enabled = state.sectionNumber < maximum) { Text(stringResource(R.string.more)) }
+                val maximum = when (state.sectionKind) {
+                    "surah" -> 114
+                    "juz", "hizb", "page" -> state.index
+                        ?.let { runCatching { it.sectionCount(state.sectionKind) }.getOrNull() } ?: 0
+                    else -> 0
+                }
+                val stepEnabled = state.sectionKind in setOf("surah", "juz", "hizb", "page")
+                val selectionLabel = when (state.sectionKind) {
+                    "surah" -> state.index?.surahs?.getOrNull(state.surah - 1)?.name
+                        ?: state.sectionNumber.toString()
+                    "juz" -> stringResource(R.string.quran_section_label, stringResource(R.string.juz), state.sectionNumber)
+                    "hizb" -> stringResource(R.string.quran_section_label, stringResource(R.string.hizb), state.sectionNumber)
+                    "page" -> stringResource(R.string.quran_section_label, stringResource(R.string.page), state.sectionNumber)
+                    "range" -> state.range?.let {
+                        stringResource(
+                            R.string.quran_range_label,
+                            it.start.surah,
+                            it.start.ayah,
+                            it.end.surah,
+                            it.end.ayah,
+                        )
+                    } ?: stringResource(R.string.quran_range)
+                    else -> stringResource(R.string.quran_go_to)
+                }
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                ) {
+                    TextButton(
+                        onClick = { vm.section(state.sectionKind, state.sectionNumber - 1) },
+                        enabled = stepEnabled && state.sectionNumber > 1,
+                    ) { Text(stringResource(R.string.back)) }
+                    TextButton(onClick = { navigationKind = state.sectionKind; navigationSheet = true }) {
+                        Text(selectionLabel, maxLines = 2)
+                    }
+                    TextButton(
+                        onClick = { vm.section(state.sectionKind, state.sectionNumber + 1) },
+                        enabled = stepEnabled && state.sectionNumber < maximum,
+                    ) { Text(stringResource(R.string.more)) }
                 }
             }
             when {
@@ -194,16 +295,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             }
         }
     }
-    if (selector) AlertDialog(onDismissRequest = { selector = false }, title = { Text(stringResource(R.string.surah)) }, text = {
-        LazyColumn(Modifier.heightIn(max = 460.dp)) { items(state.index?.surahs.orEmpty(), key = { it.number }, contentType = { "surah" }) { surah -> TextButton(onClick = { vm.select(surah.number); selector = false }, Modifier.fillMaxWidth()) { Text("${surah.number}. ${surah.name}") } } }
-    }, confirmButton = { TextButton(onClick = { selector = false }) { Text(stringResource(R.string.close)) } })
+    if (navigationSheet) state.index?.let { index ->
+        QuranNavigationSheet(index, state, { navigationSheet = false }, vm::select, vm::section, vm::range, initialKind = navigationKind)
+    }
     if (fontDialog) {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
         AlertDialog(onDismissRequest = { fontDialog = false }, title = { Text(stringResource(R.string.font_size)) }, text = { Slider(size, { size = it }, valueRange = 18f..48f) }, confirmButton = { TextButton(onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false }) { Text(stringResource(R.string.save)) } })
-    }
-    if (numberDialog) {
-        var number by remember { mutableStateOf("${state.sectionNumber}") }
-        val maximum = when(state.sectionKind) { "page" -> 604; "juz" -> 30; else -> 60 }
-        AlertDialog(onDismissRequest = { numberDialog = false }, title = { Text(stringResource(when(state.sectionKind) { "page" -> R.string.page; "juz" -> R.string.juz; else -> R.string.hizb })) }, text = { OutlinedTextField(number, { number = it.filter(Char::isDigit).take(3) }, singleLine = true, keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)) }, confirmButton = { TextButton(enabled = (number.toIntOrNull() ?: 0) in 1..maximum, onClick = { vm.section(state.sectionKind, number.toInt()); numberDialog = false }) { Text(stringResource(R.string.read)) } })
     }
 }

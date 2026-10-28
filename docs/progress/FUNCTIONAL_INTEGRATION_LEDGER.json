@@ -281,8 +281,8 @@
       "id": "02.1",
       "name": "Protected authoritative local reads",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -467,8 +467,8 @@
       "id": "02.2",
       "name": "Owned persistent-work foundation",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -507,8 +507,8 @@
       "id": "02.3",
       "name": "Disposable response-cache limits",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -563,8 +563,8 @@
       "id": "02.4",
       "name": "Authentication request ownership races",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -601,8 +601,8 @@
       "id": "21.1",
       "name": "Premium shared primitives and motion reconciliation",
       "work_package": "Work package21: UX/accessibility",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -648,8 +648,8 @@
       "id": "02.5",
       "name": "Night Prayer conflict resolution",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -787,8 +787,8 @@
       "id": "02.6",
       "name": "Watch and account local recovery surfaces",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -841,8 +841,8 @@
       "id": "02.7.1",
       "name": "Captured-owner mutation dispatch guards",
       "work_package": "Work package 2",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -1072,8 +1072,8 @@
       "id": "21.18",
       "name": "Document immersive section heroes and original artwork",
       "work_package": "Work package 21: UI/UX closure",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "COMPLETE",
       "parallel_candidate_commits": [
@@ -1145,7 +1145,7 @@
       "name": "Actionable permanent Night Prayer rejection recovery",
       "work_package": "Work package 2",
       "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "REVIEWED: RETAIN CODEX REJECTION AND SYNC IMPLEMENTATION",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -1307,14 +1307,15 @@
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
       "remaining_acceptance": "Keep rejected outbox bytes, distinguish permanent non409 operation rejection from revision conflict and temporary connectivity, and provide explicit validated repair/retry without silently discarding data or starving healthy sessions. Applicable durable-state/API/error/localization/physical gates, safe migration if required, docs, reviewed commit and verified normal push pass.",
-      "acceptance_evidence": []
+      "acceptance_evidence": [],
+      "reconciled": "Source caches rejection markers in disposable CachedDocument rows and removes current result-count/order/revision validation; retain Codex durable outbox rejection columns and validated sync responses. Later Night feature work must be layered on current contract."
     },
     {
       "id": "02.7",
       "name": "Cross-module lost-response and restart recovery",
       "work_package": "Work package 2",
       "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "REVIEWED: RETAIN CODEX REJECTION AND SYNC IMPLEMENTATION",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -1580,7 +1581,8 @@
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
       "remaining_acceptance": "Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment. Required cross-module storage/API/device regression, documentation, reviewed logical commit and verified normal push pass.",
-      "acceptance_evidence": []
+      "acceptance_evidence": [],
+      "reconciled": "Source caches rejection markers in disposable CachedDocument rows and removes current result-count/order/revision validation; retain Codex durable outbox rejection columns and validated sync responses. Later Night feature work must be layered on current contract."
     },
     {
       "id": "02.8",
@@ -1695,8 +1697,8 @@
       "id": "03.1",
       "name": "Range and section navigation",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "INTEGRATED / AUTOMATED GATES PASSED / DEVICE ACCEPTANCE PENDING",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -1765,8 +1767,15 @@
       "tests_required": "Canonical boundary/invalid/mixed Arabic-digit tests; exact reader navigation. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete surah/ayah/juz/hizb/page/range entry and reference validation; reconcile Quran hub/control sheets. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Authorized Arabic/English offline, exact-bookmark, recreation, font/insets/landscape journeys; no connected device.",
+      "acceptance_evidence": [
+        "assembleDebug/testDebugUnitTest/assembleDebugAndroidTest/lintDebug PASS;68 JVM cases;334 paired resources. See docs/testing/QURAN_FUNCTIONAL_INTEGRATION.md."
+      ],
+      "parallel_implementation_commits": [
+        "58d561c5d485aed40d53fd01421cb24d5129f468"
+      ],
+      "retained": "Current lazy reader, protected position recovery, explicit save/bookmark owner dispatch, five-tab navigation and premium UI.",
+      "reconciled": "Canonical navigation/input/range patch; manual bookmark route and shared screen edits. Fixed missing dp import, Range opening wrong selector mode, unreadable-header scroll offset."
     },
     {
       "id": "03.2",
@@ -6930,8 +6939,8 @@
       "id": "17.1",
       "name": "Independent Admin authentication",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7001,8 +7010,8 @@
       "id": "17.2",
       "name": "Independent Admin bilingual shell",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [],
@@ -7030,8 +7039,8 @@
       "id": "17.3",
       "name": "Admin authorization matrix",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7195,8 +7204,8 @@
       "id": "17.4",
       "name": "Admin user management",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7234,8 +7243,8 @@
       "id": "17.5",
       "name": "Admin audit and analysis",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7399,8 +7408,8 @@
       "id": "17.6",
       "name": "Owner recovery operations",
       "work_package": "Work package 17: Independent Admin foundation",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [],
@@ -7436,8 +7445,8 @@
       "id": "18.1",
       "name": "Admin scholar CRUD and portraits",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7475,8 +7484,8 @@
       "id": "18.2",
       "name": "Admin series CRUD and ordering",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7515,8 +7524,8 @@
       "id": "18.3",
       "name": "Admin lesson CRUD",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7595,8 +7604,8 @@
       "id": "18.5",
       "name": "Admin book CRUD and rights",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7673,8 +7682,8 @@
       "id": "18.7",
       "name": "Admin discussion moderation",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -7713,8 +7722,8 @@
       "id": "18.8",
       "name": "Admin secure service settings",
       "work_package": "Work package 18: Admin content/services",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -8082,8 +8091,8 @@
       "id": "20.1",
       "name": "Transactional email branding and reliability",
       "work_package": "Work package 20: Email campaigns",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -8125,8 +8134,8 @@
       "id": "20.2",
       "name": "Email consent and unsubscribe",
       "work_package": "Work package 20: Email campaigns",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -8188,8 +8197,8 @@
       "id": "20.3",
       "name": "Prioritized email queue",
       "work_package": "Work package 20: Email campaigns",
-      "classification": "CODEX VERSION IS NEWER",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "BOTH MUST BE RECONCILED",
+      "review_state": "EXISTING ACCEPTANCE RETAINED; SOURCE DELTA REQUIRES SEMANTIC REVIEW",
       "codex_state": "COMPLETE",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -13638,7 +13647,8 @@
     "parallel_backend": "FAIL: catalog_progress_test.php saveKhatmah lacks required expected_revision. Prior domain6382/Quran13352/assets9/media15/tafsir18/identity43 assertions passed.",
     "parallel_php_syntax": "104/109 pass on workstation PHP; four Push value objects use unsupported readonly property syntax; public/index.php unsubscribe HTML has broken quoting.",
     "target_android": "PASS: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug; BUILD SUCCESSFUL in3m53s. Baseline predates new03.1 changes.",
-    "security": "Working tree no findings. Two historical credential-URL hits manually verified as example.invalid rejection fixtures."
+    "security": "Working tree no findings. Two historical credential-URL hits manually verified as example.invalid rejection fixtures.",
+    "target_backend": "PASS:20878 assertions across all16 configured suites on disposable MariaDB; no provider delivery."
   },
   "candidate_commit_subjects": {
     "97f26e53c4e8e4dad27423904a095553275d6bb9": "feat(review): add truthful expected-ayah review surface",
@@ -13982,5 +13992,29 @@
     "1dffd2241a5a923cbba488c8ae18a2c22bc6ca16": "Queue API identity emails through durable outbox",
     "29028f5d7cde176b92f23f0aee27153628942d23": "Document Night Prayer parallel implementation and pending acceptance",
     "78917fc297156a3837539aa788c49bf2fd4422a0": "Document implemented Khatmah lifecycle and offline contract"
+  },
+  "device_acceptance": {
+    "state": "NO_AUTHORIZED_CONNECTED_TRANSPORT",
+    "tasks_queued": [
+      "03.1"
+    ],
+    "evidence": "ADB discovery on2026-10-28; serial inventory retained only in ignored local artifact."
+  },
+  "migration_inventory": {
+    "identical_versions": "001–019",
+    "source_only": [
+      "020_khatmah_revision.sql",
+      "021_notification_preferences.sql",
+      "022_lesson_reminder_jobs.sql",
+      "023_follows.sql",
+      "024_content_subscription_facts.sql",
+      "025_push_devices.sql",
+      "026_notification_inbox.sql"
+    ],
+    "codex_only": [
+      "027_lesson_provider_identity.sql",
+      "028_email_delivery_attempts.sql"
+    ],
+    "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained."
   }
 }

@@ -84,7 +84,14 @@ import java.time.LocalDate
                     if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
                     items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
                         Column {
-                            if (tool == "bookmarks") Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
+                            if (tool == "bookmarks") {
+                                Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
+                                val surah = row.text("surah").toIntOrNull()
+                                val ayah = row.text("ayah").toIntOrNull()
+                                TextButton(onClick = { open("quran/$surah/$ayah") }, enabled = surah in 1..114 && ayah in 1..286) {
+                                    Text(stringResource(R.string.open_reader))
+                                }
+                            }
                             else TextButton(onClick = { val kind = row.text("target_type"); open((if (kind == "series") "series" else kind + "s") + "/" + row.text("target_id")) }) { Text(row.text("title")) }
                             TextButton(onClick = { scope.launch {
                                 try { if (tool == "bookmarks") graph.session.request("DELETE", "$path/${row.text("id")}",expectedUser=requireNotNull(owner)) else graph.session.request("DELETE", path, mapOf("target_type" to row.text("target_type"), "target_id" to row.text("target_id").toInt()),expectedUser=requireNotNull(owner)); reload() }

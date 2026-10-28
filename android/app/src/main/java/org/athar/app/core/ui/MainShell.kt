@@ -101,7 +101,8 @@ private fun AtharNavIcon(
         else if (path == "catalog-books") navigation.navigate("catalog/books") { launchSingleTop = true }
         else {
             val parts = path.split('/')
-            if(parts.size==2 && parts[0]=="upcoming" && (parts[1].toIntOrNull()?:0)>0) navigation.navigate(path){launchSingleTop=true}
+            if (parts.size == 3 && parts[0] == "quran" && (parts[1].toIntOrNull() ?: 0) in 1..114 && (parts[2].toIntOrNull() ?: 0) in 1..286) navigation.navigate(path) { launchSingleTop = true }
+            else if(parts.size==2 && parts[0]=="upcoming" && (parts[1].toIntOrNull()?:0)>0) navigation.navigate(path){launchSingleTop=true}
             else if (parts.size == 2 && parts[0] in listOf("books","scholars","series","lessons") && (parts[1].toIntOrNull() ?: 0) > 0) navigation.navigate("content/${parts[0]}/${parts[1]}") { launchSingleTop = true }
         }
     }
@@ -145,6 +146,7 @@ private fun AtharNavIcon(
                                 stringResource(
                                     when {
                                         route == "night-prayer" -> R.string.night_prayer
+                                        route.startsWith("quran/") -> R.string.quran
                                         route == "player" -> R.string.listen
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
                                         currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
@@ -205,6 +207,20 @@ private fun AtharNavIcon(
                     NavHost(navigation, startDestination = "home", enterTransition = { fadeIn(tween(if (reduced) 0 else AtharMotion.Normal, easing = AtharMotion.Enter)) }, exitTransition = { fadeOut(tween(if (reduced) 0 else AtharMotion.Fast, easing = AtharMotion.Exit)) }) {
                         composable("home") { CompositionLocalProvider(LocalAtharVisibilityScope provides this) { HomeScreen(vm.graph, auth, navigateTab, open) } }
                         composable("quran") { QuranScreen(vm.graph, settings?.quranFontSize ?: 28) }
+                        composable(
+                            "quran/{surah}/{ayah}",
+                            arguments = listOf(
+                                navArgument("surah") { type = NavType.IntType },
+                                navArgument("ayah") { type = NavType.IntType },
+                            ),
+                        ) { entry ->
+                            QuranScreen(
+                                graph = vm.graph,
+                                fontSize = settings?.quranFontSize ?: 28,
+                                initialSurah = entry.arguments?.getInt("surah"),
+                                initialAyah = entry.arguments?.getInt("ayah"),
+                            )
+                        }
                         composable("knowledge") { CompositionLocalProvider(LocalAtharVisibilityScope provides this) { KnowledgeScreen(vm.graph, open) } }
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }
