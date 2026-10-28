@@ -29,3 +29,11 @@ Daily entry reuses the existing shared QuranText::daily API. Native date/referen
 WP03 subsystem gate: debug APK, test APK, lint and 28 targeted JVM cases PASS (3m36s);354 resources and13352 Quran PHP assertions PASS. Device acceptance remains open. Reader scope restoration after process death is a known remaining03.7 repair; it is not claimed complete.
 
 03.4/03.5 source audit: retain current exact reader/bookmark/owner guards and identical DataStore font settings. The isolated older bookmarked-ayah screen is superseded and is not imported. Actual bookmark sync/retry and font persistence/accessibility journeys remain pending.
+
+## 03.7 reader view-state restoration repair
+
+Both original branches recreated QuranViewModel at Surah1 after process death. Primitive, canonically validated SavedStateHandle selection now retains Surah/ayah, page/juz/hizb or inclusive range. The existing Nav owner and ViewModel key scope this view state to the account; it is separate from protected authoritative reading position. Unknown/corrupt selection fails visibly without clearing retained progress.
+
+Reader tool state retains the native lazy-list scroll; consumed initial anchors and handled scroll requests prevent repeated jumps during recreation. Explicit daily/resume actions have distinct request tokens. Search query paging also restores without resetting an already-rendered page to its top.
+
+Main Kotlin compilation and8 focused JVM cases pass (selection3/navigation3/protected-read2); final targeted rerun17s. New APK/lint are intentionally queued for the next coherent batch under the addendum cadence. No actual OS process-death/device proof is claimed. Earlier28-case/debug/test-APK/lint evidence above predates this repair.

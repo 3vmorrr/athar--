@@ -15,6 +15,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,7 +50,15 @@ internal fun QuranSearchResults(
     onNextPage: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    LaunchedEffect(page.query, page.offset) { listState.scrollToItem(0) }
+    var shownQuery by rememberSaveable { mutableStateOf("") }
+    var shownOffset by rememberSaveable { androidx.compose.runtime.mutableIntStateOf(-1) }
+    LaunchedEffect(page.query, page.offset) {
+        if (shownQuery != page.query || shownOffset != page.offset) {
+            listState.scrollToItem(0)
+            shownQuery = page.query
+            shownOffset = page.offset
+        }
+    }
     LazyColumn(
         modifier = modifier.testTag("quran-search-results"),
         state = listState,

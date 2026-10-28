@@ -3532,11 +3532,13 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
-      "03.7"
+      "04.1",
+      "04.2",
+      "04.3"
     ],
-    "scope": "reader view-state restoration; then next dependency-ready functional WP",
-    "state": "REPAIR NEXT",
-    "gate": "Focused lifecycle/selection/protected-read tests; batch builds per FUNCTIONAL_INTEGRATION_STRATEGY.md"
+    "scope": "MediaSession lifecycle, ownership, focus and recovery",
+    "state": "REVIEW IN PROGRESS",
+    "gate": "Immediate focused owner/security tests, then subsystem batch gate; real playback/lockscreen remains pending hardware."
   },
   "progress_audit": "Historic14d snapshot unchanged. Current post-batch closure:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Exact repository-wide full/partial/absent implementation totals remain unverified.",
   "campaign_batch": {
@@ -3591,14 +3593,16 @@
   },
   "active_review": {
     "tasks": [
-      "03.3",
-      "03.7"
+      "04.1",
+      "04.2",
+      "04.3"
     ],
-    "classification": "KEEP WITH FIXES / CONNECT EXISTING DAILY CONTRACT",
+    "state": "SOURCE REVIEW / NOT ACCEPTED",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "48d4c73f603f4ab338c13c2fd96afae8eae01c22",
-    "state": "AUTOMATED GATES PASSED / RESTORATION AND DEVICE ACCEPTANCE OPEN",
-    "evidence": "docs/testing/QURAN_FUNCTIONAL_INTEGRATION.md"
+    "findings": [
+      "Retain current persistent premium mini-player state and supported controls.",
+      "Source session activity is useful; both branches need direct A-to-B queue clearing and stale-controller/request ownership guards."
+    ]
   },
   "previous_visual_review": {
     "tasks": [
