@@ -2733,7 +2733,7 @@
       "name": "Complete adhkar and dua discovery",
       "work_package": "Work package 5: Adhkar/dua",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2763,8 +2763,7 @@
       ],
       "schema_changes": [],
       "api_changes": [
-        "backend/src/Catalog/BookAccess.php",
-        "backend/src/Catalog/CatalogService.php"
+        "Optional activity_date and progress_date; day-aware owned counter projection and /me/adhkar-stats."
       ],
       "android_changes": [
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarReminderCard.kt",
@@ -2780,15 +2779,28 @@
       "tests_required": "Full source coverage, pagination/search and unspecified-repeat cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Finish all category/source paging and Arabic search without missing NULL-repeat items; reconcile category presentation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual encrypted-storage/day rollover/conflict/account-switch/device journeys and accessibility remain open. QA emulator exited before an adb transport; new instrumentation scenarios are compiled but unexecuted.",
+      "acceptance_evidence": [
+        "Immediate Android main compile +16 day/session JVM cases PASS.118 backend assertions:24 daily/statistics +48 catalog/progress +46 API/identity PASS.365 paired resources PASS. docs/testing/ADHKAR_FUNCTIONAL_INTEGRATION.md",
+        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes."
+      ],
+      "reconciled": "Reconciled source all-category/query/paging around the current calm counter; NULL-repeat items retained. Fixed stale completion auto-advance by preserving category/query/page/index intent.",
+      "parallel_implementation_commits": [
+        "d45b818545288d0dd431b0d883cd4d0c84975be1",
+        "078062cb5d75e50e5c90bd4497c777bbe2689342",
+        "023a72429d57c174967aed127cd90349ff44cd44",
+        "6086176944dcb8a5b5a5b34dd4147604b31f9c6e",
+        "c1e66df303c2a0495fb1da6b8d374040a32aea5d",
+        "99bf164cf2189277224e3df1c84df7c3e9aaf02c",
+        "e23a956c673d4b6fa49b92959a0cc5509c37de24"
+      ]
     },
     {
       "id": "05.2",
       "name": "Adhkar daily counting and reset policy",
       "work_package": "Work package 5: Adhkar/dua",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2827,7 +2839,7 @@
       ],
       "schema_changes": [],
       "api_changes": [
-        "backend/src/Progress/ProgressService.php"
+        "Optional activity_date and progress_date; day-aware owned counter projection and /me/adhkar-stats."
       ],
       "android_changes": [
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarReminderCard.kt",
@@ -2844,15 +2856,28 @@
       "tests_required": "Date/count/repeat/NULL/reset/advance/idempotency cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Finish explicit reset/restart/day-boundary semantics without granting completion from navigation/skipping. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual encrypted-storage/day rollover/conflict/account-switch/device journeys and accessibility remain open. QA emulator exited before an adb transport; new instrumentation scenarios are compiled but unexecuted.",
+      "acceptance_evidence": [
+        "Immediate Android main compile +16 day/session JVM cases PASS.118 backend assertions:24 daily/statistics +48 catalog/progress +46 API/identity PASS.365 paired resources PASS. docs/testing/ADHKAR_FUNCTIONAL_INTEGRATION.md",
+        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes."
+      ],
+      "reconciled": "Reconciled backend UTC day and optional encrypted day snapshots. Invalid explicit dates/receipts fail closed; legacy row timestamp migration and clock rollback preserve private state. Genuine completion history is acknowledged before explicit server replacement; conflicts do not suppress pending history delivery.",
+      "parallel_implementation_commits": [
+        "d45b818545288d0dd431b0d883cd4d0c84975be1",
+        "078062cb5d75e50e5c90bd4497c777bbe2689342",
+        "023a72429d57c174967aed127cd90349ff44cd44",
+        "6086176944dcb8a5b5a5b34dd4147604b31f9c6e",
+        "c1e66df303c2a0495fb1da6b8d374040a32aea5d",
+        "99bf164cf2189277224e3df1c84df7c3e9aaf02c",
+        "e23a956c673d4b6fa49b92959a0cc5509c37de24"
+      ]
     },
     {
       "id": "05.3",
       "name": "Adhkar personal statistics",
       "work_package": "Work package 5: Adhkar/dua",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2922,7 +2947,7 @@
       ],
       "schema_changes": [],
       "api_changes": [
-        "backend/src/Progress/ProgressService.php"
+        "Optional activity_date and progress_date; day-aware owned counter projection and /me/adhkar-stats."
       ],
       "android_changes": [
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarReminderCard.kt",
@@ -2947,15 +2972,28 @@
       "tests_required": "Repeated/skipped/offline/lost-ack/date-boundary statistics tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Expose only genuine completion events and daily category progress with offline/retry truthfulness. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual encrypted-storage/day rollover/conflict/account-switch/device journeys and accessibility remain open. QA emulator exited before an adb transport; new instrumentation scenarios are compiled but unexecuted.",
+      "acceptance_evidence": [
+        "Immediate Android main compile +16 day/session JVM cases PASS.118 backend assertions:24 daily/statistics +48 catalog/progress +46 API/identity PASS.365 paired resources PASS. docs/testing/ADHKAR_FUNCTIONAL_INTEGRATION.md",
+        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes."
+      ],
+      "reconciled": "Owned historical totals and current reviewed category progress; target changes do not reinterpret old counters. Required client contract validated; cache date/retry and unreadable protected pending-history state remain explicit, never fake zero.",
+      "parallel_implementation_commits": [
+        "d45b818545288d0dd431b0d883cd4d0c84975be1",
+        "078062cb5d75e50e5c90bd4497c777bbe2689342",
+        "023a72429d57c174967aed127cd90349ff44cd44",
+        "6086176944dcb8a5b5a5b34dd4147604b31f9c6e",
+        "c1e66df303c2a0495fb1da6b8d374040a32aea5d",
+        "99bf164cf2189277224e3df1c84df7c3e9aaf02c",
+        "e23a956c673d4b6fa49b92959a0cc5509c37de24"
+      ]
     },
     {
       "id": "05.4",
       "name": "Adhkar one-handed accessibility",
       "work_package": "Work package 5: Adhkar/dua",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2979,7 +3017,9 @@
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarScreen.kt"
       ],
       "schema_changes": [],
-      "api_changes": [],
+      "api_changes": [
+        "Optional activity_date and progress_date; day-aware owned counter projection and /me/adhkar-stats."
+      ],
       "android_changes": [
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarReminderCard.kt",
         "android/app/src/main/java/org/athar/app/adhkar/AdhkarReminderManager.kt",
@@ -2994,8 +3034,21 @@
       "tests_required": "Rapid taps, font/reduced-motion/RTL/LTR and protected-unreadable regressions. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Reconcile premium active-dhikr surface, readable source/counter controls and Arabic numeric entry where applicable. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual encrypted-storage/day rollover/conflict/account-switch/device journeys and accessibility remain open. QA emulator exited before an adb transport; new instrumentation scenarios are compiled but unexecuted.",
+      "acceptance_evidence": [
+        "Immediate Android main compile +16 day/session JVM cases PASS.118 backend assertions:24 daily/statistics +48 catalog/progress +46 API/identity PASS.365 paired resources PASS. docs/testing/ADHKAR_FUNCTIONAL_INTEGRATION.md",
+        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes."
+      ],
+      "reconciled": "Preserved current counter presentation; localized progress semantics and explicit day/conflict controls;64dp count and48dp reset/navigation touch areas. Actual TalkBack/RTL/LTR/large font/one-handed device acceptance remains open.",
+      "parallel_implementation_commits": [
+        "d45b818545288d0dd431b0d883cd4d0c84975be1",
+        "078062cb5d75e50e5c90bd4497c777bbe2689342",
+        "023a72429d57c174967aed127cd90349ff44cd44",
+        "6086176944dcb8a5b5a5b34dd4147604b31f9c6e",
+        "c1e66df303c2a0495fb1da6b8d374040a32aea5d",
+        "99bf164cf2189277224e3df1c84df7c3e9aaf02c",
+        "e23a956c673d4b6fa49b92959a0cc5509c37de24"
+      ]
     },
     {
       "id": "06.1",
@@ -14084,16 +14137,15 @@
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
     "date": "2026-10-28",
-    "codex_remote": "1c922baced891b0d4dc3e5c657d66180d00303b1",
+    "codex_remote": "070997cb7fba5bf726cab84ca5f7e2dca19b059a",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
-      "05.1",
-      "05.2",
-      "05.3",
-      "05.4"
+      "06.1",
+      "06.2",
+      "06.3"
     ],
-    "state": "SOURCE INSPECTION ONLY; PRESERVE PROTECTED COUNTERS; REVIEW DAILY CONTRACT BEFORE TRANSFER"
+    "state": "SOURCE INSPECTION ONLY; REVIEW DOWNLOAD OWNERSHIP, ATOMIC PUBLICATION AND CURRENT BOOK RIGHTS POLICY"
   }
 }

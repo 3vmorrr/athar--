@@ -124,7 +124,7 @@ class NativeStorageTest {
                     assertEquals("me/adhkar-progress", path)
                     if (method == "GET") return JsonArray()
                     revision++
-                    return JsonObject().apply { addProperty("revision", revision) }
+                    return JsonObject().apply { addProperty("revision", revision); addProperty("current_count", body["current_count"] as Int); addProperty("repeat_count", 3); addProperty("progress_date", body["progress_date"].toString()) }
                 }
             }
             val session = SessionRepository(transport, store); session.login("reader@example.test", "NativeTest123!")

@@ -241,4 +241,13 @@
     <string name="cached_content_retry">Showing a saved copy. Try again to refresh it.</string>
     <string name="audio_interrupted">Playback is temporarily interrupted.</string>
     <string name="quran_text_unavailable">The verified Quran text could not be loaded. Try again.</string>
+    <string name="all_categories">All categories</string>
+    <string name="adhkar_statistics">Adhkar statistics</string>
+    <string name="adhkar_today_completions">Today</string>
+    <string name="adhkar_total_completions">Total completions</string>
+    <string name="adhkar_active_days">Active days</string>
+    <string name="adhkar_pending_completions">%1$d completion saved on this device awaiting sync</string>
+    <string name="adhkar_category_items">%1$d of %2$d completed today</string>
+    <string name="adhkar_day_unresolved">A counter from another day needs synchronization before editing. Check the device date, then sync again.</string>
+    <string name="adhkar_statistics_date">Account statistics recorded as of %1$s</string>
 </resources>

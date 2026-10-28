@@ -38,7 +38,7 @@ isolated_database(static function(PDO $db):void{
     for($i=1000;$i<=1500;$i++)$db->prepare("INSERT INTO adhkar_progress(user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES(1,?,0,1,1,'2026-01-01 00:00:00')")->execute(['curated:'.$i]);
     assert_progress(count($progress->adhkar($u))===500,'legacy counter overview remains bounded');
     $targeted=$progress->adhkar($u,['item_id'=>'1']);
-    assert_progress(count($targeted)===1&&(int)$targeted[0]['current_count']===3,'targeted counter lookup finds an older row beyond overview window');
+    assert_progress(count($targeted)===1&&(int)$targeted[0]['current_count']===0&&(int)$targeted[0]['revision']===3,'targeted counter lookup finds and projects an older row beyond overview window');
     assert_progress($progress->adhkar($other,['item_id'=>'1'])===[],'targeted counter lookup stays account scoped');
     reject_progress(fn()=>$progress->adhkar($u,['item_id'=>'1 OR 1=1']),422,'targeted lookup validates canonical positive ID');
     $progress->favorite($u,'lesson',1,true);$db->exec('UPDATE scholars SET is_published=0 WHERE id=1');
@@ -55,4 +55,10 @@ isolated_database(static function(PDO $db):void{
     assert_progress(count($categories)===2&&!in_array('Private',array_column($categories,'category'),true),'category index includes all reviewed sections and excludes unreviewed content');
     $late=$catalog->list('adhkar',['category'=>'Z-last']);
     assert_progress($late['pagination']['total']===1&&$late['items'][0]['repeat_count']===null,'category query preserves unspecified repeat count');
+    $allFirst=$catalog->list('adhkar',['q'=>'Formula','per_page'=>'1','page'=>'1']);
+    $allSecond=$catalog->list('adhkar',['q'=>'Formula','per_page'=>'1','page'=>'2']);
+    assert_progress($allFirst['pagination']['total']===2&&$allFirst['pagination']['has_more']&&!$allSecond['pagination']['has_more'],'all-category search pages include every reviewed match');
+    $matched=array_merge($allFirst['items'],$allSecond['items']);
+    assert_progress(count(array_filter($matched,static fn(array $item):bool=>$item['repeat_count']===null))===1&&!in_array('Hidden category',array_column($matched,'title'),true),'search includes NULL-repeat item and excludes unreviewed item');
+
 });echo 'PASS: '.$checks." catalog/publication/ownership/progress/retry/comment/plan assertions.\n";

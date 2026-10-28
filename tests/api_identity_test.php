@@ -33,6 +33,7 @@ try {
     expect(strlen($codes[$input['email']])===6,'fake provider received OTP, no live message sent');
     expect($api->handle(new Request('GET','/api/v1/quran/metadata',[],['Authorization'=>'Bearer '.$one['session']['access_token']]))->status===403,'verification scope cannot read main content');
     expect($api->handle(new Request('GET','/api/v1/me'))->status===401,'missing token is JSON 401');
+    expect($api->handle(new Request('GET','/api/v1/me/adhkar-stats',[],['Authorization'=>'Bearer '.$one['session']['access_token']]))->status===403,'pending account cannot read statistics');
     $hash=$db->query("SELECT token_hash FROM auth_tokens WHERE hash_scheme='hmac-sha256-v1' LIMIT 1")->fetchColumn();expect($hash!==hash('sha256',$codes[$input['email']]),'OTP keyed rather than brute-forceable bare hash');
     for($i=0;$i<5;$i++)denied(fn()=>$auth->verify($oneId,'000000'),422,'wrong OTP rejected');
     $attempts=$db->query('SELECT failed_attempts FROM auth_tokens ORDER BY id DESC LIMIT 1')->fetchColumn();expect((int)$attempts===5,'failed attempts persist transactionally (observed '.(int)$attempts.')');
@@ -40,6 +41,9 @@ try {
     $auth->resend($oneId);$verified=$auth->verify($oneId,$codes[$input['email']]);$token=$verified['session']['access_token'];expect($verified['user']['email_verified']===true,'OTP activates account');
     denied(fn()=>$auth->authenticate($one['session']['access_token'],false),401,'verification credential revoked after activation');
     $metadata=$api->handle(new Request('GET','/api/v1/quran/metadata',[],['Authorization'=>'Bearer '.$token]));expect($metadata->status===200&&count($metadata->body['data']['surahs'])===114,'verified API metadata');
+    $stats=$api->handle(new Request('GET','/api/v1/me/adhkar-stats',[],['Authorization'=>'Bearer '.$token]));
+    expect($stats->status===200&&$stats->body['data']['total_completions']===0,'verified statistics route returns authoritative empty account');
+    expect($api->handle(new Request('POST','/api/v1/me/activity',['event_id'=>'11111111-1111-4111-8111-111111111111','activity_type'=>'adhkar_completion','activity_date'=>true],['Authorization'=>'Bearer '.$token]))->status===422,'activity route rejects boolean date');
     expect(!isset($verified['user']['password_hash'])&&!isset($verified['user']['session_version']),'profile omits secrets and internal revocation state');
     $stored=$db->query("SELECT access_hash FROM api_sessions WHERE id='".$verified['session']['id']."'")->fetchColumn();expect($stored!==$token&&$stored===hash('sha256',$token),'bearer stored only hashed');
     $rotated=$auth->refresh($verified['session']['refresh_token']);$auth->authenticate($rotated['session']['access_token']);expect(true,'rotation produces a usable new token');

@@ -42,3 +42,5 @@ Task02.4's final executed gates are recorded in SESSION_OWNERSHIP.md and TEST_RE
 2026-10-28:04.1 ownership repair `8d20a958cfcc4f8f591a0dec90cc74aa1383d928` pushed/verified. Related04.1–04.5 reconciliation batch:29 JVM/debug/test APK/lint/356 resources and31 PHP media assertions PASS. Physical and live-provider acceptance remains open; no task promoted COMPLETE. Batch SHA recorded after commit in the next receipt.
 
 2026-10-28:WP04 local subsystem checkpoint `7cdea1666242fa5b5c476d01e4d2cb0524f6093d` pushed normally. Follow-up corrects documentation encoding only; original149 task definitions verified byte-decoded against the prior checkpoint.
+
+2026-10-28:WP04 receipt/document correction `070997cb7fba5bf726cab84ca5f7e2dca19b059a` pushed and exact remote verified. WP05 reconciliation:20 focused JVM cases/debug/test APK/lint/365 resources +118 backend assertions PASS. JVM worker required task-local128MiB retry after Windows paging exhaustion; no hardware/emulator instrumentation PASS inferred. All four tasks remain PARTIAL; SHA follows next checkpoint.

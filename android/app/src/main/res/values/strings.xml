@@ -269,4 +269,13 @@
     <string name="cached_content_retry">تُعرض نسخة محفوظة. أعد المحاولة لتحديثها.</string>
     <string name="audio_interrupted">التشغيل متوقف مؤقتًا.</string>
     <string name="quran_text_unavailable">تعذّر تحميل نص القرآن الموثّق. أعد المحاولة.</string>
+    <string name="all_categories">كل التصنيفات</string>
+    <string name="adhkar_statistics">إحصائيات الأذكار</string>
+    <string name="adhkar_today_completions">إكمالات اليوم</string>
+    <string name="adhkar_total_completions">إجمالي الإكمالات</string>
+    <string name="adhkar_active_days">أيام نشطة</string>
+    <string name="adhkar_pending_completions">%1$d إكمال محفوظ على الجهاز بانتظار المزامنة</string>
+    <string name="adhkar_category_items">%1$d من %2$d مكتملة اليوم</string>
+    <string name="adhkar_day_unresolved">لا يمكن تعديل عدّاد يوم آخر قبل تسوية مزامنته. تحقّق من تاريخ الجهاز ثم أعد المزامنة.</string>
+    <string name="adhkar_statistics_date">إحصاءات الحساب المسجّلة حتى %1$s</string>
 </resources>
