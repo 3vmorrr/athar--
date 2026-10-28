@@ -11,6 +11,16 @@ import org.athar.app.core.network.*
 import org.athar.app.core.security.*
 
 class SessionRepositoryTest {
+    @Test fun exportLeaseExpiresEvenWhenTheSameOwnerSignsInAgain()=runTest {
+        var actor=1
+        val repo=SessionRepository(FakeTransport{_,_->reply(id=actor)},MemoryStore())
+        repo.login("reader@example.test","Fixture123!")
+        val first=repo.lease(1);repo.requireLease(first)
+        repo.login("reader@example.test","Fixture123!")
+        assertTrue(runCatching{repo.requireLease(first)}.exceptionOrNull() is ApiException)
+        val second=repo.lease(1);actor=2;repo.login("other@example.test","Fixture123!")
+        assertTrue(runCatching{repo.requireLease(second)}.exceptionOrNull() is ApiException)
+    }
     @Test fun pendingActorCanVerifyAndResendButCannotDispatchPrivateApiRequests()=runTest{
         var privateCalls=0;var resendCalls=0
         val repo=SessionRepository(FakeTransport{path,_->when(path){

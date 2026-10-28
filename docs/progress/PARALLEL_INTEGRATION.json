@@ -3532,10 +3532,9 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
-      "07.3",
       "07.4"
     ],
-    "state": "REVIEWED SOURCE; RECONCILE OWNED EXPORT AND DELETION RECOVERY"
+    "state": "DURABLE CONFIRMED DELETION AND OWNED RECOVERY NEXT"
   },
   "progress_audit": "Historic14d snapshot unchanged. Current post-batch closure:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Exact repository-wide full/partial/absent implementation totals remain unverified.",
   "campaign_batch": {
@@ -3590,17 +3589,16 @@
   },
   "active_review": {
     "tasks": [
-      "07.1",
-      "07.2"
+      "07.3"
     ],
-    "state": "RECONCILED / LOCAL AND HTTP GATES PASSED / PHYSICAL AND PROVIDER ACCEPTANCE OPEN",
+    "state": "RECONCILED / LOCAL AND API34 SNAPSHOT GATES PASSED / SAF AND PHYSICAL ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "5290bfc2784cba90301539d5e9f309b166bce542",
+    "target_baseline": "09b2982aa367ad26bfd09ecfd3e0fe08adf10f89",
     "findings": [
-      "Preserved premium profile/auth composition; functional shared input/OTP validation, Unicode limits, explicit server success and memory-only owner-keyed passwords.",
-      "Revoke-other POST retains current family, validates live caller inside transaction and isolates owners; source stale-actor gap corrected.",
-      "Fixed inherited login/rehash/new-version credential race and stale password-change/deletion actor snapshots; serialized user-before-session/OTP locks.",
-      "22 JVM/debug/test APK/lint/405 resources,115 focused backend and136 real HTTP assertions PASS; physical/Gmail/export/deletion recovery acceptance remains open."
+      "Preflight complete owned data before CreateDocument; strict envelope, owner/generation lease, memory-only prepared bytes and checked writes/cleanup.",
+      "Owned Room snapshot includes private counters/reading/books and all pending Night Prayer operations, preserves unreadable data and excludes exemptions.",
+      "Server explicit projections, owner predicates, consistent snapshot, all night pages, actual activity rows and supported validated preferences. No migration.",
+      "27 focused JVM/410 resources,33 export +32 night +51 catalog checks; separate Admin HTTP families61/60/62/36;actual API34 storage10 PASS. SAF and physical acceptance open."
     ]
   },
   "previous_visual_review": {

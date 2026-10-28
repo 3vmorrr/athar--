@@ -21,6 +21,7 @@ sealed interface AuthState {
     data class SignedIn(val user: UserProfile, val offline: Boolean = false) : AuthState
 }
 private data class AuthReply(val user: UserProfile?, val session: Credentials, @SerializedName("delivery_status") val deliveryStatus: String?)
+internal data class SessionLease(val owner: Long, val generation: Long)
 
 class SessionRepository(private val transport: ApiTransport, private val store: TokenStore, private val language: () -> String = { "ar" }, private val now: () -> Long = System::currentTimeMillis) {
     private val gson = Gson()
@@ -31,6 +32,13 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     private val mutableState = MutableStateFlow<AuthState>(AuthState.Restoring)
     val state = mutableState.asStateFlow()
     val userId: Long? get() = stored?.user?.id
+
+    internal fun lease(owner: Long): SessionLease {
+        val epoch = generation.get()
+        requireVerifiedOwner(owner); checkGeneration(epoch)
+        return SessionLease(owner, epoch)
+    }
+    internal fun requireLease(lease: SessionLease) { requireVerifiedOwner(lease.owner); checkGeneration(lease.generation) }
 
     /** Private data actions need the captured actor and current verified access, including offline. */
     fun requireVerifiedOwner(expectedUser:Long?):Long {

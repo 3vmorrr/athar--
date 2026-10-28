@@ -290,4 +290,9 @@
     <string name="revoke_other_sessions_hint">End your other account sessions and keep this session signed in.</string>
     <string name="other_sessions_revoked">Other sessions were signed out.</string>
     <string name="account_password_updated">Your password was updated and other sessions were signed out.</string>
+    <string name="export_prepare">Prepare data copy</string>
+    <string name="export_choose_destination">Choose save location</string>
+    <string name="export_privacy_confirmation">This copy includes your account, private progress and notes, and unsynced data on this device. It is readable text in the location you choose. Private exempt periods, passwords and sign-in credentials are excluded. Preparing the copy requires a server connection.</string>
+    <string name="export_write_failed">The copy could not be saved. Prepare it again and choose an available location.</string>
+    <string name="export_partial_file">Saving failed and the incomplete file could not be removed. A partial copy may remain in your chosen location; review it before trying again.</string>
 </resources>

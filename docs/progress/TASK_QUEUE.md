@@ -2,7 +2,7 @@
 
 Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.
 
-Snapshot: 2026-10-29. Current task: **07.3**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+Snapshot: 2026-10-29. Current task: **07.4**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
 
 Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 
@@ -322,7 +322,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.2 — Safe durable book download
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.1.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.1.
 - Exact scope: Implement validated HTTPS download, bounded storage, progress and durable identity without bypassing rights.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); backend/src/Catalog/.
 - Automated gates: Redirect/SSRF/MIME/size/failure/resume eligibility tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -332,7 +332,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.3 — Book download cancellation and management
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.2.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.2.
 - Exact scope: Persist downloaded-file inventory; cancel/retry/remove only owned downloaded files safely.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new).
 - Automated gates: Interrupted download/process restart/space/path ownership tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -342,7 +342,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.4 — Native PDF open and reading state
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.3.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.3.
 - Exact scope: Open verified local PDFs with accessible native/file-provider flow and explicit retained reading position when supported.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); android/app/src/main/AndroidManifest.xml.
 - Automated gates: Malformed PDF/no viewer/provider grant/position tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -352,7 +352,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 06.5 — Book offline integrity acceptance
 
-- Parent: Work package 6: Books; state: **NOT STARTED**; dependencies: 06.4.
+- Parent: Work package 6: Books; state: **PARTIAL**; dependencies: 06.4.
 - Exact scope: Verify checksums/stale metadata/rights changes, corruption and file cleanup without deleting private progress.
 - Files/modules: android/app/src/main/java/org/athar/app/books/ (new); android/app/src/main/java/org/athar/app/core/data/.
 - Automated gates: Corrupt/truncated/missing/expired file and offline catalog cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

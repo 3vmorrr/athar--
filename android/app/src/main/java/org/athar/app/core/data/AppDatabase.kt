@@ -35,6 +35,7 @@ interface AtharDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun night(session: LocalNightSession)
     @Insert suspend fun enqueue(mutation: OutboxMutation)
     @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence LIMIT 50") suspend fun pending(user: Long): List<OutboxMutation>
+    @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence") suspend fun allMutations(user: Long): List<OutboxMutation>
     @Query("SELECT o.* FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND (c.conflict=1 OR c.rejectedStatus IS NOT NULL OR c.sequence<o.sequence)) ORDER BY o.sequence LIMIT 50") suspend fun eligiblePending(user:Long):List<OutboxMutation>
     @Query("SELECT EXISTS (SELECT 1 FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND (c.conflict=1 OR c.rejectedStatus IS NOT NULL)))") suspend fun hasEligiblePending(user:Long):Boolean
     @Query("SELECT DISTINCT sessionId FROM outbox WHERE userId=:user AND rejectedStatus IS NOT NULL ORDER BY sequence") fun observeNightRejectionIds(user:Long):Flow<List<String>>

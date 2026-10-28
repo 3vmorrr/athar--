@@ -318,4 +318,9 @@
     <string name="revoke_other_sessions_hint">تنتهي جلسات حسابك الأخرى، وتبقى هذه الجلسة متصلة.</string>
     <string name="other_sessions_revoked">تم تسجيل خروج الجلسات الأخرى.</string>
     <string name="account_password_updated">تم تحديث كلمة المرور وتسجيل خروج الجلسات الأخرى.</string>
+    <string name="export_prepare">إعداد نسخة البيانات</string>
+    <string name="export_choose_destination">اختيار مكان الحفظ</string>
+    <string name="export_privacy_confirmation">تحتوي النسخة على بيانات حسابك وتقدّمك وملاحظاتك الخاصة وبيانات هذا الجهاز غير المتزامنة. تُحفظ كنص مقروء في المكان الذي تختاره. لا تشمل فترات الإعفاء الخاصة ولا كلمات المرور أو بيانات الدخول. إعداد النسخة يحتاج اتصالًا بالخادم.</string>
+    <string name="export_write_failed">تعذر حفظ النسخة. أعد إعدادها واختر مكانًا متاحًا للحفظ.</string>
+    <string name="export_partial_file">تعذر إتمام الحفظ وإزالة الملف غير المكتمل. قد تبقى نسخة جزئية في المكان الذي اخترته؛ راجعها قبل المحاولة مجددًا.</string>
 </resources>

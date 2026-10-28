@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-29",
-  "current_task": "07.3",
+  "current_task": "07.4",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -612,7 +612,7 @@
       "name": "Safe durable book download",
       "parent": "Work package 6: Books",
       "scope": "Implement validated HTTPS download, bounded storage, progress and durable identity without bypassing rights.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.1"
       ],
@@ -630,7 +630,7 @@
       "name": "Book download cancellation and management",
       "parent": "Work package 6: Books",
       "scope": "Persist downloaded-file inventory; cancel/retry/remove only owned downloaded files safely.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.2"
       ],
@@ -647,7 +647,7 @@
       "name": "Native PDF open and reading state",
       "parent": "Work package 6: Books",
       "scope": "Open verified local PDFs with accessible native/file-provider flow and explicit retained reading position when supported.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.3"
       ],
@@ -665,7 +665,7 @@
       "name": "Book offline integrity acceptance",
       "parent": "Work package 6: Books",
       "scope": "Verify checksums/stale metadata/rights changes, corruption and file cleanup without deleting private progress.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "06.4"
       ],

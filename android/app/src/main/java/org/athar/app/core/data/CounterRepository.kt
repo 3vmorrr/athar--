@@ -62,6 +62,12 @@ class CounterRepository(private val dao: AtharDao, private val cipher: PrivateCi
     private fun currentDayState(value:CounterState,target:Int,today:String=utcDay()):CounterState =
         counterForDay(value,target,today)
 
+    suspend fun retained(owner: Long): List<CounterState> = withContext(Dispatchers.IO) {
+        session.requireVerifiedOwner(owner)
+        dao.caches(owner, "adhkar:%").map { row -> require(row.userId == owner); decode(row) }
+            .also { session.requireVerifiedOwner(owner) }
+    }
+
     private suspend fun state(user: Long, item: Int, target: Int):CounterState {
         val row=dao.cache(user,key(item))
         return if(row==null)CounterState(item,target,day=utcDay())

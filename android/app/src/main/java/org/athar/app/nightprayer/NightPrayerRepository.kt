@@ -40,6 +40,33 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         return payload
     }
     fun observe(user: Long) = dao.nights(user).map { rows -> rows.map { it to read(it) } }.flowOn(Dispatchers.Default)
+    suspend fun retainedExport(owner: Long): JsonObject = withContext(Dispatchers.IO) {
+        session.requireVerifiedOwner(owner)
+        val sessions = com.google.gson.JsonArray()
+        for (row in dao.allNights(owner)) {
+            require(row.userId == owner)
+            val body = validateRetained(row)
+            sessions.add(JsonObject().apply {
+                addProperty("owner_id", owner); addProperty("id", row.id)
+                addProperty("local_revision", row.localRevision); addProperty("server_revision", row.serverRevision)
+                addProperty("deleted", row.deleted); addProperty("dirty", row.dirty); addProperty("updated_at", row.updatedAt)
+                add("session", body ?: com.google.gson.JsonNull.INSTANCE)
+            })
+        }
+        val mutations = com.google.gson.JsonArray()
+        for (row in dao.allMutations(owner)) {
+            require(row.userId == owner && row.operation in setOf("put", "delete"))
+            val body = JsonParser.parseString(cipher.open(row.payloadCipher)).asJsonObject
+            require(body["mutation_id"].asString == row.mutationId && body["expected_revision"].toString() == row.expectedRevision.toString())
+            mutations.add(JsonObject().apply {
+                addProperty("owner_id", owner); addProperty("session_id", row.sessionId); addProperty("operation", row.operation)
+                addProperty("conflict", row.conflict); addProperty("rejected_status", row.rejectedStatus)
+                add("data", body)
+            })
+        }
+        session.requireVerifiedOwner(owner)
+        JsonObject().apply { add("device_night_sessions", sessions); add("device_night_mutations", mutations) }
+    }
     private fun retainedBody(row:LocalNightSession):JsonObject? {
         if(!row.deleted)return read(row)
         require(row.nightDate.isEmpty()&&row.verseCount==0&&row.measuredSeconds==null)

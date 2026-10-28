@@ -169,10 +169,7 @@ final class ApiKernel
             if(isset($r->headers['idempotency-key']))$this->progress->activity($user,(string)$r->headers['idempotency-key'],'book_download');return [$download,200];
         }
         if($path==='/me/export'){
-            $this->method($r,'GET');$export=['profile'=>$this->auth->profile($user)];
-            foreach(['quran_bookmarks','quran_positions','khatmah_plans','user_favorites','video_progress','account_daily_stats','adhkar_progress'] as $table){$q=$this->db->prepare('SELECT * FROM '.$table.' WHERE user_id=?');$q->execute([$user]);$export[$table]=$q->fetchAll();}
-            if($this->nightPrayer){$all=[];$page=1;do{$part=$this->nightPrayer->sessions($user,['page'=>$page++,'per_page'=>50]);$all=array_merge($all,$part['items']);}while($part['pagination']['has_more']);$export['night_prayer_sessions']=$all;$export['night_prayer_preferences']=$this->nightPrayer->preferences($user);}
-            return [$export,200];
+            $this->method($r,'GET');return [(new \Athar\Progress\AccountExportService($this->db,$this->auth,$this->nightPrayer))->read($user),200];
         }
         if(str_starts_with($path,'/night-prayer/')){
             if(!$this->nightPrayer)throw new ApiError('service_unavailable',503);

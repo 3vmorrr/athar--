@@ -1,18 +1,14 @@
 package org.athar.app.core.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
-import org.athar.app.core.data.retainedAccountData
 import org.athar.app.core.data.AccountPayloads
 import org.athar.app.AppGraph
 import org.athar.app.R
@@ -21,39 +17,11 @@ import java.time.LocalDate
 @Composable fun AccountToolsScreen(graph: AppGraph, tool: String, open: (String) -> Unit) {
     val scope = rememberCoroutineScope()
     val owner=graph.session.userId
-    var localFailure by remember(owner,tool){mutableStateOf(false)}
     var failed by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        if (uri != null) scope.launch {
-            busy = true;localFailure=false;saved=false
-            try {
-                val user = requireNotNull(owner)
-                check(graph.session.userId==user)
-                val local=try{retainedAccountData(user,graph.session,graph.lessons,graph.nightPrayer)}catch(failure:CancellationException){throw failure}catch(_:Exception){localFailure=true;throw IllegalStateException("Retained data unreadable")}
-                val data = graph.session.request("GET", "me/export",expectedUser=user).asJsonObject
-                withContext(Dispatchers.IO) {
-                    check(graph.session.userId == user)
-                    local.entrySet().forEach{data.add(it.key,it.value)}
-                    check(graph.session.userId==user)
-                    context.contentResolver.openOutputStream(uri, "wt")?.bufferedWriter(Charsets.UTF_8)?.use { it.write(data.toString()) } ?: throw java.io.IOException("Export unavailable")
-                }
-                saved = true; failed = false
-            } catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true } finally { busy = false }
-        }
-    }
+    if (tool == "export") { AccountExportScreen(graph); return }
     when(tool) {
-        "export" -> Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            AtharScreenIdentity(stringResource(R.string.export_data), AtharIcons.Lock)
-            Text(stringResource(R.string.export_explanation))
-            Button(onClick = { exporter.launch("athar-data-${LocalDate.now()}.json") }, enabled = !busy) { Text(stringResource(R.string.export_data)) }
-            if (saved) MessagePanel(stringResource(R.string.saved))
-            if (localFailure) MessagePanel(stringResource(R.string.local_data_unreadable),true)
-            else if (failed) MessagePanel(stringResource(R.string.network_error), true)
-            if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
-        }
         "khatmah" -> DataScreen(graph, "me/khatmah") { data, reload ->
             if(!AccountPayloads.valid("khatmah",data)){AccountDataFailure(reload);return@DataScreen}
             var target by remember(data) { mutableStateOf(data.text("target_date").ifBlank { LocalDate.now().plusDays(30).toString() }) }
