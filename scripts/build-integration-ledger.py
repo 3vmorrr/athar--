@@ -28,8 +28,7 @@ def build():
                                 for line in log.splitlines() if '\t' in line]
         files = [v[-1] for v in changes if any(v[-1] == p or v[-1].startswith(p.rstrip('/') + '/')
                                               for p in modules)]
-        classification = ('CODEX VERSION IS NEWER' if task['state'] == 'COMPLETE' else
-                          'EXTERNAL BLOCKER' if task['state'] == 'BLOCKED' else
+        classification = ('EXTERNAL BLOCKER' if task['state'] == 'BLOCKED' else
                           'BOTH MUST BE RECONCILED' if files else 'IMPLEMENTATION EXISTS BUT NOT TESTED')
         tasks.append({
             'id': task['id'], 'name': task['name'], 'work_package': task['parent'],
