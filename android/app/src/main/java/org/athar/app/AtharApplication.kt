@@ -3,6 +3,7 @@ package org.athar.app
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.room.Room
+import kotlinx.coroutines.launch
 import org.athar.app.auth.SessionRepository
 import org.athar.app.core.data.*
 import org.athar.app.core.network.RetrofitTransport
@@ -13,7 +14,7 @@ open class AtharApplication : Application() {
     open val graph: AppGraph by lazy { AppGraph(this) }
     override fun onCreate() {
         super.onCreate()
-        if(android.os.Build.VERSION.SDK_INT>=33){
+        if(android.os.Build.VERSION.SDK_INT>=33 && !Application.getProcessName().startsWith(packageName + ":book_pdf")){
             val manager=getSystemService(android.app.LocaleManager::class.java)
             if(manager.applicationLocales.isEmpty)manager.applicationLocales=android.os.LocaleList.forLanguageTags("ar")
         }
@@ -33,5 +34,10 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     val counters = CounterRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.COUNTERS)})
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})
-    init{if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)}
+    init{
+        if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            runCatching { org.athar.app.books.recoverBookCleanup(application,this@AppGraph) }
+        }
+    }
 }

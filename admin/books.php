@@ -21,7 +21,7 @@ function admin_book_fields(array $input): array
     }
     if (mb_strlen($values['title'],'UTF-8') < 2 || mb_strlen($values['author'],'UTF-8') < 2) throw new RuntimeException('عنوان الكتاب أو اسم المؤلف غير صالح.');
     if (!\Athar\Catalog\BookAccess::https($values['source_url']) || $values['rights_basis'] === '') throw new RuntimeException('يلزم توثيق مصدر آمن وأساس حقوق الإتاحة.');
-    if ($values['download_url'] !== '' && !\Athar\Catalog\BookAccess::https($values['download_url'])) throw new RuntimeException('رابط التنزيل المباشر يجب أن يبدأ بـ HTTPS دون بيانات دخول عند توفيره.');
+    if ($values['download_url'] !== '' && !\Athar\Catalog\BookAccess::https($values['download_url'])) throw new RuntimeException('رابط التنزيل المباشر يجب أن يكون عامًا عبر HTTPS دون بيانات دخول وعلى المنفذ القياسي.');
     $year = $values['publication_year'] === '' ? null : filter_var($values['publication_year'], FILTER_VALIDATE_INT, ['options'=>['min_range'=>1000,'max_range'=>2200]]);
     if (!in_array($values['language'], ['ar','en','other'], true) || $year === false) throw new RuntimeException('لغة الكتاب أو سنة النشر غير صالحة.');
     $values['publication_year'] = $year;

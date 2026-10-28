@@ -37,3 +37,5 @@ Both original branches recreated QuranViewModel at Surah1 after process death. P
 Reader tool state retains the native lazy-list scroll; consumed initial anchors and handled scroll requests prevent repeated jumps during recreation. Explicit daily/resume actions have distinct request tokens. Search query paging also restores without resetting an already-rendered page to its top.
 
 Main Kotlin compilation and8 focused JVM cases pass (selection3/navigation3/protected-read2); final targeted rerun17s. New APK/lint are intentionally queued for the next coherent batch under the addendum cadence. No actual OS process-death/device proof is claimed. Earlier28-case/debug/test-APK/lint evidence above predates this repair.
+
+2026-10-29:API34 read-only QA regression executed3 navigation +5 search +1 reading storage cases successfully, within a20-case cross-module batch. This validates actual Android asset parsing/search/private storage fixtures; copy/share/system chooser and real process-death/phone journeys remain open. See BOOKS_FUNCTIONAL_INTEGRATION.md.

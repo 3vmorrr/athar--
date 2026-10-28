@@ -1769,7 +1769,8 @@
       "external_blockers": null,
       "remaining_acceptance": "Authorized Arabic/English offline, exact-bookmark, recreation, font/insets/landscape journeys; no connected device.",
       "acceptance_evidence": [
-        "assembleDebug/testDebugUnitTest/assembleDebugAndroidTest/lintDebug PASS;68 JVM cases;334 paired resources. See docs/testing/QURAN_FUNCTIONAL_INTEGRATION.md."
+        "assembleDebug/testDebugUnitTest/assembleDebugAndroidTest/lintDebug PASS;68 JVM cases;334 paired resources. See docs/testing/QURAN_FUNCTIONAL_INTEGRATION.md.",
+        "2026-10-29 API34 cross-module20-case instrumentation batch PASS:Quran navigation3/search5/reading1/counter5/protected3; see BOOKS_FUNCTIONAL_INTEGRATION.md. No phone/UI/process-death claim."
       ],
       "parallel_implementation_commits": [
         "58d561c5d485aed40d53fd01421cb24d5129f468"
@@ -1855,7 +1856,8 @@
       "acceptance_evidence": [
         "16 focused JVM cases PASS: search5/share3/existing domain8. Initial source search test failed on actual108:1; corrected matching now accepts written/omitted dagger Alif without modifying canonical text.",
         "344 paired resources pass; actual device actions remain untested.",
-        "assembleDebug/assembleDebugAndroidTest/lintDebug PASS (2m49s), after16 focused JVM cases passed."
+        "assembleDebug/assembleDebugAndroidTest/lintDebug PASS (2m49s), after16 focused JVM cases passed.",
+        "2026-10-29 API34 cross-module20-case instrumentation batch PASS:Quran navigation3/search5/reading1/counter5/protected3; see BOOKS_FUNCTIONAL_INTEGRATION.md. No phone/UI/process-death claim."
       ],
       "parallel_implementation_commits": [
         "0b579abb8566a1778dde88217923b7e4e6ee7782",
@@ -2302,7 +2304,8 @@
       "acceptance_evidence": [
         "PHP daily selections matched Kotlin fixtures for2026-10-28/29,2028-02-29 and2000-01-01;3 new JVM cases pass.",
         "Quran PHP13352 and subsystem debug/test APK/lint/28 JVM cases PASS.",
-        "8 focused JVM cases PASS (selection3/navigation3/protected-read2); main Kotlin compilation PASS. Actual OS process death not exercised."
+        "8 focused JVM cases PASS (selection3/navigation3/protected-read2); main Kotlin compilation PASS. Actual OS process death not exercised.",
+        "2026-10-29 API34 cross-module20-case instrumentation batch PASS:Quran navigation3/search5/reading1/counter5/protected3; see BOOKS_FUNCTIONAL_INTEGRATION.md. No phone/UI/process-death claim."
       ],
       "parallel_implementation_commits": [],
       "existing_backend_contract": "backend/src/Domain/QuranText.php::daily shared by both branches; no native daily entry existed in either branch.",
@@ -2859,7 +2862,8 @@
       "remaining_acceptance": "Actual encrypted-storage/day rollover/conflict/account-switch/device journeys and accessibility remain open. QA emulator exited before an adb transport; new instrumentation scenarios are compiled but unexecuted.",
       "acceptance_evidence": [
         "Immediate Android main compile +16 day/session JVM cases PASS.118 backend assertions:24 daily/statistics +48 catalog/progress +46 API/identity PASS.365 paired resources PASS. docs/testing/ADHKAR_FUNCTIONAL_INTEGRATION.md",
-        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes."
+        "Debug APK/test APK/lint PASS.20 focused JVM cases PASS after task-local128MiB worker retry for host paging-file exhaustion; no global host changes.",
+        "2026-10-29 API34 cross-module20-case instrumentation batch PASS:Quran navigation3/search5/reading1/counter5/protected3; see BOOKS_FUNCTIONAL_INTEGRATION.md. No phone/UI/process-death claim."
       ],
       "reconciled": "Reconciled backend UTC day and optional encrypted day snapshots. Invalid explicit dates/receipts fail closed; legacy row timestamp migration and clock rollback preserve private state. Genuine completion history is acknowledged before explicit server replacement; conflicts do not suppress pending history delivery.",
       "parallel_implementation_commits": [
@@ -3055,7 +3059,7 @@
       "name": "Book rights and metadata journey",
       "work_package": "Work package 6: Books",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3088,12 +3092,15 @@
         "aebbb0cc57e4d5034eb18175bf4b605872ee8d33",
         "73537f2a0e064492694c6cce167ed59e63e27542"
       ],
-      "candidate_scope": "Module-history candidates; shared paths do not prove task-specific implementation.",
+      "candidate_scope": "Manual semantic review includes the new source books/ package absent from the preliminary old-module path inventory.",
       "codex_current_implementation": [
         "android/app/src/main/java/org/athar/app/core/ui/",
         "backend/src/Catalog/"
       ],
       "files_touched": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/aidl/org/athar/app/books/IBookPdfRenderer.aidl",
+        "android/app/src/main/java/org/athar/app/books/",
         "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
         "android/app/src/main/java/org/athar/app/core/ui/AtharIcons.kt",
         "android/app/src/main/java/org/athar/app/core/ui/HomeProjection.kt",
@@ -3131,27 +3138,41 @@
       "tests_required": "Hidden/rights/source/link/favorite owner cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete source/rights/availability/detail/favorite handling, including direct-link metadata without forced uploads. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "acceptance_evidence": [
+        "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
+        "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
+        "Milestone regression:all114 JVM cases and20 isolated backend suites(21,013 executed assertions) PASS."
+      ],
+      "reconciled": "Kept current editorial covers/catalog/detail and central BookAccess; integrated functional metadata, source/rights/favorite/download journey. Reconciled source destination checks into central API/web/Admin policy rather than deleting the newer shared helper.",
+      "parallel_implementation_commits": [
+        "760bfb9bf0bcd3a796afa8443a0a14e804dd8fc7",
+        "a49d71a8bf0a688b292b22d4c3a69cab6c664826",
+        "b02a115c2a2d0548f115078d66a7690247de2ea2"
+      ]
     },
     {
       "id": "06.2",
       "name": "Safe durable book download",
       "work_package": "Work package 6: Books",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
       "codex_state": "NOT STARTED",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
         "b02a115c2a2d0548f115078d66a7690247de2ea2",
         "188ee7d9f68d32d60881b58b431f9e3efa69253a"
       ],
-      "candidate_scope": "Module-history candidates; shared paths do not prove task-specific implementation.",
+      "candidate_scope": "Manual semantic review includes the new source books/ package absent from the preliminary old-module path inventory.",
       "codex_current_implementation": [
         "android/app/src/main/java/org/athar/app/books/ (new)",
         "backend/src/Catalog/"
       ],
       "files_touched": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/aidl/org/athar/app/books/IBookPdfRenderer.aidl",
+        "android/app/src/main/java/org/athar/app/books/",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
         "backend/src/Catalog/BookAccess.php",
         "backend/src/Catalog/CatalogService.php"
       ],
@@ -3170,23 +3191,39 @@
       "tests_required": "Redirect/SSRF/MIME/size/failure/resume eligibility tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Implement validated HTTPS download, bounded storage, progress and durable identity without bypassing rights. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "acceptance_evidence": [
+        "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
+        "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
+        "Milestone regression:all114 JVM cases and20 isolated backend suites(21,013 executed assertions) PASS."
+      ],
+      "reconciled": "Native foreground WorkManager data-sync download with public DNS/HTTPS redirects, no API bearer/cookies,200MiB bound/free-space reserve, real throttled progress and scoped durable request identity. A completed immutable copy and atomic manifest replace the prior copy only after validation.",
+      "parallel_implementation_commits": [
+        "aa0124f54fcbcc10f55223a0cb8cde3d102687fc",
+        "dbf9f0c3c01e2e6f83b16888a6e3ab3e7bfeead4",
+        "0680197801a05a369c4ce6af6617a107f7dcbb50"
+      ]
     },
     {
       "id": "06.3",
       "name": "Book download cancellation and management",
       "work_package": "Work package 6: Books",
-      "classification": "IMPLEMENTATION EXISTS BUT NOT TESTED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
       "codex_state": "NOT STARTED",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [],
-      "candidate_scope": "Module-history candidates; shared paths do not prove task-specific implementation.",
+      "candidate_scope": "Manual semantic review includes the new source books/ package absent from the preliminary old-module path inventory.",
       "codex_current_implementation": [
         "android/app/src/main/java/org/athar/app/books/ (new)"
       ],
-      "files_touched": [],
+      "files_touched": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/aidl/org/athar/app/books/IBookPdfRenderer.aidl",
+        "android/app/src/main/java/org/athar/app/books/",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "backend/src/Catalog/BookAccess.php"
+      ],
       "schema_changes": [],
       "api_changes": [],
       "android_changes": [],
@@ -3199,15 +3236,25 @@
       "tests_required": "Interrupted download/process restart/space/path ownership tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Persist downloaded-file inventory; cancel/retry/remove only owned downloaded files safely. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "acceptance_evidence": [
+        "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
+        "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
+        "Milestone regression:all114 JVM cases and20 isolated backend suites(21,013 executed assertions) PASS."
+      ],
+      "reconciled": "Persistent API-partition/owner/book inventory with encrypted retained title metadata; fresh availability check before retry. Scoped cancellation/removal fences old workers even when cancellation is late; deletion tombstones and cleanup recovery preserve other accounts/environments. Removing a PDF retains private reading progress.",
+      "parallel_implementation_commits": [
+        "a08d60f49f63e6192a8ff366fcbc1c6acf584d0f",
+        "2854cc00ee5b92e5732a91ec817aebe4af8e9f7c",
+        "8b5725e85432fa50f887fca71a2577cccba6120c"
+      ]
     },
     {
       "id": "06.4",
       "name": "Native PDF open and reading state",
       "work_package": "Work package 6: Books",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
       "codex_state": "NOT STARTED",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3216,13 +3263,17 @@
         "461fbd869983eeb3aaba0579228470e5a4ee2d21",
         "b8f44fd4d135dd573a7b374477d7fd81cec0a323"
       ],
-      "candidate_scope": "Module-history candidates; shared paths do not prove task-specific implementation.",
+      "candidate_scope": "Manual semantic review includes the new source books/ package absent from the preliminary old-module path inventory.",
       "codex_current_implementation": [
         "android/app/src/main/java/org/athar/app/books/ (new)",
         "android/app/src/main/AndroidManifest.xml"
       ],
       "files_touched": [
-        "android/app/src/main/AndroidManifest.xml"
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/aidl/org/athar/app/books/IBookPdfRenderer.aidl",
+        "android/app/src/main/java/org/athar/app/books/",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "backend/src/Catalog/BookAccess.php"
       ],
       "schema_changes": [],
       "api_changes": [],
@@ -3238,15 +3289,25 @@
       "tests_required": "Malformed PDF/no viewer/provider grant/position tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Open verified local PDFs with accessible native/file-provider flow and explicit retained reading position when supported. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "acceptance_evidence": [
+        "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
+        "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
+        "Milestone regression:all114 JVM cases and20 isolated backend suites(21,013 executed assertions) PASS."
+      ],
+      "reconciled": "Verified read-only descriptors enter a private isolated Binder renderer; bounded raw pixel pipes return to the app. Current reader adds page navigation/jump/zoom and read-only FileProvider fallback. Exact-document page state uses encrypted protected Room payloads and transactional live-actor checks; unreadable/unpartitioned legacy state is retained.",
+      "parallel_implementation_commits": [
+        "e65b253083a3e3acc9ca34c0aa8ae9a359800cc3",
+        "ac90c3f1a12ef0f7107f08cd8aafce3376bf2d7a",
+        "ed84cb957e4e1b4c2dbadb20abf571ce75c782e7"
+      ]
     },
     {
       "id": "06.5",
       "name": "Book offline integrity acceptance",
       "work_package": "Work package 6: Books",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
       "codex_state": "NOT STARTED",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3264,17 +3325,22 @@
         "4c6008d7e703951235e074655dfd84d73f88f3a5",
         "023a72429d57c174967aed127cd90349ff44cd44"
       ],
-      "candidate_scope": "Module-history candidates; shared paths do not prove task-specific implementation.",
+      "candidate_scope": "Manual semantic review includes the new source books/ package absent from the preliminary old-module path inventory.",
       "codex_current_implementation": [
         "android/app/src/main/java/org/athar/app/books/ (new)",
         "android/app/src/main/java/org/athar/app/core/data/"
       ],
       "files_touched": [
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/aidl/org/athar/app/books/IBookPdfRenderer.aidl",
+        "android/app/src/main/java/org/athar/app/books/",
         "android/app/src/main/java/org/athar/app/core/data/AccountDeletionCleanup.kt",
         "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
         "android/app/src/main/java/org/athar/app/core/data/AccountPayloads.kt",
         "android/app/src/main/java/org/athar/app/core/data/AppDatabase.kt",
-        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt"
+        "android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt",
+        "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
+        "backend/src/Catalog/BookAccess.php"
       ],
       "schema_changes": [],
       "api_changes": [],
@@ -3294,8 +3360,19 @@
       "tests_required": "Corrupt/truncated/missing/expired file and offline catalog cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Verify checksums/stale metadata/rights changes, corruption and file cleanup without deleting private progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "acceptance_evidence": [
+        "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
+        "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
+        "Milestone regression:all114 JVM cases and20 isolated backend suites(21,013 executed assertions) PASS."
+      ],
+      "reconciled": "Fixture checksum/corruption/reopen/replacement/revocation races verified on real files. API34 actual isolated PDF and encrypted Room/account-switch tests PASS. Real provider/phone/OS background/quota/reboot/accessibility and related account export/deletion/activity closure remain open.",
+      "parallel_implementation_commits": [
+        "0680197801a05a369c4ce6af6617a107f7dcbb50",
+        "2854cc00ee5b92e5732a91ec817aebe4af8e9f7c",
+        "8b5725e85432fa50f887fca71a2577cccba6120c",
+        "b02a115c2a2d0548f115078d66a7690247de2ea2"
+      ]
     },
     {
       "id": "07.1",
@@ -3500,7 +3577,10 @@
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
       "remaining_acceptance": "Complete deliberate export/chooser, data scope/privacy and offline/error behavior. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "acceptance_evidence": [],
+      "integration_findings": [
+        "Include new encrypted book-page and book-info records in owned export; never assign unpartitioned legacy source preferences to an unproven API realm."
+      ]
     },
     {
       "id": "07.4",
@@ -3580,7 +3660,10 @@
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
       "remaining_acceptance": "Complete confirmation/authentication/revocation/deletion and safe owned cleanup without affecting another actor. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "acceptance_evidence": [],
+      "integration_findings": [
+        "Book revocation fences publication after its durable marker and startup replays cleanup. Close the remote-delete receipt/local-marker process-death window; no whole-deletion acceptance is inferred."
+      ]
     },
     {
       "id": "07.5",
@@ -3723,7 +3806,10 @@
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
       "remaining_acceptance": "Show genuine read/listen/adhkar/lesson progress only; define unavailable totals and loading/error states. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "acceptance_evidence": [],
+      "integration_findings": [
+        "Queue genuine native completed-download activity after verified file publication. URL/rights lookup is not completion; current worker sends no invented event."
+      ]
     },
     {
       "id": "07.7",
@@ -14142,10 +14228,20 @@
   },
   "next_batch": {
     "tasks": [
-      "06.1",
-      "06.2",
-      "06.3"
+      "07.1",
+      "07.2",
+      "07.3",
+      "07.4"
     ],
-    "state": "SOURCE INSPECTION ONLY; REVIEW DOWNLOAD OWNERSHIP, ATOMIC PUBLICATION AND CURRENT BOOK RIGHTS POLICY"
+    "state": "SOURCE REVIEW NEXT; PRESERVE CURRENT OWNER/PRIVATE EXPORT CONTRACTS AND NEW BOOK DATA"
+  },
+  "last_milestone_gate": {
+    "date": "2026-10-29",
+    "scope": "WP03–WP06 plus shared foundations",
+    "jvm_tests": 114,
+    "backend_suites": 20,
+    "backend_executed_assertions": 21013,
+    "api34_instrumentation_tests": 20,
+    "state": "PASS / PHYSICAL AND PROVIDER GATES OPEN"
   }
 }

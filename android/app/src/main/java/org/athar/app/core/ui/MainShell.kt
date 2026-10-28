@@ -97,7 +97,8 @@ private fun AtharNavIcon(
         navigation.navigate(key) { popUpTo(navigation.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }
     }
     val open: (String) -> Unit = { path ->
-        if (path == "night-prayer" || path == "upcoming" || path == "player") navigation.navigate(path) { launchSingleTop = true }
+        if (path.startsWith("book-reader/") && path.substringAfter('/').toIntOrNull()?.let { it > 0 } == true) navigation.navigate(path) { launchSingleTop = true }
+        else if (path == "night-prayer" || path == "upcoming" || path == "player") navigation.navigate(path) { launchSingleTop = true }
         else if (path == "catalog-books") navigation.navigate("catalog/books") { launchSingleTop = true }
         else {
             val parts = path.split('/')
@@ -148,6 +149,7 @@ private fun AtharNavIcon(
                                         route == "night-prayer" -> R.string.night_prayer
                                         route.startsWith("quran/") -> R.string.quran
                                         route == "player" -> R.string.listen
+                                        route.startsWith("book-reader/") -> R.string.books
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
                                         currentEntry?.arguments?.getString("kind") == "books" -> R.string.books
                                         currentEntry?.arguments?.getString("kind") == "scholars" -> R.string.scholars
@@ -225,6 +227,7 @@ private fun AtharNavIcon(
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }
                         composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph) }
+                        composable("book-reader/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) { entry -> org.athar.app.books.BookReaderScreen(vm.graph, requireNotNull(entry.arguments).getInt("id")) }
                         composable("player") { org.athar.app.media.AudioScreen(vm.graph, expandedOnly = true) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
@@ -313,10 +316,8 @@ private fun AtharNavIcon(
             if (item.text("author").isNotBlank()) item(key = "author", contentType = "metadata") { Text(item.text("author"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             item(key = "description", contentType = "text") { Text(item.text("description").ifBlank { item.text("biography") }, style = MaterialTheme.typography.bodyLarge) }
             if (item.text("youtube_id").matches(Regex("[A-Za-z0-9_-]{11}"))) item(key = "youtube", contentType = "action") { Button(onClick = { uri.openUri("https://www.youtube.com/watch?v=${item.text("youtube_id")}") }) { Text(stringResource(R.string.open_youtube)) } }
-            if (path.startsWith("books/") && item.text("can_download") == "true") item(key = "download", contentType = "action") { Button(onClick = { scope.launch {
-                try { val response = graph.session.request("GET", "$path/download",expectedUser=owner); val link = response.text("url"); if (link.startsWith("https://")) uri.openUri(link) else feedback = failed }
-                catch (failure: CancellationException) { throw failure } catch (_: Exception) { feedback = failed }
-            } }) { Text(stringResource(R.string.download_book)) } }
+            if (path.startsWith("books/")) item(key = "book-rights", contentType = "rights") { org.athar.app.books.BookRights(item) { feedback = failed } }
+            if (path.startsWith("books/")) item(key = "download", contentType = "action") { org.athar.app.books.BookDownloadActions(graph, path.substringAfter('/').toInt(), org.athar.app.books.bookDownloadAllowed(item), onOpen = { open("book-reader/${path.substringAfter('/')}") }) }
             if (!path.startsWith("scholars/")) item(key = "favorite", contentType = "action") { MarkToggle(path, favoriteInitial, true, snackbar) { selected ->
                 graph.session.request(if (selected) "PUT" else "DELETE", "me/favorites", mapOf("target_type" to (if (path.startsWith("series/")) "series" else path.substringBefore('/').removeSuffix("s")), "target_id" to path.substringAfter('/').toInt()),expectedUser=owner)
                 graph.content.invalidate("me/favorites",owner)
@@ -336,13 +337,14 @@ private fun AtharNavIcon(
     var tool by rememberSaveable { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
+            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"downloads" to R.string.book_downloads,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
         }
-        Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else AccountToolsScreen(vm.graph, tool, open) }
+        Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else if (tool == "downloads") org.athar.app.books.OwnedBookDownloadsScreen(vm.graph, open) else AccountToolsScreen(vm.graph, tool, open) }
     }
 }
 
 @Composable private fun AccountProfileScreen(vm: AppViewModel, auth: AuthState.SignedIn) {
+    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -370,5 +372,5 @@ private fun AtharNavIcon(
         item(key = "signout", contentType = "action") { OutlinedButton(onClick = {vm.logout(auth.user.id)}) { Text(stringResource(R.string.logout)) } }
         item(key = "delete", contentType = "action") { TextButton(onClick = { delete = true }) { Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error) } }
     }
-    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { vm.perform { val id = auth.user.id; vm.graph.session.delete(deletePassword,id); vm.graph.database.dao().deleteUser(id) }; delete = false; deletePassword = "" }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
+    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { val submittedPassword = deletePassword; vm.perform { val id = auth.user.id; vm.graph.session.delete(submittedPassword,id); org.athar.app.books.cleanupDeletedAccountBooks(context,vm.graph,id) }; delete = false; deletePassword = "" }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
 }

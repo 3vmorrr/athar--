@@ -3593,19 +3593,21 @@
   },
   "active_review": {
     "tasks": [
-      "05.1",
-      "05.2",
-      "05.3",
-      "05.4"
+      "06.1",
+      "06.2",
+      "06.3",
+      "06.4",
+      "06.5"
     ],
-    "state": "RECONCILED / LOCAL SUBSYSTEM GATE PASSED / DEVICE ACCEPTANCE OPEN",
+    "state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / PACKAGE ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "070997cb7fba5bf726cab84ca5f7e2dca19b059a",
+    "target_baseline": "5fb3cddd84f420d913882ecf8ded8942df6b97d9",
     "findings": [
-      "Reconciled source all-category/query/paging around the current calm counter; NULL-repeat items retained. Fixed stale completion auto-advance by preserving category/query/page/index intent.",
-      "Reconciled backend UTC day and optional encrypted day snapshots. Invalid explicit dates/receipts fail closed; legacy row timestamp migration and clock rollback preserve private state. Genuine completion history is acknowledged before explicit server replacement; conflicts do not suppress pending history delivery.",
-      "Owned historical totals and current reviewed category progress; target changes do not reinterpret old counters. Required client contract validated; cache date/retry and unreadable protected pending-history state remain explicit, never fake zero.",
-      "Preserved current counter presentation; localized progress semantics and explicit day/conflict controls;64dp count and48dp reset/navigation touch areas. Actual TalkBack/RTL/LTR/large font/one-handed device acceptance remains open."
+      "Kept current editorial covers/catalog/detail and central BookAccess; integrated functional metadata, source/rights/favorite/download journey. Reconciled source destination checks into central API/web/Admin policy rather than deleting the newer shared helper.",
+      "Native foreground WorkManager data-sync download with public DNS/HTTPS redirects, no API bearer/cookies,200MiB bound/free-space reserve, real throttled progress and scoped durable request identity. A completed immutable copy and atomic manifest replace the prior copy only after validation.",
+      "Persistent API-partition/owner/book inventory with encrypted retained title metadata; fresh availability check before retry. Scoped cancellation/removal fences old workers even when cancellation is late; deletion tombstones and cleanup recovery preserve other accounts/environments. Removing a PDF retains private reading progress.",
+      "Verified read-only descriptors enter a private isolated Binder renderer; bounded raw pixel pipes return to the app. Current reader adds page navigation/jump/zoom and read-only FileProvider fallback. Exact-document page state uses encrypted protected Room payloads and transactional live-actor checks; unreadable/unpartitioned legacy state is retained.",
+      "Fixture checksum/corruption/reopen/replacement/revocation races verified on real files. API34 actual isolated PDF and encrypted Room/account-switch tests PASS. Real provider/phone/OS background/quota/reboot/accessibility and related account export/deletion/activity closure remain open."
     ]
   },
   "previous_visual_review": {
