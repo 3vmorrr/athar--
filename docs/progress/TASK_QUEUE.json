@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-28",
-  "current_task": "03.2",
+  "current_task": "03.3",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -364,7 +364,7 @@
       "name": "Verse copy and share",
       "parent": "Work package 3: Quran reader/tools",
       "scope": "Add bounded canonical text/reference/source copy/share with mixed-direction-safe presentation.",
-      "state": "NOT STARTED",
+      "state": "PARTIAL",
       "dependencies": [
         "03.5"
       ],

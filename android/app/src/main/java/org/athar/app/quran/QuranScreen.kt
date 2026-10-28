@@ -2,6 +2,8 @@ package org.athar.app.quran
 
 import org.athar.app.core.ui.AtharIcons
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +28,7 @@ import org.athar.app.core.ui.*
 import org.athar.app.core.data.ProtectedRead
 import org.athar.app.core.data.protectedReads
 
-data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val range: QuranRange? = null, val scrollTarget: Int? = null, val scrollRequest: Long = 0)
+data class QuranState(val loading: Boolean = true, val index: QuranIndex? = null, val verses: List<AyahText> = emptyList(), val surah: Int = 1, val error: Boolean = false, val sectionKind: String = "surah", val sectionNumber: Int = 1, val range: QuranRange? = null, val scrollTarget: Int? = null, val scrollRequest: Long = 0, val searchPage: QuranSearchPage? = null, val searchLoading: Boolean = false, val searchError: Boolean = false)
 class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     private val mutable = MutableStateFlow(QuranState())
     val state = mutable.asStateFlow()
@@ -37,6 +40,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     val reading = readingRetry.flatMapLatest { graph.reading.observe(readerOwner).protectedReads() }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProtectedRead.Loading)
     fun retryReading(){readingRetry.value++}
     private var load: Job? = null
+    private var searchLoad: Job? = null
     init {
         select(1)
         viewModelScope.launch { try { graph.reading.refresh(readerOwner) } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Local resume remains available offline. */ } }
@@ -99,13 +103,57 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
             catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
         }
     }
-    fun search(query: String) {
-        if (query.trim().length < 2) return
-        load?.cancel(); load = viewModelScope.launch {
-            try { val data = graph.quran.data(); val matches = withContext(Dispatchers.Default) { data.search(query.take(80)) }; mutable.value = QuranState(false, data.index, matches, 0, scrollRequest = mutable.value.scrollRequest + 1) }
-            catch (failure: CancellationException) { throw failure }
-            catch (_: Exception) { mutable.value = mutable.value.copy(error = true) }
+    fun clearSearch() {
+        searchLoad?.cancel()
+        mutable.value = mutable.value.copy(
+            searchPage = null,
+            searchLoading = false,
+            searchError = false,
+        )
+    }
+
+    fun search(query: String, offset: Int = 0) {
+        val safeQuery = query.take(80)
+        if (QuranSearchNormalizer.normalize(safeQuery).length < 2) {
+            clearSearch()
+            return
         }
+        searchLoad?.cancel()
+        searchLoad = viewModelScope.launch {
+            mutable.value = mutable.value.copy(searchLoading = true, searchError = false)
+            try {
+                val data = graph.quran.data()
+                val page = withContext(Dispatchers.Default) {
+                    data.searchPage(safeQuery, offset, SEARCH_PAGE_SIZE)
+                }
+                mutable.value = mutable.value.copy(
+                    searchPage = page,
+                    searchLoading = false,
+                    searchError = false,
+                )
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (_: Exception) {
+                mutable.value = mutable.value.copy(
+                    searchLoading = false,
+                    searchError = true,
+                )
+            }
+        }
+    }
+
+    fun previousSearchPage() {
+        val page = mutable.value.searchPage ?: return
+        if (page.hasPrevious) search(page.query, (page.offset - page.limit).coerceAtLeast(0))
+    }
+
+    fun nextSearchPage() {
+        val page = mutable.value.searchPage ?: return
+        if (page.hasNext) search(page.query, page.offset + page.limit)
+    }
+
+    companion object {
+        private const val SEARCH_PAGE_SIZE = 20
     }
     suspend fun savePosition(ayah:AyahText)=graph.reading.save(ayah.position.surah,ayah.position.ayah,readerOwner)
     suspend fun resolvePosition(remote:Boolean)=graph.reading.resolve(remote,readerOwner)
@@ -158,6 +206,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
         if (initialSurah != null && initialAyah != null) vm.select(initialSurah, initialAyah)
     }
     val state by vm.state.collectAsStateWithLifecycle()
+    val searchPage = state.searchPage
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
@@ -166,14 +215,24 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     LaunchedEffect(state.scrollRequest, unreadablePosition) {
         if (state.verses.isNotEmpty()) listState.requestScrollToItem(state.verses.indexOfFirst { it.position.globalIndex == state.scrollTarget }.coerceAtLeast(0) + if (unreadablePosition) 1 else 0)
     }
+    var selectedAyah by remember { mutableStateOf<AyahText?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
     var navigationSheet by remember { mutableStateOf(false) }
     var navigationKind by remember { mutableStateOf("surah") }
     var searchMode by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(vm) { if(searchMode && query.trim().length >= 2)vm.search(query) }
+    LaunchedEffect(vm, searchMode, query) {
+        vm.clearSearch()
+        if (searchMode && QuranSearchNormalizer.normalize(query).length >= 2) {
+            delay(250)
+            vm.search(query)
+        }
+    }
     var fontDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.quran_share_ayah)
+    val copied = stringResource(R.string.quran_ayah_copied)
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
@@ -205,8 +264,8 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 TextButton(onClick = { fontDialog = true }) { Text(stringResource(R.string.font_size)) }
             }
             if (searchMode) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(query, { query = it.take(80) }, Modifier.weight(1f), label = { Text(stringResource(R.string.search_hint)) }, singleLine = true)
-                Button(onClick = { vm.search(query) }, enabled = query.trim().length >= 2, modifier = Modifier.align(androidx.compose.ui.Alignment.CenterVertically)) { Text(stringResource(R.string.search)) }
+                OutlinedTextField(query, { query = it.take(80); vm.clearSearch() }, Modifier.weight(1f), label = { Text(stringResource(R.string.search_hint)) }, singleLine = true)
+                Button(onClick = { vm.search(query) }, enabled = QuranSearchNormalizer.normalize(query).length >= 2, modifier = Modifier.align(androidx.compose.ui.Alignment.CenterVertically)) { Text(stringResource(R.string.search)) }
             } else {
                 FlowRow(
                     Modifier.padding(horizontal = 16.dp),
@@ -272,7 +331,33 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                     ) { Text(stringResource(R.string.more)) }
                 }
             }
-            when {
+            if (searchMode) {
+                when {
+                    state.searchLoading -> LoadingScreen()
+                    state.searchError -> FailurePanel(null) { vm.search(query) }
+                    QuranSearchNormalizer.normalize(query).length < 2 -> Text(
+                        stringResource(R.string.quran_search_prompt),
+                        Modifier.padding(AtharSpacing.Xxl),
+                    )
+                    searchPage == null -> LoadingScreen()
+                    searchPage.hits.isEmpty() -> Text(
+                        stringResource(R.string.quran_search_no_results),
+                        Modifier.padding(AtharSpacing.Xxl),
+                    )
+                    else -> QuranSearchResults(
+                        page = searchPage,
+                        fontSize = fontSize,
+                        modifier = Modifier.fillMaxSize(),
+                        onOpenAyah = { ayah ->
+                            searchMode = false
+                            vm.select(ayah.position.surah, ayah.position.ayah)
+                        },
+                        onLongPressAyah = { selectedAyah = it },
+                        onPreviousPage = vm::previousSearchPage,
+                        onNextPage = vm::nextSearchPage,
+                    )
+                }
+            } else when {
                 state.loading -> LoadingScreen()
                 state.error -> FailurePanel(null) { vm.select(1) }
                 state.verses.isEmpty() -> Text(stringResource(R.string.empty_state), Modifier.padding(24.dp))
@@ -282,10 +367,11 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
                             if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
                             Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                                 TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
                                 MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
+                                TextButton(onClick = { selectedAyah = ayah }) { Text(stringResource(R.string.more)) }
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         }
@@ -301,5 +387,36 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     if (fontDialog) {
         var size by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
         AlertDialog(onDismissRequest = { fontDialog = false }, title = { Text(stringResource(R.string.font_size)) }, text = { Slider(size, { size = it }, valueRange = 18f..48f) }, confirmButton = { TextButton(onClick = { scope.launch { graph.settings.quranFontSize(size.toInt()) }; fontDialog = false }) { Text(stringResource(R.string.save)) } })
+    }
+    selectedAyah?.let { ayah ->
+        AlertDialog(
+            onDismissRequest = { selectedAyah = null },
+            title = { Text("${ayah.position.surah}:${ayah.position.ayah}") },
+            text = {
+                Column(Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState())) {
+                    Text(ayah.text, fontFamily = QuranFont, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        try {
+                            QuranAyahShareActions.copy(context, QuranAyahShareContract.from(ayah))
+                            selectedAyah = null
+                            snackbar.showSnackbar(copied)
+                        } catch (failure: CancellationException) { throw failure }
+                        catch (_: Exception) { snackbar.showSnackbar(failed) }
+                    }
+                }) { Text(stringResource(R.string.quran_copy_ayah)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    try {
+                        QuranAyahShareActions.share(context, QuranAyahShareContract.from(ayah), shareTitle)
+                        selectedAyah = null
+                    } catch (_: Exception) { scope.launch { snackbar.showSnackbar(failed) } }
+                }) { Text(shareTitle) }
+            },
+        )
     }
 }

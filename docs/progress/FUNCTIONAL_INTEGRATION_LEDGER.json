@@ -1781,8 +1781,8 @@
       "id": "03.2",
       "name": "Quran search journey",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "INTEGRATED / AUTOMATED GATES PASSED / DEVICE ACCEPTANCE PENDING",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -1851,8 +1851,17 @@
       "tests_required": "Search normalization/boundary/result-navigation/offline cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete Arabic normalization, result paging/highlight and exact result opening while preserving canonical text. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real Arabic/English offline search/paging/exact opening, copy/share chooser and recreation/accessibility journeys. No authorized device connected.",
+      "acceptance_evidence": [
+        "16 focused JVM cases PASS: search5/share3/existing domain8. Initial source search test failed on actual108:1; corrected matching now accepts written/omitted dagger Alif without modifying canonical text.",
+        "344 paired resources pass; actual device actions remain untested.",
+        "assembleDebug/assembleDebugAndroidTest/lintDebug PASS (2m49s), after16 focused JVM cases passed."
+      ],
+      "parallel_implementation_commits": [
+        "0b579abb8566a1778dde88217923b7e4e6ee7782",
+        "b171260c09fa7e941f2687d992d57ded6143cfb6"
+      ],
+      "reconciled": "Retained current reader/position ownership, adopted source search/share semantics; fixed stale query results, pager scroll reset, paired highlight contrast and real dagger-Alif search. Sharing is an explicit system chooser; no direct send."
     },
     {
       "id": "03.3",
@@ -2121,9 +2130,9 @@
       "id": "03.6",
       "name": "Verse copy and share",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
-      "codex_state": "NOT STARTED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "INTEGRATED / AUTOMATED GATES PASSED / DEVICE ACCEPTANCE PENDING",
+      "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
         "97f26e53c4e8e4dad27423904a095553275d6bb9",
@@ -2191,8 +2200,16 @@
       "tests_required": "Reference/text fidelity and Android chooser/copy semantics tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Add bounded canonical text/reference/source copy/share with mixed-direction-safe presentation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real Arabic/English offline search/paging/exact opening, copy/share chooser and recreation/accessibility journeys. No authorized device connected.",
+      "acceptance_evidence": [
+        "16 focused JVM cases PASS: search5/share3/existing domain8. Initial source search test failed on actual108:1; corrected matching now accepts written/omitted dagger Alif without modifying canonical text.",
+        "344 paired resources pass; actual device actions remain untested.",
+        "assembleDebug/assembleDebugAndroidTest/lintDebug PASS (2m49s), after16 focused JVM cases passed."
+      ],
+      "parallel_implementation_commits": [
+        "cb524e9fbeaf008a89cf494e87b3273eacdabd9d"
+      ],
+      "reconciled": "Retained current reader/position ownership, adopted source search/share semantics; fixed stale query results, pager scroll reset, paired highlight contrast and real dagger-Alif search. Sharing is an explicit system chooser; no direct send."
     },
     {
       "id": "03.7",
@@ -13996,7 +14013,9 @@
   "device_acceptance": {
     "state": "NO_AUTHORIZED_CONNECTED_TRANSPORT",
     "tasks_queued": [
-      "03.1"
+      "03.1",
+      "03.2",
+      "03.6"
     ],
     "evidence": "ADB discovery on2026-10-28; serial inventory retained only in ignored local artifact."
   },
@@ -14016,5 +14035,11 @@
       "028_email_delivery_attempts.sql"
     ],
     "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained."
+  },
+  "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
+  "last_refetch": {
+    "date": "2026-10-28",
+    "codex_remote": "1c922baced891b0d4dc3e5c657d66180d00303b1",
+    "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   }
 }

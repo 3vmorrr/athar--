@@ -2,7 +2,7 @@
 
 Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.
 
-Snapshot: 2026-10-28. Current task: **03.2**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
+Snapshot: 2026-10-28. Current task: **03.3**. Open integration/acceptance tasks: **123**. Historic engineering estimate: **51%** (frozen and unverified; not actual task completion).
 
 Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.
 
@@ -182,7 +182,7 @@ Contribution values are approximate remaining scope budgets in percentage points
 
 ## 03.6 — Verse copy and share
 
-- Parent: Work package 3: Quran reader/tools; state: **NOT STARTED**; dependencies: 03.5.
+- Parent: Work package 3: Quran reader/tools; state: **PARTIAL**; dependencies: 03.5.
 - Exact scope: Add bounded canonical text/reference/source copy/share with mixed-direction-safe presentation.
 - Files/modules: android/app/src/main/java/org/athar/app/quran/.
 - Automated gates: Reference/text fidelity and Android chooser/copy semantics tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

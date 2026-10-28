@@ -30,3 +30,5 @@ Each report follows implementation → tests/device → docs → review → comm
 |21.1 Premium shared primitives and controlled motion|981a9e1293b4270b5e9d2accc8f0a50174bd0763|47 JVM/build/lint; Arabic7/English8 component+regression, main API1, inspected captures/scoped startup; normal push and exact remote SHA verified |
 
 Task02.4's final executed gates are recorded in SESSION_OWNERSHIP.md and TEST_REPORT.md. Its source/diff is committed only after those gates; the completion report records the resulting verified SHA.
+
+2026-10-28:03.1 integration checkpoint `1c922baced891b0d4dc3e5c657d66180d00303b1` pushed/verified;68 JVM/debug/test-APK/lint/334 resources PASS. Task remains PARTIAL pending authorized hardware acceptance. Functional strategy/addendum committed and remote verified at `d258b5b1c4ec13b694e41760745023199b1fbb55`.
