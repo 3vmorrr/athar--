@@ -229,4 +229,14 @@
     <string name="quran_copy_ayah">Copy ayah and reference</string>
     <string name="quran_share_ayah">Share ayah and reference</string>
     <string name="quran_ayah_copied">Ayah text, reference and source copied.</string>
+    <string name="tafsir_choose_source_hint">Choose a tafsir book for the current ayah. Source selection stays separate from the Quran text and never changes the saved canonical text.</string>
+    <string name="tafsir_selected_source">Selected source</string>
+    <string name="tafsir_source_unavailable">The tafsir source is unavailable right now. Any cached copy remains visible; it will not be cleared or retried in a loop.</string>
+    <string name="tafsir_no_content">This book has no available explanation for the selected ayah.</string>
+    <string name="tafsir_no_sources">No tafsir books match this search.</string>
+    <string name="tafsir_sources_count">%1$d tafsir books</string>
+    <string name="tafsir_page_status">Page %1$d of %2$d · %3$d blocks</string>
+    <string name="daily_ayah">Ayah of the day</string>
+    <string name="daily_ayah_local">Daily selection from the verified Quran stored on this device.</string>
+    <string name="cached_content_retry">Showing a saved copy. Try again to refresh it.</string>
 </resources>

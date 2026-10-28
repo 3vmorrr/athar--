@@ -17,3 +17,15 @@ Reviewed source0b579ab/b171260 and cb524e9. Retained the current reader and adop
 Corrections: old query results clear before debounce; changing result pages scrolls to the top; highlight foreground is paired with its background. Source's own108:1 test failed on actual Uthmani dagger Alif. Search-only optional-Alif matching accepts both written and omitted forms, including mixed forms, while public normalization/display text remains unchanged. The failing test retains exact canonical-text and highlight-slice assertions; added both orthographic forms and1:4/Musa coverage.
 
 Focused16 JVM cases pass (search5/share3/domain8). Initial broader run had74/75 passing and exposed the dagger-Alif defect; subsequent targeted run passed all16. Debug APK/test APK/lint checkpoint PASS (2m49s).344 paired resources pass. Device copy/chooser/search/offline/RTL/accessibility acceptance remains open; no connected authorized transport.
+
+## 03.3 +03.7 — Tafsir and daily entry
+
+Source257385a/ad345fe reviewed; current UI header, identity, protected state, font and shared owner-scoped ContentRepository retained. Independent catalog/content state, premium source sheet, saved reference/book/page, correct requested-page retry and stale-result checks integrated. Old catalog cache without `pages` remains readable. API paging is bounded and typed; unpaged legacy callers still receive complete sanitized content. Source missing `Check` icon was adapted to the existing CheckCircle. Empty executable-only blocks are filtered; malformed source metadata fails closed.
+
+PHP syntax, existing8/new26 provider assertions and4 Tafsir JVM contracts pass. No schema change, new cache or real provider send. Quran source text remains unchanged.
+
+Daily entry reuses the existing shared QuranText::daily API. Native date/reference/source/version/text checks select only bundled canonical text; local fallback uses the same unsigned SHA-256/date contract. Direct PHP selections matched four Kotlin fixtures, including leap day. Local fallback and manual refresh are explicit; hub date refresh is lifecycle-bound. The private resume control reads protected state and never writes activity or resets unreadable ciphertext.3 daily JVM cases pass.
+
+WP03 subsystem gate: debug APK, test APK, lint and 28 targeted JVM cases PASS (3m36s);354 resources and13352 Quran PHP assertions PASS. Device acceptance remains open. Reader scope restoration after process death is a known remaining03.7 repair; it is not claimed complete.
+
+03.4/03.5 source audit: retain current exact reader/bookmark/owner guards and identical DataStore font settings. The isolated older bookmarked-ayah screen is superseded and is not imported. Actual bookmark sync/retry and font persistence/accessibility journeys remain pending.

@@ -1867,8 +1867,8 @@
       "id": "03.3",
       "name": "Tafsir selection and source states",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "INTEGRATED / AUTOMATED GATES PASSED / DEVICE ACCEPTANCE PENDING",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -1916,8 +1916,7 @@
       ],
       "schema_changes": [],
       "api_changes": [
-        "backend/src/Providers/Mp3Quran.php",
-        "backend/src/Providers/Quranpedia.php"
+        "Optional bounded page/per_page content parameters and additive pages/pagination metadata. Legacy unpaged clients still receive every content block."
       ],
       "android_changes": [
         "android/app/src/main/java/org/athar/app/quran/BookmarkedAyahScreen.kt",
@@ -1944,15 +1943,23 @@
       "tests_required": "Provider contract/source/paging and native book-switch/error tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete book/source/verse paging, unavailable/offline states and premium source/book sheet. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Authorized native API/cache/unavailable/retry/source selector/recreation and Arabic/English font/landscape/accessibility journeys.",
+      "acceptance_evidence": [
+        "PHP syntax + existing8/new26 provider assertions PASS;4 Tafsir JVM contract cases plus3 navigation cases PASS.",
+        "WP03 subsystem debug/test APK/lint and 28 targeted JVM cases PASS (3m36s);354 paired resources."
+      ],
+      "parallel_implementation_commits": [
+        "257385abf50af25b866bcda98567f56d37ed6981",
+        "ad345fe7f14c4e4bda6ce0c15e05e895f94f6eee"
+      ],
+      "reconciled": "Retained current header/identity/font and owner-scoped ContentRepository. Adopted independent source catalog/content state and premium source sheet. Added saved reference/book/page, stale-result checks and failed-page retry. Retained legacy unpaged API content and readable old catalog cache; strict typed paging, consistent metadata, current icon compatibility and explicit cached-copy retry."
     },
     {
       "id": "03.4",
       "name": "Durable Quran bookmarks",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "DUPLICATE IMPLEMENTATION",
+      "review_state": "SOURCE REVIEWED; RETAIN CURRENT MUTATIONS AND EXACT READER ROUTE",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2045,15 +2052,16 @@
       "tests_required": "Ownership/idempotency/offline/duplicate and exact reference tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Implement remaining bookmark add/remove/list/open/sync behavior without counting a bookmark as reading. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual add/remove/list/open/server refresh/retry and no-inferred-reading UI journeys; no connected device. Scope beyond safe offline error handling must be checked against product requirements before claiming offline mutation support.",
+      "acceptance_evidence": [],
+      "reconciled": "Both branches use owned synchronous bookmark API calls and cached listing. Source da349d3 isolated ayah display is superseded by the03.1 exact reader route; do not import unused duplicate screen. Existing explicit owner guards retained. No offline write queue is inferred."
     },
     {
       "id": "03.5",
       "name": "Quran typography preferences",
       "work_package": "Work package 3: Quran reader/tools",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "DUPLICATE IMPLEMENTATION",
+      "review_state": "IDENTICAL SETTINGS IMPLEMENTATION RETAINED / DEVICE ACCEPTANCE PENDING",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2123,8 +2131,9 @@
       "tests_required": "Preference persistence, large text, clipping and reduced-motion cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete persisted accessible font/layout preferences using canonical Quran font; no animated sacred text. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Actual preference restart/process restore, large-font/landscape/RTL/accessibility journeys.",
+      "acceptance_evidence": [],
+      "reconciled": "SettingsStore is identical on both branches: DataStore retains18–48 font preference and canonical QuranFont. Preserve existing reading layout and no sacred-text animation."
     },
     {
       "id": "03.6",
@@ -2216,7 +2225,7 @@
       "name": "Daily verse and Quran entry restoration",
       "work_package": "Work package 3: Quran reader/tools",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "DAILY-VERSE API INTEGRATED / NAVIGATION-RESTORATION REPAIR NEXT",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2289,8 +2298,14 @@
       "tests_required": "Deterministic day/reference/restore/offline cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Provide source-attributed daily verse and explicit resume/navigation restoration; no invented completion. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Repair reader view-state restoration after process death, then targeted tests; native lifecycle/offline/midnight/locale and exact daily/resume journeys remain queued.",
+      "acceptance_evidence": [
+        "PHP daily selections matched Kotlin fixtures for2026-10-28/29,2028-02-29 and2000-01-01;3 new JVM cases pass.",
+        "Quran PHP13352 and subsystem debug/test APK/lint/28 JVM cases PASS."
+      ],
+      "parallel_implementation_commits": [],
+      "existing_backend_contract": "backend/src/Domain/QuranText.php::daily shared by both branches; no native daily entry existed in either branch.",
+      "reconciled": "Connected existing daily API to Quran hub, validates date/reference/source/text against verified bundle, uses matching backend SHA-256 selection for local fallback, shows explicit private resume without writes; no statistics or completion inferred."
     },
     {
       "id": "03.8",
@@ -14015,7 +14030,11 @@
     "tasks_queued": [
       "03.1",
       "03.2",
-      "03.6"
+      "03.3",
+      "03.4",
+      "03.5",
+      "03.6",
+      "03.7"
     ],
     "evidence": "ADB discovery on2026-10-28; serial inventory retained only in ignored local artifact."
   },

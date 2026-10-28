@@ -171,6 +171,8 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
         return
     }
     var mode by rememberSaveable { mutableStateOf<String?>(null) }
+    var entrySurah by rememberSaveable { mutableStateOf<Int?>(null) }
+    var entryAyah by rememberSaveable { mutableStateOf<Int?>(null) }
     androidx.activity.compose.BackHandler(mode != null) { mode = null }
     Column(Modifier.fillMaxSize()) {
         if (mode == null) {
@@ -186,16 +188,23 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                             actions.chunked(columns).forEach { row -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 row.forEach { (key, label) -> AtharQuickAction(
                                     icon = when (key) { "read" -> AtharIcons.MenuBook; "listen" -> AtharIcons.Headphones; "tafsir" -> AtharIcons.School; else -> AtharIcons.PlayArrow },
-                                    label = stringResource(label), onClick = { mode = key }, modifier = Modifier.weight(1f).testTag("quran-action-$key"), emphasized = key == "read",
+                                    label = stringResource(label), onClick = { entrySurah = null; entryAyah = null; mode = key }, modifier = Modifier.weight(1f).testTag("quran-action-$key"), emphasized = key == "read",
                                 ) }
                             } }
                         }
                     }
                 }
+                item(key = "quran-continuation", contentType = "continuation") {
+                    QuranContinuation(graph, fontSize) { surah, ayah ->
+                        entrySurah = surah
+                        entryAyah = ayah
+                        mode = "read"
+                    }
+                }
             }
         } else {
             TextButton(onClick = { mode = null }, Modifier.padding(horizontal = 12.dp)) { Text(stringResource(R.string.quran_tools)) }
-            Box(Modifier.weight(1f)) { when(mode) { "read" -> QuranReaderScreen(graph, fontSize); "tafsir" -> TafsirScreen(graph, fontSize); else -> org.athar.app.media.AudioScreen(graph, mode == "radio") } }
+            Box(Modifier.weight(1f)) { when(mode) { "read" -> QuranReaderScreen(graph, fontSize, entrySurah, entryAyah); "tafsir" -> TafsirScreen(graph, fontSize); else -> org.athar.app.media.AudioScreen(graph, mode == "radio") } }
         }
     }
 }
@@ -391,7 +400,7 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     selectedAyah?.let { ayah ->
         AlertDialog(
             onDismissRequest = { selectedAyah = null },
-            title = { Text("${ayah.position.surah}:${ayah.position.ayah}") },
+            title = { Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.headlineSmall.copy(textDirection = TextDirection.Content)) },
             text = {
                 Column(Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState())) {
                     Text(ayah.text, fontFamily = QuranFont, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))

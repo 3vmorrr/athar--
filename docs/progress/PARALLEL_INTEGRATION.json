@@ -3532,12 +3532,11 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
-      "21.19",
-      "21.2"
+      "03.7"
     ],
-    "scope": "shared immersive primitives and Home/navigation,then Quran premium reader in source order",
-    "state": "REVIEW PENDING",
-    "gate": "Native compile/unit/lint/resource/premium/protected-state review;queue physical journey while Samsung disconnected."
+    "scope": "reader view-state restoration; then next dependency-ready functional WP",
+    "state": "REPAIR NEXT",
+    "gate": "Focused lifecycle/selection/protected-read tests; batch builds per FUNCTIONAL_INTEGRATION_STRATEGY.md"
   },
   "progress_audit": "Historic14d snapshot unchanged. Current post-batch closure:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Exact repository-wide full/partial/absent implementation totals remain unverified.",
   "campaign_batch": {
@@ -3591,6 +3590,17 @@
     "integration_commit": "Receipt follows next checkpoint."
   },
   "active_review": {
+    "tasks": [
+      "03.3",
+      "03.7"
+    ],
+    "classification": "KEEP WITH FIXES / CONNECT EXISTING DAILY CONTRACT",
+    "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
+    "target_baseline": "48d4c73f603f4ab338c13c2fd96afae8eae01c22",
+    "state": "AUTOMATED GATES PASSED / RESTORATION AND DEVICE ACCEPTANCE OPEN",
+    "evidence": "docs/testing/QURAN_FUNCTIONAL_INTEGRATION.md"
+  },
+  "previous_visual_review": {
     "tasks": [
       "21.19",
       "21.2"
