@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-27",
-  "current_task": "21.19",
+  "updated": "2026-10-28",
+  "current_task": "03.1",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -16,7 +16,7 @@
     "02.7.1": 3,
     "02.7.2": 3
   },
-  "policy": "Parallel/admin-foundation leads implementation; codex/android-ecosystem reviews every task from the exact recorded source SHA and integrates selectively in logical batches of roughly3–6 related tasks. Fast review covers correctness/contracts/schema/ownership/protected data/privacy/offline/concurrency/accessibility/RTL/premium UI and compile risks. Fix immediately; deep-test high-risk changes immediately. Reuse unchanged reviewed evidence; batch relevant expensive validation, run Work Package gates, broader milestone gates and one exhaustive final WP1–24 audit. Queue physical scenarios for shared device sessions. Commit/push/verify after stable integration batches, record exact reviewed/integrated cursors and each task status honestly. No bulk merge or source-only acceptance. WP02.8 stays deferred until available parallel batches stabilize. Continue without per-task permission.",
+  "policy": "Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.",
   "reviewed_ui_branch": {
     "ref": "origin/uiux/athar-premium-v2",
     "sha": "0e6f4ba6e3bb94075ebc38f1187ec28c7db75d32",
@@ -2794,10 +2794,7 @@
   "overall_estimate_status": "UNVERIFIED historic engineering estimate; frozen at51.38. Not an actual completed-task percentage; see PROGRESS_AUDIT_2026-10-27.json.",
   "status_meaning": "Task states track integration/required acceptance. NOT STARTED does not mean implementation is absent on other branches. Exact full/partial/absent implementation totals remain unverified.",
   "execution_override": {
-    "active": true,
-    "directive": "Premium Android UI first, then device visual review; unrelated work paused until user approval.",
-    "milestone": "PREMIUM_UI_MILESTONE.json",
-    "paused_current_task": "21.19",
-    "superseded_visual_queue": "Replaced by PUI1-PUI7; original requirements and states retained for acceptance traceability."
+    "active": false,
+    "superseded": "2026-10-28 explicit user directive: functional WP1-WP24 integration and acceptance; preserve UI, defer redesign."
   }
 }

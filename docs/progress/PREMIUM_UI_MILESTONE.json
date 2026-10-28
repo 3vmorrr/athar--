@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-27",
-  "status": "IN_PROGRESS",
+  "updated": "2026-10-28",
+  "status": "DEFERRED_BY_FUNCTIONAL_PRIORITY",
   "base_branch": "codex/android-ecosystem",
   "base_commit": "645d09b",
   "implementation_branch": "codex/athar-premium-ui",
@@ -11,7 +11,7 @@
     "open_tasks": 123,
     "visual_tasks": 21,
     "visual_open": 19,
-    "resume_rule": "Resume this point only after explicit user approval of the on-device premium UI. Preserve recorded integration cursors and unrelated dirty work."
+    "resume_rule": "Superseded by explicit 2026-10-28 user instruction. Resume functional integration now; defer dedicated visual review and redesign. Preserve existing UI."
   },
   "work_packages": [
     {

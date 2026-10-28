@@ -1,6 +1,6 @@
 # Implementation tracker
 
-> 27 October priority override: the approved Athar Premium Android UI milestone is active. Unrelated development is paused at task21.19 pending on-device visual review. Use the new premium specification and project-local athar-premium-compose-design skill; earlier visual directions below are historical. Functional requirements and evidence remain valid. See [milestone](PREMIUM_UI_MILESTONE.json) and [design system](../design/ATHAR_PREMIUM.md).
+> 28 October execution override: functional integration and acceptance across WP1-WP24 is active. Preserve existing UI and defer cosmetic redesign. The previous visual-review pause is superseded by the explicit user request. See [integration ledger](FUNCTIONAL_INTEGRATION_LEDGER.json).
 
 ## WP20 Email checkpoint —2026-10-27
 
