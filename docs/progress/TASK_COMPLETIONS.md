@@ -36,3 +36,5 @@ Task02.4's final executed gates are recorded in SESSION_OWNERSHIP.md and TEST_RE
 2026-10-28:03.2/03.6 implementation checkpoint `48d4c73f603f4ab338c13c2fd96afae8eae01c22` pushed/verified.16 focused JVM cases/debug/test APK/lint/344 resources PASS after correcting actual108:1 dagger-Alif mismatch. Both tasks remain PARTIAL pending hardware acceptance.
 
 2026-10-28:03.3/03.7 daily-entry checkpoint `f6ccdf8aff4e4c5f42603cf402b6506ec6fbff7a` pushed/verified.28 targeted JVM, debug/test APK/lint, PHP Quran13352 +tafsir34 and354 resources PASS. No task promoted COMPLETE; lifecycle/device acceptance remains open.
+
+2026-10-28:03.7 reader restoration repair `a7d162f8e580f0a891f0b3a20a50a64c88da9365` pushed/verified;8 focused JVM cases/main Kotlin compile PASS. Actual process-death and next batch APK/lint acceptance remain open; queue advanced to independent WP04 while approved Dorar/provider gates stay open.

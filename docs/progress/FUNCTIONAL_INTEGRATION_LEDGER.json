@@ -2437,8 +2437,8 @@
       "id": "04.1",
       "name": "Audio background and lockscreen",
       "work_package": "Work package 4: Recitation/radio",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "OWNERSHIP INCREMENT TESTED / METADATA AND DEVICE GATES OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -2484,8 +2484,16 @@
       "tests_required": "Service/controller/lifecycle/source identity tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Verify/fix Media3 foreground service, background playback, safe lockscreen controls and retained paused state. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Related metadata hydration, focus/network recovery; batch APK/test-APK/lint; actual background/notification/lockscreen/noisy/focus/account-switch/device journeys.",
+      "acceptance_evidence": [
+        "Immediate main compile +17 ownership/session JVM cases PASS; then5 wired media-command ownership cases PASS. docs/testing/AUDIO_FUNCTIONAL_INTEGRATION.md"
+      ],
+      "parallel_implementation_commits": [
+        "c61e58c635e855084186380a332d7849f40475dc",
+        "435d8a1c8f7965f54ffc041e0aa7e89a7a49ba73",
+        "9747b58a35e1539d8943476f841dcca017103e52"
+      ],
+      "reconciled": "Adopted immutable session activity; retained current premium mini/expanded player. Fixed direct account-switch queue retention, stale application controller hints and live command/media authorization; trusted system controls retained but cannot replace sources. Current method signatures verified in installed Media3 1.8 AAR."
     },
     {
       "id": "04.2",

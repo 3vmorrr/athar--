@@ -1,6 +1,7 @@
 package org.athar.app.media
 
 import android.content.ComponentName
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.media3.common.*
 import androidx.media3.session.MediaController
@@ -26,6 +27,8 @@ data class AudioUiState(
 )
 
 class AudioViewModel(private val graph: AppGraph, application: android.app.Application) : AndroidViewModel(application) {
+    private val owner = graph.session.userId
+    private fun ownerCurrent(): Boolean = try { graph.session.requireVerifiedOwner(owner); true } catch (_: org.athar.app.core.network.ApiException) { false }
     private val mutable = MutableStateFlow(AudioUiState())
     val state = mutable.asStateFlow()
     private val mutableSelection = MutableStateFlow(AudioSelection())
@@ -48,7 +51,8 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
         if (!mutable.value.error && !mutable.value.radio && mutable.value.mediaKey == mutableSelection.value.mediaKey && mutable.value.recording != null) toggle()
         else startSelection()
     }
-    private val future = MediaController.Builder(application, SessionToken(application, ComponentName(application, PlaybackService::class.java))).buildAsync()
+    private val future = MediaController.Builder(application, SessionToken(application, ComponentName(application, PlaybackService::class.java)))
+        .setConnectionHints(Bundle().apply { putLong(PLAYBACK_OWNER_HINT, owner ?: -1L) }).buildAsync()
     private var controller: MediaController? = null
     private var request: Job? = null
     private val listener = object : Player.Listener {
@@ -64,6 +68,7 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
         }
     }
     private fun readPlayer(player: Player) {
+        if (!ownerCurrent()) { mutable.value = AudioUiState(); return }
         mutable.value = mutable.value.copy(
             hasMedia = player.mediaItemCount > 0,
             title = player.mediaMetadata.title?.toString().orEmpty(),
@@ -80,10 +85,12 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
         )
     }
     private suspend fun player(): MediaController {
+        graph.session.requireVerifiedOwner(owner)
         controller?.let { return it }
         val ready = suspendCancellableCoroutine<MediaController> { continuation ->
             future.addListener({ if (continuation.isActive) try { continuation.resume(future.get()) } catch (error: Exception) { continuation.resumeWithException(error) } }, ContextCompat.getMainExecutor(getApplication()))
         }
+        graph.session.requireVerifiedOwner(owner)
         controller = ready; ready.addListener(listener); readPlayer(ready); return ready
     }
     fun load(reciter: Int, edition: Int, surah: Int, ayah: Int? = null) {
@@ -120,12 +127,12 @@ class AudioViewModel(private val graph: AppGraph, application: android.app.Appli
             catch (failure: CancellationException) { throw failure } catch (_: Exception) { mutable.value = AudioUiState(error = true) }
         }
     }
-    fun toggle() { controller?.let { if (it.isPlaying) it.pause() else { if (it.playbackState == Player.STATE_ENDED) it.seekTo(0); it.play() } } }
-    fun stop() { request?.cancel(); controller?.stop(); controller?.clearMediaItems(); mutable.value = AudioUiState() }
+    fun toggle() { if (ownerCurrent()) controller?.let { if (it.isPlaying) it.pause() else { if (it.playbackState == Player.STATE_ENDED) it.seekTo(0); it.play() } } }
+    fun stop() { request?.cancel(); if (ownerCurrent()) { controller?.stop(); controller?.clearMediaItems() }; mutable.value = AudioUiState() }
     fun elapsed(): Long = controller?.currentPosition?.coerceAtLeast(0) ?: 0
-    fun seek(positionMs: Long) { controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM) && it.isCurrentMediaItemSeekable }?.seekTo(positionMs.coerceIn(0, mutable.value.durationMs)) }
-    fun speed(value: Float) { controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SET_SPEED_AND_PITCH) }?.setPlaybackSpeed(value.coerceIn(0.75f, 1.5f)) }
-    fun repeat() { controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SET_REPEAT_MODE) }?.let { it.repeatMode = if (it.repeatMode == Player.REPEAT_MODE_ONE) Player.REPEAT_MODE_OFF else Player.REPEAT_MODE_ONE } }
+    fun seek(positionMs: Long) { if (ownerCurrent()) controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM) && it.isCurrentMediaItemSeekable }?.seekTo(positionMs.coerceIn(0, mutable.value.durationMs)) }
+    fun speed(value: Float) { if (ownerCurrent()) controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SET_SPEED_AND_PITCH) }?.setPlaybackSpeed(value.coerceIn(0.75f, 1.5f)) }
+    fun repeat() { if (ownerCurrent()) controller?.takeIf { it.isCommandAvailable(Player.COMMAND_SET_REPEAT_MODE) }?.let { it.repeatMode = if (it.repeatMode == Player.REPEAT_MODE_ONE) Player.REPEAT_MODE_OFF else Player.REPEAT_MODE_ONE } }
     fun supportsSpeed(): Boolean = controller?.isCommandAvailable(Player.COMMAND_SET_SPEED_AND_PITCH) == true
     fun supportsRepeat(): Boolean = controller?.isCommandAvailable(Player.COMMAND_SET_REPEAT_MODE) == true
     fun position(): Long = (controller?.currentPosition ?: 0) + mutable.value.clipStart
