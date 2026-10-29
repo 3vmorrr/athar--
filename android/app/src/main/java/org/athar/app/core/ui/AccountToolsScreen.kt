@@ -22,6 +22,7 @@ import java.time.LocalDate
     var busy by remember { mutableStateOf(false) }
     if (tool == "export") { AccountExportScreen(graph); return }
     when(tool) {
+        "activity" -> AccountActivityScreen(graph)
         "khatmah" -> DataScreen(graph, "me/khatmah") { data, reload ->
             if(!AccountPayloads.valid("khatmah",data)){AccountDataFailure(reload);return@DataScreen}
             var target by remember(data) { mutableStateOf(data.text("target_date").ifBlank { LocalDate.now().plusDays(30).toString() }) }

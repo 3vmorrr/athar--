@@ -48,6 +48,11 @@ final class ProgressService
         return $this->collectionQuery("SELECT f.target_type,f.target_id,COALESCE(b.title,l.title,r.title) title,f.created_at FROM user_favorites f LEFT JOIN books b ON f.target_type='book' AND b.id=f.target_id AND b.is_published=1 LEFT JOIN lessons l ON f.target_type='lesson' AND l.id=f.target_id AND l.is_published=1 LEFT JOIN series r ON f.target_type='series' AND r.id=f.target_id AND r.is_published=1 WHERE f.user_id=? AND (b.id IS NOT NULL OR (l.id IS NOT NULL AND (l.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=l.scholar_id AND s.is_published=1)) AND (l.series_id IS NULL OR EXISTS(SELECT 1 FROM series lr LEFT JOIN scholars rs ON rs.id=lr.scholar_id WHERE lr.id=l.series_id AND lr.is_published=1 AND (lr.scholar_id IS NULL OR rs.is_published=1)))) OR (r.id IS NOT NULL AND (r.scholar_id IS NULL OR EXISTS(SELECT 1 FROM scholars s WHERE s.id=r.scholar_id AND s.is_published=1)))) ORDER BY f.id DESC", $user, $params);
     }
 
+    public function isFavorite(int $user,string $type,int $id):bool
+    {
+        if(!in_array($type,['book','lesson','series'],true)||$id<1)throw new ApiError('invalid_fields',422);
+        $q=$this->db->prepare('SELECT 1 FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?');$q->execute([$user,$type,$id]);return (bool)$q->fetchColumn();
+    }
     public function favorite(int $user,string $type,int $id,bool $saved): void
     {
         $types=['book'=>'books','lesson'=>'lessons','series'=>'series'];if(!isset($types[$type]))throw new ApiError('invalid_fields',422,['target_type'=>'invalid']);
@@ -76,6 +81,22 @@ final class ProgressService
             if($owns&&$this->db->inTransaction())$this->db->rollBack();
             throw $e;
         }
+    }
+
+    /** Explicit account records; resume position is never elapsed watch/listen time. */
+    public function activitySummary(int $user):array
+    {
+        $today=gmdate('Y-m-d');$owns=!$this->db->inTransaction();if($owns)$this->db->beginTransaction();
+        try{
+            $q=$this->db->prepare('SELECT COALESCE(SUM(adhkar_completions),0) adhkar_completions,COALESCE(SUM(lesson_completions),0) lesson_completions,COALESCE(SUM(book_downloads),0) legacy_book_download_events,COALESCE(SUM(quran_sessions),0) legacy_quran_sessions,COALESCE(SUM(CASE WHEN adhkar_completions>0 OR lesson_completions>0 THEN 1 ELSE 0 END),0) active_days FROM account_daily_stats WHERE user_id=? AND activity_date<=?');$q->execute([$user,$today]);$totals=$q->fetch();
+            $q=$this->db->prepare('SELECT COALESCE(SUM(CASE WHEN position_seconds>0 OR is_complete=1 THEN 1 ELSE 0 END),0) lessons_with_progress,COALESCE(SUM(CASE WHEN is_complete=1 THEN 1 ELSE 0 END),0) completed_lessons FROM video_progress WHERE user_id=?');$q->execute([$user]);$lessons=$q->fetch();
+            $q=$this->db->prepare('SELECT activity_date,lesson_completions,adhkar_completions FROM account_daily_stats WHERE user_id=? AND activity_date BETWEEN DATE_SUB(?,INTERVAL 13 DAY) AND ? AND (lesson_completions>0 OR adhkar_completions>0) ORDER BY activity_date');$q->execute([$user,$today,$today]);
+            $recent=array_map(static fn(array $day):array=>['date'=>(string)$day['activity_date'],'lesson_completions'=>(int)$day['lesson_completions'],'adhkar_completions'=>(int)$day['adhkar_completions']],$q->fetchAll());
+            if($owns)$this->db->commit();
+            return ['schema_version'=>1,'owner_id'=>$user,'generated_date'=>$today,
+                'availability'=>['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>false],
+                'recorded'=>array_map('intval',array_merge($totals,$lessons)),'recent'=>$recent];
+        }catch(Throwable $e){if($owns&&$this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 
     public function lessonProgress(int $user,int $lesson): ?array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare('SELECT lesson_id,position_seconds,duration_seconds,is_complete,updated_at FROM video_progress WHERE user_id=? AND lesson_id=?');$q->execute([$user,$lesson]);$row=$q->fetch();return $row?:null;}

@@ -106,6 +106,43 @@ isolated_database(static function(PDO $db):void{
         assert_progress($response->status===200&&$response->body['data']['pagination']['page']===11&&count($response->body['data']['items'])>0,'API forwards full collection paging query');
         assert_progress($api->handle(new \Athar\Http\Request('GET',$path,[],$headers,['paged'=>'1','page'=>[]]))->status===422,'API rejects array query instead of silently coercing');
     }
+    $oldestBook=(int)$db->query('SELECT MIN(target_id) FROM user_favorites WHERE user_id=1 AND target_type=\'book\'')->fetchColumn();
+    $bookPath='/api/v1/books/'.$oldestBook;
+    assert_progress($progress->isFavorite($u,'book',$oldestBook)&&!$progress->isFavorite($other,'book',$oldestBook),'exact favorite status isolated beyond first 500');
+    $detail=$api->handle(new \Athar\Http\Request('GET',$bookPath,[],$headers));
+    assert_progress($detail->status===200&&$detail->body['data']['is_favorite']===true,'book detail carries owned boolean beyond truncated legacy list');
+    $progress->favorite($u,'book',$oldestBook,false);
+    $detail=$api->handle(new \Athar\Http\Request('GET',$bookPath,[],$headers));
+    assert_progress($detail->status===200&&$detail->body['data']['is_favorite']===false,'book detail reflects confirmed favorite removal');
+    $db->exec('DELETE FROM account_daily_stats WHERE user_id IN(1,2)');
+    $empty=$progress->activitySummary($other);
+    assert_progress($empty['owner_id']===$other&&$empty['recent']===[]&&$empty['recorded']['adhkar_completions']===0,'empty summary is a real owned DB snapshot');
+    $today=gmdate('Y-m-d');$yesterday=gmdate('Y-m-d',time()-86400);$older=gmdate('Y-m-d',time()-2*86400);
+    $progress->activity($u,test_uuid(),'lesson_completion',$yesterday);
+    $progress->activity($u,test_uuid(),'adhkar_completion',$today);$progress->activity($u,test_uuid(),'adhkar_completion',$today);
+    $progress->activity($u,test_uuid(),'book_download',$older);$progress->activity($u,test_uuid(),'quran_session',$older);
+    $progress->activity($other,test_uuid(),'adhkar_completion',$today);
+    $db->exec('UPDATE video_progress SET position_seconds=0,is_complete=0 WHERE user_id=1');
+    assert_progress($progress->activitySummary($u)['recorded']['lessons_with_progress']===0,'opening a lesson without actual progress does not count as started');
+    $db->exec('UPDATE video_progress SET position_seconds=99,is_complete=1 WHERE user_id=1');
+    $db->prepare('INSERT INTO account_daily_stats(user_id,activity_date,adhkar_completions) VALUES(1,?,99)')->execute([gmdate('Y-m-d',time()+86400)]);
+    $summary=$progress->activitySummary($u);
+    assert_progress($summary['generated_date']===$today&&$summary['recorded']['adhkar_completions']===2&&$summary['recorded']['lesson_completions']===1,'summary excludes other owner and future rows');
+    assert_progress($summary['recorded']['active_days']===2&&count($summary['recent'])===2&&$summary['recent'][0]['date']===$yesterday,'legacy-only days cannot inflate genuine completion days');
+    assert_progress($summary['recorded']['lessons_with_progress']===1&&$summary['recorded']['completed_lessons']===1&&!isset($summary['recorded']['watched_seconds']),'saved resume position is never labeled watched elapsed time');
+    assert_progress($summary['availability']===['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>false],'unimplemented tracking unavailable rather than fabricated zeros');
+    assert_progress($summary['recorded']['legacy_book_download_events']===1&&$summary['recorded']['legacy_quran_sessions']===1,'historical unknown-provenance events preserved separately');
+    $before=$db->query('SELECT SUM(book_downloads) FROM account_daily_stats WHERE user_id=1')->fetchColumn();
+    for($attempt=0;$attempt<2;$attempt++){
+        $download=$api->handle(new \Athar\Http\Request('GET','/api/v1/books/1/download',[],array_merge($headers,['Idempotency-Key'=>test_uuid()])));
+        assert_progress($download->status===200,'public rights URL resolves without claiming a completed transfer');
+    }
+    assert_progress($db->query('SELECT SUM(book_downloads) FROM account_daily_stats WHERE user_id=1')->fetchColumn()===$before,'URL lookups with idempotency headers cannot count downloads');
+    $response=$api->handle(new \Athar\Http\Request('GET','/api/v1/me/activity-summary',[],$headers));
+    assert_progress($response->status===200&&$response->body['data']['owner_id']===1&&$response->body['data']['recorded']['adhkar_completions']===2,'activity API derives exact verified owner');
+    assert_progress($api->handle(new \Athar\Http\Request('POST','/api/v1/me/activity-summary',[],$headers))->status===405,'summary read-only method');
+    assert_progress($api->handle(new \Athar\Http\Request('GET','/api/v1/me/activity-summary'))->status===401,'anonymous summary denied');
+    $db->beginTransaction();$progress->activitySummary($u);assert_progress($db->inTransaction(),'summary preserves caller transaction');$db->rollBack();
     $db->beginTransaction();$progress->bookmarks($u,['paged'=>'1']);assert_progress($db->inTransaction(),'caller transaction preserved by collection read');$db->rollBack();
 
 });echo 'PASS: '.$checks." catalog/publication/ownership/progress/retry/comment/plan assertions.\n";

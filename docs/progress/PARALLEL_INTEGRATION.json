@@ -3590,19 +3590,20 @@
   },
   "active_review": {
     "tasks": [
-      "07.5"
+      "07.5",
+      "07.6"
     ],
-    "state": "RECONCILED / LOCAL AND API34 STORAGE FIXTURE GATES PASSED / UI AND PHYSICAL ACCEPTANCE OPEN",
+    "state": "SUMMARY RECONCILED / LOCAL GATES PASSED / COMPLETED DOWNLOAD OUTBOX AND UI ACCEPTANCE PENDING",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+    "target_baseline": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72",
     "findings": [
-      "Source88011b4/0816524/d7c7270/607f6d0 reviewed and reconciled manually; preserve current premium UI, exact Quran navigation and existing export/deletion protocol.",
-      "Source sliced only first500 results. SQL now pages/counts the full owned visible set with deterministic order, strict query rejection and caller transaction preservation. Legacy Quran marker set is complete (canonical bound6236); old favorite array compatibility retained.",
-      "Native pages validate canonical Quran coordinates, unique stable IDs/targets, string/boolean/integer types and exact count/has_more consistency. Captured owner checks, confirmed-only removal, retry/cache notices, previous-page fallback and exact destinations retained.",
-      "Invalidate every query page in both languages only for captured owner; late GET cannot repopulate invalidated cache. Request generation leases reject delayed old-account responses. Quran ignores old truncated marker cache and disables marker action until authoritative lookup succeeds.",
-      "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md;152 JVM/35 classes/debug APK/test APK/lint(0 errors;59 warnings)/416 paired resources PASS.",
-      "All23 isolated backend suites PASS:21,143 executed assertions;catalog collection suite81 includes520 bookmarks,511 visible favorites, malformed/API page queries, ownership and publication filtering.",
-      "Actual API34 final31 cases PASS in13.153s:3 new Room/Keystore-backed cache isolation/in-flight invalidation/account-switch fixtures plus28 retained deletion/export/migration/PDF/Quran/counter/reading/lesson regressions. Injected transports; real native HTTP/UI/physical acceptance remains open."
+      "Reviewed fc09138e,c8827e3,d1dbdf9. Source resume-position sum is not elapsed watch time, opening/zero progress is not a lesson started, and mixed historical URL-lookup events do not prove downloads.",
+      "Owned UTC snapshot aggregates only actual lesson/adhkar completions and saved lesson progress; unavailable reading/listening/completed-download tracking is explicit. Legacy book/Quran events remain separate, unchanged and excluded from genuine active-day/recent-completion metrics.",
+      "GET book download URL no longer records activity even with Idempotency-Key. Add durable native post-publication completion outbox next, with distinct provenance/counts and export/deletion boundaries.",
+      "07.5 follow-up: book detail now carries exact owned boolean is_favorite; native action never derives absence from truncated favorites list or missing/unreadable state.",
+      "155 JVM/36 classes/debug APK/test APK/lint(0 errors;59 warnings)/426 paired resources PASS;three new activity summary contract cases.",
+      "All23 backend suites PASS:21,160 executed assertions;catalog/progress98 proves exact book favorite status beyond500, URL headers count no completed downloads, owned/UTC/read-only summary, future exclusion, legacy separation and zero-progress/non-duration semantics.",
+      "Prior a0e8fdb actual API34 storage batch31 PASS remains recorded. No new storage changes in this summary follow-up and no claim of running its UI/native HTTP acceptance."
     ]
   },
   "previous_visual_review": {

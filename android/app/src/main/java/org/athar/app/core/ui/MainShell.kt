@@ -295,13 +295,6 @@ private fun AtharNavIcon(
     val scope = rememberCoroutineScope()
     var feedback by remember(path) { mutableStateOf<String?>(null) }
     val snackbar = remember { SnackbarHostState() }
-    var favoriteInitial by remember(path) { mutableStateOf(false) }
-    LaunchedEffect(path) {
-        if (!path.startsWith("scholars/")) try {
-            val type = if (path.startsWith("series/")) "series" else path.substringBefore('/').removeSuffix("s")
-            favoriteInitial = graph.content.get("me/favorites").data.asJsonArray.any { it.text("target_type") == type && it.text("target_id") == path.substringAfter('/') }
-        } catch (failure: CancellationException) { throw failure } catch (_: Exception) { /* The idempotent save action remains available. */ }
-    }
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize()) {
@@ -311,7 +304,7 @@ private fun AtharNavIcon(
         AtharBookCover(path.substringAfter('/'), Modifier.width(if (compact) 56.dp else 88.dp).height(if (compact) 76.dp else 116.dp))
     }
     Box(Modifier.weight(1f)) {
-    DataScreen(graph, path) { item, _ ->
+    DataScreen(graph, path) { item, reload ->
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item(key = "heading", contentType = "heading") { Text(item.text("title").ifBlank { item.text("name") }, style = MaterialTheme.typography.headlineMedium) }
             if (item.text("author").isNotBlank()) item(key = "author", contentType = "metadata") { Text(item.text("author"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -319,9 +312,13 @@ private fun AtharNavIcon(
             if (item.text("youtube_id").matches(Regex("[A-Za-z0-9_-]{11}"))) item(key = "youtube", contentType = "action") { Button(onClick = { uri.openUri("https://www.youtube.com/watch?v=${item.text("youtube_id")}") }) { Text(stringResource(R.string.open_youtube)) } }
             if (path.startsWith("books/")) item(key = "book-rights", contentType = "rights") { org.athar.app.books.BookRights(item) { feedback = failed } }
             if (path.startsWith("books/")) item(key = "download", contentType = "action") { org.athar.app.books.BookDownloadActions(graph, path.substringAfter('/').toInt(), org.athar.app.books.bookDownloadAllowed(item), onOpen = { open("book-reader/${path.substringAfter('/')}") }) }
-            if (!path.startsWith("scholars/")) item(key = "favorite", contentType = "action") { MarkToggle(path, favoriteInitial, true, snackbar) { selected ->
+            if (!path.startsWith("scholars/")) item(key = "favorite", contentType = "action") {
+                val favorite = item.asJsonObject["is_favorite"]?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isBoolean }?.asBoolean
+                if (favorite == null) AccountDataFailure(reload)
+                MarkToggle(path, favorite == true, true, snackbar, enabled = favorite != null) { selected ->
                 graph.session.request(if (selected) "PUT" else "DELETE", "me/favorites", mapOf("target_type" to (if (path.startsWith("series/")) "series" else path.substringBefore('/').removeSuffix("s")), "target_id" to path.substringAfter('/').toInt()),expectedUser=owner)
                 graph.content.invalidate("me/favorites",owner)
+                graph.content.invalidate(path,owner)
             } }
             if (feedback != null) item(key = "feedback", contentType = "feedback") { MessagePanel(feedback!!) }
             items(item.array("series"), key = { "series-${it.text("id")}" }, contentType = { "series" }) { row -> ContentRow(row, { open("series/${row.text("id")}") }) }
@@ -338,7 +335,7 @@ private fun AtharNavIcon(
     var tool by rememberSaveable(auth.user.id) { mutableStateOf("profile") }
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("profile" to R.string.profile,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"downloads" to R.string.book_downloads,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
+            listOf("profile" to R.string.profile,"activity" to R.string.account_activity,"khatmah" to R.string.khatmah,"bookmarks" to R.string.bookmarks,"favorites" to R.string.favorites,"downloads" to R.string.book_downloads,"export" to R.string.export_data).forEach { (key,label) -> FilterChip(tool == key, { tool = key }, label = { Text(stringResource(label)) }) }
         }
         Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else if (tool == "downloads") org.athar.app.books.OwnedBookDownloadsScreen(vm.graph, open) else AccountToolsScreen(vm.graph, tool, open) }
     }

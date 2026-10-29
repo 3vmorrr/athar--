@@ -329,4 +329,14 @@
     <string name="check_deletion_result">التحقق من نتيجة الحذف</string>
     <string name="retry_account_deletion">إعادة محاولة حذف الحساب</string>
     <string name="saved_collection_page">الصفحة %1$d · إجمالي العناصر المحفوظة: %2$d</string>
+    <string name="account_activity">نشاطي</string>
+    <string name="activity_server_snapshot">سجلات الحساب حتى %1$s (UTC). قد لا تشمل التغييرات المحلية التي لم تُزامن بعد.</string>
+    <string name="activity_adhkar_recorded">إكمالات الأذكار المسجلة</string>
+    <string name="activity_lessons_recorded">إكمالات الدروس المسجلة</string>
+    <string name="activity_active_days">أيام إكمال الأذكار أو الدروس</string>
+    <string name="activity_lessons_progress">دروس لها تقدم محفوظ</string>
+    <string name="activity_lessons_complete">دروس معلّمة كمكتملة</string>
+    <string name="activity_unavailable_tracking">تتبع جلسات القراءة وسجل الاستماع واكتمال تنزيل الكتب غير متاح بعد. موضع القراءة أو الدرس المحفوظ ليس مدة قراءة أو مشاهدة.</string>
+    <string name="activity_recent_days">الإكمالات خلال آخر 14 يومًا (UTC)</string>
+    <string name="activity_day_recorded">الأذكار: %1$d · الدروس: %2$d</string>
 </resources>

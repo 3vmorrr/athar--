@@ -121,7 +121,11 @@ final class ApiKernel
         $user=(int)$actor['id'];
         if($path==='/home'){$this->method($r,'GET');return [$this->catalog->home($user),200];}
         if($path==='/adhkar/categories'){$this->method($r,'GET');return [$this->catalog->adhkarCategories(),200];}
-        if(preg_match('#^/(books|scholars|series|lessons|adhkar)(?:/([1-9][0-9]*))?$#',$path,$m)){$this->method($r,'GET');return [isset($m[2])?$this->catalog->detail($m[1],(int)$m[2]):$this->catalog->list($m[1],$r->query),200];}
+        if(preg_match('#^/(books|scholars|series|lessons|adhkar)(?:/([1-9][0-9]*))?$#',$path,$m)){
+            $this->method($r,'GET');$result=isset($m[2])?$this->catalog->detail($m[1],(int)$m[2]):$this->catalog->list($m[1],$r->query);
+            if($m[1]==='books'&&isset($m[2]))$result['is_favorite']=$this->progress->isFavorite((int)$actor['id'],'book',(int)$m[2]);
+            return [$result,200];
+        }
         if($path==='/quran/position'){
             if($r->method==='GET')return [$this->progress->position($user),200];
             $this->method($r,'PUT');return [$this->progress->savePosition($user,$r->body),200];
@@ -160,6 +164,7 @@ final class ApiKernel
             $this->method($r,'PUT');return [$this->progress->saveLessonProgress($user,$r->body),200];
         }
         if($path==='/me/adhkar-stats'){$this->method($r,'GET');return [$this->progress->adhkarStats($user),200];}
+        if($path==='/me/activity-summary'){$this->method($r,'GET');return [$this->progress->activitySummary($user),200];}
         if($path==='/me/activity'){
             $this->method($r,'POST');
             if(array_key_exists('activity_date',$r->body)&&!is_string($r->body['activity_date']))throw new ApiError('invalid_fields',422,['activity_date'=>'invalid']);
@@ -173,7 +178,8 @@ final class ApiKernel
         }
         if(preg_match('#^/books/([1-9][0-9]*)/download$#',$path,$m)){
             $this->method($r,'GET');$download=$this->catalog->bookDownload((int)$m[1]);
-            if(isset($r->headers['idempotency-key']))$this->progress->activity($user,(string)$r->headers['idempotency-key'],'book_download');return [$download,200];
+            // Resolving a URL/rights receipt does not prove that bytes were downloaded.
+            return [$download,200];
         }
         if($path==='/me/export'){
             $this->method($r,'GET');return [(new \Athar\Progress\AccountExportService($this->db,$this->auth,$this->nightPrayer))->read($user),200];

@@ -3771,13 +3771,15 @@
       "acceptance_evidence": [
         "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md;152 JVM/35 classes/debug APK/test APK/lint(0 errors;59 warnings)/416 paired resources PASS.",
         "All23 isolated backend suites PASS:21,143 executed assertions;catalog collection suite81 includes520 bookmarks,511 visible favorites, malformed/API page queries, ownership and publication filtering.",
-        "Actual API34 final31 cases PASS in13.153s:3 new Room/Keystore-backed cache isolation/in-flight invalidation/account-switch fixtures plus28 retained deletion/export/migration/PDF/Quran/counter/reading/lesson regressions. Injected transports; real native HTTP/UI/physical acceptance remains open."
+        "Actual API34 final31 cases PASS in13.153s:3 new Room/Keystore-backed cache isolation/in-flight invalidation/account-switch fixtures plus28 retained deletion/export/migration/PDF/Quran/counter/reading/lesson regressions. Injected transports; real native HTTP/UI/physical acceptance remains open.",
+        "Summary follow-up:155 JVM/debug/test APK/lint/426 resources and all23 backend suites(21,160 checks) PASS;no new native UI/device claim."
       ],
       "integration_findings": [
         "Source88011b4/0816524/d7c7270/607f6d0 reviewed and reconciled manually; preserve current premium UI, exact Quran navigation and existing export/deletion protocol.",
         "Source sliced only first500 results. SQL now pages/counts the full owned visible set with deterministic order, strict query rejection and caller transaction preservation. Legacy Quran marker set is complete (canonical bound6236); old favorite array compatibility retained.",
         "Native pages validate canonical Quran coordinates, unique stable IDs/targets, string/boolean/integer types and exact count/has_more consistency. Captured owner checks, confirmed-only removal, retry/cache notices, previous-page fallback and exact destinations retained.",
-        "Invalidate every query page in both languages only for captured owner; late GET cannot repopulate invalidated cache. Request generation leases reject delayed old-account responses. Quran ignores old truncated marker cache and disables marker action until authoritative lookup succeeds."
+        "Invalidate every query page in both languages only for captured owner; late GET cannot repopulate invalidated cache. Request generation leases reject delayed old-account responses. Quran ignores old truncated marker cache and disables marker action until authoritative lookup succeeds.",
+        "Follow-up beyond a0e8fdb: exact is_favorite on owned book detail replaces native truncated-list lookup; unknown/missing boolean disables action and offers retry. Focused API tests cover beyond500/removal/other owner."
       ],
       "reconciled": "Complete SQL-backed owned collection pages, strict canonical/native validation, confirmed-only removal and exact destinations. Shared cache invalidation fences stale delayed responses and account switches; authoritative full reader markers replace truncated/unknown state."
     },
@@ -3786,7 +3788,7 @@
       "name": "Personal activity dashboard",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "SUMMARY RECONCILED / LOCAL GATES PASSED / COMPLETED DOWNLOAD OUTBOX AND UI ACCEPTANCE PENDING",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3865,11 +3867,19 @@
       "tests_required": "No inferred opening-completion; dedup/date/source/owner tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Show genuine read/listen/adhkar/lesson progress only; define unavailable totals and loading/error states. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": [],
+      "remaining_acceptance": "Durable captured-owner completed-download receipt/outbox after actual verified publication, process-death/retry/idempotency and original UTC event date; authenticated owned sync, legacy separation, export/deletion fences; real native HTTP/UI/AR/EN/accessibility/physical acceptance. No completion credit from summary foundations.",
+      "acceptance_evidence": [
+        "155 JVM/36 classes/debug APK/test APK/lint(0 errors;59 warnings)/426 paired resources PASS;three new activity summary contract cases.",
+        "All23 backend suites PASS:21,160 executed assertions;catalog/progress98 proves exact book favorite status beyond500, URL headers count no completed downloads, owned/UTC/read-only summary, future exclusion, legacy separation and zero-progress/non-duration semantics.",
+        "Prior a0e8fdb actual API34 storage batch31 PASS remains recorded. No new storage changes in this summary follow-up and no claim of running its UI/native HTTP acceptance."
+      ],
       "integration_findings": [
-        "Queue genuine native completed-download activity after verified file publication. URL/rights lookup is not completion; current worker sends no invented event."
-      ]
+        "Reviewed fc09138e,c8827e3,d1dbdf9. Source resume-position sum is not elapsed watch time, opening/zero progress is not a lesson started, and mixed historical URL-lookup events do not prove downloads.",
+        "Owned UTC snapshot aggregates only actual lesson/adhkar completions and saved lesson progress; unavailable reading/listening/completed-download tracking is explicit. Legacy book/Quran events remain separate, unchanged and excluded from genuine active-day/recent-completion metrics.",
+        "GET book download URL no longer records activity even with Idempotency-Key. Add durable native post-publication completion outbox next, with distinct provenance/counts and export/deletion boundaries.",
+        "07.5 follow-up: book detail now carries exact owned boolean is_favorite; native action never derives absence from truncated favorites list or missing/unreadable state."
+      ],
+      "reconciled": "Owner-bound schema-versioned UTC summary with explicit unavailable tracking, strict native non-fabrication validation and localized cached/server snapshot notice. Genuine adhkar/lesson metrics exclude legacy unknown-provenance reading/download events. URL resolution is no longer a completion. Durable native completed-download events remain unimplemented."
     },
     {
       "id": "07.7",
@@ -14285,22 +14295,23 @@
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
     "date": "2026-10-29",
-    "codex_remote": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+    "codex_remote": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
       "07.6"
     ],
-    "state": "GENUINE COMPLETED-DOWNLOAD ACTIVITY AND TRUTHFUL PERSONAL DASHBOARD NEXT; RETAIN DELETION AND EXPORT BOUNDARIES"
+    "state": "DURABLE VERIFIED-PUBLICATION COMPLETED-DOWNLOAD OUTBOX, OWNED SYNC, EXPORT/DELETION AND LEGACY SEPARATION NEXT"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",
-    "scope": "WP03-WP06 plus WP07.1-WP07.5 and shared foundations",
-    "jvm_tests": 152,
+    "scope": "WP03-WP06 plus WP07.1-WP07.5 and WP07.6 summary foundations",
+    "jvm_tests": 155,
     "backend_suites": 23,
-    "backend_executed_assertions": 21143,
+    "backend_executed_assertions": 21160,
     "api34_instrumentation_tests": 31,
-    "state": "PASS / REAL NATIVE HTTP, OS, PHYSICAL AND PROVIDER GATES OPEN"
+    "state": "LOCAL GATES PASS / COMPLETED DOWNLOAD OUTBOX, REAL NATIVE HTTP, UI, OS, PHYSICAL AND PROVIDER GATES OPEN",
+    "api34_instrumentation_baseline": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72"
   }
 }

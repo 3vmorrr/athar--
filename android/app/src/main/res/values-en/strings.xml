@@ -301,4 +301,14 @@
     <string name="check_deletion_result">Check deletion result</string>
     <string name="retry_account_deletion">Retry account deletion</string>
     <string name="saved_collection_page">Page %1$d · Saved items: %2$d</string>
+    <string name="account_activity">My activity</string>
+    <string name="activity_server_snapshot">Account records through %1$s (UTC). Local changes awaiting sync may be absent.</string>
+    <string name="activity_adhkar_recorded">Recorded adhkar completions</string>
+    <string name="activity_lessons_recorded">Recorded lesson completions</string>
+    <string name="activity_active_days">Days with adhkar or lesson completions</string>
+    <string name="activity_lessons_progress">Lessons with saved progress</string>
+    <string name="activity_lessons_complete">Lessons marked complete</string>
+    <string name="activity_unavailable_tracking">Reading sessions, listening history and completed book download tracking are not yet available. Saved reading or lesson positions are not elapsed reading or watch time.</string>
+    <string name="activity_recent_days">Completions in the last 14 days (UTC)</string>
+    <string name="activity_day_recorded">Adhkar: %1$d · Lessons: %2$d</string>
 </resources>
