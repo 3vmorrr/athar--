@@ -17,7 +17,11 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 PROGRESS = ROOT / 'docs/progress'
 PARALLEL = Path('C:/xampp/athar-parallel')
-TARGET = '2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474'
+BASELINE_SHA = '2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474'
+BASELINE_AUDIT_COMMIT = '9492f1453e3a1dccb7d80e161deff03b83273f6b'
+INPUT = PROGRESS/'ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json'
+CHECKPOINT = json.loads(INPUT.read_text(encoding='utf-8')) if INPUT.exists() else {}
+TARGET = CHECKPOINT.get('main_sha', BASELINE_SHA)
 SOURCE = '7392e93b088990c3478cf32197781f831eb10f83'
 DATE = '2026-10-29'
 AUDIT = PROGRESS / 'ACTUAL_IMPLEMENTATION_AUDIT.json'
@@ -120,6 +124,8 @@ def main():
             task['automated_tests']='Historical executed evidence (not current closure authority):'+task['automated_tests'][len('COMPLETE:'):]
         if task['id']=='21.15':
             task['automated_tests']=task['automated_tests'].replace('292+ resource format checks','Current paired resource format checks (432 at audited source)')
+            if CHECKPOINT:
+                task['automated_tests']=re.sub(r'Current paired resource format checks \([^)]*\)',f"Current paired resource format checks ({CHECKPOINT['validation']['resources_paired']} at current checkpoint)",task['automated_tests'])
     previous = json.loads(AUDIT.read_text(encoding='utf-8')) if AUDIT.exists() else None
     old = {t['id']: t['old_status'] for t in previous['tasks']} if previous else {t['id']: t['state'] for t in queue['tasks']}
     reviewed = {}
@@ -135,10 +141,17 @@ def main():
     queue_md = (PROGRESS / 'TASK_QUEUE.md').read_text(encoding='utf-8')
     assert all(t['scope'] in queue_md and t['definition_of_done'] in queue_md for t in queue['tasks'])
     junit = []
-    for path in sorted((ROOT / 'android/app/build/test-results/testDebugUnitTest').glob('TEST-*.xml')):
-        x = ET.parse(path).getroot()
-        junit.append(dict(name=x.attrib['name'], tests=int(x.attrib['tests']), failures=int(x.attrib['failures']),
-                          errors=int(x.attrib['errors']), skipped=int(x.attrib.get('skipped', 0)), **fingerprint(path)))
+    baseline_audit = None
+    if CHECKPOINT:
+        # A targeted later suite replaces the local XML directory. Never relabel it
+        # as the original167-case run or silently discard the original receipt.
+        baseline_audit=json.loads(git(ROOT,'show',BASELINE_AUDIT_COMMIT+':docs/progress/ACTUAL_IMPLEMENTATION_AUDIT.json'))
+        junit=baseline_audit['current_validation']['junit_receipts']
+    else:
+        for path in sorted((ROOT / 'android/app/build/test-results/testDebugUnitTest').glob('TEST-*.xml')):
+            x = ET.parse(path).getroot()
+            junit.append(dict(name=x.attrib['name'], tests=int(x.attrib['tests']), failures=int(x.attrib['failures']),
+                              errors=int(x.attrib['errors']), skipped=int(x.attrib.get('skipped', 0)), **fingerprint(path)))
     assert len(junit) == 38 and sum(x['tests'] for x in junit) == 167
     assert not any(x['failures'] or x['errors'] or x['skipped'] for x in junit)
     backend_receipt=(ROOT/'artifacts/functional-integration/book-activity-serial-backend.log').read_text(encoding='utf-8-sig')
@@ -147,7 +160,7 @@ def main():
     assert backend_receipt.count('PASS: 15 provider catalog/recording/timing/URL-boundary assertions')==2
     lint=ET.parse(ROOT/'android/app/build/reports/lint-results-debug.xml').getroot()
     assert not any(i.get('severity') in {'Error','Fatal'} for i in lint.findall('issue'))
-    assert sum(i.get('severity')=='Warning' for i in lint.findall('issue'))==59
+    assert sum(i.get('severity')=='Warning' for i in lint.findall('issue'))==CHECKPOINT.get('validation',{}).get('lint_warnings',59)
     assert 'BUILD SUCCESSFUL' in (ROOT/'artifacts/functional-integration/book-activity-serial-gradle.log').read_text(encoding='utf-8-sig')
     assert 'OK (35 tests)' in (ROOT/'artifacts/functional-integration/book-activity-api34.private.log').read_text(encoding='utf-8-sig')
     receipts = (PROGRESS / 'TASK_COMPLETIONS.md').read_text(encoding='utf-8')
@@ -166,12 +179,15 @@ def main():
             else:
                 try: evidence.append(evidence_file(token, location))
                 except ValueError as error: unresolved.append(str(error))
+        for token in CHECKPOINT.get('additional_main_evidence',{}).get(task_id,[]):
+            evidence.append(evidence_file(token,'main'))
         implementation = {'A':'IMPLEMENTED','V':'IMPLEMENTED','P':'PARTIALLY_IMPLEMENTED',
                           'U':'IMPLEMENTED','R':'PARTIALLY_IMPLEMENTED','S':'SCAFFOLDED','M':'SCAFFOLDED',
                           'B':'IMPLEMENTATION_BLOCKED','N':'NOT_IMPLEMENTED'}[verdict]
         if task_id in {'15.3', '20.5'}: implementation = 'SCAFFOLDED'
         integration = 'INTEGRATED' if verdict in 'AV' else ('PARTIALLY_INTEGRATED' if verdict == 'P' else 'NOT_INTEGRATED')
         if task_id in {'03.8', '15.3', '24.1'}: integration = 'INTEGRATION_BLOCKED'
+        integration=CHECKPOINT.get('integration_overrides',{}).get(task_id,integration)
         verification = 'ACCEPTED' if verdict == 'A' else ('ACCEPTANCE_PENDING' if verdict == 'V' else 'NOT_TESTED')
         if verdict in 'URS' and any(p.endswith('.kt') or p.endswith('.kts') or p.endswith('AndroidManifest.xml') for p in paths):
             verification = 'TESTS_FAILING'
@@ -183,11 +199,11 @@ def main():
                     'S':'scaffold_or_unmeasured_gate','M':'scaffold_or_unmeasured_gate', 'B':'external_blocked', 'N':'not_implemented'}[verdict]
         tests = []
         if location == 'main' and wp in JVM_PATTERNS:
-            tests.append({'kind':'inherited_current_JVM_subset', 'source_ref':TARGET,
+            tests.append({'kind':'inherited_baseline_JVM_subset', 'source_ref':BASELINE_SHA,
                           'classes':[x['name'] for x in junit if re.search(JVM_PATTERNS[wp],x['name'])],
                           'limit':'Passed unit subset only; does not establish native API/physical/provider/final acceptance.'})
         if location == 'main' and wp in {'03','04','05','06','07','08','17','18','19','20','22','23'}:
-            tests.append({'kind':'inherited_current_backend_subsystem_gate', 'source_ref':TARGET,
+            tests.append({'kind':'inherited_baseline_backend_subsystem_gate', 'source_ref':BASELINE_SHA,
                           'receipt':'artifacts/functional-integration/book-activity-serial-backend.log',
                           'limit':'24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery.'})
         log_receipts = []
@@ -253,6 +269,9 @@ def main():
         elif old[task_id] == 'COMPLETE' and verdict != 'A':
             accuracy = 'Reopened for current acceptance: relevant production call paths changed after the old hardware receipt.'
         else: accuracy = 'Retained only for the bounded scope supported by source and receipts; not a release-readiness claim.'
+        if task_id in CHECKPOINT.get('reviewed_tasks',[]):
+            accuracy='Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.'
+            tests.append({'kind':'new_focused_functional_checkpoint','source_ref':TARGET,'result':CHECKPOINT['validation']})
         main_status = implementation if location == 'main' else ('PARTIALLY_IMPLEMENTED' if task_id[:2] in {'07','08','21'} else 'NOT_IMPLEMENTED')
         rows.append({'id':task_id,'name':task['name'],'scope':task['scope'],'definition_of_done':task['definition_of_done'],
                      'old_status':old[task_id],'implementation_status':implementation,'implementation_location':location,
@@ -343,6 +362,14 @@ def main():
             'next_task':{'id':'07.7','action':'Reconcile canonical Khatmah workload/date contract and revisioned shared API/web writer first; then port editor without overwriting drafts. Do not resume until audit commit/checks complete.',
                          'deferred':'02.8 plus reopened hardware acceptance are queued until an authorized physical session; approved provider gates remain explicit.'},
             'wiring_evidence':wiring,'tasks':rows}
+    if CHECKPOINT:
+        data['original_audit_commit']=BASELINE_AUDIT_COMMIT
+        data['original_audit_metrics']=baseline_audit['metrics']
+        data['baseline_validation']=baseline_audit['current_validation']
+        data['current_validation']=CHECKPOINT['validation']
+        data['functional_checkpoint']=CHECKPOINT
+        data['next_task']=CHECKPOINT['next_task']
+        queue['current_task']=CHECKPOINT['next_task']['id']
     # Checks deliberately fail if someone silently changes a status without reconciling all generated views.
     if args.check:
         assert previous == data, 'Audit JSON stale; regenerate after explicit scope review.'
@@ -384,7 +411,7 @@ def main():
     queue['actual_audit'] = 'ACTUAL_IMPLEMENTATION_AUDIT.json'
     queue['audit_metrics'] = metrics
     queue['status_meaning'] = 'Four independent axes and concrete missing/evidence fields are authoritative. Historical51.38 estimate is frozen/obsolete; never use it as actual engineering completion. See ACTUAL_IMPLEMENTATION_AUDIT.md.'
-    queue['active_checkpoint'] = '149-task actual source audit reconciled. Next feature07.7 follows the audit checkpoint report; no feature implementation performed during this audit.'
+    queue['active_checkpoint'] = '149-task source findings reconciled; exact current checkpoint/validation in ACTUAL_IMPLEMENTATION_AUDIT.json. Next feature'+queue['current_task']+'. Original audit retained as dated evidence.'
     queue['overall_estimate_status'] = 'OBSOLETE subjective historic estimate; actual count metrics are generated from the149 audited records.'
     dump(queue_path,queue)
     ledger_path = PROGRESS/'FUNCTIONAL_INTEGRATION_LEDGER.json'
@@ -417,7 +444,7 @@ def main():
 def report_text(data):
     rows=data['tasks']; metrics=data['metrics']
     lines=['# Actual implementation audit —149 tasks','',f"Audit date: {DATE}. Active branch `{data['main_branch']}` at `{TARGET}`. Parallel `{data['parallel_branch']}` at `{SOURCE}`.",'',
-           'This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED snapshot as an implementation inventory. Historical receipts remain dated records. No application code was changed to improve these numbers. Seven previously closed native scopes are reopened because changed call paths have not received the required current hardware acceptance.','',
+           'This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED snapshot as an implementation inventory. Historical receipts remain dated records. Original audit9492f14 changed no application code. Later functional checkpoints are separately identified; changed task findings advance only with explicit source review and focused evidence. Seven previously closed native scopes remain reopened because changed call paths have not received the required current hardware acceptance.','',
            '## Generated metrics','', '| Metric | Tasks |','|---|---:|']
     lines += [f'| {key} | {value} |' for key,value in metrics.items()]
     lines += ['', 'Counts overlap. Fully implemented includes unmerged reviewed source and can have failing verification; main-only count is separate. Integrated excludes partial call paths. All required verification is a whole-task gate, not passing unit tests. Production code remaining includes integration ports; feature coding is separately counted. No weighted percentage is claimed.','',
@@ -434,7 +461,7 @@ def report_text(data):
               'Measurement/release tasks have real tooling but no completed outcome: representative review accuracy/latency, startup, idle battery/network, signed reproducibility, hosted acceptance and handoff. Scaffolding is recorded separately; no99% accuracy, release startup number, battery result or delivered signed artifact is fabricated.','',
               'UI-v3 contains actual native changes and compile fixes: PCM constant, model Worker API/coroutine ownership, File resolution and a typed generated-assets task wired through androidComponents Variant API. The latter is an existing candidate correction for the inspected SourceSet Provider failure; do not rewrite it blindly. The failed configuration was on7392 with its local import repair; no failed or passed build is claimed for UI-v3. It also contains a debug showcase; preview is not production acceptance. origin/uiux/athar-premium-v2 is a22-file design/presentation delta. Branches were compared against parallel rather than counted wholesale as integrated functionality. Current native Canvas artwork/hero primitives already exist, so21.19 is not NOT STARTED; per-section presentation/acceptance remains separate.','',
               '## Verification receipts and limits','',
-              'Inherited at unchanged main feature HEAD2b7d7de:167 JVM cases/38 classes, debug and test APK builds, lint0 errors/59 warnings,24 backend suites/21192 executed assertions,35 actual API34 instrument cases in15.109s. The nested15 media assertions inside a combined31 banner are not counted twice. API34 exercises actual Room/Keystore/files/installed isolated PDF with injected transports; it does not prove native real HTTP, OS process/reboot, physical device or real provider delivery. JSON fingerprints all38 XML files and bounded log receipts.','',
+              'Baseline receipts at source2b7d7de:167 JVM cases/38 classes, debug and test APK builds, lint0 errors/59 warnings,24 backend suites/21192 executed assertions,35 actual API34 instrument cases in15.109s. Reuse applies only to unchanged paths, not newly integrated code. The nested15 media assertions inside a combined31 banner are not counted twice. API34 exercises actual Room/Keystore/files/installed isolated PDF with injected transports; it does not prove native real HTTP, OS process/reboot, physical device or real provider delivery. Original38 XML fingerprints remain frozen in original audit9492f14 and baseline_validation, even when targeted later runs replace local XML files.','',
               'Newly executed audit checks: Git fetch/ref/dirty checks;432 paired AR/EN resources PASS; parallel Gradle configuration FAILED at SourceSet Provider API; injected server push adapter test FAILED at PHP8.0 readonly syntax before assertions. Secret screening found0 working findings and2 historical heuristic findings; both inspected blobs contain intentional example.invalid credential-URL rejection fixtures. The scanner exited nonzero; this is recorded as adjudicated synthetic inputs, not an unexplained clean PASS. History/scanner were not changed. No production fix was made during this audit. The pre-existing parallel File/import repair remains dirty and disclosed. Main current passing suites were not unnecessarily rerun. Documentation consistency checks run after reconciliation.','',
               'Retained closures are backed by implementation review and available inherited receipts. Admin authentication/action/user/privacy219 HTTP is a regression receipt, not a new audit run; WP18 combined118 HTTP/142 browser and WP20 final42 HTTP/worker/15 browser remain bounded local proofs. No real message is inferred. Original API27 foundation receipts are retained as history; seven changed native scopes are explicitly reopened for current hardware acceptance.','',
               '## Reopened previous closures','']
@@ -446,7 +473,7 @@ def report_text(data):
         if r['external_blockers']: lines.append(f"- **{r['id']}**: {r['external_blockers'][0]}. {r['exact_remaining_work'][0]}")
     lines += ['', '## Documentation corrections and execution order','',
               'TASK_QUEUE.json/MD and FUNCTIONAL_INTEGRATION_LEDGER.json now carry IMPLEMENTATION / INTEGRATION / VERIFICATION / CLOSURE / MISSING / EVIDENCE for every task. The explicit review TSV records individual scope findings; this JSON is the generated authoritative evidence/metrics view. ACCOUNT_FUNCTIONAL_INTEGRATION and current progress/testing headers point here. Historical percentages/counts remain labeled historical and cannot override this audit. The renderer/validator rejects missing axes and inconsistent totals.','',
-              'Next executable task: **07.7**, canonical Khatmah workload/date and shared revisioned API/web contract, then editor draft/ACK safety. Continue07.8/07.9 as a related subsystem, integrate08.x without regressing current conflict/rejection recovery, reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for the finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; run final security/performance/release gates after integration settles. Audit completion must precede normal feature execution.','',
+              f"Next executable task: **{data['next_task']['id']}**. {data['next_task']['action']} Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.",'',
               '## Full task reclassification table','',
               'I: IMPLEMENTED / PARTIALLY_IMPLEMENTED / SCAFFOLDED / IMPLEMENTATION_BLOCKED. Integration and verification are separate columns; PARTIAL closure never implies missing feature code by itself. Every row has concrete present/missing/source details below and in JSON.','',
               '| ID | Old | Implementation | Integration | Verification | Closure | Evidence |','|---|---|---|---|---|---|---|']
@@ -460,6 +487,11 @@ def report_text(data):
                   'MISSING: '+('; '.join(r['missing_requirements']) or 'None in this bounded accepted scope.'),
                   'EVIDENCE: '+ '; '.join(f"`{e['location']}:{e['path']}`" for e in r['evidence'])+'. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.',
                   'Old status: '+r['old_status_assessment'],'']
+    if data.get('functional_checkpoint'):
+        cp=data['functional_checkpoint']
+        v=cp['validation']
+        lines[4:4]=['## Functional update after the original audit','',cp['summary'],'',
+                    f"Current focused validation, separate from the inherited baseline: **{v['jvm_cases']} JVM / {v['backend_assertions']} backend assertions / {v['actual_cookie_api_http_assertions']} actual cookie/API HTTP assertions**. Debug/test APK PASS; lint{v['lint_errors']} errors/{v['lint_warnings']} warnings;{v['resources_paired']} paired resources. No new instrumentation/physical acceptance. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.",'']
     return '\n'.join(lines)
 
 def reconcile_documents(data):
@@ -473,7 +505,8 @@ def reconcile_documents(data):
         link='ACTUAL_IMPLEMENTATION_AUDIT.md' if '/progress/' in name else '../progress/ACTUAL_IMPLEMENTATION_AUDIT.md'
         note=f"{marker_start}\n> **Current authority —2026-10-29:** [{metrics['total']}-task actual source audit]({link}). {metrics['fully_implemented_any_reviewed_branch']} tasks have implemented source ({metrics['fully_implemented_main']} in main, {metrics['implemented_only_unmerged']} only unmerged); {metrics['formally_closed']} are accepted/closed, {metrics['acceptance_only_current_app']} need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.\n\n"
         if name.endswith('ACCOUNT_FUNCTIONAL_INTEGRATION.md'):
-            note+='> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE: current2b7d7de source and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit.07.7–07.9 still require Khatmah contract/conflict code and integration.\n\n'
+            note+='> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE:2b7d7de baseline and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit. '
+            note+=('07.7/07.8 now have integrated revisioned web/API/native editing and explicit lifecycle; see KHATMAH_FUNCTIONAL_INTEGRATION.md and current focused receipts.07.9 durable offline/outbox/conflicts remain open.' if CHECKPOINT else '07.7–07.9 still require Khatmah contract/conflict code and integration.')+'\n\n'
         note+=marker_end+'\n\n'
         first, separator, rest=source.partition('\n')
         path.write_text(first+'\n\n'+note+rest.lstrip('\n') if separator else note+source,encoding='utf-8')
@@ -486,8 +519,8 @@ def reconcile_documents(data):
     d['review_worktree_checkout']=SOURCE
     d['last_fetch_date']=DATE
     d['progress_audit']='ACTUAL_IMPLEMENTATION_AUDIT.json is authoritative; historic26/77/42/4 and51.38 estimate superseded. Contiguous infrastructure cursor is historical, not a claim that all later feature source is unreviewed.'
-    d['active_review']={'tasks':[r['id'] for r in data['tasks']],'state':'ACTUAL149-TASK SOURCE AUDIT RECONCILED; NEXT FEATURE07.7 AFTER AUDIT CHECKPOINT REPORT',
-                        'source_head':SOURCE,'target_baseline':TARGET,'report':'ACTUAL_IMPLEMENTATION_AUDIT.json','next_feature_task':'07.7'}
+    d['active_review']={'tasks':CHECKPOINT.get('reviewed_tasks',[r['id'] for r in data['tasks']]),'state':'SOURCE RECONCILED; CURRENT FOUR-AXIS FINDINGS AND FOCUSED EVIDENCE IN ACTUAL AUDIT',
+                        'source_head':SOURCE,'target_baseline':TARGET,'report':'ACTUAL_IMPLEMENTATION_AUDIT.json','next_feature_task':data['next_task']['id']}
     dump(path,d)
     path=PROGRESS/'PREMIUM_UI_MILESTONE.json'
     d=json.loads(path.read_text(encoding='utf-8'))

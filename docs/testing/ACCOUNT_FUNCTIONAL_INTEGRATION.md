@@ -1,9 +1,9 @@
 # Account functional integration
 
 <!-- actual-implementation-audit:start -->
-> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 112 tasks have implemented source (73 in main, 39 only unmerged); 19 are accepted/closed, 54 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
 
-> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE: current2b7d7de source and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit.07.7–07.9 still require Khatmah contract/conflict code and integration.
+> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE:2b7d7de baseline and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit. 07.7/07.8 now have integrated revisioned web/API/native editing and explicit lifecycle; see KHATMAH_FUNCTIONAL_INTEGRATION.md and current focused receipts.07.9 durable offline/outbox/conflicts remain open.
 
 <!-- actual-implementation-audit:end -->
 

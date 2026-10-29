@@ -2,7 +2,7 @@
   "schema_version": 1,
   "date": "2026-10-29",
   "main_branch": "codex/android-ecosystem",
-  "main_sha": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+  "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
   "parallel_branch": "parallel/admin-foundation",
   "parallel_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "other_reviewed_branches": {
@@ -16,31 +16,31 @@
   "authority": "Source review TSV + exact source/blob/test receipt evidence; summaries are generated. This audit overrides historic progress estimates.",
   "metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 110,
-    "fully_implemented_main": 71,
-    "integrated_active_application": 71,
+    "fully_implemented_any_reviewed_branch": 112,
+    "fully_implemented_main": 73,
+    "integrated_active_application": 73,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 91,
-    "acceptance_only_current_app": 52,
-    "partially_implemented_needing_code": 24,
-    "partial_tasks_needing_production_code": 23,
+    "fully_implemented_outstanding_verification": 93,
+    "acceptance_only_current_app": 54,
+    "partially_implemented_needing_code": 22,
+    "partial_tasks_needing_production_code": 21,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 53,
-    "production_code_remaining_including_integration": 65,
-    "feature_code_remaining": 24,
-    "integration_code_remaining": 49,
+    "any_implementation_or_scaffold_only_unmerged": 51,
+    "production_code_remaining_including_integration": 63,
+    "feature_code_remaining": 22,
+    "integration_code_remaining": 47,
     "reopened_previous_complete": 7
   },
   "exclusive_partition": {
     "accepted": 19,
     "external_blocked": 4,
-    "implemented_integrated_awaiting_acceptance": 52,
+    "implemented_integrated_awaiting_acceptance": 54,
     "implemented_unmerged": 39,
-    "partially_implemented": 24,
+    "partially_implemented": 22,
     "scaffold_or_unmeasured_gate": 11
   },
   "historical_status_reclassification": {
@@ -49,9 +49,9 @@
       "implemented_integrated_awaiting_acceptance": 7
     },
     "PARTIAL": {
-      "implemented_integrated_awaiting_acceptance": 44,
+      "implemented_integrated_awaiting_acceptance": 46,
       "implemented_unmerged": 7,
-      "partially_implemented": 21,
+      "partially_implemented": 19,
       "scaffold_or_unmeasured_gate": 5
     },
     "NOT STARTED": {
@@ -75,461 +75,75 @@
     "Main implementation state for unmerged scopes indicates only an older partial baseline when explicitly present; never imported branch code."
   ],
   "current_validation": {
-    "inherited_source_sha": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-    "jvm_cases": 167,
-    "jvm_classes": 38,
+    "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+    "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+    "jvm_cases": 8,
+    "jvm_classes": 2,
     "junit_receipts": [
       {
-        "name": "org.athar.app.AccountDeletionIntentTest",
+        "name": "org.athar.app.KhatmahContractTest",
         "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountDeletionIntentTest.xml",
-        "sha256": "e9ccbd70b3f239a1558c21e80f686e88724f773cc22531021644b5f347f303a9",
-        "bytes": 751
-      },
-      {
-        "name": "org.athar.app.AccountDeletionWorkflowTest",
-        "tests": 6,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountDeletionWorkflowTest.xml",
-        "sha256": "375edadddbb512324634405db265ddb74b6c601e51471834cd015c36bee9aaa1",
-        "bytes": 1266
-      },
-      {
-        "name": "org.athar.app.AccountExportTest",
-        "tests": 5,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
-        "sha256": "411d5d50999a286d8359f31267e24cd696fcb70037c2dc01f68cdde24aadf47d",
-        "bytes": 1006
-      },
-      {
-        "name": "org.athar.app.AccountExportWriterTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
-        "sha256": "aa279c87cea1c755d481725df6cff40839ec108ac6773181297e894453615313",
-        "bytes": 867
-      },
-      {
-        "name": "org.athar.app.AccountInputTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountInputTest.xml",
-        "sha256": "02c60e6bf1962271f6ea2939aad3e8f70de81d588056c89ecc571f7b6d42f2d0",
-        "bytes": 715
-      },
-      {
-        "name": "org.athar.app.AccountPayloadsTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountPayloadsTest.xml",
-        "sha256": "0d15eaf2f3794ac9db7fa297180828e29275b77ed20249f22d57419b15b86ced",
-        "bytes": 686
-      },
-      {
-        "name": "org.athar.app.ActivitySummaryTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ActivitySummaryTest.xml",
-        "sha256": "e8cb5d29c806d68435531935b7581b361b2c23d95ca4679f9082251e9de24357",
-        "bytes": 897
-      },
-      {
-        "name": "org.athar.app.AdhkarSummaryTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AdhkarSummaryTest.xml",
-        "sha256": "3ff2ab43647baa61652bd020747acb3a2e88eac2dd8c27075a612143137d4585",
-        "bytes": 593
-      },
-      {
-        "name": "org.athar.app.AudioRequestsTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioRequestsTest.xml",
-        "sha256": "8e54524dc327eaf23f4debda3f8661b745d6303c554b1c4f01363330885239a8",
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+        "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
         "bytes": 735
       },
       {
-        "name": "org.athar.app.AudioSelectionTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioSelectionTest.xml",
-        "sha256": "6dfa44870594a3aa3d2beafcec64194340ce205a63d46c0655ac3cfed1948af8",
-        "bytes": 615
-      },
-      {
-        "name": "org.athar.app.AudioTimingTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioTimingTest.xml",
-        "sha256": "f43c68c8982a5ad7b88aeb00787a829a8f944316b7f55bce658343e18a057bd0",
-        "bytes": 715
-      },
-      {
-        "name": "org.athar.app.BookCompletionEventTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookCompletionEventTest.xml",
-        "sha256": "64ab70129a316678508ef8bbda89e73c5f39e6aafc9fd1a19011cf50bcd30b78",
-        "bytes": 783
-      },
-      {
-        "name": "org.athar.app.BookCompletionJournalTest",
-        "tests": 6,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookCompletionJournalTest.xml",
-        "sha256": "c802869a55354fbc6a2746c4f24edefe48f5d2de9e0df9877d58a86be86c9304",
-        "bytes": 1286
-      },
-      {
-        "name": "org.athar.app.BookDownloadPolicyTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookDownloadPolicyTest.xml",
-        "sha256": "4dd5b2e5474016293026d13491d51ab632a6782534614b4aed0bcbbb1158422a",
-        "bytes": 612
-      },
-      {
-        "name": "org.athar.app.BookFilesTest",
-        "tests": 7,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookFilesTest.xml",
-        "sha256": "35513c9b731a65f77b89912ead0b61217becd141cc54cfc16773a039808a5d89",
-        "bytes": 1324
-      },
-      {
-        "name": "org.athar.app.BookReadingPayloadTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookReadingPayloadTest.xml",
-        "sha256": "f4321b1a597ff656f6a9ccbccc0129da0f446f0cfb3f441c9fce8925219ba71b",
-        "bytes": 605
-      },
-      {
-        "name": "org.athar.app.BookTransferTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookTransferTest.xml",
-        "sha256": "2b9f194ff98e1c7857540d13b96eab86dcc825ade8f73f0471f83fac1bc240a1",
-        "bytes": 767
-      },
-      {
-        "name": "org.athar.app.ContentCachePolicyTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ContentCachePolicyTest.xml",
-        "sha256": "4142d28a30e557b89e42b03e5a9a07808bee7627c981697c73c657e5cf0a3da2",
-        "bytes": 846
-      },
-      {
-        "name": "org.athar.app.CounterDayTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.CounterDayTest.xml",
-        "sha256": "bd1070b7c7932c9efe34e86ff35b66b8343d3c03f3ffcc5f366eb932bb090589",
-        "bytes": 741
-      },
-      {
-        "name": "org.athar.app.DailyAyahTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.DailyAyahTest.xml",
-        "sha256": "c0c2eef6276a01c09c7bc1d88cf4ccfebeb7bd5127a9295055e18cf8f6f8a169",
-        "bytes": 692
-      },
-      {
-        "name": "org.athar.app.DomainTest",
-        "tests": 8,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.DomainTest.xml",
-        "sha256": "a9a3f80aaa7de46b93449759709e4a3e2d80d5841ce55ae7885aa2d0bcb62c59",
-        "bytes": 1230
-      },
-      {
-        "name": "org.athar.app.HomeProjectionTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.HomeProjectionTest.xml",
-        "sha256": "fa942ca74abbfea5b2da036207b2be585785819669a5b967c5ec73ba92e3f37f",
-        "bytes": 890
-      },
-      {
-        "name": "org.athar.app.ImmersiveHeroPolicyTest",
-        "tests": 6,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ImmersiveHeroPolicyTest.xml",
-        "sha256": "bd39548054361b51a38e6fbf1d45fbf52bd50f4b0bcd13e420674eb3098a0f10",
-        "bytes": 1126
-      },
-      {
-        "name": "org.athar.app.NightRejectionTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
-        "sha256": "0b72c97a5ab0802a41f95e3dfe2358f3766692ab9b2252c1c4a544efec435cdf",
-        "bytes": 726
-      },
-      {
-        "name": "org.athar.app.OtpInputTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OtpInputTest.xml",
-        "sha256": "645b0a3f4fba31b7ef4c15ba3dc919c15bbeb3d78aaeb1343089e7e81f40e7e5",
-        "bytes": 701
-      },
-      {
-        "name": "org.athar.app.OwnedSyncRunnerTest",
-        "tests": 9,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
-        "sha256": "e1916ea66a996958f56a90388d79c64e0f27b912027fe604a187b83c3fdfc6bf",
-        "bytes": 1562
-      },
-      {
-        "name": "org.athar.app.PlaybackOwnershipTest",
+        "name": "org.athar.app.KhatmahViewModelTest",
         "tests": 5,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.PlaybackOwnershipTest.xml",
-        "sha256": "58d03bf562b520998705bb9de402aaa474346cf174414691a9f222f39b5540fd",
-        "bytes": 983
-      },
-      {
-        "name": "org.athar.app.PlayerPolicyTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.PlayerPolicyTest.xml",
-        "sha256": "c4fe8ebff4f1f1dd064b9ee96d525b63364d67ee07426fa9b5e511427af2b208",
-        "bytes": 571
-      },
-      {
-        "name": "org.athar.app.ProtectedReadTest",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ProtectedReadTest.xml",
-        "sha256": "96451b63ba2adcbb1544c5c58145f08e25527ebf17df104eac7be6bf8636c80d",
-        "bytes": 609
-      },
-      {
-        "name": "org.athar.app.QuranAyahShareContractTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranAyahShareContractTest.xml",
-        "sha256": "1c0163a742587a007719b4b6a5651528c1e34147b9fa74087775513e7467fd2f",
-        "bytes": 724
-      },
-      {
-        "name": "org.athar.app.QuranNavigationPolicyTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranNavigationPolicyTest.xml",
-        "sha256": "4a01f37ef503ce2a82a2fc67994fd1b26ca6e7d1b51f4b87bc95c8ef95acfe1a",
-        "bytes": 733
-      },
-      {
-        "name": "org.athar.app.QuranSearchPolicyTest",
-        "tests": 5,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSearchPolicyTest.xml",
-        "sha256": "5125d8e868193a67dd592c5d45a7c6c7b58f7f1a51acc85c6def85f896910001",
-        "bytes": 991
-      },
-      {
-        "name": "org.athar.app.QuranSelectionTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSelectionTest.xml",
-        "sha256": "6359cb75ee531cf011b224c3689edcae9b4ce7a21cc33a774e9bfc99dc6d1ba8",
-        "bytes": 726
-      },
-      {
-        "name": "org.athar.app.SavedCollectionsTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SavedCollectionsTest.xml",
-        "sha256": "5cbe72ac3e174bb4f88d54dbbc390e3595ab4e6bc93a1dd5c0f967aef73b4077",
-        "bytes": 848
-      },
-      {
-        "name": "org.athar.app.SessionRepositoryTest",
-        "tests": 25,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
-        "sha256": "269ee3516e6dd29837d6b7b4a95a3d261489306d4a045dade2b2a6245df9f7ff",
-        "bytes": 3841
-      },
-      {
-        "name": "org.athar.app.TafsirContractTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.TafsirContractTest.xml",
-        "sha256": "b4dbbdd937765f5fceb0df637212d6a12867c6ab4da4e3e79effc947db6a6629",
-        "bytes": 832
-      },
-      {
-        "name": "org.athar.app.UpcomingPolicyTest",
-        "tests": 3,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.UpcomingPolicyTest.xml",
-        "sha256": "a9733d2ebb9d1b599276a4886ef640651b643256f52bdc6b213228dff5e2ec58",
-        "bytes": 749
-      },
-      {
-        "name": "org.athar.app.UpcomingViewModelTest",
-        "tests": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.UpcomingViewModelTest.xml",
-        "sha256": "a7f772399d64ac3437cfabe3fcc6348d8bb3ef71385eebf4039e5717e46b3054",
-        "bytes": 885
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+        "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+        "bytes": 990
       }
     ],
-    "backend_suites": 24,
-    "backend_assertions": 21192,
-    "instrumentation_cases": 35,
-    "instrumentation_platform": "API34 emulator; actual Room/Keystore/files/isolated PDF, injected transport",
-    "lint_errors": 0,
-    "lint_warnings": 59,
-    "resources_paired": 432,
-    "new_checks": [
-      "Git fetch and exact refs/status",
-      "Parallel Gradle configuration FAILED",
-      "Push adapter PHP8.0 execution FAILED before assertions",
-      "432 paired resources PASS",
-      "Audit/queue/ledger consistency validation",
-      "Secret screening:0 working findings;2 historical synthetic credential-URL rejection fixtures manually reviewed, not hidden as a clean scanner exit."
-    ],
-    "secret_screening": {
-      "receipt": "artifacts/functional-integration/audit-security.log",
-      "scanner_exit": "nonzero:2 history heuristic findings",
-      "working_findings": 0,
-      "history_blobs_scanned": 2560,
-      "working_files_at_scan": 810,
-      "manual_adjudication": [
-        {
-          "object": "a350300ce4ba59982e77d62bf7faf773c468e465",
-          "path": "tests/admin_campaign_http_test.py",
-          "line": 38,
-          "finding": "Synthetic example.invalid userinfo URL is an intentional invalid-image rejection input."
-        },
-        {
-          "object": "bfc9d31b570c4b7f683c5a2486370557a8b93f7e",
-          "path": "tests/campaign_test.php",
-          "line": 25,
-          "finding": "Synthetic example.invalid userinfo URL is an intentional invalid-fields rejection input."
-        }
-      ],
-      "limit": "History not rewritten and scanner not weakened. This audit is not final release23.6 clearance."
+    "backend_suites": 5,
+    "backend_assertions": 323,
+    "backend_components": {
+      "khatmah": 84,
+      "catalog_progress": 103,
+      "account_export": 33,
+      "account_deletion": 33,
+      "recovery": 70
     },
+    "actual_cookie_api_http_assertions": 23,
+    "debug_apk": "PASS",
+    "test_apk": "PASS",
+    "lint_errors": 0,
+    "lint_warnings": 62,
+    "resources_paired": 451,
+    "new_instrumentation_cases": 0,
+    "physical_acceptance": "NOT_EXECUTED",
+    "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/book-activity-serial-gradle.log",
-        "sha256": "84e042c98ed7c815b0dd727d445781bb1be285d7ce6d5d90732f2f40b72b4c5e",
-        "bytes": 8439
+        "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+        "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+        "bytes": 5326
       },
       {
-        "path": "artifacts/functional-integration/book-activity-serial-backend.log",
-        "sha256": "0626fa89d27748c50cfa7f272e9bbede91f0126aa86412632e4af94528834baf",
-        "bytes": 2182
+        "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+        "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+        "bytes": 153
       },
       {
-        "path": "artifacts/functional-integration/book-activity-api34.private.log",
-        "sha256": "eac8d8c3276f61d867ec62ecd1f03cbb8890f78c62c7474413dcbd3e370f0621",
-        "bytes": 24800
+        "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+        "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+        "bytes": 234
       },
       {
-        "path": "artifacts/functional-integration/audit-parallel-configuration.log",
-        "sha256": "50bf755cdc7d5642dbbe46833c34d7520f6f14c30c42c2a6f27f5ba5d94d15f5",
-        "bytes": 1300
+        "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+        "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+        "bytes": 426
       },
       {
-        "path": "artifacts/functional-integration/audit-push-provider.log",
-        "sha256": "5d200dd9f2b3f6294853852b19736f18562ce26f22d80ade5b4bf27b82ecb138",
-        "bytes": 933
+        "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+        "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+        "bytes": 472
       }
     ],
-    "limitations": [
-      "No new physical-device/provider/hosted/signing acceptance.",
-      "No source-branch Android compile/test pass: configuration fails.",
-      "No FCM delivery/real Gmail inbox proof.",
-      "Physical historical logs are inherited;7 changed native scopes reopened.",
-      "Evidence logs may contain private fixtures and remain ignored; only relative paths/digests and bounded counts are committed."
+    "limits": [
+      "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+      "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+      "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
     ]
   },
   "preserved_dirty_paths": [
@@ -538,15 +152,15 @@
   ],
   "parallel_dirty_caveat": "Pre-existing android/app/build.gradle.kts File/import repair preserved; configuration failure is on that working tree, not a clean7392 build.",
   "next_task": {
-    "id": "07.7",
-    "action": "Reconcile canonical Khatmah workload/date contract and revisioned shared API/web writer first; then port editor without overwriting drafts. Do not resume until audit commit/checks complete.",
-    "deferred": "02.8 plus reopened hardware acceptance are queued until an authorized physical session; approved provider gates remain explicit."
+    "id": "07.9",
+    "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
+    "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
   },
   "wiring_evidence": {
     "main_graph": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/AtharApplication.kt",
-      "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
       "git_blob": "9374390bcb49c85455dc6779fe7de7afefb696d9",
       "sha256": "1b64dd6e506363c675da18c358e5b3f3fc97301b1e59d5bc2e4092344263c8c0",
       "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
@@ -577,7 +191,7 @@
     "main_navigation": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
-      "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
       "git_blob": "330e54590d0d39f6d58daad266d0e61ece15ae63",
       "sha256": "02aa13e7396cd79a8841f8fbbcec255e0c4f97285bfac322bce5ae6d39ecbae6",
       "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
@@ -647,10 +261,10 @@
     "main_api": {
       "location": "main",
       "path": "backend/src/Http/ApiKernel.php",
-      "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-      "git_blob": "6388de378c01c96dd2068a06788e0ba837753157",
-      "sha256": "b70a53956874d24080a70af520cd49bd0d266b1405c3a91fc3d3b39033fa6fc4",
-      "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
+      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+      "git_blob": "6b09406162eee3813c067ab2e7d2ad650d4f284e",
+      "sha256": "70ff011001b9b363519350184652b2e00201bdb77d20422b25459e1d99e200ec",
+      "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
       "symbols": [
         {
           "line": 15,
@@ -673,11 +287,11 @@
           "symbol": "private function dispatch(Request $r): array"
         },
         {
-          "line": 213,
+          "line": 216,
           "symbol": "private function method(Request $r,string $method): void { if($r->method!==$method)throw new ApiError('method_not_allowed',405); }"
         },
         {
-          "line": 214,
+          "line": 217,
           "symbol": "private function authRate(Request $r,string $scope,string $identity,int $limit,int $window): void"
         }
       ],
@@ -821,8 +435,8 @@
     },
     "main_admin_entry": {
       "path": "public/index.php",
-      "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-      "git_blob": "19e6718ba5e6845a7b8e23f4d48d507681a7dca5",
+      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+      "git_blob": "dc083a3083bd6b395ffd311e7d7364b11bf59e22",
       "read_source": "Committed snapshot; two unrelated pre-existing mail wording lines remain dirty in working tree.",
       "anchors": [
         {
@@ -834,55 +448,55 @@
           "text": "$owner = admin_require_auth();"
         },
         {
-          "line": 573,
+          "line": 583,
           "text": "admin_require_auth();"
         },
         {
-          "line": 636,
+          "line": 646,
           "text": "$adminActor = admin_require_auth();"
         },
         {
-          "line": 646,
+          "line": 656,
           "text": "$admin = admin_require_auth();"
         },
         {
-          "line": 658,
+          "line": 668,
           "text": "admin_authorize_kind($admin, $kind);"
         },
         {
-          "line": 723,
+          "line": 733,
           "text": "} elseif ($kind === 'user-profile-update') {"
         },
         {
-          "line": 748,
+          "line": 758,
           "text": "db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $emailChanged ? 'admin-user-email-updated' : 'admin-user-pr"
         },
         {
-          "line": 788,
+          "line": 798,
           "text": "try { $admin = admin_require_auth(); $artifact = build_backup_archive((int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 798,
+          "line": 808,
           "text": "try { $admin = admin_require_auth(); $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 809,
+          "line": 819,
           "text": "try { $admin = admin_require_auth(); reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 916,
+          "line": 926,
           "text": "$managedUserWhere = '';"
         },
         {
-          "line": 919,
+          "line": 929,
           "text": "$managedUserWhere = ' WHERE (u.email LIKE ? ESCAPE \\'=\\' OR COALESCE(u.display_name,\\'\\') LIKE ? ESCAPE \\'=\\' OR COALESCE(u.username,\\'\\') LIKE ? ESCAPE \\'=\\'' . (ctype_digit($mana"
         },
         {
-          "line": 924,
+          "line": 934,
           "text": "$managedUserCountQuery = db()->prepare('SELECT COUNT(*) FROM users u' . $managedUserWhere);"
         },
         {
-          "line": 933,
+          "line": 943,
           "text": "FROM users u\" . $managedUserWhere . \" ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}\");"
         }
       ]
@@ -981,7 +595,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -1117,7 +731,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -1282,7 +896,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -1536,7 +1150,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -1691,7 +1305,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -1934,7 +1548,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -2054,17 +1668,17 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "d399968cb71e2353f891ebcf50cea6623618016f",
-          "sha256": "482c57c3fe3b5c57fcd5dca7da9802412ee114be756c83ba7f2a595e7492ddd5",
-          "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "87cfd88c5d85a43ba1726fd661e39da136ff488c",
+          "sha256": "fe69d06f6d6aa9cac74b3d1908f2d14a696224257c313de86777f379c941b627",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
               "line": 17,
               "symbol": "@Composable fun AccountToolsScreen(graph: AppGraph, tool: String, open: (String) -> Unit) {"
             },
             {
-              "line": 50,
+              "line": 26,
               "symbol": "@Composable internal fun AccountDataFailure(retry:()->Unit){"
             }
           ],
@@ -2072,8 +1686,8 @@
         }
       ],
       "related_commits": [
-        "1895a096d3509fd288d1a70bb5974792dd8d0754",
-        "d6c63a880764373a0992fdf4374efeb149486964"
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+        "1895a096d3509fd288d1a70bb5974792dd8d0754"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -2084,7 +1698,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -2501,7 +2115,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -2610,7 +2224,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -2736,7 +2350,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -3068,7 +2682,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -3170,7 +2784,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.ContentCachePolicyTest",
@@ -3387,7 +3001,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -3400,7 +3014,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -3548,7 +3162,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -3561,7 +3175,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -3723,7 +3337,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -3736,7 +3350,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -3938,7 +3552,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -3951,7 +3565,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4155,7 +3769,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -4168,7 +3782,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4360,7 +3974,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -4373,7 +3987,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4520,7 +4134,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -4533,7 +4147,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4633,7 +4247,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -4646,7 +4260,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4792,7 +4406,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DailyAyahTest",
@@ -4805,7 +4419,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -4945,7 +4559,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AudioRequestsTest",
@@ -4957,7 +4571,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -5209,7 +4823,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AudioRequestsTest",
@@ -5221,7 +4835,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -5448,7 +5062,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AudioRequestsTest",
@@ -5460,7 +5074,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -5559,7 +5173,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AudioRequestsTest",
@@ -5571,7 +5185,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -5674,7 +5288,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AudioRequestsTest",
@@ -5686,7 +5300,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -5802,7 +5416,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AdhkarSummaryTest",
@@ -5811,7 +5425,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6010,7 +5624,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AdhkarSummaryTest",
@@ -6019,7 +5633,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6122,7 +5736,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AdhkarSummaryTest",
@@ -6131,7 +5745,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6247,7 +5861,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AdhkarSummaryTest",
@@ -6256,7 +5870,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6391,7 +6005,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookCompletionEventTest",
@@ -6404,7 +6018,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6550,7 +6164,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookCompletionEventTest",
@@ -6563,7 +6177,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6723,7 +6337,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookCompletionEventTest",
@@ -6736,7 +6350,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -6943,7 +6557,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookCompletionEventTest",
@@ -6956,7 +6570,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -7196,7 +6810,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookCompletionEventTest",
@@ -7209,7 +6823,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -7596,7 +7210,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -7613,7 +7227,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8000,7 +7614,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -8017,7 +7631,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8176,7 +7790,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -8193,7 +7807,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8460,7 +8074,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -8477,7 +8091,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8584,7 +8198,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -8601,7 +8215,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8730,10 +8344,10 @@
         {
           "location": "main",
           "path": "backend/src/Progress/ProgressService.php",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "183d39b8422942e7461b3627f2b731635cc2eda0",
-          "sha256": "c07432315cae0a41617da2fa71df8b65a2e19c8dcfb97e52273de121c09ce212",
-          "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "e389ce8dd4eb80dc058fbc28c4848964680f979a",
+          "sha256": "c5f0e7a8f7e0aab480ad962f5a907e936d33945326c839b60c2ba97f8e32f277",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
               "line": 11,
@@ -8800,43 +8414,43 @@
               "symbol": "public function khatmah(int $user): ?array"
             },
             {
-              "line": 116,
+              "line": 115,
               "symbol": "public function saveKhatmah(int $user,array $data): array"
             },
             {
-              "line": 121,
+              "line": 119,
               "symbol": "public function comments(int $user,int $lesson): array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare(\"SELECT c.id,c.body,c.status,c.created_at,u.display_name,u.username FROM lesson_comments c JOIN users"
             },
             {
-              "line": 122,
+              "line": 120,
               "symbol": "public function addComment(int $user,int $lesson,string $body): array"
             },
             {
-              "line": 126,
+              "line": 124,
               "symbol": "public function preferences(int $user,?array $update=null): array"
             },
             {
-              "line": 132,
+              "line": 130,
               "symbol": "public function adhkarStats(int $user):array"
             },
             {
-              "line": 213,
+              "line": 211,
               "symbol": "public function adhkar(int $user,array $params=[]):array"
             },
             {
-              "line": 228,
+              "line": 226,
               "symbol": "public function saveAdhkar(int $user,array $data):array"
             },
             {
-              "line": 281,
+              "line": 279,
               "symbol": "private function activityDate(?string $date):string"
             },
             {
-              "line": 294,
+              "line": 292,
               "symbol": "private function collectionQuery(string $sql,int $user,array $params,bool $legacyLimit=true):array"
             },
             {
-              "line": 317,
+              "line": 315,
               "symbol": "private function integer(array $data,string $key,int $min,int $max): int { $value=$data[$key]??null;if(!is_int($value)||$value<$min||$value>$max)throw new ApiError('invalid_fields',422,[$key=>'invalid']);return $value; }"
             }
           ],
@@ -8844,6 +8458,7 @@
         }
       ],
       "related_commits": [
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
         "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
       ],
       "alternative_branch_evidence": [],
@@ -8855,7 +8470,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -8872,7 +8487,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -8898,224 +8513,346 @@
       "scope": "Complete canonical daily workload/start/end/target validation and premium editor hierarchy.",
       "definition_of_done": "Complete canonical daily workload/start/end/target validation and premium editor hierarchy. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "old_status": "PARTIAL",
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "implementation_location": "parallel",
-      "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "implementation_location": "main",
+      "main_implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "exclusive_category": "partially_implemented",
+      "exclusive_category": "implemented_integrated_awaiting_acceptance",
       "implemented_requirements": [
-        "Parallel native editor validates canonical workload/dates and persists owned plans; main still uses old account form."
+        "Canonical inclusive UTC workload/date validation and revisioned owner-leased native editor are integrated with the same web/API writer; refresh and late ACK preserve newer drafts, and603 pages remains99 percent."
       ],
       "missing_requirements": [
-        "Reconcile canonical rounding/overdue start validation and CAS API/web writer; preserve drafts during background ACK; integrate into current graph."
+        "Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9."
       ],
       "exact_remaining_work": [
-        "Reconcile canonical rounding/overdue start validation and CAS API/web writer; preserve drafts during background ACK; integrate into current graph."
+        "Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9."
       ],
-      "feature_code_remaining": true,
-      "integration_code_remaining": true,
+      "feature_code_remaining": false,
+      "integration_code_remaining": false,
       "test_code_remaining": false,
-      "production_code_remaining": true,
-      "acceptance_only_in_current_app": false,
+      "production_code_remaining": false,
+      "acceptance_only_in_current_app": true,
       "evidence": [
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33",
-          "sha256": "471b8c8bcceafcbf24d58fa68ce9f2ee554f7bdb7e59ddc6be3decc56e5f91fd",
-          "last_path_commit": "fccbd6111d6559200a83b9b04eaeb56ed9536936",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "453180ea330ae5700d7a6bc811c206391e6ce115",
+          "sha256": "fd84c3c2f0bfbd5ee53a5dd309992ce5e321307d326d34d5a9c407fd02edb657",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
-              "line": 25,
-              "symbol": "data class KhatmahServerVersion("
+              "line": 7,
+              "symbol": "data class KhatmahPlan(val start: LocalDate, val target: LocalDate, val completed: Int, val status: String, val revision: Int) {"
             },
             {
-              "line": 35,
-              "symbol": "data class KhatmahPlanState("
+              "line": 14,
+              "symbol": "data class KhatmahDraft(val start: String, val target: String, val pages: String) {"
             },
             {
-              "line": 48,
-              "symbol": "data class KhatmahMetrics("
+              "line": 15,
+              "symbol": "fun values(today: LocalDate, baseline: KhatmahPlan?): Triple<LocalDate, LocalDate, Int> {"
             },
             {
-              "line": 64,
-              "symbol": "class KhatmahRepository("
+              "line": 26,
+              "symbol": "fun from(plan: KhatmahPlan?, today: LocalDate) = KhatmahDraft("
             },
             {
-              "line": 76,
-              "symbol": "fun observe(owner: Long): Flow<KhatmahPlanState?> ="
+              "line": 32,
+              "symbol": "object KhatmahContract {"
             },
             {
-              "line": 81,
-              "symbol": "suspend fun saved(owner: Long): KhatmahPlanState? ="
+              "line": 33,
+              "symbol": "fun date(value: String): LocalDate {"
             },
             {
-              "line": 86,
-              "symbol": "suspend fun refresh(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
+              "line": 37,
+              "symbol": "fun numberInput(value: String): String = buildString {"
             },
             {
-              "line": 113,
-              "symbol": "suspend fun save("
+              "line": 44,
+              "symbol": "fun parse(data: JsonElement): KhatmahPlan? {"
             },
             {
-              "line": 161,
-              "symbol": "suspend fun action("
+              "line": 47,
+              "symbol": "fun text(key: String): String {"
             },
             {
-              "line": 233,
-              "symbol": "suspend fun sync(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
+              "line": 51,
+              "symbol": "fun integer(key: String): Int {"
             },
             {
-              "line": 296,
-              "symbol": "suspend fun useServer("
-            },
-            {
-              "line": 320,
-              "symbol": "suspend fun keepDevice("
-            },
-            {
-              "line": 345,
-              "symbol": "fun metrics(plan: KhatmahPlanState): KhatmahMetrics ="
-            },
-            {
-              "line": 348,
-              "symbol": "private suspend fun ensureInitializedForEdit(owner: Long) {"
-            },
-            {
-              "line": 371,
-              "symbol": "private suspend fun syncBestEffort(owner: Long) {"
-            },
-            {
-              "line": 384,
-              "symbol": "private suspend fun fetch(owner: Long): KhatmahServerVersion? {"
-            },
-            {
-              "line": 393,
-              "symbol": "private fun parseServer(data: JsonElement): KhatmahServerVersion? {"
-            },
-            {
-              "line": 417,
-              "symbol": "private fun decode(row: CachedDocument): KhatmahPlanState {"
-            },
-            {
-              "line": 436,
-              "symbol": "private suspend fun write(owner: Long, value: KhatmahPlanState) {"
-            },
-            {
-              "line": 448,
-              "symbol": "private suspend fun remove(owner: Long) {"
-            },
-            {
-              "line": 453,
-              "symbol": "private fun validateStoredDates(start: String, target: String) {"
-            },
-            {
-              "line": 460,
-              "symbol": "private fun validateEditableDates("
-            },
-            {
-              "line": 479,
-              "symbol": "fun calculateMetrics("
-            },
-            {
-              "line": 548,
-              "symbol": "private fun KhatmahServerVersion.toLocal("
+              "line": 59,
+              "symbol": "fun metrics(plan: KhatmahPlan, today: LocalDate): Map<String, Int> {"
             }
           ],
           "worktree_matches_ref": true
         },
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "08788b89f0ac29bc5d0aad730675bed602908473",
-          "sha256": "f196fcd9513561c7ec1f9853ba71470f397e7a25fff6f203421f8a93413bea4c",
-          "last_path_commit": "4cba177c1d38ab7a63164edaa705308fa0d9d3c2",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
+          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
-              "line": 32,
-              "symbol": "private data class KhatmahOperationState("
+              "line": 13,
+              "symbol": "internal interface KhatmahGateway {"
             },
             {
-              "line": 38,
-              "symbol": "private class KhatmahViewModel("
+              "line": 14,
+              "symbol": "fun requireActive()"
             },
             {
-              "line": 59,
-              "symbol": "fun clearFeedback() {"
+              "line": 15,
+              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
             },
             {
-              "line": 63,
-              "symbol": "fun refresh() = runOperation(markSaved = false) {"
+              "line": 16,
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
+            },
+            {
+              "line": 19,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 20,
+              "symbol": "internal data class KhatmahUiState("
+            },
+            {
+              "line": 35,
+              "symbol": "internal class KhatmahViewModel("
+            },
+            {
+              "line": 44,
+              "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
+            },
+            {
+              "line": 45,
+              "symbol": "fun edit(value: KhatmahDraft) {"
+            },
+            {
+              "line": 51,
+              "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
+            },
+            {
+              "line": 52,
+              "symbol": "fun refresh(discard: Boolean = false) {"
+            },
+            {
+              "line": 75,
+              "symbol": "fun save() = submit(null, null)"
+            },
+            {
+              "line": 76,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
+            },
+            {
+              "line": 78,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2",
+          "sha256": "6781c87e35880b798c61ede06db7ac1ceaa1bb0ca3ce3392e1ab487da838150b",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "symbols": [
+            {
+              "line": 28,
+              "symbol": "internal fun KhatmahScreen(graph: AppGraph) {"
+            },
+            {
+              "line": 34,
+              "symbol": "override fun requireActive() = graph.session.requireLease(lease)"
+            },
+            {
+              "line": 35,
+              "symbol": "override suspend fun load(): Pair<KhatmahPlan?, Boolean> {"
+            },
+            {
+              "line": 40,
+              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan {"
             },
             {
               "line": 71,
-              "symbol": "fun save("
+              "symbol": "internal fun KhatmahContent("
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
+          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "symbols": [
+            {
+              "line": 12,
+              "symbol": "final class Khatmah"
             },
             {
-              "line": 84,
-              "symbol": "fun action("
+              "line": 15,
+              "symbol": "public function __construct(PDO $db) { $this->db=$db; }"
             },
             {
-              "line": 95,
-              "symbol": "fun sync() = runOperation {"
+              "line": 17,
+              "symbol": "public function get(int $owner):?array"
             },
             {
-              "line": 99,
-              "symbol": "fun useServer() = runOperation {"
+              "line": 23,
+              "symbol": "public static function decorate(array $row,?string $today=null):array"
             },
             {
-              "line": 103,
-              "symbol": "fun keepDevice() = runOperation {"
+              "line": 48,
+              "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
             },
             {
-              "line": 107,
-              "symbol": "private fun runOperation("
+              "line": 55,
+              "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
             },
             {
-              "line": 141,
-              "symbol": "fun KhatmahScreen(graph: AppGraph) {"
+              "line": 66,
+              "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
             },
             {
-              "line": 191,
-              "symbol": "private fun KhatmahContent("
+              "line": 67,
+              "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
             },
             {
-              "line": 586,
-              "symbol": "private fun KhatmahWorkload("
+              "line": 69,
+              "symbol": "private function mutate(int $owner,array $data,bool $action):array"
             },
             {
-              "line": 707,
-              "symbol": "private fun KhatmahConflictPanel("
+              "line": 120,
+              "symbol": "private function matches(array $current,array $data):bool"
             },
             {
-              "line": 780,
-              "symbol": "private fun KhatmahVersionCard("
+              "line": 126,
+              "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
             }
           ],
           "worktree_matches_ref": true
         }
       ],
       "related_commits": [
-        "4cba177c1d38ab7a63164edaa705308fa0d9d3c2",
-        "fccbd6111d6559200a83b9b04eaeb56ed9536936"
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
-        "parallel_graph",
-        "parallel_navigation",
-        "parallel_manifest",
-        "parallel_api",
-        "main_graph"
+        "main_graph",
+        "main_navigation",
+        "main_manifest",
+        "main_api"
       ],
       "tests_executed": [
         {
-          "kind": "new_parallel_configuration_failure",
-          "receipt": "artifacts/functional-integration/audit-parallel-configuration.log",
-          "limit": "Gradle :app:tasks fails at SourceSet Provider configuration. Local pre-existing File/import repair present; pristine branch has an additional script compilation issue. No JVM/instrumentation pass on this source claimed."
+          "kind": "inherited_baseline_JVM_subset",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "classes": [
+            "org.athar.app.AccountDeletionIntentTest",
+            "org.athar.app.AccountDeletionWorkflowTest",
+            "org.athar.app.AccountExportTest",
+            "org.athar.app.AccountExportWriterTest",
+            "org.athar.app.AccountInputTest",
+            "org.athar.app.AccountPayloadsTest",
+            "org.athar.app.ActivitySummaryTest",
+            "org.athar.app.BookCompletionEventTest",
+            "org.athar.app.BookCompletionJournalTest",
+            "org.athar.app.SavedCollectionsTest"
+          ],
+          "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
+        },
+        {
+          "kind": "inherited_baseline_backend_subsystem_gate",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
+          "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
+        },
+        {
+          "kind": "new_focused_functional_checkpoint",
+          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "result": {
+            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+            "jvm_cases": 8,
+            "jvm_classes": 2,
+            "junit_receipts": [
+              {
+                "name": "org.athar.app.KhatmahContractTest",
+                "tests": 3,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "bytes": 735
+              },
+              {
+                "name": "org.athar.app.KhatmahViewModelTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+                "bytes": 990
+              }
+            ],
+            "backend_suites": 5,
+            "backend_assertions": 323,
+            "backend_components": {
+              "khatmah": 84,
+              "catalog_progress": 103,
+              "account_export": 33,
+              "account_deletion": 33,
+              "recovery": 70
+            },
+            "actual_cookie_api_http_assertions": 23,
+            "debug_apk": "PASS",
+            "test_apk": "PASS",
+            "lint_errors": 0,
+            "lint_warnings": 62,
+            "resources_paired": 451,
+            "new_instrumentation_cases": 0,
+            "physical_acceptance": "NOT_EXECUTED",
+            "provider_delivery": "NOT_APPLICABLE",
+            "logs": [
+              {
+                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+                "bytes": 5326
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+                "bytes": 153
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+                "bytes": 234
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+                "bytes": 426
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "bytes": 472
+              }
+            ],
+            "limits": [
+              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+            ]
+          }
         }
       ],
       "inherited_acceptance_receipts": [],
@@ -9123,14 +8860,14 @@
       "tests_still_required": [
         "Cross-surah/day/invalid target/date/workload domain and UI tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Reconcile canonical rounding/overdue start validation and CAS API/web writer; preserve drafts during background ACK; integrate into current graph."
+        "Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9."
       ],
       "external_blockers": [],
       "confidence": "medium",
       "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
       "old_closure_accurate": true,
-      "old_status_assessment": "Closure remains open; concrete code/integration/measurement deficit is now explicit.",
-      "reporting_verdict": "R"
+      "old_status_assessment": "Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.",
+      "reporting_verdict": "V"
     },
     {
       "id": "07.8",
@@ -9138,224 +8875,291 @@
       "scope": "Implement pause/resume/edit/restart/finish with deliberate progress updates and confirmation.",
       "definition_of_done": "Implement pause/resume/edit/restart/finish with deliberate progress updates and confirmation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "old_status": "PARTIAL",
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "implementation_location": "parallel",
-      "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "implementation_location": "main",
+      "main_implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "exclusive_category": "partially_implemented",
+      "exclusive_category": "implemented_integrated_awaiting_acceptance",
       "implemented_requirements": [
-        "Parallel pause/resume/progress/restart/finish actions and server endpoint exist."
+        "Explicit pause/resume/finish/restart controls use CAS and confirmation; generic saves preserve lifecycle and cannot edit finished plans; exact one-revision committed action retries do not duplicate resets or reading activity."
       ],
       "missing_requirements": [
-        "Prevent generic update of finished plans bypassing restart; retain action identity/idempotency and deliberate confirmations in current app."
+        "Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9."
       ],
       "exact_remaining_work": [
-        "Prevent generic update of finished plans bypassing restart; retain action identity/idempotency and deliberate confirmations in current app."
+        "Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9."
       ],
-      "feature_code_remaining": true,
-      "integration_code_remaining": true,
+      "feature_code_remaining": false,
+      "integration_code_remaining": false,
       "test_code_remaining": false,
-      "production_code_remaining": true,
-      "acceptance_only_in_current_app": false,
+      "production_code_remaining": false,
+      "acceptance_only_in_current_app": true,
       "evidence": [
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33",
-          "sha256": "471b8c8bcceafcbf24d58fa68ce9f2ee554f7bdb7e59ddc6be3decc56e5f91fd",
-          "last_path_commit": "fccbd6111d6559200a83b9b04eaeb56ed9536936",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2",
+          "sha256": "6781c87e35880b798c61ede06db7ac1ceaa1bb0ca3ce3392e1ab487da838150b",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
-              "line": 25,
-              "symbol": "data class KhatmahServerVersion("
+              "line": 28,
+              "symbol": "internal fun KhatmahScreen(graph: AppGraph) {"
+            },
+            {
+              "line": 34,
+              "symbol": "override fun requireActive() = graph.session.requireLease(lease)"
             },
             {
               "line": 35,
-              "symbol": "data class KhatmahPlanState("
+              "symbol": "override suspend fun load(): Pair<KhatmahPlan?, Boolean> {"
             },
             {
-              "line": 48,
-              "symbol": "data class KhatmahMetrics("
+              "line": 40,
+              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan {"
             },
             {
-              "line": 64,
-              "symbol": "class KhatmahRepository("
-            },
-            {
-              "line": 76,
-              "symbol": "fun observe(owner: Long): Flow<KhatmahPlanState?> ="
-            },
-            {
-              "line": 81,
-              "symbol": "suspend fun saved(owner: Long): KhatmahPlanState? ="
-            },
-            {
-              "line": 86,
-              "symbol": "suspend fun refresh(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
-            },
-            {
-              "line": 113,
-              "symbol": "suspend fun save("
-            },
-            {
-              "line": 161,
-              "symbol": "suspend fun action("
-            },
-            {
-              "line": 233,
-              "symbol": "suspend fun sync(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
-            },
-            {
-              "line": 296,
-              "symbol": "suspend fun useServer("
-            },
-            {
-              "line": 320,
-              "symbol": "suspend fun keepDevice("
-            },
-            {
-              "line": 345,
-              "symbol": "fun metrics(plan: KhatmahPlanState): KhatmahMetrics ="
-            },
-            {
-              "line": 348,
-              "symbol": "private suspend fun ensureInitializedForEdit(owner: Long) {"
-            },
-            {
-              "line": 371,
-              "symbol": "private suspend fun syncBestEffort(owner: Long) {"
-            },
-            {
-              "line": 384,
-              "symbol": "private suspend fun fetch(owner: Long): KhatmahServerVersion? {"
-            },
-            {
-              "line": 393,
-              "symbol": "private fun parseServer(data: JsonElement): KhatmahServerVersion? {"
-            },
-            {
-              "line": 417,
-              "symbol": "private fun decode(row: CachedDocument): KhatmahPlanState {"
-            },
-            {
-              "line": 436,
-              "symbol": "private suspend fun write(owner: Long, value: KhatmahPlanState) {"
-            },
-            {
-              "line": 448,
-              "symbol": "private suspend fun remove(owner: Long) {"
-            },
-            {
-              "line": 453,
-              "symbol": "private fun validateStoredDates(start: String, target: String) {"
-            },
-            {
-              "line": 460,
-              "symbol": "private fun validateEditableDates("
-            },
-            {
-              "line": 479,
-              "symbol": "fun calculateMetrics("
-            },
-            {
-              "line": 548,
-              "symbol": "private fun KhatmahServerVersion.toLocal("
+              "line": 71,
+              "symbol": "internal fun KhatmahContent("
             }
           ],
           "worktree_matches_ref": true
         },
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "08788b89f0ac29bc5d0aad730675bed602908473",
-          "sha256": "f196fcd9513561c7ec1f9853ba71470f397e7a25fff6f203421f8a93413bea4c",
-          "last_path_commit": "4cba177c1d38ab7a63164edaa705308fa0d9d3c2",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
+          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
-              "line": 32,
-              "symbol": "private data class KhatmahOperationState("
+              "line": 13,
+              "symbol": "internal interface KhatmahGateway {"
             },
             {
-              "line": 38,
-              "symbol": "private class KhatmahViewModel("
+              "line": 14,
+              "symbol": "fun requireActive()"
             },
             {
-              "line": 59,
-              "symbol": "fun clearFeedback() {"
+              "line": 15,
+              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
             },
             {
-              "line": 63,
-              "symbol": "fun refresh() = runOperation(markSaved = false) {"
+              "line": 16,
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
             },
             {
-              "line": 71,
-              "symbol": "fun save("
+              "line": 19,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
             },
             {
-              "line": 84,
-              "symbol": "fun action("
+              "line": 20,
+              "symbol": "internal data class KhatmahUiState("
             },
             {
-              "line": 95,
-              "symbol": "fun sync() = runOperation {"
+              "line": 35,
+              "symbol": "internal class KhatmahViewModel("
             },
             {
-              "line": 99,
-              "symbol": "fun useServer() = runOperation {"
+              "line": 44,
+              "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
             },
             {
-              "line": 103,
-              "symbol": "fun keepDevice() = runOperation {"
+              "line": 45,
+              "symbol": "fun edit(value: KhatmahDraft) {"
             },
             {
-              "line": 107,
-              "symbol": "private fun runOperation("
+              "line": 51,
+              "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
             },
             {
-              "line": 141,
-              "symbol": "fun KhatmahScreen(graph: AppGraph) {"
+              "line": 52,
+              "symbol": "fun refresh(discard: Boolean = false) {"
             },
             {
-              "line": 191,
-              "symbol": "private fun KhatmahContent("
+              "line": 75,
+              "symbol": "fun save() = submit(null, null)"
             },
             {
-              "line": 586,
-              "symbol": "private fun KhatmahWorkload("
+              "line": 76,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
             },
             {
-              "line": 707,
-              "symbol": "private fun KhatmahConflictPanel("
+              "line": 78,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
+          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "symbols": [
+            {
+              "line": 12,
+              "symbol": "final class Khatmah"
             },
             {
-              "line": 780,
-              "symbol": "private fun KhatmahVersionCard("
+              "line": 15,
+              "symbol": "public function __construct(PDO $db) { $this->db=$db; }"
+            },
+            {
+              "line": 17,
+              "symbol": "public function get(int $owner):?array"
+            },
+            {
+              "line": 23,
+              "symbol": "public static function decorate(array $row,?string $today=null):array"
+            },
+            {
+              "line": 48,
+              "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
+            },
+            {
+              "line": 55,
+              "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
+            },
+            {
+              "line": 66,
+              "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
+            },
+            {
+              "line": 67,
+              "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
+            },
+            {
+              "line": 69,
+              "symbol": "private function mutate(int $owner,array $data,bool $action):array"
+            },
+            {
+              "line": 120,
+              "symbol": "private function matches(array $current,array $data):bool"
+            },
+            {
+              "line": 126,
+              "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
             }
           ],
           "worktree_matches_ref": true
         }
       ],
       "related_commits": [
-        "4cba177c1d38ab7a63164edaa705308fa0d9d3c2",
-        "fccbd6111d6559200a83b9b04eaeb56ed9536936"
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
-        "parallel_graph",
-        "parallel_navigation",
-        "parallel_manifest",
-        "parallel_api",
-        "main_graph"
+        "main_graph",
+        "main_navigation",
+        "main_manifest",
+        "main_api"
       ],
       "tests_executed": [
         {
-          "kind": "new_parallel_configuration_failure",
-          "receipt": "artifacts/functional-integration/audit-parallel-configuration.log",
-          "limit": "Gradle :app:tasks fails at SourceSet Provider configuration. Local pre-existing File/import repair present; pristine branch has an additional script compilation issue. No JVM/instrumentation pass on this source claimed."
+          "kind": "inherited_baseline_JVM_subset",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "classes": [
+            "org.athar.app.AccountDeletionIntentTest",
+            "org.athar.app.AccountDeletionWorkflowTest",
+            "org.athar.app.AccountExportTest",
+            "org.athar.app.AccountExportWriterTest",
+            "org.athar.app.AccountInputTest",
+            "org.athar.app.AccountPayloadsTest",
+            "org.athar.app.ActivitySummaryTest",
+            "org.athar.app.BookCompletionEventTest",
+            "org.athar.app.BookCompletionJournalTest",
+            "org.athar.app.SavedCollectionsTest"
+          ],
+          "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
+        },
+        {
+          "kind": "inherited_baseline_backend_subsystem_gate",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
+          "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
+        },
+        {
+          "kind": "new_focused_functional_checkpoint",
+          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "result": {
+            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+            "jvm_cases": 8,
+            "jvm_classes": 2,
+            "junit_receipts": [
+              {
+                "name": "org.athar.app.KhatmahContractTest",
+                "tests": 3,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "bytes": 735
+              },
+              {
+                "name": "org.athar.app.KhatmahViewModelTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+                "bytes": 990
+              }
+            ],
+            "backend_suites": 5,
+            "backend_assertions": 323,
+            "backend_components": {
+              "khatmah": 84,
+              "catalog_progress": 103,
+              "account_export": 33,
+              "account_deletion": 33,
+              "recovery": 70
+            },
+            "actual_cookie_api_http_assertions": 23,
+            "debug_apk": "PASS",
+            "test_apk": "PASS",
+            "lint_errors": 0,
+            "lint_warnings": 62,
+            "resources_paired": 451,
+            "new_instrumentation_cases": 0,
+            "physical_acceptance": "NOT_EXECUTED",
+            "provider_delivery": "NOT_APPLICABLE",
+            "logs": [
+              {
+                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+                "bytes": 5326
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+                "bytes": 153
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+                "bytes": 234
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+                "bytes": 426
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "bytes": 472
+              }
+            ],
+            "limits": [
+              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+            ]
+          }
         }
       ],
       "inherited_acceptance_receipts": [],
@@ -9363,14 +9167,14 @@
       "tests_still_required": [
         "State transitions/idempotency/date/actual progress cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Prevent generic update of finished plans bypassing restart; retain action identity/idempotency and deliberate confirmations in current app."
+        "Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9."
       ],
       "external_blockers": [],
       "confidence": "medium",
       "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
       "old_closure_accurate": true,
-      "old_status_assessment": "Closure remains open; concrete code/integration/measurement deficit is now explicit.",
-      "reporting_verdict": "R"
+      "old_status_assessment": "Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.",
+      "reporting_verdict": "V"
     },
     {
       "id": "07.9",
@@ -9381,18 +9185,18 @@
       "implementation_status": "PARTIALLY_IMPLEMENTED",
       "implementation_location": "parallel",
       "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
+      "integration_status": "PARTIALLY_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "exclusive_category": "partially_implemented",
       "implemented_requirements": [
-        "Parallel encrypted local plans/pending sync/revision conflicts exist."
+        "Parallel encrypted pending plans/conflict candidate exists; current main additionally has canonical CAS/replay, owner/session-leased requests and in-memory draft retention."
       ],
       "missing_requirements": [
-        "Fix lost-reply retry/newer-edit ACK and missing-server conflict resolution; migrate to current owned schema/deletion guards and wire sync."
+        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
       ],
       "exact_remaining_work": [
-        "Fix lost-reply retry/newer-edit ACK and missing-server conflict resolution; migrate to current owned schema/deletion guards and wire sync."
+        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
       ],
       "feature_code_remaining": true,
       "integration_code_remaining": true,
@@ -9506,9 +9310,132 @@
             }
           ],
           "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
+          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "symbols": [
+            {
+              "line": 13,
+              "symbol": "internal interface KhatmahGateway {"
+            },
+            {
+              "line": 14,
+              "symbol": "fun requireActive()"
+            },
+            {
+              "line": 15,
+              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
+            },
+            {
+              "line": 16,
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
+            },
+            {
+              "line": 19,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 20,
+              "symbol": "internal data class KhatmahUiState("
+            },
+            {
+              "line": 35,
+              "symbol": "internal class KhatmahViewModel("
+            },
+            {
+              "line": 44,
+              "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
+            },
+            {
+              "line": 45,
+              "symbol": "fun edit(value: KhatmahDraft) {"
+            },
+            {
+              "line": 51,
+              "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
+            },
+            {
+              "line": 52,
+              "symbol": "fun refresh(discard: Boolean = false) {"
+            },
+            {
+              "line": 75,
+              "symbol": "fun save() = submit(null, null)"
+            },
+            {
+              "line": 76,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
+            },
+            {
+              "line": 78,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
+          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "symbols": [
+            {
+              "line": 12,
+              "symbol": "final class Khatmah"
+            },
+            {
+              "line": 15,
+              "symbol": "public function __construct(PDO $db) { $this->db=$db; }"
+            },
+            {
+              "line": 17,
+              "symbol": "public function get(int $owner):?array"
+            },
+            {
+              "line": 23,
+              "symbol": "public static function decorate(array $row,?string $today=null):array"
+            },
+            {
+              "line": 48,
+              "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
+            },
+            {
+              "line": 55,
+              "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
+            },
+            {
+              "line": 66,
+              "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
+            },
+            {
+              "line": 67,
+              "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
+            },
+            {
+              "line": 69,
+              "symbol": "private function mutate(int $owner,array $data,bool $action):array"
+            },
+            {
+              "line": 120,
+              "symbol": "private function matches(array $current,array $data):bool"
+            },
+            {
+              "line": 126,
+              "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
+            }
+          ],
+          "worktree_matches_ref": true
         }
       ],
       "related_commits": [
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
         "fccbd6111d6559200a83b9b04eaeb56ed9536936"
       ],
       "alternative_branch_evidence": [],
@@ -9524,6 +9451,82 @@
           "kind": "new_parallel_configuration_failure",
           "receipt": "artifacts/functional-integration/audit-parallel-configuration.log",
           "limit": "Gradle :app:tasks fails at SourceSet Provider configuration. Local pre-existing File/import repair present; pristine branch has an additional script compilation issue. No JVM/instrumentation pass on this source claimed."
+        },
+        {
+          "kind": "new_focused_functional_checkpoint",
+          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "result": {
+            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+            "jvm_cases": 8,
+            "jvm_classes": 2,
+            "junit_receipts": [
+              {
+                "name": "org.athar.app.KhatmahContractTest",
+                "tests": 3,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "bytes": 735
+              },
+              {
+                "name": "org.athar.app.KhatmahViewModelTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+                "bytes": 990
+              }
+            ],
+            "backend_suites": 5,
+            "backend_assertions": 323,
+            "backend_components": {
+              "khatmah": 84,
+              "catalog_progress": 103,
+              "account_export": 33,
+              "account_deletion": 33,
+              "recovery": 70
+            },
+            "actual_cookie_api_http_assertions": 23,
+            "debug_apk": "PASS",
+            "test_apk": "PASS",
+            "lint_errors": 0,
+            "lint_warnings": 62,
+            "resources_paired": 451,
+            "new_instrumentation_cases": 0,
+            "physical_acceptance": "NOT_EXECUTED",
+            "provider_delivery": "NOT_APPLICABLE",
+            "logs": [
+              {
+                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+                "bytes": 5326
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+                "bytes": 153
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+                "bytes": 234
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+                "bytes": 426
+              },
+              {
+                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "bytes": 472
+              }
+            ],
+            "limits": [
+              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+            ]
+          }
         }
       ],
       "inherited_acceptance_receipts": [],
@@ -9531,13 +9534,13 @@
       "tests_still_required": [
         "Offline restart/lost response/conflict/ownership plan tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Fix lost-reply retry/newer-edit ACK and missing-server conflict resolution; migrate to current owned schema/deletion guards and wire sync."
+        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
       ],
       "external_blockers": [],
       "confidence": "medium",
       "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
       "old_closure_accurate": true,
-      "old_status_assessment": "Closure remains open; concrete code/integration/measurement deficit is now explicit.",
+      "old_status_assessment": "Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.",
       "reporting_verdict": "R"
     },
     {
@@ -10324,7 +10327,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DomainTest",
@@ -10333,7 +10336,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -11235,7 +11238,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DomainTest",
@@ -11244,7 +11247,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -11367,7 +11370,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.DomainTest",
@@ -11376,7 +11379,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -17834,7 +17837,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -17937,7 +17940,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18072,7 +18075,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18271,7 +18274,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18414,7 +18417,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18549,7 +18552,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18669,7 +18672,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18778,7 +18781,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -18882,7 +18885,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19100,7 +19103,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19216,7 +19219,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19342,7 +19345,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19485,7 +19488,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19611,7 +19614,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19757,7 +19760,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -19992,7 +19995,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -20212,7 +20215,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -20432,7 +20435,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -20667,7 +20670,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -20887,7 +20890,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -21008,7 +21011,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -21214,7 +21217,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -21485,7 +21488,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -21708,7 +21711,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -21858,7 +21861,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22050,7 +22053,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22230,7 +22233,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22418,7 +22421,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22558,7 +22561,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22681,7 +22684,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22789,7 +22792,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -22873,7 +22876,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23255,17 +23258,17 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "d399968cb71e2353f891ebcf50cea6623618016f",
-          "sha256": "482c57c3fe3b5c57fcd5dca7da9802412ee114be756c83ba7f2a595e7492ddd5",
-          "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "87cfd88c5d85a43ba1726fd661e39da136ff488c",
+          "sha256": "fe69d06f6d6aa9cac74b3d1908f2d14a696224257c313de86777f379c941b627",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
               "line": 17,
               "symbol": "@Composable fun AccountToolsScreen(graph: AppGraph, tool: String, open: (String) -> Unit) {"
             },
             {
-              "line": 50,
+              "line": 26,
               "symbol": "@Composable internal fun AccountDataFailure(retry:()->Unit){"
             }
           ],
@@ -23273,7 +23276,7 @@
         }
       ],
       "related_commits": [
-        "d6c63a880764373a0992fdf4374efeb149486964",
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
         "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
       ],
       "alternative_branch_evidence": [],
@@ -23285,7 +23288,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23424,7 +23427,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23504,7 +23507,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23584,7 +23587,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23683,7 +23686,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23791,7 +23794,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23861,10 +23864,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "face44ff4ce5304a531bc41fd4c240b35a293b01",
-          "sha256": "f1a9b532b6dd28d1ad099355e48eee8523bee3576f3dda1595ce7c2085615d93",
-          "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "40e353643b26593b063f13a55fb97759316d11d1",
+          "sha256": "ca51a2055a446c1a73b62f5599504120f9eb7ed076c57b5a7c2a7804c58cd240",
+          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
           "symbols": [
             {
               "line": 1,
@@ -23875,7 +23878,7 @@
         }
       ],
       "related_commits": [
-        "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
         "f66a05a5c567afb6acd7d2bf55b8e0593493bb1c"
       ],
       "alternative_branch_evidence": [],
@@ -23887,7 +23890,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -23900,7 +23903,7 @@
       "inherited_acceptance_receipts": [],
       "receipt_blob_continuity": [],
       "tests_still_required": [
-        "Current paired resource format checks (432 at audited source); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+        "Current paired resource format checks (451 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
         "Complete screen matrix and correct any residual mixed numbers/dates/RTL mirroring/contrast issues; resource parity alone cannot establish visual completion."
       ],
@@ -24059,7 +24062,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -24175,7 +24178,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.HomeProjectionTest",
@@ -24462,7 +24465,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookFilesTest",
@@ -24471,7 +24474,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -24851,7 +24854,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookFilesTest",
@@ -24860,7 +24863,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -25152,7 +25155,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.BookFilesTest",
@@ -25161,7 +25164,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -25332,7 +25335,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -25348,7 +25351,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -25600,7 +25603,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -25616,7 +25619,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -25727,7 +25730,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -25743,7 +25746,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -25970,7 +25973,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -25986,7 +25989,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -26038,13 +26041,13 @@
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
           "kind": "test tree",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
         },
         {
           "location": "main",
           "path": "tests",
           "kind": "test tree",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
         }
       ],
       "related_commits": [],
@@ -26057,7 +26060,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -26073,7 +26076,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -26164,7 +26167,7 @@
       ],
       "tests_executed": [
         {
-          "kind": "inherited_current_JVM_subset",
+          "kind": "inherited_baseline_JVM_subset",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "classes": [
             "org.athar.app.AccountDeletionIntentTest",
@@ -26180,7 +26183,7 @@
           "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
         },
         {
-          "kind": "inherited_current_backend_subsystem_gate",
+          "kind": "inherited_baseline_backend_subsystem_gate",
           "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
           "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
           "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
@@ -26613,5 +26616,580 @@
       "old_status_assessment": "Misleading as an implementation statement: code/tooling exists, predominantly unmerged. No integration credit granted.",
       "reporting_verdict": "S"
     }
-  ]
+  ],
+  "original_audit_commit": "9492f1453e3a1dccb7d80e161deff03b83273f6b",
+  "original_audit_metrics": {
+    "total": 149,
+    "fully_implemented_any_reviewed_branch": 110,
+    "fully_implemented_main": 71,
+    "integrated_active_application": 71,
+    "passed_all_required_verification": 19,
+    "formally_closed": 19,
+    "fully_implemented_outstanding_verification": 91,
+    "acceptance_only_current_app": 52,
+    "partially_implemented_needing_code": 24,
+    "partial_tasks_needing_production_code": 23,
+    "partial_tasks_needing_only_test_code": 1,
+    "not_implemented": 0,
+    "external_blocked": 4,
+    "implemented_only_unmerged": 39,
+    "any_implementation_or_scaffold_only_unmerged": 53,
+    "production_code_remaining_including_integration": 65,
+    "feature_code_remaining": 24,
+    "integration_code_remaining": 49,
+    "reopened_previous_complete": 7
+  },
+  "baseline_validation": {
+    "inherited_source_sha": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+    "jvm_cases": 167,
+    "jvm_classes": 38,
+    "junit_receipts": [
+      {
+        "name": "org.athar.app.AccountDeletionIntentTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountDeletionIntentTest.xml",
+        "sha256": "e9ccbd70b3f239a1558c21e80f686e88724f773cc22531021644b5f347f303a9",
+        "bytes": 751
+      },
+      {
+        "name": "org.athar.app.AccountDeletionWorkflowTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountDeletionWorkflowTest.xml",
+        "sha256": "375edadddbb512324634405db265ddb74b6c601e51471834cd015c36bee9aaa1",
+        "bytes": 1266
+      },
+      {
+        "name": "org.athar.app.AccountExportTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+        "sha256": "411d5d50999a286d8359f31267e24cd696fcb70037c2dc01f68cdde24aadf47d",
+        "bytes": 1006
+      },
+      {
+        "name": "org.athar.app.AccountExportWriterTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+        "sha256": "aa279c87cea1c755d481725df6cff40839ec108ac6773181297e894453615313",
+        "bytes": 867
+      },
+      {
+        "name": "org.athar.app.AccountInputTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountInputTest.xml",
+        "sha256": "02c60e6bf1962271f6ea2939aad3e8f70de81d588056c89ecc571f7b6d42f2d0",
+        "bytes": 715
+      },
+      {
+        "name": "org.athar.app.AccountPayloadsTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountPayloadsTest.xml",
+        "sha256": "0d15eaf2f3794ac9db7fa297180828e29275b77ed20249f22d57419b15b86ced",
+        "bytes": 686
+      },
+      {
+        "name": "org.athar.app.ActivitySummaryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ActivitySummaryTest.xml",
+        "sha256": "e8cb5d29c806d68435531935b7581b361b2c23d95ca4679f9082251e9de24357",
+        "bytes": 897
+      },
+      {
+        "name": "org.athar.app.AdhkarSummaryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AdhkarSummaryTest.xml",
+        "sha256": "3ff2ab43647baa61652bd020747acb3a2e88eac2dd8c27075a612143137d4585",
+        "bytes": 593
+      },
+      {
+        "name": "org.athar.app.AudioRequestsTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioRequestsTest.xml",
+        "sha256": "8e54524dc327eaf23f4debda3f8661b745d6303c554b1c4f01363330885239a8",
+        "bytes": 735
+      },
+      {
+        "name": "org.athar.app.AudioSelectionTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioSelectionTest.xml",
+        "sha256": "6dfa44870594a3aa3d2beafcec64194340ce205a63d46c0655ac3cfed1948af8",
+        "bytes": 615
+      },
+      {
+        "name": "org.athar.app.AudioTimingTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AudioTimingTest.xml",
+        "sha256": "f43c68c8982a5ad7b88aeb00787a829a8f944316b7f55bce658343e18a057bd0",
+        "bytes": 715
+      },
+      {
+        "name": "org.athar.app.BookCompletionEventTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookCompletionEventTest.xml",
+        "sha256": "64ab70129a316678508ef8bbda89e73c5f39e6aafc9fd1a19011cf50bcd30b78",
+        "bytes": 783
+      },
+      {
+        "name": "org.athar.app.BookCompletionJournalTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookCompletionJournalTest.xml",
+        "sha256": "c802869a55354fbc6a2746c4f24edefe48f5d2de9e0df9877d58a86be86c9304",
+        "bytes": 1286
+      },
+      {
+        "name": "org.athar.app.BookDownloadPolicyTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookDownloadPolicyTest.xml",
+        "sha256": "4dd5b2e5474016293026d13491d51ab632a6782534614b4aed0bcbbb1158422a",
+        "bytes": 612
+      },
+      {
+        "name": "org.athar.app.BookFilesTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookFilesTest.xml",
+        "sha256": "35513c9b731a65f77b89912ead0b61217becd141cc54cfc16773a039808a5d89",
+        "bytes": 1324
+      },
+      {
+        "name": "org.athar.app.BookReadingPayloadTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookReadingPayloadTest.xml",
+        "sha256": "f4321b1a597ff656f6a9ccbccc0129da0f446f0cfb3f441c9fce8925219ba71b",
+        "bytes": 605
+      },
+      {
+        "name": "org.athar.app.BookTransferTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.BookTransferTest.xml",
+        "sha256": "2b9f194ff98e1c7857540d13b96eab86dcc825ade8f73f0471f83fac1bc240a1",
+        "bytes": 767
+      },
+      {
+        "name": "org.athar.app.ContentCachePolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ContentCachePolicyTest.xml",
+        "sha256": "4142d28a30e557b89e42b03e5a9a07808bee7627c981697c73c657e5cf0a3da2",
+        "bytes": 846
+      },
+      {
+        "name": "org.athar.app.CounterDayTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.CounterDayTest.xml",
+        "sha256": "bd1070b7c7932c9efe34e86ff35b66b8343d3c03f3ffcc5f366eb932bb090589",
+        "bytes": 741
+      },
+      {
+        "name": "org.athar.app.DailyAyahTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.DailyAyahTest.xml",
+        "sha256": "c0c2eef6276a01c09c7bc1d88cf4ccfebeb7bd5127a9295055e18cf8f6f8a169",
+        "bytes": 692
+      },
+      {
+        "name": "org.athar.app.DomainTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.DomainTest.xml",
+        "sha256": "a9a3f80aaa7de46b93449759709e4a3e2d80d5841ce55ae7885aa2d0bcb62c59",
+        "bytes": 1230
+      },
+      {
+        "name": "org.athar.app.HomeProjectionTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.HomeProjectionTest.xml",
+        "sha256": "fa942ca74abbfea5b2da036207b2be585785819669a5b967c5ec73ba92e3f37f",
+        "bytes": 890
+      },
+      {
+        "name": "org.athar.app.ImmersiveHeroPolicyTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ImmersiveHeroPolicyTest.xml",
+        "sha256": "bd39548054361b51a38e6fbf1d45fbf52bd50f4b0bcd13e420674eb3098a0f10",
+        "bytes": 1126
+      },
+      {
+        "name": "org.athar.app.NightRejectionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
+        "sha256": "0b72c97a5ab0802a41f95e3dfe2358f3766692ab9b2252c1c4a544efec435cdf",
+        "bytes": 726
+      },
+      {
+        "name": "org.athar.app.OtpInputTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OtpInputTest.xml",
+        "sha256": "645b0a3f4fba31b7ef4c15ba3dc919c15bbeb3d78aaeb1343089e7e81f40e7e5",
+        "bytes": 701
+      },
+      {
+        "name": "org.athar.app.OwnedSyncRunnerTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+        "sha256": "e1916ea66a996958f56a90388d79c64e0f27b912027fe604a187b83c3fdfc6bf",
+        "bytes": 1562
+      },
+      {
+        "name": "org.athar.app.PlaybackOwnershipTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.PlaybackOwnershipTest.xml",
+        "sha256": "58d03bf562b520998705bb9de402aaa474346cf174414691a9f222f39b5540fd",
+        "bytes": 983
+      },
+      {
+        "name": "org.athar.app.PlayerPolicyTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.PlayerPolicyTest.xml",
+        "sha256": "c4fe8ebff4f1f1dd064b9ee96d525b63364d67ee07426fa9b5e511427af2b208",
+        "bytes": 571
+      },
+      {
+        "name": "org.athar.app.ProtectedReadTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.ProtectedReadTest.xml",
+        "sha256": "96451b63ba2adcbb1544c5c58145f08e25527ebf17df104eac7be6bf8636c80d",
+        "bytes": 609
+      },
+      {
+        "name": "org.athar.app.QuranAyahShareContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranAyahShareContractTest.xml",
+        "sha256": "1c0163a742587a007719b4b6a5651528c1e34147b9fa74087775513e7467fd2f",
+        "bytes": 724
+      },
+      {
+        "name": "org.athar.app.QuranNavigationPolicyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranNavigationPolicyTest.xml",
+        "sha256": "4a01f37ef503ce2a82a2fc67994fd1b26ca6e7d1b51f4b87bc95c8ef95acfe1a",
+        "bytes": 733
+      },
+      {
+        "name": "org.athar.app.QuranSearchPolicyTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSearchPolicyTest.xml",
+        "sha256": "5125d8e868193a67dd592c5d45a7c6c7b58f7f1a51acc85c6def85f896910001",
+        "bytes": 991
+      },
+      {
+        "name": "org.athar.app.QuranSelectionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSelectionTest.xml",
+        "sha256": "6359cb75ee531cf011b224c3689edcae9b4ce7a21cc33a774e9bfc99dc6d1ba8",
+        "bytes": 726
+      },
+      {
+        "name": "org.athar.app.SavedCollectionsTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SavedCollectionsTest.xml",
+        "sha256": "5cbe72ac3e174bb4f88d54dbbc390e3595ab4e6bc93a1dd5c0f967aef73b4077",
+        "bytes": 848
+      },
+      {
+        "name": "org.athar.app.SessionRepositoryTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+        "sha256": "269ee3516e6dd29837d6b7b4a95a3d261489306d4a045dade2b2a6245df9f7ff",
+        "bytes": 3841
+      },
+      {
+        "name": "org.athar.app.TafsirContractTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.TafsirContractTest.xml",
+        "sha256": "b4dbbdd937765f5fceb0df637212d6a12867c6ab4da4e3e79effc947db6a6629",
+        "bytes": 832
+      },
+      {
+        "name": "org.athar.app.UpcomingPolicyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.UpcomingPolicyTest.xml",
+        "sha256": "a9733d2ebb9d1b599276a4886ef640651b643256f52bdc6b213228dff5e2ec58",
+        "bytes": 749
+      },
+      {
+        "name": "org.athar.app.UpcomingViewModelTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.UpcomingViewModelTest.xml",
+        "sha256": "a7f772399d64ac3437cfabe3fcc6348d8bb3ef71385eebf4039e5717e46b3054",
+        "bytes": 885
+      }
+    ],
+    "backend_suites": 24,
+    "backend_assertions": 21192,
+    "instrumentation_cases": 35,
+    "instrumentation_platform": "API34 emulator; actual Room/Keystore/files/isolated PDF, injected transport",
+    "lint_errors": 0,
+    "lint_warnings": 59,
+    "resources_paired": 432,
+    "new_checks": [
+      "Git fetch and exact refs/status",
+      "Parallel Gradle configuration FAILED",
+      "Push adapter PHP8.0 execution FAILED before assertions",
+      "432 paired resources PASS",
+      "Audit/queue/ledger consistency validation",
+      "Secret screening:0 working findings;2 historical synthetic credential-URL rejection fixtures manually reviewed, not hidden as a clean scanner exit."
+    ],
+    "secret_screening": {
+      "receipt": "artifacts/functional-integration/audit-security.log",
+      "scanner_exit": "nonzero:2 history heuristic findings",
+      "working_findings": 0,
+      "history_blobs_scanned": 2560,
+      "working_files_at_scan": 810,
+      "manual_adjudication": [
+        {
+          "object": "a350300ce4ba59982e77d62bf7faf773c468e465",
+          "path": "tests/admin_campaign_http_test.py",
+          "line": 38,
+          "finding": "Synthetic example.invalid userinfo URL is an intentional invalid-image rejection input."
+        },
+        {
+          "object": "bfc9d31b570c4b7f683c5a2486370557a8b93f7e",
+          "path": "tests/campaign_test.php",
+          "line": 25,
+          "finding": "Synthetic example.invalid userinfo URL is an intentional invalid-fields rejection input."
+        }
+      ],
+      "limit": "History not rewritten and scanner not weakened. This audit is not final release23.6 clearance."
+    },
+    "logs": [
+      {
+        "path": "artifacts/functional-integration/book-activity-serial-gradle.log",
+        "sha256": "84e042c98ed7c815b0dd727d445781bb1be285d7ce6d5d90732f2f40b72b4c5e",
+        "bytes": 8439
+      },
+      {
+        "path": "artifacts/functional-integration/book-activity-serial-backend.log",
+        "sha256": "0626fa89d27748c50cfa7f272e9bbede91f0126aa86412632e4af94528834baf",
+        "bytes": 2182
+      },
+      {
+        "path": "artifacts/functional-integration/book-activity-api34.private.log",
+        "sha256": "eac8d8c3276f61d867ec62ecd1f03cbb8890f78c62c7474413dcbd3e370f0621",
+        "bytes": 24800
+      },
+      {
+        "path": "artifacts/functional-integration/audit-parallel-configuration.log",
+        "sha256": "50bf755cdc7d5642dbbe46833c34d7520f6f14c30c42c2a6f27f5ba5d94d15f5",
+        "bytes": 1300
+      },
+      {
+        "path": "artifacts/functional-integration/audit-push-provider.log",
+        "sha256": "5d200dd9f2b3f6294853852b19736f18562ce26f22d80ade5b4bf27b82ecb138",
+        "bytes": 933
+      }
+    ],
+    "limitations": [
+      "No new physical-device/provider/hosted/signing acceptance.",
+      "No source-branch Android compile/test pass: configuration fails.",
+      "No FCM delivery/real Gmail inbox proof.",
+      "Physical historical logs are inherited;7 changed native scopes reopened.",
+      "Evidence logs may contain private fixtures and remain ignored; only relative paths/digests and bounded counts are committed."
+    ]
+  },
+  "functional_checkpoint": {
+    "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+    "reviewed_tasks": [
+      "07.7",
+      "07.8",
+      "07.9"
+    ],
+    "summary": "Functional integration after original audit:07.7/07.8 now have canonical inclusive UTC workload/date validation, revisioned shared web/API writes, native owner-leased editing and deliberate lifecycle actions. Both are IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.9 has server CAS/replay and retained-draft foundations only; durable offline intent/conflicts are still missing.",
+    "validation": {
+      "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+      "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+      "jvm_cases": 8,
+      "jvm_classes": 2,
+      "junit_receipts": [
+        {
+          "name": "org.athar.app.KhatmahContractTest",
+          "tests": 3,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+          "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+          "bytes": 735
+        },
+        {
+          "name": "org.athar.app.KhatmahViewModelTest",
+          "tests": 5,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+          "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+          "bytes": 990
+        }
+      ],
+      "backend_suites": 5,
+      "backend_assertions": 323,
+      "backend_components": {
+        "khatmah": 84,
+        "catalog_progress": 103,
+        "account_export": 33,
+        "account_deletion": 33,
+        "recovery": 70
+      },
+      "actual_cookie_api_http_assertions": 23,
+      "debug_apk": "PASS",
+      "test_apk": "PASS",
+      "lint_errors": 0,
+      "lint_warnings": 62,
+      "resources_paired": 451,
+      "new_instrumentation_cases": 0,
+      "physical_acceptance": "NOT_EXECUTED",
+      "provider_delivery": "NOT_APPLICABLE",
+      "logs": [
+        {
+          "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+          "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+          "bytes": 5326
+        },
+        {
+          "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+          "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+          "bytes": 153
+        },
+        {
+          "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+          "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+          "bytes": 234
+        },
+        {
+          "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+          "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+          "bytes": 426
+        },
+        {
+          "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+          "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+          "bytes": 472
+        }
+      ],
+      "limits": [
+        "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+        "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+        "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+      ]
+    },
+    "integration_overrides": {
+      "07.9": "PARTIALLY_INTEGRATED"
+    },
+    "additional_main_evidence": {
+      "07.9": [
+        "KhatmahViewModel.kt",
+        "backend/src/Progress/Khatmah.php"
+      ]
+    },
+    "next_task": {
+      "id": "07.9",
+      "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
+      "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
+    }
+  }
 }

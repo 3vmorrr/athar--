@@ -1,0 +1,95 @@
+{
+  "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+  "reviewed_tasks": [
+    "07.7",
+    "07.8",
+    "07.9"
+  ],
+  "summary": "Functional integration after original audit:07.7/07.8 now have canonical inclusive UTC workload/date validation, revisioned shared web/API writes, native owner-leased editing and deliberate lifecycle actions. Both are IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.9 has server CAS/replay and retained-draft foundations only; durable offline intent/conflicts are still missing.",
+  "validation": {
+    "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+    "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
+    "jvm_cases": 8,
+    "jvm_classes": 2,
+    "junit_receipts": [
+      {
+        "name": "org.athar.app.KhatmahContractTest",
+        "tests": 3,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
+        "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+        "bytes": 735
+      },
+      {
+        "name": "org.athar.app.KhatmahViewModelTest",
+        "tests": 5,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
+        "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
+        "bytes": 990
+      }
+    ],
+    "backend_suites": 5,
+    "backend_assertions": 323,
+    "backend_components": {
+      "khatmah": 84,
+      "catalog_progress": 103,
+      "account_export": 33,
+      "account_deletion": 33,
+      "recovery": 70
+    },
+    "actual_cookie_api_http_assertions": 23,
+    "debug_apk": "PASS",
+    "test_apk": "PASS",
+    "lint_errors": 0,
+    "lint_warnings": 62,
+    "resources_paired": 451,
+    "new_instrumentation_cases": 0,
+    "physical_acceptance": "NOT_EXECUTED",
+    "provider_delivery": "NOT_APPLICABLE",
+    "logs": [
+      {
+        "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
+        "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
+        "bytes": 5326
+      },
+      {
+        "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
+        "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
+        "bytes": 153
+      },
+      {
+        "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
+        "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
+        "bytes": 234
+      },
+      {
+        "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
+        "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
+        "bytes": 426
+      },
+      {
+        "path": "artifacts/functional-integration/khatmah-real-http-final.log",
+        "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+        "bytes": 472
+      }
+    ],
+    "limits": [
+      "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
+      "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
+      "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+    ]
+  },
+  "integration_overrides": {
+    "07.9": "PARTIALLY_INTEGRATED"
+  },
+  "additional_main_evidence": {
+    "07.9": [
+      "KhatmahViewModel.kt",
+      "backend/src/Progress/Khatmah.php"
+    ]
+  },
+  "next_task": {
+    "id": "07.9",
+    "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
+    "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
+  }
+}

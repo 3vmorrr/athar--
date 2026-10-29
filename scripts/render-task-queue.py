@@ -29,7 +29,7 @@ assert data['current_task'] in ids
 assert sum(data['phase2_weights'].values())==100
 open_tasks=[row for row in tasks if row['state']!='COMPLETE']
 lines=['# Ordered execution queue','',
-       'The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative. Source reconciliation is complete at the reported snapshot; next feature07.7 follows the audit checkpoint report. Four axes below distinguish finished code from integration and acceptance.','',data['policy'],'',
+       f"The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative at its recorded source refs. Later functional checkpoints update affected task findings explicitly; next feature **{data['current_task']}**. Four axes below distinguish finished code from integration and acceptance.",'',data['policy'],'',
        f"Snapshot: {data['updated']}. Next feature task after audit: **{data['current_task']}**. Open integration/acceptance tasks: **{len(open_tasks)}**. Historical weighted estimates are obsolete; use the generated audit counts.",'',
        data.get('status_meaning', ''),'',
        'The JSON beside this file is the editable source. Run `python scripts/render-task-queue.py` after an update. COMPLETE requires the recorded applicable gates, docs, reviewed commit and verified normal push. Commit receipts live in TASK_COMPLETIONS.md to avoid self-referential hashes. Dependencies reference queue IDs; blocked external gates may be skipped only for an independently ready task, with the skip reported. The parallel branch leads implementation; this track accepts one integration task at a time under PARALLEL_INTEGRATION.json.','',

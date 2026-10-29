@@ -1072,8 +1072,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "d399968cb71e2353f891ebcf50cea6623618016f"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "87cfd88c5d85a43ba1726fd661e39da136ff488c"
         }
       ],
       "historic_parallel_state_claim": "COMPLETE"
@@ -5025,8 +5025,8 @@
         {
           "location": "main",
           "path": "backend/src/Progress/ProgressService.php",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "183d39b8422942e7461b3627f2b731635cc2eda0"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "e389ce8dd4eb80dc058fbc28c4848964680f979a"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5036,9 +5036,9 @@
       "name": "Khatmah workload and plan editor",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "d520fb169cc9f926acd77ad84cbfa30382330f20",
         "fccbd6111d6559200a83b9b04eaeb56ed9536936",
@@ -5086,27 +5086,39 @@
       "external_blockers": null,
       "remaining_acceptance": "Complete canonical daily workload/start/end/target validation and premium editor hierarchy. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Reconcile canonical rounding/overdue start validation and CAS API/web writer; preserve drafts during background ACK; integrate into current graph."
+        "Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9."
       ],
       "actual_audit_record": "07.7",
       "actual_evidence": [
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33"
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "453180ea330ae5700d7a6bc811c206391e6ce115"
         },
         {
-          "location": "parallel",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+        },
+        {
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "08788b89f0ac29bc5d0aad730675bed602908473"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2"
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5116,9 +5128,9 @@
       "name": "Khatmah lifecycle actions",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "a09031d5497a3ec65164069a05e0d6e33e953595",
         "6b6bef31f87fe10b5ca3e32d828f56c7eb10138d",
@@ -5152,27 +5164,33 @@
       "external_blockers": null,
       "remaining_acceptance": "Implement pause/resume/edit/restart/finish with deliberate progress updates and confirmation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Prevent generic update of finished plans bypassing restart; retain action identity/idempotency and deliberate confirmations in current app."
+        "Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9."
       ],
       "actual_audit_record": "07.8",
       "actual_evidence": [
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33"
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2"
         },
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "08788b89f0ac29bc5d0aad730675bed602908473"
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5233,12 +5251,12 @@
       "remaining_acceptance": "Persist plan edits/progress safely across restart/account changes and reconcile conflicts explicitly. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
       "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
+      "integration_status": "PARTIALLY_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "production_code_remaining": true,
       "missing": [
-        "Fix lost-reply retry/newer-edit ACK and missing-server conflict resolution; migrate to current owned schema/deletion guards and wire sync."
+        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
       ],
       "actual_audit_record": "07.9",
       "actual_evidence": [
@@ -5247,6 +5265,18 @@
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
           "ref": "7392e93b088990c3478cf32197781f831eb10f83",
           "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+        },
+        {
+          "location": "main",
+          "path": "backend/src/Progress/Khatmah.php",
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -12466,8 +12496,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "d399968cb71e2353f891ebcf50cea6623618016f"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "87cfd88c5d85a43ba1726fd661e39da136ff488c"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -12966,8 +12996,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "face44ff4ce5304a531bc41fd4c240b35a293b01"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "git_blob": "40e353643b26593b063f13a55fb97759316d11d1"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16050,12 +16080,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18009,26 +18039,26 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "actual_audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 110,
-    "fully_implemented_main": 71,
-    "integrated_active_application": 71,
+    "fully_implemented_any_reviewed_branch": 112,
+    "fully_implemented_main": 73,
+    "integrated_active_application": 73,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 91,
-    "acceptance_only_current_app": 52,
-    "partially_implemented_needing_code": 24,
-    "partial_tasks_needing_production_code": 23,
+    "fully_implemented_outstanding_verification": 93,
+    "acceptance_only_current_app": 54,
+    "partially_implemented_needing_code": 22,
+    "partial_tasks_needing_production_code": 21,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 53,
-    "production_code_remaining_including_integration": 65,
-    "feature_code_remaining": 24,
-    "integration_code_remaining": 49,
+    "any_implementation_or_scaffold_only_unmerged": 51,
+    "production_code_remaining_including_integration": 63,
+    "feature_code_remaining": 22,
+    "integration_code_remaining": 47,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+  "audit_target_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }

@@ -1,31 +1,37 @@
 # Actual implementation audit —149 tasks
 
-Audit date: 2026-10-29. Active branch `codex/android-ecosystem` at `2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474`. Parallel `parallel/admin-foundation` at `7392e93b088990c3478cf32197781f831eb10f83`.
+Audit date: 2026-10-29. Active branch `codex/android-ecosystem` at `11f94da50b2d4e050a296be3c1ab861225de7d4d`. Parallel `parallel/admin-foundation` at `7392e93b088990c3478cf32197781f831eb10f83`.
 
-This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED snapshot as an implementation inventory. Historical receipts remain dated records. No application code was changed to improve these numbers. Seven previously closed native scopes are reopened because changed call paths have not received the required current hardware acceptance.
+## Functional update after the original audit
+
+Functional integration after original audit:07.7/07.8 now have canonical inclusive UTC workload/date validation, revisioned shared web/API writes, native owner-leased editing and deliberate lifecycle actions. Both are IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.9 has server CAS/replay and retained-draft foundations only; durable offline intent/conflicts are still missing.
+
+Current focused validation, separate from the inherited baseline: **8 JVM / 323 backend assertions / 23 actual cookie/API HTTP assertions**. Debug/test APK PASS; lint0 errors/62 warnings;451 paired resources. No new instrumentation/physical acceptance. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.
+
+This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED snapshot as an implementation inventory. Historical receipts remain dated records. Original audit9492f14 changed no application code. Later functional checkpoints are separately identified; changed task findings advance only with explicit source review and focused evidence. Seven previously closed native scopes remain reopened because changed call paths have not received the required current hardware acceptance.
 
 ## Generated metrics
 
 | Metric | Tasks |
 |---|---:|
 | total | 149 |
-| fully_implemented_any_reviewed_branch | 110 |
-| fully_implemented_main | 71 |
-| integrated_active_application | 71 |
+| fully_implemented_any_reviewed_branch | 112 |
+| fully_implemented_main | 73 |
+| integrated_active_application | 73 |
 | passed_all_required_verification | 19 |
 | formally_closed | 19 |
-| fully_implemented_outstanding_verification | 91 |
-| acceptance_only_current_app | 52 |
-| partially_implemented_needing_code | 24 |
-| partial_tasks_needing_production_code | 23 |
+| fully_implemented_outstanding_verification | 93 |
+| acceptance_only_current_app | 54 |
+| partially_implemented_needing_code | 22 |
+| partial_tasks_needing_production_code | 21 |
 | partial_tasks_needing_only_test_code | 1 |
 | not_implemented | 0 |
 | external_blocked | 4 |
 | implemented_only_unmerged | 39 |
-| any_implementation_or_scaffold_only_unmerged | 53 |
-| production_code_remaining_including_integration | 65 |
-| feature_code_remaining | 24 |
-| integration_code_remaining | 49 |
+| any_implementation_or_scaffold_only_unmerged | 51 |
+| production_code_remaining_including_integration | 63 |
+| feature_code_remaining | 22 |
+| integration_code_remaining | 47 |
 | reopened_previous_complete | 7 |
 
 Counts overlap. Fully implemented includes unmerged reviewed source and can have failing verification; main-only count is separate. Integrated excludes partial call paths. All required verification is a whole-task gate, not passing unit tests. Production code remaining includes integration ports; feature coding is separately counted. No weighted percentage is claimed.
@@ -36,9 +42,9 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 |---|---:|
 | accepted | 19 |
 | external_blocked | 4 |
-| implemented_integrated_awaiting_acceptance | 52 |
+| implemented_integrated_awaiting_acceptance | 54 |
 | implemented_unmerged | 39 |
-| partially_implemented | 24 |
+| partially_implemented | 22 |
 | scaffold_or_unmeasured_gate | 11 |
 | **Total** | **149** |
 
@@ -47,7 +53,7 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 | Old state | Actual categories |
 |---|---|
 | COMPLETE | accepted: 19; implemented_integrated_awaiting_acceptance: 7 |
-| PARTIAL | implemented_integrated_awaiting_acceptance: 44; implemented_unmerged: 7; partially_implemented: 21; scaffold_or_unmeasured_gate: 5 |
+| PARTIAL | implemented_integrated_awaiting_acceptance: 46; implemented_unmerged: 7; partially_implemented: 19; scaffold_or_unmeasured_gate: 5 |
 | NOT STARTED | implemented_integrated_awaiting_acceptance: 1; implemented_unmerged: 32; partially_implemented: 3; scaffold_or_unmeasured_gate: 6 |
 | BLOCKED | external_blocked: 4 |
 
@@ -69,7 +75,7 @@ UI-v3 contains actual native changes and compile fixes: PCM constant, model Work
 
 ## Verification receipts and limits
 
-Inherited at unchanged main feature HEAD2b7d7de:167 JVM cases/38 classes, debug and test APK builds, lint0 errors/59 warnings,24 backend suites/21192 executed assertions,35 actual API34 instrument cases in15.109s. The nested15 media assertions inside a combined31 banner are not counted twice. API34 exercises actual Room/Keystore/files/installed isolated PDF with injected transports; it does not prove native real HTTP, OS process/reboot, physical device or real provider delivery. JSON fingerprints all38 XML files and bounded log receipts.
+Baseline receipts at source2b7d7de:167 JVM cases/38 classes, debug and test APK builds, lint0 errors/59 warnings,24 backend suites/21192 executed assertions,35 actual API34 instrument cases in15.109s. Reuse applies only to unchanged paths, not newly integrated code. The nested15 media assertions inside a combined31 banner are not counted twice. API34 exercises actual Room/Keystore/files/installed isolated PDF with injected transports; it does not prove native real HTTP, OS process/reboot, physical device or real provider delivery. Original38 XML fingerprints remain frozen in original audit9492f14 and baseline_validation, even when targeted later runs replace local XML files.
 
 Newly executed audit checks: Git fetch/ref/dirty checks;432 paired AR/EN resources PASS; parallel Gradle configuration FAILED at SourceSet Provider API; injected server push adapter test FAILED at PHP8.0 readonly syntax before assertions. Secret screening found0 working findings and2 historical heuristic findings; both inspected blobs contain intentional example.invalid credential-URL rejection fixtures. The scanner exited nonzero; this is recorded as adjudicated synthetic inputs, not an unexplained clean PASS. History/scanner were not changed. No production fix was made during this audit. The pre-existing parallel File/import repair remains dirty and disclosed. Main current passing suites were not unnecessarily rerun. Documentation consistency checks run after reconciliation.
 
@@ -96,7 +102,7 @@ Retained closures are backed by implementation review and available inherited re
 
 TASK_QUEUE.json/MD and FUNCTIONAL_INTEGRATION_LEDGER.json now carry IMPLEMENTATION / INTEGRATION / VERIFICATION / CLOSURE / MISSING / EVIDENCE for every task. The explicit review TSV records individual scope findings; this JSON is the generated authoritative evidence/metrics view. ACCOUNT_FUNCTIONAL_INTEGRATION and current progress/testing headers point here. Historical percentages/counts remain labeled historical and cannot override this audit. The renderer/validator rejects missing axes and inconsistent totals.
 
-Next executable task: **07.7**, canonical Khatmah workload/date and shared revisioned API/web contract, then editor draft/ACK safety. Continue07.8/07.9 as a related subsystem, integrate08.x without regressing current conflict/rejection recovery, reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for the finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; run final security/performance/release gates after integration settles. Audit completion must precede normal feature execution.
+Next executable task: **07.9**. Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts. Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.
 
 ## Full task reclassification table
 
@@ -145,9 +151,9 @@ I: IMPLEMENTED / PARTIALLY_IMPLEMENTED / SCAFFOLDED / IMPLEMENTATION_BLOCKED. In
 | 07.4 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionCoordinator.kt; main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionStore.kt; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt |
 | 07.5 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/core/data/SavedCollections.kt; main:android/app/src/main/java/org/athar/app/core/ui/SavedCollectionScreen.kt |
 | 07.6 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/core/data/ActivitySummary.kt; main:android/app/src/main/java/org/athar/app/core/data/BookActivityRepository.kt; main:backend/src/Progress/ProgressService.php |
-| 07.7 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt; parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt |
-| 07.8 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt; parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt |
-| 07.9 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt |
+| 07.7 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:backend/src/Progress/Khatmah.php |
+| 07.8 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:backend/src/Progress/Khatmah.php |
+| 07.9 | PARTIAL | PARTIALLY_IMPLEMENTED | PARTIALLY_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:backend/src/Progress/Khatmah.php |
 | 08.1 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt |
 | 08.2 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
 | 08.3 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
@@ -586,27 +592,27 @@ Old status: Closure remains open, but old PARTIAL hid finished code/acceptance-o
 
 ### 07.7 — Khatmah workload and plan editor
 
-IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel native editor validates canonical workload/dates and persists owned plans; main still uses old account form.
-INTEGRATION: `NOT_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
-MISSING: Reconcile canonical rounding/overdue start validation and CAS API/web writer; preserve drafts during background ACK; integrate into current graph.
-EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt`; `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
-Old status: Closure remains open; concrete code/integration/measurement deficit is now explicit.
+IMPLEMENTATION: `IMPLEMENTED` (main); Canonical inclusive UTC workload/date validation and revisioned owner-leased native editor are integrated with the same web/API writer; refresh and late ACK preserve newer drafts, and603 pages remains99 percent.
+INTEGRATION: `INTEGRATED`. VERIFICATION: `ACCEPTANCE_PENDING`. CLOSURE: `PARTIAL`.
+MISSING: Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9.
+EVIDENCE: `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt`; `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt`; `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt`; `main:backend/src/Progress/Khatmah.php`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
+Old status: Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.
 
 ### 07.8 — Khatmah lifecycle actions
 
-IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel pause/resume/progress/restart/finish actions and server endpoint exist.
-INTEGRATION: `NOT_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
-MISSING: Prevent generic update of finished plans bypassing restart; retain action identity/idempotency and deliberate confirmations in current app.
-EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt`; `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
-Old status: Closure remains open; concrete code/integration/measurement deficit is now explicit.
+IMPLEMENTATION: `IMPLEMENTED` (main); Explicit pause/resume/finish/restart controls use CAS and confirmation; generic saves preserve lifecycle and cannot edit finished plans; exact one-revision committed action retries do not duplicate resets or reading activity.
+INTEGRATION: `INTEGRATED`. VERIFICATION: `ACCEPTANCE_PENDING`. CLOSURE: `PARTIAL`.
+MISSING: Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9.
+EVIDENCE: `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt`; `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt`; `main:backend/src/Progress/Khatmah.php`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
+Old status: Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.
 
 ### 07.9 — Khatmah offline and conflicts
 
-IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel encrypted local plans/pending sync/revision conflicts exist.
-INTEGRATION: `NOT_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
-MISSING: Fix lost-reply retry/newer-edit ACK and missing-server conflict resolution; migrate to current owned schema/deletion guards and wire sync.
-EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
-Old status: Closure remains open; concrete code/integration/measurement deficit is now explicit.
+IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel encrypted pending plans/conflict candidate exists; current main additionally has canonical CAS/replay, owner/session-leased requests and in-memory draft retention.
+INTEGRATION: `PARTIALLY_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
+MISSING: Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage.
+EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt`; `main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt`; `main:backend/src/Progress/Khatmah.php`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
+Old status: Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.
 
 ### 08.1 — Tonight dashboard and Islamic night identity
 
