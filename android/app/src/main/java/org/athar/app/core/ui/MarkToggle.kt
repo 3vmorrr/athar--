@@ -18,7 +18,7 @@ import kotlinx.coroutines.*
 import org.athar.app.R
 import org.athar.app.core.network.ApiException
 
-@Composable fun MarkToggle(identity: String, initial: Boolean, favorite: Boolean, feedback: SnackbarHostState, onChange: suspend (Boolean) -> Unit) {
+@Composable fun MarkToggle(identity: String, initial: Boolean, favorite: Boolean, feedback: SnackbarHostState, enabled: Boolean = true, onChange: suspend (Boolean) -> Unit) {
     var selected by remember(identity, initial) { mutableStateOf(initial) }
     var busy by remember(identity) { mutableStateOf(false) }
     val reduced = reducedMotion()
@@ -29,7 +29,7 @@ import org.athar.app.core.network.ApiException
     val scale by animateFloatAsState(if (selected) 1.04f else 1f, if (reduced) snap() else spring(dampingRatio = AtharMotion.SmallSpringDamping, stiffness = AtharMotion.SmallSpringStiffness), label = "mark-feedback")
     val label = stringResource(if (favorite) { if (selected) R.string.remove_favorite else R.string.add_favorite } else { if (selected) R.string.remove_bookmark else R.string.bookmark })
     Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
-        IconToggleButton(checked = selected, enabled = !busy, onCheckedChange = { next ->
+        IconToggleButton(checked = selected, enabled = enabled && !busy, onCheckedChange = { next ->
             val previous = selected; selected = next; busy = true
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             scope.launch {

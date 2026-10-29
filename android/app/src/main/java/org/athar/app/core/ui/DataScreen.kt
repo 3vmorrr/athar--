@@ -19,6 +19,7 @@ import org.athar.app.core.network.ApiException
 
 data class DataState(val loading: Boolean = true, val result: CachedResult? = null, val error: String? = null)
 class DataViewModel(private val graph: AppGraph, private val path: String, private val query: Map<String, String>) : ViewModel() {
+    private val owner = requireNotNull(graph.session.userId)
     private val mutable = MutableStateFlow(DataState())
     val state = mutable.asStateFlow()
     private var job: Job? = null
@@ -26,7 +27,7 @@ class DataViewModel(private val graph: AppGraph, private val path: String, priva
         job?.cancel()
         job = viewModelScope.launch {
             mutable.value = mutable.value.copy(loading = true, error = null)
-            try { mutable.value = DataState(false, graph.content.get(path, query)) }
+            try { mutable.value = DataState(false, graph.content.get(path, query, expectedOwner = owner)) }
             catch (failure: CancellationException) { throw failure }
             catch (failure: Exception) { mutable.value = DataState(false, error = if (failure is ApiException) failure.message else null) }
         }

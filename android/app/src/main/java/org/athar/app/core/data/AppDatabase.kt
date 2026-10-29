@@ -30,6 +30,8 @@ interface AtharDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun deletion(record: LocalAccountDeletion)
     @Query("DELETE FROM account_deletions WHERE userId=:user AND requestId=:request AND state IN ('prepared','pending','rejected')") suspend fun abortDeletion(user: Long, request: String)
     @Query("DELETE FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun removeCache(user: Long, key: String)
+    @Query("DELETE FROM cached_documents WHERE userId=:user AND (substr(cacheKey,1,length(:ar))=:ar OR substr(cacheKey,1,length(:en))=:en)")
+    suspend fun removeContentPath(user: Long, ar: String, en: String)
     @Query("SELECT cacheKey,updatedAt,LENGTH(payloadCipher) AS bytes FROM cached_documents WHERE userId=:user AND (cacheKey LIKE 'ar:%' OR cacheKey LIKE 'en:%')") suspend fun contentCacheEntries(user:Long):List<ContentCacheEntry>
     @Transaction suspend fun trimContentCache(user:Long,now:Long,policy:ContentCachePolicy){
         policy.evictions(contentCacheEntries(user),now).forEach{removeCache(user,it)}

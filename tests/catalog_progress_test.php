@@ -66,4 +66,46 @@ isolated_database(static function(PDO $db):void{
     $matched=array_merge($allFirst['items'],$allSecond['items']);
     assert_progress(count(array_filter($matched,static fn(array $item):bool=>$item['repeat_count']===null))===1&&!in_array('Hidden category',array_column($matched,'title'),true),'search includes NULL-repeat item and excludes unreviewed item');
 
+    // Regression: source paging sliced the first 500 rows rather than the collection.
+    $index=\Athar\Domain\QuranIndex::standard();
+    for($global=1;$global<=520;$global++){
+        $at=$index->position($global);
+        $progress->addBookmark($u,['surah'=>$at['surah'],'ayah'=>$at['ayah'],'label'=>'saved '.$global]);
+    }
+    assert_progress(count($progress->bookmarks($u))===520,'legacy reader receives complete canonical marker set beyond 500');
+    $seen=[];
+    for($page=1;$page<=11;$page++){
+        $result=$progress->bookmarks($u,['paged'=>'1','page'=>(string)$page,'per_page'=>'50']);
+        assert_progress($result['pagination']['total']===520&&$result['pagination']['has_more']===($page<11),'complete bookmark count and exact has_more');
+        $seen=array_merge($seen,array_column($result['items'],'id'));
+    }
+    assert_progress(count($seen)===520&&count(array_unique($seen))===520,'same-timestamp pages have stable unique tie ordering');
+    assert_progress($progress->bookmarks($other,['paged'=>'1'])['pagination']['total']===0,'paged bookmark owner isolated');
+    $tail=$progress->bookmarks($u,['paged'=>'1','page'=>'12','per_page'=>'50']);
+    assert_progress($tail['items']===[]&&!$tail['pagination']['has_more'],'out of range page is explicit empty');
+    foreach([['paged'=>[]],['paged'=>'yes'],['paged'=>'1','page'=>'0'],['paged'=>'1','page'=>'1.5'],['paged'=>'1','page'=>[]],['paged'=>'1','per_page'=>'51'],['paged'=>'1','page'=>'10001']] as $query)
+        reject_progress(fn()=>$progress->bookmarks($u,$query),422,'malformed page query rejected without coercion');
+    $progress->favorite($u,'lesson',1,true);
+    $fav=$progress->favorites($u,['paged'=>'1','per_page'=>'1']);
+    assert_progress($fav['pagination']['total']===2&&count($fav['items'])===1&&$fav['pagination']['has_more'],'favorite pagination and complete visibility filtered count');
+    $db->exec('UPDATE lessons SET is_published=0 WHERE id=1');
+    assert_progress($progress->favorites($u,['paged'=>'1'])['pagination']['total']===1,'hidden favorite excluded from count and rows');
+    for($i=0;$i<510;$i++){
+        $db->prepare("INSERT INTO books(title,author,source_url,rights_basis,is_published) VALUES(?, 'Author','https://example.invalid/source','Permission',1)")->execute(['Saved book '.$i]);
+        $progress->favorite($u,'book',(int)$db->lastInsertId(),true);
+    }
+    $far=$progress->favorites($u,['paged'=>'1','page'=>'11','per_page'=>'50']);
+    assert_progress($far['pagination']['total']===511&&count($far['items'])===11&&!$far['pagination']['has_more'],'favorites after first 500 remain reachable');
+    $auth=new \Athar\Identity\AuthService($db,new \Athar\Identity\OtpService($db,str_repeat('a',32),static fn()=>false));
+    $db->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute([password_hash('CollectionFixture123!',PASSWORD_BCRYPT,['cost'=>4]),$u]);
+    $login=$auth->login('one@example.invalid','CollectionFixture123!');
+    $api=new \Athar\Http\ApiKernel($db,$auth,new \Athar\Identity\RateLimiter($db,str_repeat('r',32)));
+    $headers=['Authorization'=>'Bearer '.$login['session']['access_token']];
+    foreach(['/api/v1/quran/bookmarks','/api/v1/me/favorites'] as $path){
+        $response=$api->handle(new \Athar\Http\Request('GET',$path,[],$headers,['paged'=>'1','page'=>'11','per_page'=>'50']));
+        assert_progress($response->status===200&&$response->body['data']['pagination']['page']===11&&count($response->body['data']['items'])>0,'API forwards full collection paging query');
+        assert_progress($api->handle(new \Athar\Http\Request('GET',$path,[],$headers,['paged'=>'1','page'=>[]]))->status===422,'API rejects array query instead of silently coercing');
+    }
+    $db->beginTransaction();$progress->bookmarks($u,['paged'=>'1']);assert_progress($db->inTransaction(),'caller transaction preserved by collection read');$db->rollBack();
+
 });echo 'PASS: '.$checks." catalog/publication/ownership/progress/retry/comment/plan assertions.\n";

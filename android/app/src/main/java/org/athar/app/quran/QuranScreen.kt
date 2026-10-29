@@ -36,6 +36,26 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
     val state = mutable.asStateFlow()
     private val mutableBookmarks = MutableStateFlow<Set<Int>>(emptySet())
     val bookmarks = mutableBookmarks.asStateFlow()
+    private val mutableBookmarkReady = MutableStateFlow(false)
+    val bookmarkReady = mutableBookmarkReady.asStateFlow()
+    private var bookmarkLoad: Job? = null
+    fun refreshBookmarks() {
+        bookmarkLoad?.cancel()
+        bookmarkLoad = viewModelScope.launch {
+            mutableBookmarkReady.value = false
+            try {
+                // Old cached responses may contain only the first 500 markers.
+                graph.session.requireVerifiedOwner(readerOwner)
+                val data = graph.content.get("quran/bookmarks", allowCache = false).data
+                val index = graph.quran.data().index
+                val rows = org.athar.app.core.data.SavedCollections.rows("bookmarks", data, index)
+                graph.session.requireVerifiedOwner(readerOwner)
+                mutableBookmarks.value = rows.map { index.global(it.text("surah").toInt(), it.text("ayah").toInt()) }.toSet()
+                mutableBookmarkReady.value = true
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { /* Unknown markers stay unavailable until retry. */ }
+        }
+    }
     private val readingRetry=MutableStateFlow(0)
     private val readerOwner=requireNotNull(graph.session.userId)
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,10 +72,8 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
             catch (_: Exception) { mutable.value = QuranState(loading = false, error = true) }
         }
         viewModelScope.launch { try { graph.reading.refresh(readerOwner) } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Local resume remains available offline. */ } }
-        viewModelScope.launch {
-            try { val data = graph.content.get("quran/bookmarks").data; mutableBookmarks.value = data.asJsonArray.map { row -> graph.quran.data().index.global(row.text("surah").toInt(), row.text("ayah").toInt()) }.toSet() }
-            catch (failure: CancellationException) { throw failure } catch (_: Exception) { /* Initial marker lookup may be unavailable offline. */ }
-        }
+        refreshBookmarks()
+        viewModelScope.launch { graph.content.revision.drop(1).collect { refreshBookmarks() } }
     }
     private fun showLoaded(selection: QuranSelection, data: QuranData, restoring: Boolean = false) {
         val previous = saved.get<Long>("scroll_request") ?: 0L
@@ -144,6 +162,7 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
     suspend fun resolvePosition(remote:Boolean)=graph.reading.resolve(remote,readerOwner)
     suspend fun syncReading()=graph.reading.sync(readerOwner)
     suspend fun bookmark(ayah: AyahText, saved: Boolean) {
+        check(mutableBookmarkReady.value)
         graph.session.request(if (saved) "POST" else "DELETE", "quran/bookmarks", mapOf("surah" to ayah.position.surah, "ayah" to ayah.position.ayah),expectedUser=readerOwner)
         mutableBookmarks.value = if (saved) mutableBookmarks.value + ayah.position.globalIndex else mutableBookmarks.value - ayah.position.globalIndex
         graph.content.invalidate("quran/bookmarks",readerOwner)
@@ -208,6 +227,7 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
     val state by vm.state.collectAsStateWithLifecycle()
     val searchPage = state.searchPage
     val bookmarks by vm.bookmarks.collectAsStateWithLifecycle()
+    val bookmarkReady by vm.bookmarkReady.collectAsStateWithLifecycle()
     val storedReading by vm.reading.collectAsStateWithLifecycle()
     val reading=(storedReading as? ProtectedRead.Ready)?.value
     val listState = rememberLazyListState()
@@ -240,6 +260,7 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
     val saved = stringResource(R.string.saved); val failed = stringResource(R.string.network_error)
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
+            if (!bookmarkReady) TextButton(onClick = vm::refreshBookmarks) { Text(stringResource(R.string.account_data_unavailable) + " · " + stringResource(R.string.retry)) }
             reading?.let { position ->
                 Surface(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
                     Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -374,7 +395,7 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
                             FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                                 TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }
-                                MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar) { selected -> vm.bookmark(ayah, selected) }
+                                MarkToggle("ayah-${ayah.position.globalIndex}", ayah.position.globalIndex in bookmarks, false, snackbar, enabled = bookmarkReady) { selected -> vm.bookmark(ayah, selected) }
                                 TextButton(onClick = { selectedAyah = ayah }) { Text(stringResource(R.string.more)) }
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

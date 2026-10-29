@@ -300,4 +300,5 @@
     <string name="account_deletion_reauth">If the deletion request was not sent or could not finish, enter this account’s password to retry. Your password is not stored.</string>
     <string name="check_deletion_result">Check deletion result</string>
     <string name="retry_account_deletion">Retry account deletion</string>
+    <string name="saved_collection_page">Page %1$d · Saved items: %2$d</string>
 </resources>

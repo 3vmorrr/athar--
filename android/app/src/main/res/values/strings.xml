@@ -328,4 +328,5 @@
     <string name="account_deletion_reauth">إذا لم تُرسل محاولة الحذف أو تعذر إكمالها، أدخل كلمة مرور هذا الحساب لإعادة المحاولة. لا نحفظ كلمة المرور.</string>
     <string name="check_deletion_result">التحقق من نتيجة الحذف</string>
     <string name="retry_account_deletion">إعادة محاولة حذف الحساب</string>
+    <string name="saved_collection_page">الصفحة %1$d · إجمالي العناصر المحفوظة: %2$d</string>
 </resources>

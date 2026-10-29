@@ -42,36 +42,7 @@ import java.time.LocalDate
                 if (data.text("daily_pages").isNotBlank()) item { Text(stringResource(R.string.daily_pages, data.text("daily_pages"))) }
             }
         }
-        else -> {
-            val path = if (tool == "bookmarks") "quran/bookmarks" else "me/favorites"
-            DataScreen(graph, path) { data, reload ->
-                if(!AccountPayloads.valid(tool,data)){AccountDataFailure(reload);return@DataScreen}
-                val rows = data.asJsonArray.toList()
-                LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    item(key = "identity", contentType = "heading") { AtharScreenIdentity(stringResource(if (tool == "bookmarks") R.string.bookmarks else R.string.favorites), if (tool == "bookmarks") AtharIcons.Bookmark else AtharIcons.Favorite) }
-                    if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
-                    items(rows, key = { if (tool == "bookmarks") it.text("id") else it.text("target_type") + it.text("target_id") }, contentType = { tool }) { row ->
-                        Column {
-                            if (tool == "bookmarks") {
-                                Text("${row.text("surah")}:${row.text("ayah")} ${row.text("label")}", style = MaterialTheme.typography.titleMedium)
-                                val surah = row.text("surah").toIntOrNull()
-                                val ayah = row.text("ayah").toIntOrNull()
-                                TextButton(onClick = { open("quran/$surah/$ayah") }, enabled = surah in 1..114 && ayah in 1..286) {
-                                    Text(stringResource(R.string.open_reader))
-                                }
-                            }
-                            else TextButton(onClick = { val kind = row.text("target_type"); open((if (kind == "series") "series" else kind + "s") + "/" + row.text("target_id")) }) { Text(row.text("title")) }
-                            TextButton(onClick = { scope.launch {
-                                try { if (tool == "bookmarks") graph.session.request("DELETE", "$path/${row.text("id")}",expectedUser=requireNotNull(owner)) else graph.session.request("DELETE", path, mapOf("target_type" to row.text("target_type"), "target_id" to row.text("target_id").toInt()),expectedUser=requireNotNull(owner)); reload() }
-                                catch (failure: CancellationException) { throw failure } catch (_: Exception) { failed = true }
-                            } }) { Text(stringResource(R.string.delete_action)) }
-                            HorizontalDivider()
-                        }
-                    }
-                    if (failed) item { MessagePanel(stringResource(R.string.network_error), true) }
-                }
-            }
-        }
+        else -> SavedCollectionScreen(graph, tool, open)
     }
 }
 

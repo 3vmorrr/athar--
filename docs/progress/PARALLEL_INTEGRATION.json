@@ -3590,15 +3590,19 @@
   },
   "active_review": {
     "tasks": [
-      "07.4"
+      "07.5"
     ],
-    "state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / OS AND PHYSICAL ACCEPTANCE OPEN",
+    "state": "RECONCILED / LOCAL AND API34 STORAGE FIXTURE GATES PASSED / UI AND PHYSICAL ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
+    "target_baseline": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
     "findings": [
-      "Encrypted durable owned deletion protocol and recovery worker; queue persistence precedes dispatch. No purge on missing proof or unknown result.",
-      "Cold persisted credentials, same-owner late refresh and newer B sign-in are fenced correctly; post-response captured actor A cleanup preserves B. Root/private API/Room/sync/book/PDF/Media3 observe deletion state.",
-      "148 JVM/debug/test APK/lint/415 resources,23 backend suites(21,113 checks),actual API34 storage/deletion/migration/PDF/Quran28 PASS. Actual process/OS/native HTTP/physical/provider evidence remains open."
+      "Source88011b4/0816524/d7c7270/607f6d0 reviewed and reconciled manually; preserve current premium UI, exact Quran navigation and existing export/deletion protocol.",
+      "Source sliced only first500 results. SQL now pages/counts the full owned visible set with deterministic order, strict query rejection and caller transaction preservation. Legacy Quran marker set is complete (canonical bound6236); old favorite array compatibility retained.",
+      "Native pages validate canonical Quran coordinates, unique stable IDs/targets, string/boolean/integer types and exact count/has_more consistency. Captured owner checks, confirmed-only removal, retry/cache notices, previous-page fallback and exact destinations retained.",
+      "Invalidate every query page in both languages only for captured owner; late GET cannot repopulate invalidated cache. Request generation leases reject delayed old-account responses. Quran ignores old truncated marker cache and disables marker action until authoritative lookup succeeds.",
+      "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md;152 JVM/35 classes/debug APK/test APK/lint(0 errors;59 warnings)/416 paired resources PASS.",
+      "All23 isolated backend suites PASS:21,143 executed assertions;catalog collection suite81 includes520 bookmarks,511 visible favorites, malformed/API page queries, ownership and publication filtering.",
+      "Actual API34 final31 cases PASS in13.153s:3 new Room/Keystore-backed cache isolation/in-flight invalidation/account-switch fixtures plus28 retained deletion/export/migration/PDF/Quran/counter/reading/lesson regressions. Injected transports; real native HTTP/UI/physical acceptance remains open."
     ]
   },
   "previous_visual_review": {

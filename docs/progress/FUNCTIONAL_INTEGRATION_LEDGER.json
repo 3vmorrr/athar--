@@ -3719,7 +3719,7 @@
       "name": "Saved content collections",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "review_state": "RECONCILED / LOCAL AND API34 STORAGE FIXTURE GATES PASSED / UI AND PHYSICAL ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3767,8 +3767,19 @@
       "tests_required": "Owner/paging/deleted target/optimistic rollback/offline cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete favorites/bookmarks list paging, removal and exact destination navigation. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": []
+      "remaining_acceptance": "Real native HTTP and UI journeys for paging/removal/navigation/offline/retry, stale/deleted targets, AR/EN/accessibility and authorized physical API27 phone. No task completion from transport fixtures.",
+      "acceptance_evidence": [
+        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md;152 JVM/35 classes/debug APK/test APK/lint(0 errors;59 warnings)/416 paired resources PASS.",
+        "All23 isolated backend suites PASS:21,143 executed assertions;catalog collection suite81 includes520 bookmarks,511 visible favorites, malformed/API page queries, ownership and publication filtering.",
+        "Actual API34 final31 cases PASS in13.153s:3 new Room/Keystore-backed cache isolation/in-flight invalidation/account-switch fixtures plus28 retained deletion/export/migration/PDF/Quran/counter/reading/lesson regressions. Injected transports; real native HTTP/UI/physical acceptance remains open."
+      ],
+      "integration_findings": [
+        "Source88011b4/0816524/d7c7270/607f6d0 reviewed and reconciled manually; preserve current premium UI, exact Quran navigation and existing export/deletion protocol.",
+        "Source sliced only first500 results. SQL now pages/counts the full owned visible set with deterministic order, strict query rejection and caller transaction preservation. Legacy Quran marker set is complete (canonical bound6236); old favorite array compatibility retained.",
+        "Native pages validate canonical Quran coordinates, unique stable IDs/targets, string/boolean/integer types and exact count/has_more consistency. Captured owner checks, confirmed-only removal, retry/cache notices, previous-page fallback and exact destinations retained.",
+        "Invalidate every query page in both languages only for captured owner; late GET cannot repopulate invalidated cache. Request generation leases reject delayed old-account responses. Quran ignores old truncated marker cache and disables marker action until authoritative lookup succeeds."
+      ],
+      "reconciled": "Complete SQL-backed owned collection pages, strict canonical/native validation, confirmed-only removal and exact destinations. Shared cache invalidation fences stale delayed responses and account switches; authoritative full reader markers replace truncated/unknown state."
     },
     {
       "id": "07.6",
@@ -14274,23 +14285,22 @@
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
     "date": "2026-10-29",
-    "codex_remote": "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
+    "codex_remote": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
-      "07.5",
       "07.6"
     ],
-    "state": "SOURCE COLLECTION PAGING/VALIDATION AND GENUINE COMPLETED-DOWNLOAD ACTIVITY NEXT; RETAIN DELETION FENCES"
+    "state": "GENUINE COMPLETED-DOWNLOAD ACTIVITY AND TRUTHFUL PERSONAL DASHBOARD NEXT; RETAIN DELETION AND EXPORT BOUNDARIES"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",
-    "scope": "WP03-WP06 plus WP07.1-WP07.4 and shared foundations",
-    "jvm_tests": 148,
+    "scope": "WP03-WP06 plus WP07.1-WP07.5 and shared foundations",
+    "jvm_tests": 152,
     "backend_suites": 23,
-    "backend_executed_assertions": 21113,
-    "api34_instrumentation_tests": 28,
+    "backend_executed_assertions": 21143,
+    "api34_instrumentation_tests": 31,
     "state": "PASS / REAL NATIVE HTTP, OS, PHYSICAL AND PROVIDER GATES OPEN"
   }
 }
