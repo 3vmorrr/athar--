@@ -14,6 +14,44 @@ import org.junit.Test
 import java.util.UUID
 
 class AccountDeletionStorageTest {
+    @Test fun encryptedIntentSurvivesReopenRejectsSwapsAndKeepsAPermanentFenceAfterCleanup() = runBlocking {
+        val context=ApplicationProvider.getApplicationContext<Context>()
+        val name="deletion-journal-${UUID.randomUUID()}.db"
+        fun open()=Room.databaseBuilder(context,AppDatabase::class.java,name).build()
+        var db=open();val cipher=PrivateCipher();val namespace="123456abcdef"
+        try {
+            var store=AccountDeletionStore(namespace,db,cipher)
+            val prepared=store.prepare(1){}
+            assertTrue(store.isBlocked(1))
+            val encrypted=checkNotNull(db.dao().deletion(1)).payloadCipher!!
+            assertFalse(encrypted.contains(prepared.secret));assertFalse(encrypted.contains(prepared.requestId))
+            val pending=store.transition(prepared,DeletionPhase.PENDING)
+            db.close();db=open();store=AccountDeletionStore(namespace,db,cipher);store.initialize()
+            assertEquals(pending,store.intent(1));assertTrue(store.isBlocked(1))
+            val original=checkNotNull(db.dao().deletion(1))
+            val swapped=original.copy(userId=2);db.dao().deletion(swapped)
+            assertTrue(runCatching{store.intent(2)}.isFailure);assertEquals(swapped,db.dao().deletion(2))
+            db.dao().abortDeletion(2,swapped.requestId)
+            db.dao().deletion(original.copy(state="rejected"))
+            assertTrue(runCatching{store.intent(1)}.isFailure)
+            assertEquals(original.payloadCipher,db.dao().deletion(1)!!.payloadCipher)
+            db.dao().deletion(original)
+            assertTrue(runCatching{AccountDeletionStore("abcdef123456",db,cipher).intent(1)}.isFailure)
+            assertTrue(runCatching{store.prepare(3){error("actor changed fixture")}}.isFailure)
+            assertNull(db.dao().deletion(3))
+            val confirmed=store.transition(pending,DeletionPhase.CONFIRMED)
+            db.dao().deleteUser(1)
+            val cleaned=store.transition(confirmed,DeletionPhase.CLEANED);store.forgetCapability(cleaned)
+            assertNull(db.dao().deletion(1)!!.payloadCipher)
+            db.close();db=open();store=AccountDeletionStore(namespace,db,cipher);store.initialize()
+            assertTrue(store.isBlocked(1));assertNull(store.intent(1))
+            assertTrue(runCatching{db.dao().cache(CachedDocument(1,"late","cipher",1))}.exceptionOrNull() is AccountDeletionPending)
+            db.dao().cache(CachedDocument(2,"keep","other-owner",1))
+            val rejected=store.transition(store.transition(store.prepare(4){},DeletionPhase.PENDING),DeletionPhase.REJECTED)
+            store.removeRejected(rejected);assertFalse(store.isBlocked(4))
+            assertEquals("other-owner",db.dao().cache(2,"keep")!!.payloadCipher)
+        } finally { db.close();context.deleteDatabase(name) }
+    }
     @Test fun durableFenceBlocksQueuedLateWritesAndNeverTouchesAnotherOwner() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()

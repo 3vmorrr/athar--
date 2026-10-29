@@ -9,8 +9,95 @@ import org.junit.Test
 import org.athar.app.auth.*
 import org.athar.app.core.network.*
 import org.athar.app.core.security.*
+import org.athar.app.core.data.*
 
 class SessionRepositoryTest {
+    @Test fun coldDeletionCleanupClearsOnlyTheOwnedPersistedCredentialFile()=runTest {
+        val store=MemoryStore();SessionRepository(FakeTransport{_,_->reply()},store).login("one@example.test","Fixture123!")
+        val cold=SessionRepository(FakeTransport{_,_->error("No network needed")},store)
+        cold.forgetDeletedOwner(1);assertNull(store.value);assertEquals(AuthState.SignedOut,cold.state.value)
+        SessionRepository(FakeTransport{_,_->reply(id=2)},store).login("two@example.test","Fixture123!")
+        val other=store.value;SessionRepository(FakeTransport{_,_->error("No network needed")},store).forgetDeletedOwner(1)
+        assertEquals(other,store.value)
+    }
+    @Test fun deletionCleanupDoesNotInvalidateANewerSignInIntentForB()=runTest {
+        val store=MemoryStore();var actor=1;val started=CompletableDeferred<Unit>();val finish=CompletableDeferred<Unit>()
+        val repo=SessionRepository(FakeTransport{_,_->if(actor==2){started.complete(Unit);finish.await();reply(id=2)}else reply()},store)
+        repo.login("one@example.test","Fixture123!");actor=2
+        val signingIn=async{repo.login("two@example.test","Fixture123!")};started.await()
+        repo.forgetDeletedOwner(1);finish.complete(Unit);signingIn.await()
+        assertEquals(2L,repo.userId);assertEquals(2L,store.value!!.user.id)
+    }
+    @Test fun delayedRefreshCannotPersistADeletedOwnersCredentialsAgain()=runTest {
+        val store=MemoryStore();var now=0L;val started=CompletableDeferred<Unit>();val finish=CompletableDeferred<Unit>()
+        val repo=SessionRepository(FakeTransport{path,_->when(path){
+            "auth/login"->reply()
+            "auth/refresh"->{started.complete(Unit);finish.await();reply("old-refresh")}
+            else->JsonParser.parseString("{}")
+        }},store,now={now})
+        repo.login("one@example.test","Fixture123!");now=901_000
+        val pending=async{runCatching{repo.request("GET","me",expectedUser=1)}};started.await()
+        repo.forgetDeletedOwner(1);finish.complete(Unit)
+        assertTrue(pending.await().isFailure);assertNull(store.value);assertEquals(AuthState.SignedOut,repo.state.value)
+    }
+    @Test fun blockedOwnerCannotDispatchPrivateRequestsButCanSubmitItsPasswordAuthenticatedDeletion()=runTest {
+        val store=MemoryStore();var blocked=false;var deletes=0
+        val transport=object:ApiTransport{
+            override suspend fun request(method:String,path:String,body:Map<String,Any?>,query:Map<String,String>,bearer:String?,language:String):JsonElement{
+                if(path=="auth/login")return reply()
+                check(method=="DELETE"&&path=="me");deletes++
+                assertEquals("a",bearer);assertEquals(64,(body["recovery_secret"] as String).length)
+                return JsonParser.parseString("{\"status\":\"deleted\"}")
+            }
+        }
+        val repo=SessionRepository(transport,store,ownerBlocked={blocked});repo.login("one@example.test","Fixture123!");val before=store.value
+        blocked=true
+        assertTrue(runCatching{repo.request("GET","me",expectedUser=1)}.exceptionOrNull() is ApiException)
+        repo.submitDeletion(AccountDeletionIntent.prepare("123456abcdef",1),"Fixture123!")
+        assertEquals(1,deletes);assertEquals(before,store.value)
+        repo.forgetDeletedOwner(2);assertEquals(before,store.value)
+        repo.forgetDeletedOwner(1);assertNull(store.value)
+    }
+    @Test fun successfulDeletionResultForACapturedOwnerSurvivesActorSwitchWithoutClearingB()=runTest {
+        val store=MemoryStore();var actor=1;val started=CompletableDeferred<Unit>();val finish=CompletableDeferred<Unit>()
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply(id=actor)else{started.complete(Unit);finish.await();JsonParser.parseString("{\"status\":\"deleted\"}")}},store)
+        repo.login("one@example.test","Fixture123!")
+        val delete=async{repo.submitDeletion(AccountDeletionIntent.prepare("123456abcdef",1),"Fixture123!")};started.await()
+        actor=2;repo.login("two@example.test","Fixture123!");val before=store.value;finish.complete(Unit);delete.await()
+        repo.forgetDeletedOwner(1);assertEquals(before,store.value);assertEquals(2L,repo.userId)
+    }
+    @Test fun deletionRejectionsAreTaggedOnlyForAnActualServerResponse()=runTest {
+        val store=MemoryStore();var calls=0
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply()else{calls++;throw ApiException(422,"invalid_credentials","")}},store)
+        val intent=AccountDeletionIntent.prepare("123456abcdef",1)
+        assertTrue(runCatching{repo.submitDeletion(intent,"Fixture123!")}.exceptionOrNull() is DeletionNotDispatched)
+        assertEquals(0,calls);repo.login("one@example.test","Fixture123!")
+        assertTrue(runCatching{repo.submitDeletion(intent,"wrong")}.exceptionOrNull() is DeletionRejected)
+        assertEquals(1,calls);assertNotNull(store.value)
+    }
+    @Test fun journalInitializationFailurePreservesStoredCredentialsAndCanRetry()=runTest {
+        val store=MemoryStore();val transport=FakeTransport{path,_->if(path=="auth/login")reply()else JsonParser.parseString("{\"id\":1,\"email\":\"reader@example.test\",\"email_verified\":true}")}
+        SessionRepository(transport,store).login("one@example.test","Fixture123!");val saved=store.value
+        var fail=true
+        val repo=SessionRepository(transport,store,beforeRestore={if(fail)throw java.io.IOException("journal fixture")})
+        repo.restore();assertEquals(AuthState.RestoreFailed,repo.state.value);assertEquals(saved,store.value)
+        fail=false;repo.restore();assertTrue(repo.state.value is AuthState.SignedIn);assertEquals(1L,repo.userId)
+    }
+    @Test fun restoredDeletionFenceIsLoadedBeforeAnyPrivateDispatchAndProofUsesNoBearer()=runTest {
+        val store=MemoryStore();SessionRepository(FakeTransport{_,_->reply()},store).login("one@example.test","Fixture123!")
+        var blocked=false;var privateCalls=0;val proofBearers=mutableListOf<String?>()
+        val transport=object:ApiTransport{
+            override suspend fun request(method:String,path:String,body:Map<String,Any?>,query:Map<String,String>,bearer:String?,language:String):JsonElement{
+                if(path=="auth/deletion-receipt"){proofBearers.add(bearer);return JsonParser.parseString(if(method=="DELETE")"{\"status\":\"forgotten\"}" else "{}")}
+                privateCalls++;return JsonParser.parseString("{}")
+            }
+        }
+        val repo=SessionRepository(transport,store,ownerBlocked={blocked},beforeRestore={blocked=true})
+        repo.restore();assertTrue(repo.state.value is AuthState.SignedIn);assertEquals(0,privateCalls)
+        assertTrue(runCatching{repo.lease(1)}.isFailure);repo.deletionLease(1)
+        val intent=AccountDeletionIntent.prepare("123456abcdef",1);repo.deletionProof(intent);repo.acknowledgeDeletion(intent)
+        assertEquals(listOf(null,null),proofBearers)
+    }
     @Test fun exportLeaseExpiresEvenWhenTheSameOwnerSignsInAgain()=runTest {
         var actor=1
         val repo=SessionRepository(FakeTransport{_,_->reply(id=actor)},MemoryStore())
@@ -58,14 +145,14 @@ class SessionRepositoryTest {
         val results=listOf(
             runCatching{repo.updateProfile("Fixture","fixture",1)},
             runCatching{repo.changePassword("old","new password","new password",1)},
-            runCatching{repo.delete("fixture password",1)},
+            runCatching{repo.submitDeletion(AccountDeletionIntent.prepare("123456abcdef",1),"fixture password")},
             runCatching{repo.logout(1)},
             runCatching{repo.revokeOtherSessions(1)},
             runCatching{repo.verify("123456",1)},
             runCatching{repo.resend(1)},
             runCatching{repo.request("DELETE","me/favorites",expectedUser=1)}
         )
-        assertTrue(results.all{it.exceptionOrNull() is ApiException})
+        assertTrue(results.all{it.exceptionOrNull().let { failure -> failure is ApiException || (failure is DeletionNotDispatched && failure.failure is ApiException) }})
         assertEquals(0,writes);assertEquals(before,store.value);assertEquals(2L,repo.userId)
     }
     @Test fun queuedPrivateWritesCannotUseAnotherAccount()=runTest {

@@ -21,8 +21,8 @@ class PersistentSyncCoordinator(context:Context,private val graph:AppGraph) {
     init {
         scope.launch {
             var previous:Long?=null
-            graph.session.state.collect{state->
-                val owner=(state as? AuthState.SignedIn)?.user?.id
+            combine(graph.session.state,graph.deletionStore.blockedOwners){state,_->state}.collect{state->
+                val owner=(state as? AuthState.SignedIn)?.user?.id?.takeUnless(graph.deletionStore::isBlocked)
                 if(state !is AuthState.Restoring&&owner!=previous){
                     previous?.let(schedule::cancel)
                     previous=owner

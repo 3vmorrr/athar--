@@ -30,14 +30,19 @@ class MainActivity : AppCompatActivity() {
             })
             val settings by vm.settings.collectAsStateWithLifecycle()
             val auth by vm.auth.collectAsStateWithLifecycle()
+            val deletionOwners by graph.deletionStore.blockedOwners.collectAsStateWithLifecycle()
             AtharTheme(settings?.theme ?: "light") {
                 Surface {
                     when {
                         settings == null || auth is AuthState.Restoring -> LoadingScreen()
+                        auth is AuthState.RestoreFailed -> SessionRestoreFailure(vm::restoreSession)
                         settings?.onboardingComplete == false -> OnboardingScreen(vm::completeOnboarding)
                         auth is AuthState.SignedOut -> AuthScreen(vm)
                         auth is AuthState.Pending -> key((auth as AuthState.Pending).user.id) { VerificationScreen(vm, auth as AuthState.Pending) }
-                        auth is AuthState.SignedIn -> key((auth as AuthState.SignedIn).user.id) { MainShell(vm, auth as AuthState.SignedIn) }
+                        auth is AuthState.SignedIn -> key((auth as AuthState.SignedIn).user.id) {
+                            val actor=auth as AuthState.SignedIn
+                            if(actor.user.id in deletionOwners)AccountDeletionRecoveryScreen(vm,actor.user.id)else MainShell(vm,actor)
+                        }
                     }
                 }
             }

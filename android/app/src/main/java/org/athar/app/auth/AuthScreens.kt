@@ -25,6 +25,12 @@ import org.athar.app.core.ui.*
 }
 @Composable private fun feedbackText(code: String): String = stringResource(authFeedbackResource(code))
 
+@Composable fun SessionRestoreFailure(retry:()->Unit) {
+    Box(Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp),contentAlignment=Alignment.TopCenter){
+        MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=retry){Text(stringResource(R.string.retry))}}
+    }
+}
+
 @Composable fun AuthScreen(vm: AppViewModel) {
     var mode by rememberSaveable { mutableStateOf("login") }
     var name by rememberSaveable { mutableStateOf("") }

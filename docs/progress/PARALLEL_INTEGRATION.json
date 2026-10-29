@@ -3532,9 +3532,10 @@
   "validation_strategy": "docs/progress/VALIDATION_STRATEGY.md; user optimization2026-10-27 supersedes per-small-task global validation. Every task reviewed; immediate relevant deep gates for high risks;3–6 task batches; WP/milestone/final gates; queued physical sessions.",
   "next_batch": {
     "tasks": [
-      "07.4"
+      "07.5",
+      "07.6"
     ],
-    "state": "DURABLE CONFIRMED DELETION AND OWNED RECOVERY NEXT"
+    "state": "COLLECTION PAGING, STRICT VALIDATION AND GENUINE DOWNLOAD ACTIVITY NEXT"
   },
   "progress_audit": "Historic14d snapshot unchanged. Current post-batch closure:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Exact repository-wide full/partial/absent implementation totals remain unverified.",
   "campaign_batch": {
@@ -3591,13 +3592,13 @@
     "tasks": [
       "07.4"
     ],
-    "state": "RECOVERY FOUNDATIONS VERIFIED / NATIVE PROTOCOL AND UI IN PROGRESS",
+    "state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / OS AND PHYSICAL ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "b7e18217080315e01199e60dbd1df174771f8c4b",
+    "target_baseline": "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
     "findings": [
-      "Atomic hashed server deletion proof and current-password cookie deletion path;26 deletion +34 auth +33 export +9 migration assertions;23 HTTP cookie cases PASS.",
-      "Room3 durable owner-write fence and book publication pause, preserving bytes before confirmation;7 JVM/debug/test APK and actual API34 migration/fence3 PASS.",
-      "Native intent/recovery/worker/session/media/PDF/UI protocol is next. No crash-gap or task-completion claim."
+      "Encrypted durable owned deletion protocol and recovery worker; queue persistence precedes dispatch. No purge on missing proof or unknown result.",
+      "Cold persisted credentials, same-owner late refresh and newer B sign-in are fenced correctly; post-response captured actor A cleanup preserves B. Root/private API/Room/sync/book/PDF/Media3 observe deletion state.",
+      "148 JVM/debug/test APK/lint/415 resources,23 backend suites(21,113 checks),actual API34 storage/deletion/migration/PDF/Quran28 PASS. Actual process/OS/native HTTP/physical/provider evidence remains open."
     ]
   },
   "previous_visual_review": {

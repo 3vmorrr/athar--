@@ -65,5 +65,10 @@ isolated_database(static function(PDO $db):void{
     deletion_check($probe($id,$secret,'DELETE')->status===200,'proof acknowledgement remains idempotent');
     $legacy=$auth->login('legacy@example.invalid','DeletionFixture123!');$auth->delete($auth->authenticate($legacy['session']['access_token']),'DeletionFixture123!');
     deletion_check((int)$db->query('SELECT COUNT(*) FROM users WHERE id=3')->fetchColumn()===0&&(int)$db->query('SELECT COUNT(*) FROM account_deletion_receipts')->fetchColumn()===0,'legacy clients retain password-authenticated delete compatibility');
+    for($attempt=0;$attempt<6;$attempt++){
+        $failed=$api->handle(new Request('DELETE','/api/v1/me',['password'=>'wrong'],['Authorization'=>'Bearer '.$two['session']['access_token']]));
+        deletion_check($failed->status===($attempt<5?422:429),'deletion password attempts bounded per owner across sessions');
+    }
+    deletion_check($otherFingerprint===$db->query('SELECT * FROM users WHERE id=2')->fetchAll(),'rate limited attempts preserve the account');
 });
 echo 'PASS: '.$checks." deletion/hashed-proof/rollback/ownership/populated-migration/reopen assertions; no live delivery.\n";

@@ -16,7 +16,9 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
     val settings: StateFlow<AppSettings?> = graph.settings.settings.map<AppSettings, AppSettings?> { it }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
     private val mutableOperation = MutableStateFlow(OperationState())
     val operation = mutableOperation.asStateFlow()
-    init { viewModelScope.launch { graph.session.restore() } }
+    private var restoring:kotlinx.coroutines.Job?=null
+    init { restoreSession() }
+    fun restoreSession(){if(restoring?.isActive==true)return;restoring=viewModelScope.launch{graph.session.restore()}}
     fun completeOnboarding() { viewModelScope.launch { graph.settings.completeOnboarding() } }
     fun clearFeedback() { if (!mutableOperation.value.busy) mutableOperation.value = OperationState() }
     fun invalid(code: String) { if (!mutableOperation.value.busy) mutableOperation.value = OperationState(error = code) }
@@ -102,13 +104,20 @@ class AppViewModel(val graph: AppGraph) : ViewModel() {
         }
     }
     fun logout(expectedUser:Long?=graph.session.userId) = perform { graph.session.logout(expectedUser) }
+    fun deleteAccount(password:String,owner:Long)=perform(successMessage="account_deleted"){graph.accountDeletion.delete(owner,password)}
+    fun checkDeletion(owner:Long)=perform{graph.accountDeletion.recover(owner)}
     fun perform(successMessage: String? = null, block: suspend () -> Unit) {
         if (mutableOperation.value.busy) return
         viewModelScope.launch {
             mutableOperation.value = OperationState(busy = true)
             try { block(); if (mutableOperation.value.busy) mutableOperation.value = OperationState(message = successMessage) }
             catch (failure: CancellationException) { throw failure }
-            catch (failure: Exception) { mutableOperation.value = OperationState(error = if (failure is ApiException) failure.code.ifBlank { "network_error" } else "network_error") }
+            catch (failure: Exception) { mutableOperation.value = OperationState(error = when(failure){
+                is ApiException->failure.code.ifBlank{"network_error"}
+                is org.athar.app.core.data.AccountDeletionUnreadable->"local_data_unreadable"
+                is org.athar.app.core.data.DeletionUnconfirmed->"account_deletion_pending"
+                else->"network_error"
+            }) }
         }
     }
 }

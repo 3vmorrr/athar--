@@ -71,6 +71,7 @@ class PlaybackService : MediaSessionService() {
             }
         }).build()
         scope.launch { (application as AtharApplication).graph.session.state.collect { synchronizeOwner() } }
+        scope.launch { (application as AtharApplication).graph.deletionStore.blockedOwners.collect { synchronizeOwner() } }
     }
     // Media-button startup can provide a placeholder ControllerInfo. Verify the real
     // controller in onConnect, while this service callback checks the live account.

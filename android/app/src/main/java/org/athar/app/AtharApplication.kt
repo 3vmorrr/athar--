@@ -24,8 +24,10 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val partition = java.security.MessageDigest.getInstance("SHA-256").digest(apiBaseUrl.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }.take(12)
     val cipher = PrivateCipher()
     val database = Room.databaseBuilder(application, AppDatabase::class.java, "athar-$partition.db").addMigrations(AppDatabase.MIGRATION_1_2,AppDatabase.MIGRATION_2_3).build()
+    internal val deletionStore = AccountDeletionStore(partition,database,cipher)
+    private suspend fun initializeDeletion(){accountDeletion.initialize()}
     val settings = SettingsStore(application)
-    val session = SessionRepository(RetrofitTransport(apiBaseUrl), KeystoreTokenStore(application, cipher, namespace = partition), language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
+    val session = SessionRepository(RetrofitTransport(apiBaseUrl), KeystoreTokenStore(application, cipher, namespace = partition), language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } },ownerBlocked=deletionStore::isBlocked,beforeRestore={initializeDeletion()})
     val content = ContentRepository(session, database.dao(), cipher, language = { AppCompatDelegate.getApplicationLocales().toLanguageTags().ifBlank { "ar" } })
     private var persistentSync:org.athar.app.core.sync.PersistentSyncCoordinator?=null
     private fun requestSync(owner:Long,module:org.athar.app.core.sync.SyncModule){persistentSync?.request(owner,module)}
@@ -34,10 +36,11 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     val counters = CounterRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.COUNTERS)})
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})
+    internal val accountDeletion=AccountDeletionCoordinator(application,partition,database,session,deletionStore,enablePersistentSync)
     init{
         if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-            runCatching { org.athar.app.books.recoverBookCleanup(application,this@AppGraph) }
+            try{accountDeletion.recoverAll()}catch(cancelled:kotlinx.coroutines.CancellationException){throw cancelled}catch(_:Exception){/* Journal and owned bytes remain available for explicit retry. */}
         }
     }
 }

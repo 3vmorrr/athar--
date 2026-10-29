@@ -105,7 +105,7 @@ final class ApiKernel
         if($path==='/me'){
             if($r->method==='GET')return [$this->auth->profile((int)$actor['id']),200];
             if($r->method==='PATCH')return [$this->auth->updateProfile((int)$actor['id'],$r->string('display_name',80),$r->string('username',24)),200];
-            if($r->method==='DELETE'){$this->auth->delete($actor,$r->string('password',200),array_key_exists('request_id',$r->body)?$r->string('request_id',36):null,array_key_exists('recovery_secret',$r->body)?$r->string('recovery_secret',64):null);return [['status'=>'deleted'],200];}
+            if($r->method==='DELETE'){$this->authRate($r,'account-delete',(string)$actor['id'],5,900);$this->auth->delete($actor,$r->string('password',200),array_key_exists('request_id',$r->body)?$r->string('request_id',36):null,array_key_exists('recovery_secret',$r->body)?$r->string('recovery_secret',64):null);return [['status'=>'deleted'],200];}
             throw new ApiError('method_not_allowed',405);
         }
         if($path==='/me/password'){$this->method($r,'PUT');return [$this->auth->changePassword($actor,$r->string('current_password',200),$r->string('password',200),$r->string('password_confirmation',200)),200];}

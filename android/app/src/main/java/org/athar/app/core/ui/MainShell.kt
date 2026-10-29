@@ -345,7 +345,6 @@ private fun AtharNavIcon(
 }
 
 @Composable private fun AccountProfileScreen(vm: AppViewModel, auth: AuthState.SignedIn) {
-    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -375,7 +374,7 @@ private fun AtharNavIcon(
         } }
         if (operation.error != null || operation.message != null) item(key = "feedback", contentType = "feedback") { org.athar.app.auth.Feedback(operation) }
         item(key = "signout", contentType = "action") { OutlinedButton(onClick = {vm.logout(auth.user.id)}) { Text(stringResource(R.string.logout)) } }
-        item(key = "delete", contentType = "action") { TextButton(onClick = { delete = true }) { Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error) } }
+        item(key = "delete", contentType = "action") { TextButton(onClick = { delete = true }, enabled = !operation.busy) { Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error) } }
     }
-    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { val submittedPassword = deletePassword; vm.perform { val id = auth.user.id; vm.graph.session.delete(submittedPassword,id); org.athar.app.books.cleanupDeletedAccountBooks(context,vm.graph,id) }; delete = false; deletePassword = "" }) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
+    if (delete) AlertDialog(onDismissRequest = { delete = false; deletePassword = "" }, title = { Text(stringResource(R.string.delete_account)) }, text = { Column { Text(stringResource(R.string.delete_account_body)); PasswordField(deletePassword, { deletePassword = it }, stringResource(R.string.current_password)) } }, confirmButton = { TextButton(onClick = { val submittedPassword = deletePassword; vm.deleteAccount(submittedPassword,auth.user.id); delete = false; deletePassword = "" }, enabled = !operation.busy && deletePassword.isNotEmpty()) { Text(stringResource(R.string.delete_action)) } }, dismissButton = { TextButton(onClick = { delete = false; deletePassword = "" }) { Text(stringResource(R.string.cancel)) } })
 }

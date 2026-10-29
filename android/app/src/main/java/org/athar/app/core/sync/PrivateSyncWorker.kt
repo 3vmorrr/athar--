@@ -9,7 +9,7 @@ import java.util.Locale
 import kotlinx.coroutines.CancellationException
 
 internal class GraphSyncOperations(private val graph:AppGraph):OwnedSyncOperations {
-    override val owner:Long? get(){val id=graph.session.userId;return id?.takeIf{(graph.session.state.value as? AuthState.SignedIn)?.user?.id==it}}
+    override val owner:Long? get(){val id=graph.session.userId;return id?.takeIf{(graph.session.state.value as? AuthState.SignedIn)?.user?.id==it&&!graph.deletionStore.isBlocked(it)}}
     override suspend fun push(module:SyncModule,owner:Long){
         when(module){
             SyncModule.READING->graph.reading.sync(owner)

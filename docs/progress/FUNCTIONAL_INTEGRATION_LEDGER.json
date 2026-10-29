@@ -3138,7 +3138,7 @@
       "tests_required": "Hidden/rights/source/link/favorite owner cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 new deletion protocol/API34 fixtures now integrated; actual process/OS acceptance open,07.6 genuine completed native download activity remain independent functional follow-ups.",
       "acceptance_evidence": [
         "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
         "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
@@ -3191,7 +3191,7 @@
       "tests_required": "Redirect/SSRF/MIME/size/failure/resume eligibility tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 new deletion protocol/API34 fixtures now integrated; actual process/OS acceptance open,07.6 genuine completed native download activity remain independent functional follow-ups.",
       "acceptance_evidence": [
         "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
         "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
@@ -3236,7 +3236,7 @@
       "tests_required": "Interrupted download/process restart/space/path ownership tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 new deletion protocol/API34 fixtures now integrated; actual process/OS acceptance open,07.6 genuine completed native download activity remain independent functional follow-ups.",
       "acceptance_evidence": [
         "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
         "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
@@ -3289,7 +3289,7 @@
       "tests_required": "Malformed PDF/no viewer/provider grant/position tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 new deletion protocol/API34 fixtures now integrated; actual process/OS acceptance open,07.6 genuine completed native download activity remain independent functional follow-ups.",
       "acceptance_evidence": [
         "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
         "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
@@ -3360,7 +3360,7 @@
       "tests_required": "Corrupt/truncated/missing/expired file and offline catalog cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 deletion receipt/local-fence process-death,07.6 genuine completed native download activity remain independent functional follow-ups.",
+      "remaining_acceptance": "Real book provider/download, WorkManager/foreground/cancel/background/reboot/API26–27/API36 quota and AR/EN/accessibility/phone journeys.07.3 book export code/API34 snapshot now integrated; SAF acceptance open,07.4 new deletion protocol/API34 fixtures now integrated; actual process/OS acceptance open,07.6 genuine completed native download activity remain independent functional follow-ups.",
       "acceptance_evidence": [
         "docs/testing/BOOKS_FUNCTIONAL_INTEGRATION.md;debug APK/test APK/lint(0 errors)/29 focused JVM/400 paired resources PASS;97 focused PHP assertions PASS.",
         "API34 read-only QA:20 cross-module instrumentation cases PASS, including actual isolated PDF1 and encrypted book Room/actor2. No physical/live-provider claim.",
@@ -3628,7 +3628,7 @@
       "name": "Account deletion and local ownership cleanup",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
-      "review_state": "RECOVERY FOUNDATIONS VERIFIED / NATIVE PROTOCOL AND UI IN PROGRESS",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / OS AND PHYSICAL ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3703,15 +3703,16 @@
       "tests_required": "Delete/reauth/tokens/local rows/worker cancellation/failure recovery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Wire encrypted intent, confirmed/uncertain receipt recovery, owner-scoped cancellation/purge and session/media/PDF lifetime into native UI/worker/startup. Exercise interrupted/network/actor/process cases and full relevant gates; physical acceptance remains open.",
+      "remaining_acceptance": "Real native HTTP deletion/export acceptance, WorkManager OS execution/cancellation/process death/reboot, Media3/PDF resource UI, AR/EN/accessibility and authorized API27 phone. Extend cancellation/fences/export for future Khatmah/notification modules when integrated. No task completion credit from injected transport.",
       "acceptance_evidence": [
-        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md:26 deletion +34 session +33 export +9 provider migration checks PASS;23 cookie HTTP checks PASS.",
-        "7 BookFiles JVM cases, debug/test APK build and actual API34 Room/fence/migration3 PASS. No whole-flow/physical claim."
+        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md;all148 JVM/34 classes/debug APK/test APK/lint(0 errors;59 warnings)/415 paired resources PASS.",
+        "All23 isolated backend suites PASS:21,113 executed assertions;includes33 deletion,34 auth,33 export. Earlier23 cookie HTTP cases PASS.",
+        "Actual API34:28 storage/PDF/Quran/deletion/export/migration cases PASS in26.402s. Lost-commit fake transport plus actual file-backed Keystore/Room/files;backend proof separately real MariaDB. No real native HTTP/process-kill/OS/physical claim."
       ],
       "integration_findings": [
         "Book revocation fences publication after its durable marker and startup replays cleanup. Close the remote-delete receipt/local-marker process-death window; no whole-deletion acceptance is inferred."
       ],
-      "reconciled": "Source post-response cleanup has an acknowledgement/process-death gap and no Room late-write fence. Added atomic hashed server proof/capability recovery and current-password cookie deletion guard. Added transactional Room owner-write fence and separate durable book publication pause. Native initiation/recovery/worker/UI wiring is next; remote/local crash gap is not yet closed."
+      "reconciled": "Encrypted namespace/owner/request/phase-bound intent, durable recovery enqueue before dispatch, explicit uncertain-versus-definitive rejection, authless positive proof recovery and post-cleanup proof acknowledgement. Private UI/API/Room writes, book publication, sync, Media3 and PDF lifetime observe the fence. Captured-owner positive deletion survives A-to-B; cold credentials and late refresh cannot restore deleted A or clear B. Legacy positive book markers install Room fences; unreadable/unproven state is preserved."
     },
     {
       "id": "07.5",
@@ -14273,22 +14274,23 @@
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
     "date": "2026-10-29",
-    "codex_remote": "09b2982aa367ad26bfd09ecfd3e0fe08adf10f89",
+    "codex_remote": "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
-      "07.4"
+      "07.5",
+      "07.6"
     ],
-    "state": "FOUNDATIONS VERIFIED; NATIVE DURABLE DELETION PROTOCOL/UI/RECOVERY NEXT"
+    "state": "SOURCE COLLECTION PAGING/VALIDATION AND GENUINE COMPLETED-DOWNLOAD ACTIVITY NEXT; RETAIN DELETION FENCES"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",
-    "scope": "WP03–WP06 plus shared foundations",
-    "jvm_tests": 114,
-    "backend_suites": 20,
-    "backend_executed_assertions": 21013,
-    "api34_instrumentation_tests": 20,
-    "state": "PASS / PHYSICAL AND PROVIDER GATES OPEN"
+    "scope": "WP03-WP06 plus WP07.1-WP07.4 and shared foundations",
+    "jvm_tests": 148,
+    "backend_suites": 23,
+    "backend_executed_assertions": 21113,
+    "api34_instrumentation_tests": 28,
+    "state": "PASS / REAL NATIVE HTTP, OS, PHYSICAL AND PROVIDER GATES OPEN"
   }
 }

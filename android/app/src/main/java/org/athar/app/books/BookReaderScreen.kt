@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.athar.app.AppGraph
@@ -50,7 +51,14 @@ private class BookReaderViewModel(private val graph: AppGraph, application: Appl
     private var generation = 0L
     private val reading = BookReadingStore(application, graph)
 
-    init { open() }
+    init {
+        open()
+        viewModelScope.launch {
+            combine(graph.session.state,graph.deletionStore.blockedOwners){_,_->runCatching{authorize()}.isSuccess}.collect{allowed->
+                if(!allowed){generation++;opening?.cancel();rendering?.cancel();client?.close();client=null;copy=null;mutable.value=BookReaderState(loading=false,error=BookReadError.PROGRESS)}
+            }
+        }
+    }
     fun open() {
         val ticket = ++generation
         opening?.cancel(); rendering?.cancel(); client?.close(); client = null

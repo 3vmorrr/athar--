@@ -11,11 +11,15 @@ import kotlinx.coroutines.sync.withLock
 import org.athar.app.core.network.ApiException
 import org.athar.app.core.network.ApiTransport
 import org.athar.app.core.security.*
+import org.athar.app.core.data.AccountDeletionIntent
+import org.athar.app.core.data.DeletionRejected
+import org.athar.app.core.data.DeletionNotDispatched
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicLong
 
 sealed interface AuthState {
     data object Restoring : AuthState
+    data object RestoreFailed : AuthState
     data object SignedOut : AuthState
     data class Pending(val user: UserProfile, val deliveryStatus: String? = null) : AuthState
     data class SignedIn(val user: UserProfile, val offline: Boolean = false) : AuthState
@@ -23,11 +27,12 @@ sealed interface AuthState {
 private data class AuthReply(val user: UserProfile?, val session: Credentials, @SerializedName("delivery_status") val deliveryStatus: String?)
 internal data class SessionLease(val owner: Long, val generation: Long)
 
-class SessionRepository(private val transport: ApiTransport, private val store: TokenStore, private val language: () -> String = { "ar" }, private val now: () -> Long = System::currentTimeMillis) {
+class SessionRepository(private val transport: ApiTransport, private val store: TokenStore, private val language: () -> String = { "ar" }, private val now: () -> Long = System::currentTimeMillis, private val ownerBlocked: (Long) -> Boolean = { false }, private val beforeRestore: suspend () -> Unit = {}) {
     private val gson = Gson()
     private val refreshMutex = Mutex()
     private val sessionMutex = Mutex()
     private val generation = AtomicLong()
+    private val deletedOwners = java.util.concurrent.ConcurrentHashMap.newKeySet<Long>()
     @Volatile private var stored: StoredSession? = null
     private val mutableState = MutableStateFlow<AuthState>(AuthState.Restoring)
     val state = mutableState.asStateFlow()
@@ -42,6 +47,12 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
 
     /** Private data actions need the captured actor and current verified access, including offline. */
     fun requireVerifiedOwner(expectedUser:Long?):Long {
+        val owner=requireCredentialsOwner(expectedUser)
+        if(ownerBlocked(owner))throw ApiException(409,"account_deletion_pending","")
+        return owner
+    }
+    private fun requireCredentialsOwner(expectedUser:Long?):Long {
+        if(expectedUser!=null&&expectedUser in deletedOwners)throw ApiException(401,"account_deleted","")
         val credentials=stored
         val signedIn=mutableState.value as? AuthState.SignedIn
         if(expectedUser==null||credentials?.user?.id!=expectedUser||signedIn?.user?.id!=expectedUser||
@@ -49,19 +60,31 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         return expectedUser
     }
 
+    internal fun deletionLease(owner:Long):SessionLease {
+        val epoch=generation.get();requireCredentialsOwner(owner);checkGeneration(epoch)
+        return SessionLease(owner,epoch)
+    }
+    internal fun requireDeletionLease(lease:SessionLease){requireCredentialsOwner(lease.owner);checkGeneration(lease.generation)}
+
     suspend fun restore() {
-        val epoch = generation.get()
-        val saved = store.load()
-        if (saved == null) { clear(epoch); return }
-        save(saved, epoch)
-        if (saved.credentials.scope != "full" || !saved.user.emailVerified) return
+        val epoch=generation.get()
+        val saved=try {
+            sessionMutex.withLock{checkGeneration(epoch);mutableState.value=AuthState.Restoring}
+            beforeRestore()
+            val loaded=store.load()
+            if(loaded==null){clear(epoch);return}
+            save(loaded,epoch);loaded
+        }catch(cancelled:CancellationException){throw cancelled}
+        catch(failure:Exception){sessionMutex.withLock{if(generation.get()==epoch)mutableState.value=if(failure is ApiException&&failure.code=="account_deleted")AuthState.SignedOut else AuthState.RestoreFailed};return}
+        if(saved.credentials.scope!="full"||!saved.user.emailVerified||ownerBlocked(saved.user.id))return
         try {
-            val profile = gson.fromJson(request("GET", "me"), UserProfile::class.java)
-            val current = stored ?: return
-            save(current.copy(user = profile), epoch)
-        } catch (failure: CancellationException) { throw failure }
-        catch (failure: ApiException) { if (failure.status in listOf(401, 403)) clear(epoch) else offline(saved, epoch) }
-        catch (failure: IOException) { offline(saved, epoch) }
+            val profile=gson.fromJson(request("GET","me"),UserProfile::class.java)
+            if(profile.id!=saved.user.id)throw IOException("Invalid restored profile owner")
+            val current=stored?:return
+            save(current.copy(user=profile),epoch)
+        }catch(failure:CancellationException){throw failure}
+        catch(failure:ApiException){if(failure.status in listOf(401,403))clear(epoch)else offline(saved,epoch)}
+        catch(failure:IOException){offline(saved,epoch)}
     }
 
     // Invalidate both former requests and requests started while a new sign-in was pending.
@@ -123,7 +146,41 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         if(count==null||!count.isJsonPrimitive||!count.asJsonPrimitive.isNumber||!count.toString().matches(Regex("0|[1-9][0-9]*")))throw IOException("Invalid session revocation response")
         return count.asString.toIntOrNull()?:throw IOException("Invalid session revocation response")
     }
-    suspend fun delete(password: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);val epoch = generation.get(); request("DELETE", "me", mapOf("password" to password),expectedUser=requireNotNull(expectedUser)); clear(epoch) }
+    internal suspend fun submitDeletion(intent:AccountDeletionIntent,password:String) {
+        val epoch=generation.get()
+        val credentials=try {
+            requireCredentialsOwner(intent.owner)
+            var current=stored?:throw ApiException(401,"session_changed","")
+            if(now()>=current.expiresAt-30_000){refresh(current.credentials.accessToken);current=stored?:throw ApiException(401,"session_changed","")}
+            checkGeneration(epoch);requireCredentialsOwner(intent.owner);current
+        }catch(cancelled:CancellationException){throw cancelled}
+        catch(failure:Exception){throw DeletionNotDispatched(failure)}
+        val response=try {
+            transport.request("DELETE","me",mapOf("password" to password,"request_id" to intent.requestId,"recovery_secret" to intent.secret),bearer=credentials.credentials.accessToken,language=language())
+        }catch(cancelled:CancellationException){throw cancelled}
+        catch(failure:ApiException){
+            if(failure.status in listOf(401,403))clear(epoch)
+            if(failure.status in 400..499)throw DeletionRejected(failure)
+            throw failure
+        }
+        // Preserve a successful irreversible result for its captured owner even after A -> B.
+        // The coordinator journals/purges only A and clears credentials only if they still belong to A.
+        if(!response.isJsonObject||response.asJsonObject["status"]?.let{it.isJsonPrimitive&&it.asJsonPrimitive.isString&&it.asString=="deleted"}!=true)throw IOException("Invalid deletion response")
+    }
+    internal suspend fun deletionProof(intent:AccountDeletionIntent):JsonElement = transport.request("POST","auth/deletion-receipt",mapOf("request_id" to intent.requestId,"recovery_secret" to intent.secret),language=language())
+    internal suspend fun acknowledgeDeletion(intent:AccountDeletionIntent) {
+        val response=transport.request("DELETE","auth/deletion-receipt",mapOf("request_id" to intent.requestId,"recovery_secret" to intent.secret),language=language())
+        if(!response.isJsonObject||response.asJsonObject["status"]?.asString!="forgotten")throw IOException("Invalid deletion acknowledgement")
+    }
+    internal suspend fun forgetDeletedOwner(owner:Long) {
+        deletedOwners.add(owner)
+        sessionMutex.withLock {
+            val current=stored?:store.load()
+            // Do not invalidate a newer sign-in intent for B. The owner blacklist also
+            // prevents delayed restore/refresh responses for A from persisting again.
+            if(current?.user?.id==owner){stored=null;mutableState.value=AuthState.SignedOut;store.clear()}
+        }
+    }
     suspend fun logout(expectedUser:Long?=userId) {
         if(expectedUser!=userId)throw ApiException(401,"session_changed","")
         val token = stored?.credentials?.accessToken
@@ -142,7 +199,9 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     }
     private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, "unauthenticated", "") }
     private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {
-        checkGeneration(epoch); store.save(session)
+        checkGeneration(epoch)
+        if(session.user.id in deletedOwners)throw ApiException(401,"account_deleted","")
+        store.save(session)
         if(rotateRequests)generation.incrementAndGet()
         stored = session; publish(session, delivery)
     }

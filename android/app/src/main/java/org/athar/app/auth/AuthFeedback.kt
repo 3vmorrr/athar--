@@ -22,5 +22,9 @@ import org.athar.app.R
     "other_sessions_revoked" -> R.string.other_sessions_revoked
     "session_changed" -> R.string.auth_session_expired
     "saved" -> R.string.saved
+    "account_deleted" -> R.string.account_deleted
+    "account_deletion_pending" -> R.string.account_deletion_pending
+    "account_deletion_reauth" -> R.string.account_deletion_reauth
+    "local_data_unreadable" -> R.string.local_data_unreadable
     else -> R.string.network_error
 }

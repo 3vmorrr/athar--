@@ -28,7 +28,7 @@ interface AtharDao {
     @Query("SELECT * FROM account_deletions ORDER BY userId") suspend fun allDeletions(): List<LocalAccountDeletion>
     @Query("SELECT * FROM account_deletions ORDER BY userId") fun observeDeletions(): Flow<List<LocalAccountDeletion>>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun deletion(record: LocalAccountDeletion)
-    @Query("DELETE FROM account_deletions WHERE userId=:user AND requestId=:request AND state IN ('prepared','pending')") suspend fun abortDeletion(user: Long, request: String)
+    @Query("DELETE FROM account_deletions WHERE userId=:user AND requestId=:request AND state IN ('prepared','pending','rejected')") suspend fun abortDeletion(user: Long, request: String)
     @Query("DELETE FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun removeCache(user: Long, key: String)
     @Query("SELECT cacheKey,updatedAt,LENGTH(payloadCipher) AS bytes FROM cached_documents WHERE userId=:user AND (cacheKey LIKE 'ar:%' OR cacheKey LIKE 'en:%')") suspend fun contentCacheEntries(user:Long):List<ContentCacheEntry>
     @Transaction suspend fun trimContentCache(user:Long,now:Long,policy:ContentCachePolicy){
