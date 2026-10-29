@@ -1,5 +1,10 @@
 # Books functional integration
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ## Baseline and source review
 
 Refetched target5fb3cddd84f420d913882ecf8ded8942df6b97d9 and parallel7392e93b088990c3478cf32197781f831eb10f83. Source commits760bfb9 (rights detail), aa0124f/dbf9f0c/0680197 (download and ownership), a08d60f (management), e65b253/ac90c3f (PDF), a49d71a (source URL),2854cc0/ed84cb9/8b5725e (deletion/reader storage) are implementation input. New source books/ files were absent from the preliminary old-module inventory and are explicitly reviewed here.

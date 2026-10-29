@@ -1,5 +1,10 @@
 # Physical Android integration —2026-10-25
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ##26 October — cross-module lost-response/storage reopen02.7
 
 API27 Arabic19/19 (76.557s), English19/19 (79.079s) PASS. Test-only transport loses committed responses from real fixture API; named Room disk files close/reopen, then each operation retries three times. Actual export totals increase exactly one lesson/one adhkar completion, with no reading activity; Night two-edit replay stays revision2 and deletion replay stays revision3. Existing storage/ownership and all four native module journeys pass.56 unchanged JVM/build/test APK/lint/316 resources and secret/diff review PASS. No production behavior changed. Device read-only connectivity is now validated active Wi-Fi;02.8 OS reconnect/process/reboot acceptance remains separate and in progress.

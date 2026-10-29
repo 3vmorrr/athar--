@@ -1,5 +1,10 @@
 # Audio functional integration
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ## 04.1 ownership and session activity increment
 
 Reviewed sourcec61e58c and the current persistent premium player. Retained Media3 focus/noisy handling and current mini/expanded controls. Adopted the source immutable session-activity PendingIntent. Both branches only cleared queues on unsigned/pending states, so direct SignedInA→SignedInB could retain former media. The service now rechecks verified current ownership before connections/commands/media replacement and clears the queue on owner changes. The application controller carries its captured owner as an additional fence and rechecks it before/after connection and controls.

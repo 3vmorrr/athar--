@@ -1,5 +1,10 @@
 # Task02.8 — actual OS synchronization lifecycle acceptance
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Status: PARTIAL. Previous missing-network condition changed26 October2026: read-only ConnectivityManager/dumpsys inspection sees active CONNECTED Wi-Fi with INTERNET and VALIDATED. No SSID/IP/device identifiers are copied into this report. No global network/font/animation setting has been changed. Task02.7 disk close/reopen is not OS process death or reboot evidence.
 
 ## Ready connected-scheduler gate

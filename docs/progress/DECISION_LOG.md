@@ -1,5 +1,10 @@
 # Engineering decision log
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Task21.18: document the additive immersive direction before implementing it; use the references for composition/interaction, not assets, sacred text, identity or fake data. Keep original local artwork/fallbacks, bounded native motion, actual status/actions and provider/private-state constraints. Return to functional02.7.2 after docs; later shared/screen tasks own code/device acceptance. Weight phase21 closure by task contribution budgets so a small specification is not treated as a full screen.
 
 Task02.7.1: capture the actor at the UI/ViewModel boundary and before repository IO/lock suspension; reject rather than retarget a queued action. A matching ID alone is insufficient after same-actor authentication becomes Pending, so private actions require current verified/full SignedIn credentials. OTP/resend/logout retain their explicit pending-account allowance. Preserve pending rows/retained ciphertext and current presentation; no actor/global reset.

@@ -1,5 +1,10 @@
 # Engineering change log
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ## WP20 Email checkpoint —2026-10-27
 
 Source infrastructure reviewed through0748860ff54ab7b0399613458f36eed0f8da5205. Encrypted priority outbox, token/recipient binding, signed consent, Owner template tests and safe worker recovery accepted locally.193 combined backend+final35 focused;42 HTTP/worker+32 service+15 browser;219 Admin privacy/auth PASS. Restored adjacent overview/recovery/create panels removed in preceding campaign view replacement;navigation and actual authoring verified. [Evidence and limits](../testing/EMAIL_OUTBOX.md). On reviewed push:26 validated+3 native-pending+5 reviewed partial+1 external blocked+114 unclassified=149. Real Gmail20.5 and canonical Push/combined acceptance remain open. Next21.19/21.2;WP02.8 preserved.

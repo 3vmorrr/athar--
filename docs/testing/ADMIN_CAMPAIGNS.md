@@ -1,5 +1,10 @@
 # WP19 campaign integration checkpoint
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Base1167b847ff081f4e3546c908c6956e8d52fa98a1; parallel7392e93b088990c3478cf32197781f831eb10f83. Initial seven commits5ebeb719..c191c3a inspected in the existing parallel worktree atc191c3a and adopted with fixes. Campaign-only later correctionscb9e4e4/3d33bd0/082a69c/bcd28eb/ad6ce86/281e9b2/dae7acb also inspected/adopted selectively; intervening Email commits stay pending, so the contiguous source cursor stops atc191c3a. No bulk merge.
 
 ## Retained implementation and repairs

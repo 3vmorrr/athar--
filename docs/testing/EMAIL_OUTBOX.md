@@ -1,5 +1,10 @@
 # WP20 Email integration and applicable acceptance
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Basef69557ece577af17358f85586494d8a0fcc57b18. Parallel7392e93b088990c3478cf32197781f831eb10f83; source worktree0748860ff54ab7b0399613458f36eed0f8da5205. Reviewed the33 remaining interleaved infrastructure commits afterc191c3a through0748860f, including later WP19 corrections already selectively adopted. Existing source controller parse failure in unsubscribe markup was replaced with a separate valid bilingual confirmation view. No monolithic branch merge.
 
 ## Per-task findings

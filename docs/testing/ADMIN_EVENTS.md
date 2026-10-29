@@ -1,5 +1,10 @@
 # Admin Upcoming/Live editor — task18.4
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Integration base:8e8c8eca26875eb887469f3714f81d7c9c2b0749. Source range after6bbfee50e51899a6a1c100ac0cbbd8c9a54eed6b:826f5211f150b1ac5eb48d60d3570dd6af7d9eca, d1a1f05c53dc1824717d7ee88b21a77793aaeed1, d0cb9b0a3afe7215f385c22f8b742728a11e3602, 2f800af4cd7e988c6d9e908e59efb39c3a58b692. Both worktrees inspected at that coherent boundary; source PHP syntax passes there. Later source-head WP20 parse failure remains separate pending work. KEEP WITH FIXES / COMPLETE + TESTED.
 
 ## Reconciliation

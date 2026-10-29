@@ -1,5 +1,10 @@
 # Risk-based integration and validation
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 User instruction2026-10-27: inspect every task, deep-test every risk, batch expensive checks. This supersedes the earlier full validation after every small task. Preserve every engineering/security/privacy/premium standard and reuse exact reviewed-SHA evidence for unchanged code.
 
 - Fast review per task: diff/business rules/API/schema, ownership/protected local data, privacy/security, offline/sync, concurrency/error paths, accessibility/RTL/LTR/themes/premium identity, compile risks and changed cross-file contracts. Record source SHA, fixes, targeted evidence and honest status.

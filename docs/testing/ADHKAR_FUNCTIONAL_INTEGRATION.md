@@ -1,5 +1,10 @@
 # Adhkar functional integration
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ## Review baseline
 
 Target070997cb7fba5bf726cab84ca5f7e2dca19b059a; parallel7392e93b088990c3478cf32197781f831eb10f83 (refetched before this batch). Preserve current calm counter layout and protected encrypted ownership. Source candidates: d45b818 discovery;078062c backend day contract;023a724/4c6008d/b959edb protected day/pending counters;6086176 stale-day UI;99bf164/c1e66df statistics;e23a956 accessible controls. Reminder-specific3b98360/5d20078/93f574d remain separate until notification dependencies are reviewed.

@@ -1,5 +1,10 @@
 ## Task18.3 — Admin lessons and native Watch contract
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 234 actual HTTP/202 browser/20,765 backend assertions PASS. Provider and scope validation, title/order bounds, exact-case identities, native Watch/playlist/parent visibility, event-history retention, scoped cleanup and parent-lock race accepted. Migration027 and authenticated full-ledger legacy backup/recovery pass separately. [Evidence and limitations](ADMIN_LESSONS.md). No production migration/native code or real provider playback/physical Android claim. Source cursor6bbfee5 unchanged;18.4 follows;02.8 remains deferred.
 
 ## Task18.2 — Admin series and associations

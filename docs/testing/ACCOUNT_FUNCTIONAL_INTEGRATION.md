@@ -1,5 +1,12 @@
 # Account functional integration
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE: current2b7d7de source and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit.07.7–07.9 still require Khatmah contract/conflict code and integration.
+
+<!-- actual-implementation-audit:end -->
+
 ## WP07.1–07.2 source reconciliation — 2026-10-29
 
 Source head7392e93b088990c3478cf32197781f831eb10f83 remains the reviewed implementation input. Profile/security commits1b3174ad, f2ff5e4d,9e25d1f2,3c58ceac,8477c78e and shared AccountInput/operation feedback are reviewed separately from future push hooks and Khatmah work. Preserve the current profile identity, theme/language controls and private data ownership.

@@ -1,5 +1,10 @@
 # WP18 content/services integration batch —18.5–18.9
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 Base:14d46fc7f3c17ed2ae9f55962c28f423741072bc. Parallel head:7392e93b088990c3478cf32197781f831eb10f83. Reviewed17 consecutive source commits after2f800af4cd7e988c6d9e908e59efb39c3a58b692 through e217cee15082e4e0a0585a5b9a715a88d47f88de. The existing parallel worktree is detached at that coherent boundary; its PHP controller syntax passes. Later source-head WP20 syntax failure remains separate pending work. Full source SHAs and attribution remain in PARALLEL_INTEGRATION.json. No bulk merge.
 
 | Task | Source range | Reconciliation and gate |

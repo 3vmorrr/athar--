@@ -1,5 +1,10 @@
 # Quran functional integration
 
+<!-- actual-implementation-audit:start -->
+> **Current authority —2026-10-29:** [149-task actual source audit](../progress/ACTUAL_IMPLEMENTATION_AUDIT.md). 110 tasks have implemented source (71 in main, 39 only unmerged); 19 are accepted/closed, 52 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+
+<!-- actual-implementation-audit:end -->
+
 ## 03.1 — canonical navigation
 
 Reviewed source `58d561c5d485aed40d53fd01421cb24d5129f468` against the current integration branch. Applied only the compatible canonical index/data/input/navigation patches. Manually reconciled current lazy reader, bookmark/account routes and navigation shell; retained protected reading-position recovery and captured-owner writes. No Quran asset, schema or server API changes.

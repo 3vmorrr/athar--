@@ -232,5 +232,7 @@
     "device_detected": "Samsung SM-M105G, Android8.1/API27 ARM32; serial retained only in ignored local evidence.",
     "new_ui": "Validation running; not accepted or complete."
   },
-  "review_approval": "PENDING"
+  "review_approval": "PENDING",
+  "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
+  "historic_snapshot_notice": "paused_execution counts/base commit are dated planning history. Runtime source/current acceptance and all task counts are superseded by2026-10-29 actual audit; no new user visual acceptance is inferred."
 }

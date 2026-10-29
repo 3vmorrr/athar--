@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27",
+  "updated": "2026-10-29",
   "policy": "Batch physical scenarios by journey; preserve existing evidence elsewhere and never infer device PASS from compilation, HTTP or desktop browsers. Add scenarios as affected native tasks are reviewed; this incremental queue does not replace existing task-specific open gates.",
   "sessions": [
     {
@@ -44,7 +44,32 @@
         "Verify native deep link, locale, quiet/frequency/TTL, duplicate/retry and cancellation journey; no worship-history targeting or fake delivery analytics."
       ],
       "existing_evidence": "ADMIN_CAMPAIGNS.md: local domain/Admin gates only; no provider acceptance."
+    },
+    {
+      "id": "audit-reopened-native-foundations",
+      "state": "QUEUED",
+      "tasks": [
+        "02.3",
+        "02.4",
+        "21.1",
+        "02.5",
+        "02.6",
+        "02.7.1",
+        "02.7"
+      ],
+      "device": "Authorized API27 ARM32 physical target; later permission flows also need appropriate API33+ target",
+      "scenarios": [
+        "Reaccept native cache/invalidation after new serialized invalidation/session-lease changes; old hardware receipt predates these paths. No missing feature code identified.",
+        "Reaccept hardware login/refresh/revocation after new credential/deletion lease behavior;25 current JVM cases do not replace the required hardware gate. No missing feature code identified.",
+        "Reaccept newly added PremiumSurfaces/shared-element/floating/identity primitives on hardware; original acceptance predates these additions. No missing primitive code identified.",
+        "Reaccept conflict/owner transitions after new verified-owner/rejection/export wiring. Old hardware receipt remains historical; no conflict feature gap identified.",
+        "Reaccept newly replaced account collections/activity/protected-error surfaces on hardware; old account form acceptance cannot certify these replacements.",
+        "Reaccept actor-switch dispatch after current session leases/daily counters/account mutations; original physical receipt predates them. No missing guard code identified.",
+        "Rerun cross-module native HTTP lost-response/reopen acceptance after daily-counter/session changes; current account-only API34 fixtures do not reaccept all original modules."
+      ],
+      "existing_evidence": "Dated hardware receipts remain historical. Current local unit/storage subset is passing but does not close changed native HTTP/physical journeys."
     }
   ],
-  "device_availability": "2026-10-27 adb devices -l: no connected devices; no new physical acceptance claimed."
+  "device_availability": "2026-10-27 adb devices -l: no connected devices; no new physical acceptance claimed.",
+  "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json"
 }
