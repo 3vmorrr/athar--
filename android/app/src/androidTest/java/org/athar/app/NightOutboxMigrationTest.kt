@@ -33,10 +33,10 @@ class NightOutboxMigrationTest {
                 execSQL("INSERT INTO private_exemptions VALUES (1,?)",arrayOf(original))
             }
             old.close()
-            val db=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2).build()
+            val db=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2,AppDatabase.MIGRATION_2_3).build()
             try{
                 val dao=db.dao();val pending=dao.pending(1).single()
-                assertEquals(2,db.openHelper.writableDatabase.version)
+                assertEquals(3,db.openHelper.writableDatabase.version)
                 assertEquals(original,pending.payloadCipher);assertTrue(pending.conflict);assertNull(pending.rejectedStatus)
                 assertEquals(original,dao.night(1,"session")!!.payloadCipher)
                 assertEquals(original,dao.cache(1,"night-sync-cursor")!!.payloadCipher)

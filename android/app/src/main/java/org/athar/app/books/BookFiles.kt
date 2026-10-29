@@ -23,12 +23,16 @@ internal class BookFiles(private val root: File, val scope: BookScope) {
     private val lock = locks.computeIfAbsent(File(root, scope.key).absolutePath) { Any() }
     private val directory get() = File(root, scope.key)
     private val revoked get() = File(root, "revoked-${scope.key}")
+    private val paused get() = File(root, "deleting-${scope.key}")
     private fun book(id: Int): File { require(id > 0); return File(directory, "book-$id") }
     private fun token(value: String): String = value.also { require(UUID.fromString(it).toString() == it) }
-    private fun allowed() { if (revoked.exists()) throw IOException("book_owner_revoked") }
+    private fun allowed() {
+        if (revoked.exists()) throw IOException("book_owner_revoked")
+        if (paused.exists()) throw IOException("account_deletion_pending")
+    }
     fun ownerRevoked(): Boolean = synchronized(lock) { revoked.exists() }
     fun freeBytes(): Long = directory.usableSpace
-    private fun active(id: Int, request: String): Boolean = !revoked.exists() &&
+    private fun active(id: Int, request: String): Boolean = !revoked.exists() && !paused.exists() &&
         File(book(id), "request").takeIf { it.isFile }?.readText(Charsets.UTF_8)?.trim() == request
 
     fun begin(id: Int, request: String = UUID.randomUUID().toString()): String = synchronized(lock) {
@@ -127,6 +131,21 @@ internal class BookFiles(private val root: File, val scope: BookScope) {
         if (!root.isDirectory && !root.mkdirs()) throw IOException("book_storage_unavailable")
         atomic(revoked, "revoked")
         if (directory.exists() && !directory.deleteRecursively()) throw IOException("book_owner_cleanup_failed")
+    }
+
+    /** A durable pause fences publication without deleting any bytes before remote confirmation. */
+    fun pauseDeletion(request: String) = synchronized(lock) {
+        token(request)
+        if (!root.isDirectory && !root.mkdirs()) throw IOException("book_storage_unavailable")
+        if (paused.exists() && paused.readText(Charsets.UTF_8).trim() != request) throw IOException("book_deletion_changed")
+        atomic(paused, request)
+    }
+    fun resumeDeletion(request: String) = synchronized(lock) {
+        token(request)
+        if (paused.exists()) {
+            check(paused.readText(Charsets.UTF_8).trim() == request)
+            if (!paused.delete()) throw IOException("book_deletion_resume_failed")
+        }
     }
 
     private fun atomic(destination: File, text: String) {

@@ -48,6 +48,13 @@ final class ApiKernel
         if($path==='/auth/refresh'){$this->method($r,'POST');$this->authRate($r,'refresh','',40,60);return [$this->auth->refresh($r->string('refresh_token',64)),200];}
         if($path==='/auth/forgot-password'){$this->method($r,'POST');$email=$r->string('email',190);$this->authRate($r,'forgot',strtolower(trim($email)),3,900);$this->auth->requestReset($email);return [['status'=>'if_registered_email_will_be_sent'],202];}
         if($path==='/auth/reset-password'){$this->method($r,'POST');$email=$r->string('email',190);$this->authRate($r,'reset',strtolower(trim($email)),5,900);$this->auth->reset($email,$r->string('code',6),$r->string('password',200),$r->string('password_confirmation',200));return [['status'=>'password_updated'],200];}
+        if($path==='/auth/deletion-receipt'){
+            if(!in_array($r->method,['POST','DELETE'],true))throw new ApiError('method_not_allowed',405);
+            $this->authRate($r,'deletion-recovery','',60,600);
+            $receipts=new \Athar\Identity\DeletionReceipts($this->db);$requestId=$r->string('request_id',36);$secret=$r->string('recovery_secret',64);
+            if($r->method==='DELETE'){$receipts->forget($requestId,$secret);return [['status'=>'forgotten'],200];}
+            return [$receipts->prove($requestId,$secret),200];
+        }
         $actor=$this->auth->authenticate($r->bearer(),false);
         if($path==='/auth/logout'){$this->method($r,'POST');$this->auth->logout($actor);return [['status'=>'logged_out'],200];}
         if($path==='/auth/verify-email'){$this->method($r,'POST');$this->authRate($r,'verify',(string)$actor['id'],5,900);return [$this->auth->verify((int)$actor['id'],$r->string('code',6)),200];}
@@ -98,7 +105,7 @@ final class ApiKernel
         if($path==='/me'){
             if($r->method==='GET')return [$this->auth->profile((int)$actor['id']),200];
             if($r->method==='PATCH')return [$this->auth->updateProfile((int)$actor['id'],$r->string('display_name',80),$r->string('username',24)),200];
-            if($r->method==='DELETE'){$this->auth->delete($actor,$r->string('password',200));return [['status'=>'deleted'],200];}
+            if($r->method==='DELETE'){$this->auth->delete($actor,$r->string('password',200),array_key_exists('request_id',$r->body)?$r->string('request_id',36):null,array_key_exists('recovery_secret',$r->body)?$r->string('recovery_secret',64):null);return [['status'=>'deleted'],200];}
             throw new ApiError('method_not_allowed',405);
         }
         if($path==='/me/password'){$this->method($r,'PUT');return [$this->auth->changePassword($actor,$r->string('current_password',200),$r->string('password',200),$r->string('password_confirmation',200)),200];}

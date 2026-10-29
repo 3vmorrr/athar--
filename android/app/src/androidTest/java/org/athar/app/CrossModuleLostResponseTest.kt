@@ -49,7 +49,7 @@ class CrossModuleLostResponseTest {
         val session=SessionRepository(transport,store);session.login(email,"NativeFixture123!")
         val owner=requireNotNull(session.userId);val cipher=PrivateCipher();val quran=QuranRepository(context)
         val name="loss-fixture-${UUID.randomUUID()}.db"
-        fun database()=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2).build()
+        fun database()=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2,AppDatabase.MIGRATION_2_3).build()
         var db=database()
         fun reading()=ReadingRepository(db.dao(),cipher,session,{quran.data().index},automaticSync=false)
         fun lessons()=LessonRepository(db.dao(),cipher,session,automaticSync=false)

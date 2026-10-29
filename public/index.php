@@ -523,15 +523,11 @@ if ($path === '/account') {
             }
         } elseif ($action === 'delete-account') {
             $password = (string) ($_POST['password'] ?? '');
-            $statement = db()->prepare('SELECT password_hash FROM users WHERE id=?');
-            $statement->execute([$user['id']]);
-            $hash = (string) $statement->fetchColumn();
-            if ($hash === '' || !password_verify($password, $hash)) $accountError = 'كلمة المرور غير صحيحة.';
-            else {
-                db()->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='الحساب حُذف.' WHERE user_id=?")->execute([$user['id']]);
-                db()->prepare('DELETE FROM users WHERE id=?')->execute([$user['id']]);
-                db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$user['id'], 'account-deleted-minimal-audit-retained', 'user', (string) $user['id']]);
+            try {
+                web_identity_auth()->delete($user,$password);
                 $_SESSION = []; session_destroy(); redirect('/');
+            } catch (\Athar\Http\ApiError $error) {
+                $accountError = $error->getMessage()==='invalid_credentials'?'كلمة المرور غير صحيحة.':'تعذر إتمام الحذف. سجّل الدخول مجددًا وحاول مرة أخرى.';
             }
         }
     }

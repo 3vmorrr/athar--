@@ -61,7 +61,7 @@ class NightRejectionStorageTest {
 
     @Test fun rejectedQueueSurvivesActualDatabaseCloseAndReopen()=runBlocking {
         val context=ApplicationProvider.getApplicationContext<android.content.Context>();val name="rejection-fixture-${UUID.randomUUID()}.db"
-        fun open()=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2).build()
+        fun open()=Room.databaseBuilder(context,AppDatabase::class.java,name).addMigrations(AppDatabase.MIGRATION_1_2,AppDatabase.MIGRATION_2_3).build()
         val id=UUID.randomUUID().toString()
         try{
             val original=Harness(open()).use{h->h.login();h.repo.save(h.body(),id);h.rejections[id]=422;h.repo.sync();h.dao.sessionMutations(1,id)}

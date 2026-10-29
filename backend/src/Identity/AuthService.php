@@ -163,11 +163,13 @@ final class AuthService
         $this->audit($userId,'api-profile-updated');return $this->profile($userId);
     }
 
-    public function delete(array $actor,string $password): void
+    public function delete(array $actor,string $password,?string $requestId=null,?string $recoverySecret=null): void
     {
+        if($requestId!==null||$recoverySecret!==null)DeletionReceipts::validate($requestId??'',$recoverySecret??'');
         $this->db->beginTransaction();
         try {
             $this->lockPasswordActor($actor,$password);
+            if($requestId!==null)(new DeletionReceipts($this->db))->record((int)$actor['id'],$requestId,(string)$recoverySecret);
             $this->db->prepare("UPDATE email_campaign_recipients SET user_id=NULL,email='',status=IF(status IN ('pending','processing'),'skipped',status),failure_note='Account deleted' WHERE user_id=?")->execute([$actor['id']]);
             $this->audit((int)$actor['id'],'api-account-deleted'); $this->db->prepare('DELETE FROM users WHERE id=?')->execute([$actor['id']]); $this->db->commit();
         } catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}

@@ -3589,16 +3589,15 @@
   },
   "active_review": {
     "tasks": [
-      "07.3"
+      "07.4"
     ],
-    "state": "RECONCILED / LOCAL AND API34 SNAPSHOT GATES PASSED / SAF AND PHYSICAL ACCEPTANCE OPEN",
+    "state": "RECOVERY FOUNDATIONS VERIFIED / NATIVE PROTOCOL AND UI IN PROGRESS",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "09b2982aa367ad26bfd09ecfd3e0fe08adf10f89",
+    "target_baseline": "b7e18217080315e01199e60dbd1df174771f8c4b",
     "findings": [
-      "Preflight complete owned data before CreateDocument; strict envelope, owner/generation lease, memory-only prepared bytes and checked writes/cleanup.",
-      "Owned Room snapshot includes private counters/reading/books and all pending Night Prayer operations, preserves unreadable data and excludes exemptions.",
-      "Server explicit projections, owner predicates, consistent snapshot, all night pages, actual activity rows and supported validated preferences. No migration.",
-      "27 focused JVM/410 resources,33 export +32 night +51 catalog checks; separate Admin HTTP families61/60/62/36;actual API34 storage10 PASS. SAF and physical acceptance open."
+      "Atomic hashed server deletion proof and current-password cookie deletion path;26 deletion +34 auth +33 export +9 migration assertions;23 HTTP cookie cases PASS.",
+      "Room3 durable owner-write fence and book publication pause, preserving bytes before confirmation;7 JVM/debug/test APK and actual API34 migration/fence3 PASS.",
+      "Native intent/recovery/worker/session/media/PDF/UI protocol is next. No crash-gap or task-completion claim."
     ]
   },
   "previous_visual_review": {

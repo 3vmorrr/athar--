@@ -9,6 +9,32 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class BookFilesTest {
+    @Test fun deletionPauseSurvivesReopenPreservesBytesAndRequiresTheExactIntentToResume() = fixture { root, files ->
+        val request = files.begin(1); write(files, 1, request); val copy = files.publish(1, request)
+        val other = BookFiles(root, BookScope("0123456789ab", 2))
+        val otherRequest = other.begin(1); write(other, 1, otherRequest); other.publish(1, otherRequest)
+        val intent = java.util.UUID.randomUUID().toString()
+        files.pauseDeletion(intent)
+        val reopened = BookFiles(root, files.scope)
+        assertFalse(reopened.isActive(1, request)); assertTrue(copy.file.exists())
+        assertTrue(runCatching { reopened.current(1) }.isFailure)
+        assertTrue(runCatching { reopened.resumeDeletion(java.util.UUID.randomUUID().toString()) }.isFailure)
+        assertTrue(other.verify(checkNotNull(other.current(1))))
+        reopened.resumeDeletion(intent); assertTrue(reopened.verify(copy))
+        reopened.pauseDeletion(intent); reopened.revoke(); reopened.resumeDeletion(intent)
+        assertTrue(runCatching { reopened.begin(1) }.isFailure)
+    }
+    @Test fun pauseDuringHashingFencesLatePublicationWithoutDeletingAnyUnconfirmedBytes() = fixture { root, files ->
+        val request = files.begin(1); write(files, 1, request)
+        val entered = CountDownLatch(1); val release = CountDownLatch(1); var failed = false
+        val worker = thread { failed = runCatching { files.publish(1, request) { entered.countDown(); check(release.await(5, TimeUnit.SECONDS)) } }.isFailure }
+        assertTrue(entered.await(5, TimeUnit.SECONDS))
+        val intent = java.util.UUID.randomUUID().toString(); files.pauseDeletion(intent)
+        release.countDown(); worker.join(5000)
+        assertFalse(worker.isAlive); assertTrue(failed)
+        assertTrue(java.io.File(root, "${files.scope.key}/book-1/$request.part").isFile)
+        files.resumeDeletion(intent); assertTrue(files.verify(files.publish(1, request)))
+    }
     private fun fixture(test: (java.io.File, BookFiles) -> Unit) {
         val root = Files.createTempDirectory("athar-book-test").toFile()
         try { test(root, BookFiles(root, BookScope("0123456789ab", 1))) }

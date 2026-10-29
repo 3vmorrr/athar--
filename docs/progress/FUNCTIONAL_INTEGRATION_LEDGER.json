@@ -3627,8 +3627,8 @@
       "id": "07.4",
       "name": "Account deletion and local ownership cleanup",
       "work_package": "Work package 7: Account/Khatmah",
-      "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "PRELIMINARY INVENTORY; SEMANTIC REVIEW REQUIRED",
+      "classification": "PARALLEL IMPLEMENTATION NEEDS FIXES",
+      "review_state": "RECOVERY FOUNDATIONS VERIFIED / NATIVE PROTOCOL AND UI IN PROGRESS",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3674,7 +3674,10 @@
         "backend/src/Identity/AuthService.php",
         "backend/src/Identity/OtpService.php"
       ],
-      "schema_changes": [],
+      "schema_changes": [
+        "database/migrations/029_account_deletion_receipts.sql",
+        "Room2-to3 account_deletions journal; additive populated migration checks"
+      ],
       "api_changes": [
         "backend/src/Identity/AuthService.php",
         "backend/src/Identity/OtpService.php"
@@ -3700,11 +3703,15 @@
       "tests_required": "Delete/reauth/tokens/local rows/worker cancellation/failure recovery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Complete confirmation/authentication/revocation/deletion and safe owned cleanup without affecting another actor. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "acceptance_evidence": [],
+      "remaining_acceptance": "Wire encrypted intent, confirmed/uncertain receipt recovery, owner-scoped cancellation/purge and session/media/PDF lifetime into native UI/worker/startup. Exercise interrupted/network/actor/process cases and full relevant gates; physical acceptance remains open.",
+      "acceptance_evidence": [
+        "docs/testing/ACCOUNT_FUNCTIONAL_INTEGRATION.md:26 deletion +34 session +33 export +9 provider migration checks PASS;23 cookie HTTP checks PASS.",
+        "7 BookFiles JVM cases, debug/test APK build and actual API34 Room/fence/migration3 PASS. No whole-flow/physical claim."
+      ],
       "integration_findings": [
         "Book revocation fences publication after its durable marker and startup replays cleanup. Close the remote-delete receipt/local-marker process-death window; no whole-deletion acceptance is inferred."
-      ]
+      ],
+      "reconciled": "Source post-response cleanup has an acknowledgement/process-death gap and no Room late-write fence. Added atomic hashed server proof/capability recovery and current-password cookie deletion guard. Added transactional Room owner-write fence and separate durable book publication pause. Native initiation/recovery/worker/UI wiring is next; remote/local crash gap is not yet closed."
     },
     {
       "id": "07.5",
@@ -14258,9 +14265,10 @@
     ],
     "codex_only": [
       "027_lesson_provider_identity.sql",
-      "028_email_delivery_attempts.sql"
+      "028_email_delivery_attempts.sql",
+      "029_account_deletion_receipts.sql"
     ],
-    "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained."
+    "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained. Source head7392e93 remains unchanged;029 adds deletion proof without collision. Populated/fresh/replay tests PASS; Room2-to3 preserves private rows and pending outbox."
   },
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
@@ -14272,7 +14280,7 @@
     "tasks": [
       "07.4"
     ],
-    "state": "DURABLE OWNED DELETION RECOVERY NEXT; PRESERVE DATA UNTIL CONFIRMED REMOTE DELETION"
+    "state": "FOUNDATIONS VERIFIED; NATIVE DURABLE DELETION PROTOCOL/UI/RECOVERY NEXT"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",

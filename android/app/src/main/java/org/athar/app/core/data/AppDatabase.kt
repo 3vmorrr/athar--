@@ -11,13 +11,24 @@ data class LocalNightSession(val userId: Long, val id: String, val nightDate: St
 data class OutboxMutation(@PrimaryKey(autoGenerate = true) val sequence: Long = 0, val userId: Long, val mutationId: String, val sessionId: String, val operation: String, val expectedRevision: Int, val payloadCipher: String, val conflict: Boolean = false, val rejectedStatus: Int? = null)
 @Entity(tableName = "private_exemptions", primaryKeys = ["userId"])
 data class PrivateExemptions(val userId: Long, val encryptedPayload: String)
+@Entity(tableName = "account_deletions", primaryKeys = ["userId"])
+data class LocalAccountDeletion(val userId: Long, val requestId: String, val state: String, val payloadCipher: String?, val updatedAt: Long)
+
+class AccountDeletionPending : java.io.IOException("account_deletion_pending")
 
 @Dao
 interface AtharDao {
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun cache(user: Long, key: String): CachedDocument?
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") fun observeCache(user: Long, key: String): Flow<CachedDocument?>
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix") suspend fun caches(user: Long, prefix: String): List<CachedDocument>
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun cache(document: CachedDocument)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertCache(document: CachedDocument)
+    @Transaction suspend fun cache(document: CachedDocument) { requireWritable(document.userId); insertCache(document) }
+    suspend fun requireWritable(user: Long) { if (deletion(user) != null) throw AccountDeletionPending() }
+    @Query("SELECT * FROM account_deletions WHERE userId=:user") suspend fun deletion(user: Long): LocalAccountDeletion?
+    @Query("SELECT * FROM account_deletions ORDER BY userId") suspend fun allDeletions(): List<LocalAccountDeletion>
+    @Query("SELECT * FROM account_deletions ORDER BY userId") fun observeDeletions(): Flow<List<LocalAccountDeletion>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun deletion(record: LocalAccountDeletion)
+    @Query("DELETE FROM account_deletions WHERE userId=:user AND requestId=:request AND state IN ('prepared','pending')") suspend fun abortDeletion(user: Long, request: String)
     @Query("DELETE FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun removeCache(user: Long, key: String)
     @Query("SELECT cacheKey,updatedAt,LENGTH(payloadCipher) AS bytes FROM cached_documents WHERE userId=:user AND (cacheKey LIKE 'ar:%' OR cacheKey LIKE 'en:%')") suspend fun contentCacheEntries(user:Long):List<ContentCacheEntry>
     @Transaction suspend fun trimContentCache(user:Long,now:Long,policy:ContentCachePolicy){
@@ -32,8 +43,10 @@ interface AtharDao {
     @Query("SELECT * FROM night_sessions WHERE userId=:user AND deleted=0 ORDER BY nightDate DESC,updatedAt DESC") fun nights(user: Long): Flow<List<LocalNightSession>>
     @Query("SELECT * FROM night_sessions WHERE userId=:user") suspend fun allNights(user: Long): List<LocalNightSession>
     @Query("SELECT * FROM night_sessions WHERE userId=:user AND id=:id") suspend fun night(user: Long, id: String): LocalNightSession?
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun night(session: LocalNightSession)
-    @Insert suspend fun enqueue(mutation: OutboxMutation)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertNight(session: LocalNightSession)
+    @Transaction suspend fun night(session: LocalNightSession) { requireWritable(session.userId); insertNight(session) }
+    @Insert suspend fun insertMutation(mutation: OutboxMutation)
+    @Transaction suspend fun enqueue(mutation: OutboxMutation) { requireWritable(mutation.userId); insertMutation(mutation) }
     @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence LIMIT 50") suspend fun pending(user: Long): List<OutboxMutation>
     @Query("SELECT * FROM outbox WHERE userId=:user ORDER BY sequence") suspend fun allMutations(user: Long): List<OutboxMutation>
     @Query("SELECT o.* FROM outbox o WHERE o.userId=:user AND NOT EXISTS (SELECT 1 FROM outbox c WHERE c.userId=o.userId AND c.sessionId=o.sessionId AND (c.conflict=1 OR c.rejectedStatus IS NOT NULL OR c.sequence<o.sequence)) ORDER BY o.sequence LIMIT 50") suspend fun eligiblePending(user:Long):List<OutboxMutation>
@@ -50,7 +63,8 @@ interface AtharDao {
     @Query("DELETE FROM outbox WHERE userId=:user AND sessionId=:id") suspend fun removeSessionMutations(user: Long, id: String)
     @Query("UPDATE outbox SET conflict=1 WHERE userId=:user AND mutationId=:id") suspend fun markConflict(user: Long, id: String)
     @Query("SELECT * FROM private_exemptions WHERE userId=:user") suspend fun exemptions(user: Long): PrivateExemptions?
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun exemptions(value: PrivateExemptions)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertExemptions(value: PrivateExemptions)
+    @Transaction suspend fun exemptions(value: PrivateExemptions) { requireWritable(value.userId); insertExemptions(value) }
     @Query("DELETE FROM private_exemptions WHERE userId=:user") suspend fun deleteExemptions(user: Long)
     @Query("DELETE FROM cached_documents WHERE userId=:user") suspend fun deleteCache(user: Long)
     @Query("DELETE FROM night_sessions WHERE userId=:user") suspend fun deleteNights(user: Long)
@@ -58,13 +72,18 @@ interface AtharDao {
     @Transaction suspend fun deleteUser(user: Long) { deleteCache(user); deleteNights(user); deleteOutbox(user); deleteExemptions(user) }
 }
 
-@Database(entities = [CachedDocument::class, LocalNightSession::class, OutboxMutation::class, PrivateExemptions::class], version = 2, exportSchema = true)
+@Database(entities = [CachedDocument::class, LocalNightSession::class, OutboxMutation::class, PrivateExemptions::class, LocalAccountDeletion::class], version = 3, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): AtharDao
     companion object {
         val MIGRATION_1_2 = object : androidx.room.migration.Migration(1,2) {
             override fun migrate(db:androidx.sqlite.db.SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE outbox ADD COLUMN rejectedStatus INTEGER")
+            }
+        }
+        val MIGRATION_2_3 = object : androidx.room.migration.Migration(2,3) {
+            override fun migrate(db:androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS account_deletions (userId INTEGER NOT NULL, requestId TEXT NOT NULL, state TEXT NOT NULL, payloadCipher TEXT, updatedAt INTEGER NOT NULL, PRIMARY KEY(userId))")
             }
         }
     }
