@@ -339,4 +339,10 @@
     <string name="activity_unavailable_tracking">تتبع جلسات القراءة وسجل الاستماع واكتمال تنزيل الكتب غير متاح بعد. موضع القراءة أو الدرس المحفوظ ليس مدة قراءة أو مشاهدة.</string>
     <string name="activity_recent_days">الإكمالات خلال آخر 14 يومًا (UTC)</string>
     <string name="activity_day_recorded">الأذكار: %1$d · الدروس: %2$d</string>
+    <string name="activity_downloads_complete">تنزيلات كتب مكتملة مسجلة</string>
+    <string name="activity_available_book_tracking">تتبع جلسات القراءة وسجل الاستماع غير متاح بعد. التنزيلات المكتملة تُحسب من النسخ التي تم التحقق منها؛ ولا تشمل سجلات طلبات الروابط القديمة.</string>
+    <string name="activity_day_downloads">تنزيلات مكتملة: %1$d</string>
+    <string name="book_activity_pending">أحداث تنزيل مكتملة تنتظر تأكيد المزامنة: %1$d</string>
+    <string name="book_activity_sync">مزامنة سجل التنزيلات</string>
+    <string name="book_activity_sync_unconfirmed">تعذر تأكيد مزامنة سجل التنزيلات. احتُفظ بالأحداث لإعادة المحاولة أو التصدير.</string>
 </resources>

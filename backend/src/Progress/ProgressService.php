@@ -61,7 +61,7 @@ final class ProgressService
     }
     public function activity(int $user,string $eventId,string $kind,?string $activityDate=null): void
     {
-        $columns=['quran_session'=>'quran_sessions','lesson_completion'=>'lesson_completions','adhkar_completion'=>'adhkar_completions','book_download'=>'book_downloads'];
+        $columns=['quran_session'=>'quran_sessions','lesson_completion'=>'lesson_completions','adhkar_completion'=>'adhkar_completions','book_download'=>'book_downloads','book_download_completed'=>'book_completions'];
         if(!preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i',$eventId)||!isset($columns[$kind]))throw new ApiError('invalid_fields',422,['event_id'=>'invalid']);
         $date=$this->activityDate($activityDate);
         $owns=!$this->db->inTransaction();
@@ -88,13 +88,13 @@ final class ProgressService
     {
         $today=gmdate('Y-m-d');$owns=!$this->db->inTransaction();if($owns)$this->db->beginTransaction();
         try{
-            $q=$this->db->prepare('SELECT COALESCE(SUM(adhkar_completions),0) adhkar_completions,COALESCE(SUM(lesson_completions),0) lesson_completions,COALESCE(SUM(book_downloads),0) legacy_book_download_events,COALESCE(SUM(quran_sessions),0) legacy_quran_sessions,COALESCE(SUM(CASE WHEN adhkar_completions>0 OR lesson_completions>0 THEN 1 ELSE 0 END),0) active_days FROM account_daily_stats WHERE user_id=? AND activity_date<=?');$q->execute([$user,$today]);$totals=$q->fetch();
+            $q=$this->db->prepare('SELECT COALESCE(SUM(adhkar_completions),0) adhkar_completions,COALESCE(SUM(lesson_completions),0) lesson_completions,COALESCE(SUM(book_downloads),0) legacy_book_download_events,COALESCE(SUM(book_completions),0) completed_book_downloads,COALESCE(SUM(quran_sessions),0) legacy_quran_sessions,COALESCE(SUM(CASE WHEN adhkar_completions>0 OR lesson_completions>0 OR book_completions>0 THEN 1 ELSE 0 END),0) active_days FROM account_daily_stats WHERE user_id=? AND activity_date<=?');$q->execute([$user,$today]);$totals=$q->fetch();
             $q=$this->db->prepare('SELECT COALESCE(SUM(CASE WHEN position_seconds>0 OR is_complete=1 THEN 1 ELSE 0 END),0) lessons_with_progress,COALESCE(SUM(CASE WHEN is_complete=1 THEN 1 ELSE 0 END),0) completed_lessons FROM video_progress WHERE user_id=?');$q->execute([$user]);$lessons=$q->fetch();
-            $q=$this->db->prepare('SELECT activity_date,lesson_completions,adhkar_completions FROM account_daily_stats WHERE user_id=? AND activity_date BETWEEN DATE_SUB(?,INTERVAL 13 DAY) AND ? AND (lesson_completions>0 OR adhkar_completions>0) ORDER BY activity_date');$q->execute([$user,$today,$today]);
-            $recent=array_map(static fn(array $day):array=>['date'=>(string)$day['activity_date'],'lesson_completions'=>(int)$day['lesson_completions'],'adhkar_completions'=>(int)$day['adhkar_completions']],$q->fetchAll());
+            $q=$this->db->prepare('SELECT activity_date,lesson_completions,adhkar_completions,book_completions FROM account_daily_stats WHERE user_id=? AND activity_date BETWEEN DATE_SUB(?,INTERVAL 13 DAY) AND ? AND (lesson_completions>0 OR adhkar_completions>0 OR book_completions>0) ORDER BY activity_date');$q->execute([$user,$today,$today]);
+            $recent=array_map(static fn(array $day):array=>['date'=>(string)$day['activity_date'],'lesson_completions'=>(int)$day['lesson_completions'],'adhkar_completions'=>(int)$day['adhkar_completions'],'completed_book_downloads'=>(int)$day['book_completions']],$q->fetchAll());
             if($owns)$this->db->commit();
-            return ['schema_version'=>1,'owner_id'=>$user,'generated_date'=>$today,
-                'availability'=>['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>false],
+            return ['schema_version'=>2,'owner_id'=>$user,'generated_date'=>$today,
+                'availability'=>['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>true],
                 'recorded'=>array_map('intval',array_merge($totals,$lessons)),'recent'=>$recent];
         }catch(Throwable $e){if($owns&&$this->db->inTransaction())$this->db->rollBack();throw $e;}
     }

@@ -24,6 +24,15 @@ class AccountExportTest {
         assertFalse(result.getAsJsonObject("privacy")["local_private_exemptions_included"].asBoolean)
         assertEquals(result, com.google.gson.JsonParser.parseString(result.toString()))
     }
+    @Test fun pendingBookCompletionExportBindsEveryRecordAndRejectsUnexpectedPrivateFields() {
+        val event=org.athar.app.core.data.BookCompletionEvent(namespace,1,7,"9db001e5-8d21-4cb2-84e7-29fda6da872e","a".repeat(64),java.time.LocalDate.parse("2026-10-29"))
+        val good=device().apply { getAsJsonArray("device_book_activity").add(event.json()) }
+        AccountExportPolicy.requireDevice(1,namespace,good)
+        for (row in listOf(event.json().apply{addProperty("owner",2)},event.json().apply{addProperty("namespace","abcdef123456")},event.json().apply{addProperty("password","private")})) {
+            val bad=device().apply{getAsJsonArray("device_book_activity").add(row)}
+            assertTrue(runCatching{AccountExportPolicy.requireDevice(1,namespace,bad)}.isFailure)
+        }
+    }
     @Test fun missingSectionsAndCrossOwnerRowsAbortTheWholeExport() {
         for (table in AccountExportPolicy.accountTables) {
             val missing = account().apply { remove(table) }

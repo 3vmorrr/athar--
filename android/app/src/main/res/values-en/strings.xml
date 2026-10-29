@@ -311,4 +311,10 @@
     <string name="activity_unavailable_tracking">Reading sessions, listening history and completed book download tracking are not yet available. Saved reading or lesson positions are not elapsed reading or watch time.</string>
     <string name="activity_recent_days">Completions in the last 14 days (UTC)</string>
     <string name="activity_day_recorded">Adhkar: %1$d · Lessons: %2$d</string>
+    <string name="activity_downloads_complete">Recorded completed book downloads</string>
+    <string name="activity_available_book_tracking">Reading session and listening history tracking are not yet available. Completed downloads come from verified copies and exclude historical URL request records.</string>
+    <string name="activity_day_downloads">Completed downloads: %1$d</string>
+    <string name="book_activity_pending">Completed download events awaiting sync confirmation: %1$d</string>
+    <string name="book_activity_sync">Sync download records</string>
+    <string name="book_activity_sync_unconfirmed">Download record sync could not be confirmed. Events were retained for retry or export.</string>
 </resources>

@@ -25,8 +25,11 @@ suspend fun retainedAccountData(owner:Long,session:SessionRepository,lessons:Les
 }
 
 /** One owned Room snapshot; unreadable protected state aborts instead of producing a partial copy. */
-internal suspend fun retainedAccountData(owner: Long, graph: AppGraph): JsonObject =
-    AccountLocalSnapshot(graph.partition, graph.database, graph.cipher, graph.session, graph.lessons, graph.nightPrayer, graph.reading, graph.counters).read(owner)
+internal suspend fun retainedAccountData(owner: Long, graph: AppGraph): JsonObject {
+    graph.session.requireVerifiedOwner(owner)
+    graph.bookActivity.capture(owner)
+    return AccountLocalSnapshot(graph.partition, graph.database, graph.cipher, graph.session, graph.lessons, graph.nightPrayer, graph.reading, graph.counters).read(owner)
+}
 
 internal class AccountLocalSnapshot(
     private val namespace: String,
@@ -49,6 +52,7 @@ internal class AccountLocalSnapshot(
                 night.retainedExport(owner).entrySet().forEach { add(it.key, it.value) }
                 add("device_reading_position", gson.toJsonTree(reading.saved(owner)))
                 add("device_adhkar_counters", gson.toJsonTree(counters.retained(owner)))
+                add("device_book_activity", retainedBookActivity(namespace, owner, database.dao(), cipher))
                 org.athar.app.books.retainedBookData(namespace, owner, database.dao(), cipher, session).entrySet().forEach { add(it.key, it.value) }
             }
             session.requireLease(lease)

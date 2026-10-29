@@ -56,7 +56,7 @@ class AccountDeletionJourneyStorageTest {
         fun coordinator()=AccountDeletionCoordinator(context,namespace,db,session,store,persistentWork=false)
         var coordinator=coordinator()
         fun copy(owner:Long):BookCopy{
-            val files=BookFiles(File(root,"books"),BookScope(namespace,owner));val request=files.begin(7)
+            val files=BookFiles(File(root,"books"),BookScope(namespace,owner)){book,request,hash->cipher.seal(BookCompletionEvent(namespace,owner,book,request,hash,java.time.LocalDate.now(java.time.ZoneOffset.UTC)).json().toString())};val request=files.begin(7)
             files.openPart(7,request).use{it.write("%PDF-1.4\nprivate fixture".toByteArray());it.fd.sync()}
             return files.publish(7,request)
         }
@@ -64,6 +64,10 @@ class AccountDeletionJourneyStorageTest {
             session.login("one@example.test","correct fixture")
             val a=CachedDocument(1,"owned",cipher.seal("private A"),1);val b=CachedDocument(2,"owned",cipher.seal("private B"),1)
             db.dao().cache(a);db.dao().cache(b);val copyA=copy(1);val copyB=copy(2)
+            val activityId=UUID.randomUUID().toString()
+            val activityA=CachedDocument(1,"activity-completion:$activityId",cipher.seal(BookCompletionEvent(namespace,1,7,activityId,"a".repeat(64),java.time.LocalDate.now(java.time.ZoneOffset.UTC)).json().toString()),1)
+            val activityB=activityA.copy(userId=2,payloadCipher=cipher.seal(BookCompletionEvent(namespace,2,7,activityId,"b".repeat(64),java.time.LocalDate.now(java.time.ZoneOffset.UTC)).json().toString()))
+            db.dao().cache(activityA);db.dao().cache(activityB)
             val exemptA=PrivateExemptions(1,cipher.seal("private exemption A"));val exemptB=PrivateExemptions(2,cipher.seal("private exemption B"))
             db.dao().exemptions(exemptA);db.dao().exemptions(exemptB)
             val nightA=LocalNightSession(1,"night-a","2026-01-01",1,null,cipher.seal("private night A"),1,0,false,true,1)
@@ -86,6 +90,9 @@ class AccountDeletionJourneyStorageTest {
             assertNull(session.userId);server.proofOffline=false
             assertEquals(DeletionRecoveryResult.COMPLETE,coordinator.recover(1))
             assertNull(db.dao().cache(1,"owned"));assertFalse(copyA.file.exists())
+            assertNull(db.dao().cache(1,activityA.cacheKey));assertEquals(activityB,db.dao().cache(2,activityB.cacheKey))
+            assertFalse(File(root,"books/${BookScope(namespace,1).key}").exists())
+            assertEquals(1,BookFiles(File(root,"books"),BookScope(namespace,2)).completionReceipts().size)
             assertNull(db.dao().exemptions(1));assertNull(db.dao().night(1,"night-a"));assertTrue(db.dao().allMutations(1).isEmpty())
             assertEquals(b,db.dao().cache(2,"owned"));assertTrue(copyB.file.exists())
             assertEquals(exemptB,db.dao().exemptions(2));assertEquals(nightB,db.dao().night(2,"night-b"));assertEquals(queuedB,db.dao().allMutations(2))

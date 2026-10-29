@@ -36,6 +36,7 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     val counters = CounterRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.COUNTERS)})
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})
+    internal val bookActivity = BookActivityRepository(partition,database,cipher,session,files={org.athar.app.books.bookFiles(application,org.athar.app.books.BookScope(partition,it))},requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.ACTIVITY)},onAcknowledged={content.invalidate("me/activity-summary",it);content.invalidate("home",it)})
     internal val accountDeletion=AccountDeletionCoordinator(application,partition,database,session,deletionStore,enablePersistentSync)
     init{
         if(enablePersistentSync)persistentSync=org.athar.app.core.sync.PersistentSyncCoordinator(application,this)

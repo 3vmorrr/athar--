@@ -14,6 +14,18 @@ class ActivitySummaryTest {
         assertEquals(2,value.recent.size)
         assertTrue(runCatching { parse(owner=8) }.isFailure)
     }
+    @Test fun versionTwoUsesOnlySeparateCompletedDownloadCountsAndKeepsOldCacheUnavailable() {
+        assertNull(parse().downloads)
+        val root=JsonParser.parseString(fixture).asJsonObject
+        root.addProperty("schema_version",2);root.getAsJsonObject("availability").addProperty("book_downloads",true)
+        root.getAsJsonObject("recorded").addProperty("completed_book_downloads",3)
+        root.getAsJsonArray("recent")[0].asJsonObject.addProperty("completed_book_downloads",1)
+        root.getAsJsonArray("recent")[1].asJsonObject.addProperty("completed_book_downloads",2)
+        val summary=ActivitySummary.parse(root,7)
+        assertEquals(3L,summary.downloads);assertEquals(2L,summary.recent.last().downloads)
+        root.getAsJsonArray("recent")[1].asJsonObject.addProperty("completed_book_downloads",3)
+        assertTrue(runCatching{ActivitySummary.parse(root,7)}.isFailure)
+    }
     @Test fun unavailableOrUnreadableIsNeverAnInventedZeroMetric() {
         for (bad in listOf("{}",fixture.replace("\"active_days\":2","\"active_days\":true"),fixture.replace("\"active_days\":2","\"active_days\":2.5"),fixture.replace("\"active_days\":2","\"active_days\":9223372036854775808"),fixture.replace("\"book_downloads\":false","\"book_downloads\":true"),fixture.replace("\"reading_sessions\":false","\"reading_sessions\":\"false\""),fixture.replace("\"completed_lessons\":1","\"completed_lessons\":4")))
             assertTrue(runCatching { parse(bad) }.isFailure)

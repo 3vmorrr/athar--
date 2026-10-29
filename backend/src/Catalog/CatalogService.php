@@ -49,8 +49,10 @@ final class CatalogService
     }
     public function home(int $userId): array
     {
-        $q=$this->db->prepare('SELECT COALESCE(SUM(quran_sessions),0) quran_sessions,COALESCE(SUM(lesson_completions),0) lesson_completions,COALESCE(SUM(adhkar_completions),0) adhkar_completions,COALESCE(SUM(book_downloads),0) book_downloads,COUNT(*) active_days FROM account_daily_stats WHERE user_id=?');$q->execute([$userId]);
-        return ['latest_lessons'=>$this->list('lessons',['per_page'=>3,'sort'=>'latest'])['items'],'books'=>$this->list('books',['per_page'=>3])['items'],'scholars'=>$this->list('scholars',['per_page'=>6])['items'],'activity'=>$q->fetch()];
+        $summary=(new \Athar\Progress\ProgressService($this->db,$this))->activitySummary($userId);
+        $recorded=$summary['recorded'];
+        $activity=['quran_sessions'=>null,'lesson_completions'=>$recorded['lesson_completions'],'adhkar_completions'=>$recorded['adhkar_completions'],'book_downloads'=>$recorded['completed_book_downloads'],'active_days'=>$recorded['active_days'],'availability'=>$summary['availability'],'generated_date'=>$summary['generated_date']];
+        return ['latest_lessons'=>$this->list('lessons',['per_page'=>3,'sort'=>'latest'])['items'],'books'=>$this->list('books',['per_page'=>3])['items'],'scholars'=>$this->list('scholars',['per_page'=>6])['items'],'activity'=>$activity];
     }
     private function definition(string $type): array
     {

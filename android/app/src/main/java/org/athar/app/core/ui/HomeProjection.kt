@@ -5,7 +5,12 @@ import com.google.gson.JsonElement
 /** Missing or malformed cached/server data is unavailable, never invented zero/empty state. */
 internal object HomeProjection {
     fun metric(data: JsonElement, name: String): Long? = runCatching {
-        val value = data.asJsonObject.getAsJsonObject("activity").get(name).asJsonPrimitive
+        val activity = data.asJsonObject.getAsJsonObject("activity")
+        if (name == "quran_sessions") {
+            val available = activity.getAsJsonObject("availability")["reading_sessions"].asJsonPrimitive
+            if (!available.isBoolean || !available.asBoolean) return null
+        }
+        val value = activity.get(name).asJsonPrimitive
         if (!value.isNumber && !value.isString) return null
         value.asString.takeIf { it.matches(Regex("[0-9]+")) }?.toLongOrNull()
     }.getOrNull()

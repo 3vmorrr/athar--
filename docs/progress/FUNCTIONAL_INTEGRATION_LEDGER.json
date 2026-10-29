@@ -3788,7 +3788,7 @@
       "name": "Personal activity dashboard",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "SUMMARY RECONCILED / LOCAL GATES PASSED / COMPLETED DOWNLOAD OUTBOX AND UI ACCEPTANCE PENDING",
+      "review_state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / NATIVE HTTP, OS AND PHYSICAL ACCEPTANCE OPEN",
       "codex_state": "PARTIAL",
       "parallel_state": "PARTIAL",
       "parallel_candidate_commits": [
@@ -3867,19 +3867,20 @@
       "tests_required": "No inferred opening-completion; dedup/date/source/owner tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "device_acceptance_required": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "external_blockers": null,
-      "remaining_acceptance": "Durable captured-owner completed-download receipt/outbox after actual verified publication, process-death/retry/idempotency and original UTC event date; authenticated owned sync, legacy separation, export/deletion fences; real native HTTP/UI/AR/EN/accessibility/physical acceptance. No completion credit from summary foundations.",
+      "remaining_acceptance": "Actual native HTTP/provider end-to-end worker journey; OS WorkManager scheduling/cancellation, actual process kill/reboot and quotas; AR/EN, dark, large-font/landscape/accessibility UI, authorized physical API27 acceptance. Injected transports and equivalent durable crash states do not close these gates.",
       "acceptance_evidence": [
-        "155 JVM/36 classes/debug APK/test APK/lint(0 errors;59 warnings)/426 paired resources PASS;three new activity summary contract cases.",
-        "All23 backend suites PASS:21,160 executed assertions;catalog/progress98 proves exact book favorite status beyond500, URL headers count no completed downloads, owned/UTC/read-only summary, future exclusion, legacy separation and zero-progress/non-duration semantics.",
-        "Prior a0e8fdb actual API34 storage batch31 PASS remains recorded. No new storage changes in this summary follow-up and no claim of running its UI/native HTTP acceptance."
+        "All167 JVM tests/38 classes,debug APK/test APK/lint(0 errors;59 warnings)/432 paired resources PASS. Final native build5m50s with task-local wrapper SerialGC.",
+        "All24 isolated backend suites PASS:21,192 executed assertions;new completed-download suite27 plus catalog/progress103. Actual MariaDB10.4.32 proves additive migration preservation/replay/interruption/type rejection, stable kind/date idempotency, exact ownership, export and delete cascade. No live delivery/providers.",
+        "Actual read-only API34:35 instrumentation cases PASS in15.109s. Four new Room/Keystore/files/transport fixtures cover committed lost reply with DB reopen/original UTC date, A-to-B capture without B credentials, late A response after B login, and unreadable/foreign/deletion fences. Extended export and full lost-deletion-response journey prove new pending rows and filesystem receipts are included/cleaned only for A; B preserved. V2 PDF copy renders through the actual installed isolated service. Existing31 storage/Quran/counter/reading/lesson cases retained."
       ],
       "integration_findings": [
-        "Reviewed fc09138e,c8827e3,d1dbdf9. Source resume-position sum is not elapsed watch time, opening/zero progress is not a lesson started, and mixed historical URL-lookup events do not prove downloads.",
-        "Owned UTC snapshot aggregates only actual lesson/adhkar completions and saved lesson progress; unavailable reading/listening/completed-download tracking is explicit. Legacy book/Quran events remain separate, unchanged and excluded from genuine active-day/recent-completion metrics.",
-        "GET book download URL no longer records activity even with Idempotency-Key. Add durable native post-publication completion outbox next, with distinct provenance/counts and export/deletion boundaries.",
-        "07.5 follow-up: book detail now carries exact owned boolean is_favorite; native action never derives absence from truncated favorites list or missing/unreadable state."
+        "Book publication now commits an opaque encrypted completion receipt in backward-compatible ATHAR-PDF-2. Before overwrite/removal the prior receipt is durably promoted; reopen recovers the publication-to-outbox gap. Only after guarded Room persistence is its filesystem promotion source cleared. Legacy v1/part/orphan/URL states never backfill completions.",
+        "BookActivityRepository queues captured A receipts even after login B, but sends only with a current A session-generation lease. Original UUID/date/hash survive retry and database reopen; strict acknowledgement removes only the matching pending row. Private cache eviction cannot remove this nonlocalized outbox.",
+        "Worker checks namespace and durable deletion fences, reuses an already verified same-request commit, and retains encrypted filesystem receipts if Room handoff is interrupted. Existing owned private-sync infrastructure gains ACTIVITY; acknowledgement refreshes own Home/summary caches. No new permission, dependency or standalone background job.",
+        "Migration030 appends a separate completed event kind/counter without rewriting mixed legacy history. Fresh/populated/replay/interrupted-DDL/wrong-column contracts tested; unsupported schema remains unrecorded and intact. Export fixed projections and complete local snapshot include new owned activity; existing account purge covers both Room pending rows and filesystem receipts.",
+        "Summary v2 exposes genuine completed-download totals/days, retains v1 cached unavailable state, and never infers elapsed watch/listen time. Home reads the same genuine metrics and keeps legacy reading-session tracking explicitly unavailable, including old caches. Activity controls/status share one scroll surface with retained owner/namespace-bound state and truthful retry/confirmation notices."
       ],
-      "reconciled": "Owner-bound schema-versioned UTC summary with explicit unavailable tracking, strict native non-fabrication validation and localized cached/server snapshot notice. Genuine adhkar/lesson metrics exclude legacy unknown-provenance reading/download events. URL resolution is no longer a completion. Durable native completed-download events remain unimplemented."
+      "reconciled": "Durable encrypted publication-to-Room handoff, original captured-owner completed-download events, verified-owner idempotent sync, truthful summary/Home metrics and complete owned export/deletion. Typed v1/v2 compatibility; no legacy backfill or fabricated elapsed/reading/listening metrics."
     },
     {
       "id": "07.7",
@@ -14270,9 +14271,12 @@
       "03.5",
       "03.6",
       "03.7",
-      "07.3"
+      "07.3",
+      "07.4",
+      "07.5",
+      "07.6"
     ],
-    "evidence": "2026-10-29 API34 storage/PDF20 plus account snapshot batch10 PASS. Physical/API27/provider/SAF/OS/UI acceptance remains open. Inventory and logs are ignored/private."
+    "evidence": "2026-10-29 actual API34 current35-case storage/deletion/export/PDF/Quran/account batch PASS in15.109s. Captured network/proof transports are injected; real MariaDB tested separately. Physical/API27/provider/SAF/OS/UI/native HTTP acceptance remains open. All inventories/captures/raw logs remain ignored/private."
   },
   "migration_inventory": {
     "identical_versions": "001–019",
@@ -14288,30 +14292,33 @@
     "codex_only": [
       "027_lesson_provider_identity.sql",
       "028_email_delivery_attempts.sql",
-      "029_account_deletion_receipts.sql"
+      "029_account_deletion_receipts.sql",
+      "030_book_download_completions.sql"
     ],
-    "decision": "No current version/name collisions. Incoming020–026 need semantic review and disposable fresh/populated schema tests before adoption; existing full-ledger fingerprint must be retained. Source head7392e93 remains unchanged;029 adds deletion proof without collision. Populated/fresh/replay tests PASS; Room2-to3 preserves private rows and pending outbox."
+    "decision": "No current version/name collisions. Incoming020-026 still need per-task semantic review; retain full-ledger fingerprints. Source7392e93 unchanged.029 deletion proof and030 distinct completed-download kind/count are additive.030 preserves populated private rows/legacy counters, resumes interrupted DDL, rejects an incompatible existing column without recording readiness, and replays safely. Room remains version3; existing guarded encrypted cache rows hold the new outbox."
   },
   "strategy": "docs/progress/FUNCTIONAL_INTEGRATION_STRATEGY.md",
   "last_refetch": {
     "date": "2026-10-29",
-    "codex_remote": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72",
+    "codex_remote": "d6c63a880764373a0992fdf4374efeb149486964",
     "parallel_remote": "7392e93b088990c3478cf32197781f831eb10f83"
   },
   "next_batch": {
     "tasks": [
-      "07.6"
+      "07.7",
+      "07.8",
+      "07.9"
     ],
-    "state": "DURABLE VERIFIED-PUBLICATION COMPLETED-DOWNLOAD OUTBOX, OWNED SYNC, EXPORT/DELETION AND LEGACY SEPARATION NEXT"
+    "state": "REVIEW AND RECONCILE SOURCE REVISIONED KHATMAH PLAN/OWNED OFFLINE SYNC; PRESERVE COMPLETED-DOWNLOAD, DELETION AND EXPORT BOUNDARIES"
   },
   "last_milestone_gate": {
     "date": "2026-10-29",
-    "scope": "WP03-WP06 plus WP07.1-WP07.5 and WP07.6 summary foundations",
-    "jvm_tests": 155,
-    "backend_suites": 23,
-    "backend_executed_assertions": 21160,
-    "api34_instrumentation_tests": 31,
-    "state": "LOCAL GATES PASS / COMPLETED DOWNLOAD OUTBOX, REAL NATIVE HTTP, UI, OS, PHYSICAL AND PROVIDER GATES OPEN",
-    "api34_instrumentation_baseline": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72"
+    "scope": "WP03-WP06 and WP07.1-WP07.6 functional reconciliation",
+    "jvm_tests": 167,
+    "backend_suites": 24,
+    "backend_executed_assertions": 21192,
+    "api34_instrumentation_tests": 35,
+    "state": "LOCAL AND API34 FIXTURE GATES PASS / REAL NATIVE HTTP, UI, OS, PHYSICAL AND PROVIDER GATES OPEN",
+    "api34_scope": "Current completed-download/export/deletion/cache/PDF/Quran storage batch35;35-case receipt binds with this stable checkpoint."
   }
 }

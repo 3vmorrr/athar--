@@ -8,7 +8,7 @@ import java.util.Locale
 /** Explicit export schema; a bad owner or unknown private section aborts the entire copy. */
 object AccountExportPolicy {
     val accountTables = setOf("quran_bookmarks", "quran_positions", "khatmah_plans", "user_favorites", "video_progress", "account_daily_stats", "adhkar_progress")
-    val deviceSections = setOf("device_lesson_progress", "device_night_sessions", "device_night_mutations", "device_reading_position", "device_adhkar_counters", "device_book_positions", "device_book_inventory")
+    val deviceSections = setOf("device_lesson_progress", "device_night_sessions", "device_night_mutations", "device_reading_position", "device_adhkar_counters", "device_book_positions", "device_book_inventory", "device_book_activity")
     private val forbidden = setOf("privateexemptions", "localexemptions", "deviceprivateexemptions", "password", "passwordhash", "accesstoken", "refreshtoken", "tokenhash", "accesshash", "refreshhash", "secret", "apikey", "payloadcipher", "encryptedpayload", "sessionversion")
 
     private fun safe(value: JsonElement, depth: Int = 0) {
@@ -48,10 +48,14 @@ object AccountExportPolicy {
             if (section == "device_reading_position") require(value.isJsonNull || value.isJsonObject)
             else require(value.isJsonArray)
         }
-        listOf("device_book_positions", "device_book_inventory").forEach { section -> device.getAsJsonArray(section).forEach {
+        listOf("device_book_positions", "device_book_inventory", "device_book_activity").forEach { section -> device.getAsJsonArray(section).forEach {
             val row = it.asJsonObject
             require(integer(row["owner"]) == owner && row["namespace"].asString == namespace)
         } }
+        device.getAsJsonArray("device_book_activity").forEach { row ->
+            val request = row.asJsonObject["event_id"].asString
+            BookCompletionEvent.parse(row, namespace, owner, request)
+        }
         safe(device)
     }
     fun envelope(owner: Long, namespace: String, account: JsonObject, device: JsonObject, generatedAt: Instant = Instant.now()): JsonObject {

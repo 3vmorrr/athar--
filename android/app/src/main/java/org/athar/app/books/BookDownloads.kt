@@ -18,7 +18,10 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.coroutineContext
 
-internal fun bookFiles(context: Context, scope: BookScope) = BookFiles(File(context.filesDir, "books"), scope)
+internal fun bookFiles(context: Context, scope: BookScope) = BookFiles(File(context.filesDir, "books"), scope) { book, request, hash ->
+    val graph = (context.applicationContext as org.athar.app.AtharApplication).graph
+    graph.cipher.seal(org.athar.app.core.data.BookCompletionEvent(scope.namespace, scope.owner, book, request, hash, java.time.LocalDate.now(java.time.ZoneOffset.UTC)).json().toString())
+}
 
 class BookDownloadWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
     override suspend fun doWork(): Result {
@@ -27,16 +30,24 @@ class BookDownloadWorker(context: Context, parameters: WorkerParameters) : Corou
         var request: String? = null
         return try {
             val scope = BookScope(inputData.getString(NAMESPACE).orEmpty(), inputData.getLong(OWNER, -1))
+            val graph = (applicationContext as org.athar.app.AtharApplication).graph
+            if (scope.namespace != graph.partition) return Result.failure()
+            graph.accountDeletion.initialize()
+            graph.database.dao().requireWritable(scope.owner)
             book = inputData.getInt(BOOK, -1)
             request = requireNotNull(inputData.getString(TOKEN))
             files = bookFiles(applicationContext, scope)
             if (!files.isActive(book, request)) return Result.failure()
             setProgress(workDataOf(PERCENT to -1))
             setForeground(foreground(-1))
-            BookTransfer().download(files, book, request, inputData.getString(URL).orEmpty()) { percent ->
+            val existing = files.current(book)?.takeIf { it.token == request && files.verify(it) }
+            if (existing == null) BookTransfer().download(files, book, request, inputData.getString(URL).orEmpty()) { percent ->
                 setProgress(workDataOf(PERCENT to percent))
                 setForeground(foreground(percent))
             }
+            try { graph.bookActivity.capture(scope.owner) }
+            catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { /* Committed encrypted file receipt survives for owned sync. */ }
             Result.success(workDataOf(TOKEN to request))
         } catch (cancelled: CancellationException) { throw cancelled }
         catch (_: BookTransferRejected) { Result.failure() }

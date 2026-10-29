@@ -16,6 +16,7 @@ internal class GraphSyncOperations(private val graph:AppGraph):OwnedSyncOperatio
             SyncModule.COUNTERS->graph.counters.sync(owner)
             SyncModule.LESSONS->graph.lessons.sync(owner)
             SyncModule.NIGHT_PRAYER->graph.nightPrayer.sync(owner)
+            SyncModule.ACTIVITY->graph.bookActivity.sync(owner)
         }
     }
     suspend fun hasPending(module:SyncModule,owner:Long):Boolean=when(module){
@@ -23,6 +24,7 @@ internal class GraphSyncOperations(private val graph:AppGraph):OwnedSyncOperatio
         SyncModule.COUNTERS->graph.counters.hasPending(owner)
         SyncModule.LESSONS->graph.lessons.hasPending(owner)
         SyncModule.NIGHT_PRAYER->graph.nightPrayer.hasPending(owner)
+        SyncModule.ACTIVITY->graph.bookActivity.hasPending(owner)
     }
     override suspend fun hasPending(owner:Long)=SyncModule.entries.any{hasPending(it,owner)}
 }

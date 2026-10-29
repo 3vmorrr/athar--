@@ -8,11 +8,16 @@ import org.junit.Test
 
 class HomeProjectionTest {
     @Test fun actualZeroAndOwnedTotalsRemainDistinctFromUnreadableData() {
-        assertEquals(0L, HomeProjection.metric(JsonParser.parseString("""{"activity":{"quran_sessions":"0"}}"""), "quran_sessions"))
-        assertEquals(72L, HomeProjection.metric(JsonParser.parseString("""{"activity":{"quran_sessions":72}}"""), "quran_sessions"))
-        for (json in listOf("{}", "null", """{"activity":null}""", """{"activity":{"quran_sessions":false}}""", """{"activity":{"quran_sessions":-1}}""", """{"activity":{"quran_sessions":"unreadable"}}""")) {
-            assertNull(HomeProjection.metric(JsonParser.parseString(json), "quran_sessions"))
+        assertEquals(0L, HomeProjection.metric(JsonParser.parseString("""{"activity":{"lesson_completions":"0"}}"""), "lesson_completions"))
+        assertEquals(72L, HomeProjection.metric(JsonParser.parseString("""{"activity":{"lesson_completions":72}}"""), "lesson_completions"))
+        for (json in listOf("{}", "null", """{"activity":null}""", """{"activity":{"lesson_completions":false}}""", """{"activity":{"lesson_completions":-1}}""", """{"activity":{"lesson_completions":"unreadable"}}""")) {
+            assertNull(HomeProjection.metric(JsonParser.parseString(json), "lesson_completions"))
         }
+    }
+    @Test fun legacyReadingCountersCannotAppearAsImplementedSessionTracking() {
+        for (raw in listOf("""{"activity":{"quran_sessions":72}}""","""{"activity":{"quran_sessions":72,"availability":{"reading_sessions":false}}}""","""{"activity":{"quran_sessions":72,"availability":{"reading_sessions":"true"}}}"""))
+            assertNull(HomeProjection.metric(JsonParser.parseString(raw),"quran_sessions"))
+        assertEquals(72L,HomeProjection.metric(JsonParser.parseString("""{"activity":{"quran_sessions":72,"availability":{"reading_sessions":true}}}"""),"quran_sessions"))
     }
     @Test fun confirmedEmptyCollectionsDifferFromInvalidRecordsAndUnsupportedRoutes() {
         assertEquals(emptyList<Any>(), HomeProjection.items(JsonParser.parseString("""{"books":[]}"""), "books"))

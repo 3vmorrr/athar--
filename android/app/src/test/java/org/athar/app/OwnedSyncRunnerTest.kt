@@ -31,7 +31,7 @@ class OwnedSyncRunnerTest {
     }
     @Test fun unavailableModuleKeepsOtherModulesUsableAndRequestsNetworkRetry()=runTest {
         val operations=Operations().apply{action={if(it==SyncModule.READING)throw IOException("Private diagnostic")}}
-        assertEquals(SyncOutcome.RETRY,OwnedSyncRunner(operations).run(1));assertEquals(4,operations.calls.size)
+        assertEquals(SyncOutcome.RETRY,OwnedSyncRunner(operations).run(1));assertEquals(SyncModule.entries.size,operations.calls.size)
     }
     @Test fun revocationStopsTheRunRatherThanRetryingAFormerAccount()=runTest {
         val operations=Operations().apply{action={throw ApiException(403,"forbidden","Private provider text")}}
@@ -39,7 +39,7 @@ class OwnedSyncRunnerTest {
     }
     @Test fun malformedLocalDataRequiresAttentionButDoesNotBlockHealthyModules()=runTest {
         val operations=Operations().apply{action={if(it==SyncModule.COUNTERS)throw IllegalArgumentException("Private ciphertext fixture")}}
-        assertEquals(SyncOutcome.ACTION_REQUIRED,OwnedSyncRunner(operations).run(1));assertEquals(4,operations.calls.size)
+        assertEquals(SyncOutcome.ACTION_REQUIRED,OwnedSyncRunner(operations).run(1));assertEquals(SyncModule.entries.size,operations.calls.size)
     }
     @Test fun throttlingAndServerFailureRetryWhileValidationNeedsAnExplicitFix()=runTest {
         for(status in listOf(429,500,422)){

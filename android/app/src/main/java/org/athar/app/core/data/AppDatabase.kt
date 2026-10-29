@@ -21,6 +21,7 @@ interface AtharDao {
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") suspend fun cache(user: Long, key: String): CachedDocument?
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey=:key") fun observeCache(user: Long, key: String): Flow<CachedDocument?>
     @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix") suspend fun caches(user: Long, prefix: String): List<CachedDocument>
+    @Query("SELECT * FROM cached_documents WHERE userId=:user AND cacheKey LIKE :prefix") fun observeCaches(user: Long, prefix: String): Flow<List<CachedDocument>>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertCache(document: CachedDocument)
     @Transaction suspend fun cache(document: CachedDocument) { requireWritable(document.userId); insertCache(document) }
     suspend fun requireWritable(user: Long) { if (deletion(user) != null) throw AccountDeletionPending() }

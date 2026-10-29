@@ -36,7 +36,7 @@ final class AccountExportService
                 'khatmah_plans'=>'id,user_id,start_date,target_date,total_pages,completed_pages,status,created_at,updated_at',
                 'user_favorites'=>'id,user_id,target_type,target_id,created_at',
                 'video_progress'=>'user_id,lesson_id,position_seconds,duration_seconds,is_complete,updated_at',
-                'account_daily_stats'=>'user_id,activity_date,quran_sessions,lesson_completions,adhkar_completions,book_downloads',
+                'account_daily_stats'=>'user_id,activity_date,quran_sessions,lesson_completions,adhkar_completions,book_downloads,book_completions',
                 'adhkar_progress'=>'user_id,item_key,current_count,repeat_count,revision,updated_at',
                 'activity_events'=>'user_id,event_id,activity_type,activity_date,created_at',
             ];

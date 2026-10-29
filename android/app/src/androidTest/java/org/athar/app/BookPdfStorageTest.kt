@@ -16,10 +16,10 @@ import java.io.File
 import java.util.UUID
 
 class BookPdfStorageTest {
-    @Test fun verifiedReadOnlyCopyRendersThroughTheInstalledIsolatedPrivateService() = runBlocking {
+    @Test fun verifiedReadOnlyV2CopyRendersThroughTheInstalledIsolatedPrivateService() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val root = File(context.cacheDir, "qa-books-${UUID.randomUUID()}").apply { mkdirs() }
-        val files = BookFiles(root, BookScope("0123456789ab", 1))
+        val files = BookFiles(root, BookScope("0123456789ab", 1)) { _, request, _ -> "opaque-pdf-receipt-$request" }
         val client = BookPdfClient(context) {}
         try {
             val request = files.begin(1)
@@ -33,6 +33,7 @@ class BookPdfStorageTest {
             } finally { document.close() }
             val copy = files.publish(1, request)
             assertTrue(files.verify(copy))
+            assertEquals("ATHAR-PDF-2", File(copy.file.parentFile,"manifest").readLines().first())
             val descriptor = files.openVerified(1) { ParcelFileDescriptor.open(it.file, ParcelFileDescriptor.MODE_READ_ONLY) }
             try { assertEquals(1, client.open(descriptor)) } finally { descriptor.close() }
             val bitmap = client.render(0, 300)

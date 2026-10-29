@@ -3590,20 +3590,20 @@
   },
   "active_review": {
     "tasks": [
-      "07.5",
       "07.6"
     ],
-    "state": "SUMMARY RECONCILED / LOCAL GATES PASSED / COMPLETED DOWNLOAD OUTBOX AND UI ACCEPTANCE PENDING",
+    "state": "RECONCILED / LOCAL AND API34 FIXTURE GATES PASSED / NATIVE HTTP, OS AND PHYSICAL ACCEPTANCE OPEN",
     "source_head": "7392e93b088990c3478cf32197781f831eb10f83",
-    "target_baseline": "a0e8fdb83bd9b52f9121cd7f16a28e8854ed1c72",
+    "target_baseline": "d6c63a880764373a0992fdf4374efeb149486964",
     "findings": [
-      "Reviewed fc09138e,c8827e3,d1dbdf9. Source resume-position sum is not elapsed watch time, opening/zero progress is not a lesson started, and mixed historical URL-lookup events do not prove downloads.",
-      "Owned UTC snapshot aggregates only actual lesson/adhkar completions and saved lesson progress; unavailable reading/listening/completed-download tracking is explicit. Legacy book/Quran events remain separate, unchanged and excluded from genuine active-day/recent-completion metrics.",
-      "GET book download URL no longer records activity even with Idempotency-Key. Add durable native post-publication completion outbox next, with distinct provenance/counts and export/deletion boundaries.",
-      "07.5 follow-up: book detail now carries exact owned boolean is_favorite; native action never derives absence from truncated favorites list or missing/unreadable state.",
-      "155 JVM/36 classes/debug APK/test APK/lint(0 errors;59 warnings)/426 paired resources PASS;three new activity summary contract cases.",
-      "All23 backend suites PASS:21,160 executed assertions;catalog/progress98 proves exact book favorite status beyond500, URL headers count no completed downloads, owned/UTC/read-only summary, future exclusion, legacy separation and zero-progress/non-duration semantics.",
-      "Prior a0e8fdb actual API34 storage batch31 PASS remains recorded. No new storage changes in this summary follow-up and no claim of running its UI/native HTTP acceptance."
+      "Book publication now commits an opaque encrypted completion receipt in backward-compatible ATHAR-PDF-2. Before overwrite/removal the prior receipt is durably promoted; reopen recovers the publication-to-outbox gap. Only after guarded Room persistence is its filesystem promotion source cleared. Legacy v1/part/orphan/URL states never backfill completions.",
+      "BookActivityRepository queues captured A receipts even after login B, but sends only with a current A session-generation lease. Original UUID/date/hash survive retry and database reopen; strict acknowledgement removes only the matching pending row. Private cache eviction cannot remove this nonlocalized outbox.",
+      "Worker checks namespace and durable deletion fences, reuses an already verified same-request commit, and retains encrypted filesystem receipts if Room handoff is interrupted. Existing owned private-sync infrastructure gains ACTIVITY; acknowledgement refreshes own Home/summary caches. No new permission, dependency or standalone background job.",
+      "Migration030 appends a separate completed event kind/counter without rewriting mixed legacy history. Fresh/populated/replay/interrupted-DDL/wrong-column contracts tested; unsupported schema remains unrecorded and intact. Export fixed projections and complete local snapshot include new owned activity; existing account purge covers both Room pending rows and filesystem receipts.",
+      "Summary v2 exposes genuine completed-download totals/days, retains v1 cached unavailable state, and never infers elapsed watch/listen time. Home reads the same genuine metrics and keeps legacy reading-session tracking explicitly unavailable, including old caches. Activity controls/status share one scroll surface with retained owner/namespace-bound state and truthful retry/confirmation notices.",
+      "All167 JVM tests/38 classes,debug APK/test APK/lint(0 errors;59 warnings)/432 paired resources PASS. Final native build5m50s with task-local wrapper SerialGC.",
+      "All24 isolated backend suites PASS:21,192 executed assertions;new completed-download suite27 plus catalog/progress103. Actual MariaDB10.4.32 proves additive migration preservation/replay/interruption/type rejection, stable kind/date idempotency, exact ownership, export and delete cascade. No live delivery/providers.",
+      "Actual read-only API34:35 instrumentation cases PASS in15.109s. Four new Room/Keystore/files/transport fixtures cover committed lost reply with DB reopen/original UTC date, A-to-B capture without B credentials, late A response after B login, and unreadable/foreign/deletion fences. Extended export and full lost-deletion-response journey prove new pending rows and filesystem receipts are included/cleaned only for A; B preserved. V2 PDF copy renders through the actual installed isolated service. Existing31 storage/Quran/counter/reading/lesson cases retained."
     ]
   },
   "previous_visual_review": {

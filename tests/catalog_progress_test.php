@@ -130,7 +130,7 @@ isolated_database(static function(PDO $db):void{
     assert_progress($summary['generated_date']===$today&&$summary['recorded']['adhkar_completions']===2&&$summary['recorded']['lesson_completions']===1,'summary excludes other owner and future rows');
     assert_progress($summary['recorded']['active_days']===2&&count($summary['recent'])===2&&$summary['recent'][0]['date']===$yesterday,'legacy-only days cannot inflate genuine completion days');
     assert_progress($summary['recorded']['lessons_with_progress']===1&&$summary['recorded']['completed_lessons']===1&&!isset($summary['recorded']['watched_seconds']),'saved resume position is never labeled watched elapsed time');
-    assert_progress($summary['availability']===['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>false],'unimplemented tracking unavailable rather than fabricated zeros');
+    assert_progress($summary['availability']===['reading_sessions'=>false,'listening_history'=>false,'adhkar_completions'=>true,'lesson_progress'=>true,'book_downloads'=>true],'unimplemented tracking unavailable rather than fabricated zeros');
     assert_progress($summary['recorded']['legacy_book_download_events']===1&&$summary['recorded']['legacy_quran_sessions']===1,'historical unknown-provenance events preserved separately');
     $before=$db->query('SELECT SUM(book_downloads) FROM account_daily_stats WHERE user_id=1')->fetchColumn();
     for($attempt=0;$attempt<2;$attempt++){
@@ -142,6 +142,14 @@ isolated_database(static function(PDO $db):void{
     assert_progress($response->status===200&&$response->body['data']['owner_id']===1&&$response->body['data']['recorded']['adhkar_completions']===2,'activity API derives exact verified owner');
     assert_progress($api->handle(new \Athar\Http\Request('POST','/api/v1/me/activity-summary',[],$headers))->status===405,'summary read-only method');
     assert_progress($api->handle(new \Athar\Http\Request('GET','/api/v1/me/activity-summary'))->status===401,'anonymous summary denied');
+    $completedId=test_uuid();$progress->activity($u,$completedId,'book_download_completed',$older);$progress->activity($u,$completedId,'book_download_completed',$older);
+    $summary=$progress->activitySummary($u);
+    assert_progress($summary['schema_version']===2&&$summary['availability']['book_downloads']===true&&$summary['recorded']['completed_book_downloads']===1,'new completion kind counts once in separate proven-flow metric');
+    assert_progress($summary['recorded']['legacy_book_download_events']===1&&$summary['recorded']['active_days']===3&&$summary['recent'][0]['completed_book_downloads']===1,'completed downloads include original UTC day without rewriting mixed legacy counters');
+    reject_progress(fn()=>$progress->activity($u,$completedId,'book_download_completed',$today),409,'completion retry never rewrites original event date');
+    reject_progress(fn()=>$progress->activity($u,$completedId,'book_download',$older),409,'legacy kind cannot reuse completed event id');
+    $progress->activity($other,$completedId,'book_download_completed',$today);
+    assert_progress($progress->activitySummary($other)['recorded']['completed_book_downloads']===1&&$progress->activitySummary($u)['recorded']['completed_book_downloads']===1,'same event UUID remains owned independently');
     $db->beginTransaction();$progress->activitySummary($u);assert_progress($db->inTransaction(),'summary preserves caller transaction');$db->rollBack();
     $db->beginTransaction();$progress->bookmarks($u,['paged'=>'1']);assert_progress($db->inTransaction(),'caller transaction preserved by collection read');$db->rollBack();
 

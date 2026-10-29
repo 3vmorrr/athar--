@@ -19,9 +19,14 @@ internal data class BookScope(val namespace: String, val owner: Long) {
 internal data class BookCopy(val file: File, val token: String, val size: Long, val sha256: String)
 
 /** Immutable copies + an atomic manifest. Cancellation/revocation fence publication durably. */
-internal class BookFiles(private val root: File, val scope: BookScope) {
+internal class BookFiles(
+    private val root: File,
+    val scope: BookScope,
+    private val completionReceipt: ((book: Int, request: String, sha256: String) -> String)? = null,
+) {
     private val lock = locks.computeIfAbsent(File(root, scope.key).absolutePath) { Any() }
     private val directory get() = File(root, scope.key)
+    private val completions get() = File(directory, "completion-receipts")
     private val revoked get() = File(root, "revoked-${scope.key}")
     private val paused get() = File(root, "deleting-${scope.key}")
     private fun book(id: Int): File { require(id > 0); return File(directory, "book-$id") }
@@ -74,7 +79,13 @@ internal class BookFiles(private val root: File, val scope: BookScope) {
     fun publish(id: Int, request: String, checkCancelled: () -> Unit = {}): BookCopy {
         token(request)
         val part = synchronized(lock) {
+            checkCancelled()
             check(active(id, request)) { "book_request_changed" }
+            val committed = readManifest(id)?.copy
+            if (committed?.token == request && verify(committed)) {
+                promoteCompletion(id)
+                return committed
+            }
             File(book(id), "$request.part")
         }
         val size = part.length()
@@ -83,25 +94,78 @@ internal class BookFiles(private val root: File, val scope: BookScope) {
         return synchronized(lock) {
             checkCancelled()
             check(active(id, request)) { "book_request_changed" }
+            // Preserve the prior committed receipt before replacing its recovery source.
+            promoteCompletion(id)
+            val receipt = completionReceipt?.invoke(id, request, hash)?.also(::validateReceipt)
             val destination = File(book(id), "$request-$hash.pdf")
             Files.move(part.toPath(), destination.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
             // If this fails, the old manifest still names the old valid copy.
-            atomic(File(book(id), "manifest"), "ATHAR-PDF-1\n$request\n$size\n$hash")
+            val manifest = if (receipt == null) "ATHAR-PDF-1\n$request\n$size\n$hash"
+                else "ATHAR-PDF-2\n$request\n$size\n$hash\n$receipt"
+            atomic(File(book(id), "manifest"), manifest)
+            // A crash here is recovered from the v2 manifest before overwrite/removal.
+            promoteCompletion(id)
             book(id).listFiles()?.filter { it.name.endsWith(".pdf") && it != destination }?.forEach { it.delete() }
             BookCopy(destination, request, size, hash)
         }
     }
 
-    fun current(id: Int): BookCopy? = synchronized(lock) {
-        allowed()
+    private data class Manifest(val copy: BookCopy, val receipt: String?)
+    private fun readManifest(id: Int): Manifest? {
         val manifest = File(book(id), "manifest")
-        if (!manifest.exists()) return@synchronized null
+        if (!manifest.exists()) return null
+        if (!manifest.isFile || manifest.length() !in 1..16384) throw IOException("book_manifest_unreadable")
         val lines = manifest.readLines(Charsets.UTF_8)
-        if (lines.size != 4 || lines[0] != "ATHAR-PDF-1") throw IOException("book_manifest_unreadable")
+        val version1 = lines.size == 4 && lines[0] == "ATHAR-PDF-1"
+        val version2 = lines.size == 5 && lines[0] == "ATHAR-PDF-2"
+        if (!version1 && !version2) throw IOException("book_manifest_unreadable")
         val request = runCatching { token(lines[1]) }.getOrElse { throw IOException("book_manifest_unreadable", it) }
         val size = lines[2].toLongOrNull()?.takeIf { it in 5..BookDownloadPolicy.MAX_BYTES } ?: throw IOException("book_manifest_unreadable")
         if (!lines[3].matches(Regex("[a-f0-9]{64}"))) throw IOException("book_manifest_unreadable")
-        BookCopy(File(book(id), "$request-${lines[3]}.pdf"), request, size, lines[3])
+        val receipt = if (version2) lines[4].also(::validateReceipt) else null
+        return Manifest(BookCopy(File(book(id), "$request-${lines[3]}.pdf"), request, size, lines[3]), receipt)
+    }
+
+    fun current(id: Int): BookCopy? = synchronized(lock) { allowed(); readManifest(id)?.copy }
+
+    private fun validateReceipt(value: String) {
+        if (value.isBlank() || value.length > 8192 || value.contains('\n') || value.contains('\r')) throw IOException("book_completion_unreadable")
+    }
+
+    /** Only a committed v2 manifest can create this opaque, encrypted handoff. */
+    private fun promoteCompletion(id: Int) {
+        val manifest = readManifest(id) ?: return
+        val receipt = manifest.receipt ?: return
+        if (!completions.isDirectory && !completions.mkdirs()) throw IOException("book_completion_storage_unavailable")
+        val destination = File(completions, manifest.copy.token)
+        // The first receipt owns the original request date even if a caller retries it.
+        if (!destination.exists()) atomic(destination, receipt)
+    }
+
+    fun completionReceipts(): Map<String, String> = synchronized(lock) {
+        allowed()
+        knownBooks().forEach(::promoteCompletion)
+        if (!completions.exists()) return@synchronized emptyMap()
+        val entries = completions.listFiles() ?: throw IOException("book_completion_inventory_unreadable")
+        entries.filterNot { it.name.startsWith(".atomic-") }.sortedBy { it.name }.associate { file ->
+            val request = runCatching { token(file.name) }.getOrElse { throw IOException("book_completion_unreadable", it) }
+            if (!file.isFile || file.length() !in 1..16384) throw IOException("book_completion_unreadable")
+            request to file.readText(Charsets.UTF_8).also(::validateReceipt)
+        }
+    }
+
+    /** Call only after the exact receipt is durable in the protected Room outbox. */
+    fun acknowledgeCompletion(id: Int, request: String) = synchronized(lock) {
+        allowed(); token(request)
+        val current = readManifest(id)
+        if (current?.copy?.token == request && current.receipt != null) {
+            val copy = current.copy
+            // Clear promotion source before unlinking the handoff, so reopen cannot replay it.
+            atomic(File(book(id), "manifest"), "ATHAR-PDF-1\n$request\n${copy.size}\n${copy.sha256}")
+        }
+        val receipt = File(completions, request)
+        if (receipt.exists() && !receipt.delete()) throw IOException("book_completion_ack_failed")
+        Unit
     }
 
     fun verify(copy: BookCopy): Boolean = synchronized(lock) {
@@ -123,6 +187,7 @@ internal class BookFiles(private val root: File, val scope: BookScope) {
 
     fun remove(id: Int) = synchronized(lock) {
         cancel(id)
+        promoteCompletion(id)
         val folder = book(id)
         if (folder.exists() && !folder.deleteRecursively()) throw IOException("book_remove_failed")
     }
