@@ -470,19 +470,30 @@ if ($path === '/account') {
                     catch (PDOException $exception) { if(db()->inTransaction())db()->rollBack(); if ($exception->getCode() === '23000') $accountError = 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'; else throw $exception; }
                 }
             }
-        } elseif ($action === 'plan-status') {
-            $status = (string) ($_POST['status'] ?? '');
-            if (!in_array($status, ['active','paused','finished'], true)) $accountError = 'حالة الخطة غير صالحة.';
-            else { db()->prepare('UPDATE khatmah_plans SET status=? WHERE user_id=?')->execute([$status, $user['id']]); flash('تم تحديث حالة الخطة.'); redirect('/account'); }
-        } elseif ($action === 'plan') {
-            $target = (string) ($_POST['target_date'] ?? '');
-            $completed = filter_var($_POST['completed_pages'] ?? 0, FILTER_VALIDATE_INT);
-            $date = DateTimeImmutable::createFromFormat('!Y-m-d', $target);
-            if (!$date || $date <= new DateTimeImmutable('today') || $completed === false || $completed < 0 || $completed > 604) {
-                $accountError = 'اختر تاريخًا مستقبليًا وكمية صفحات بين 0 و604.';
-            } else {
-                db()->prepare("INSERT INTO khatmah_plans (user_id,start_date,target_date,completed_pages,status) VALUES (?,?,?,?, 'active') ON DUPLICATE KEY UPDATE target_date=VALUES(target_date),completed_pages=VALUES(completed_pages),status='active'")->execute([$user['id'], date('Y-m-d'), $target, $completed]);
+        } elseif (in_array($action, ['plan','plan-status','plan-restart'], true)) {
+            try {
+                $expected = filter_var($_POST['expected_revision'] ?? null, FILTER_VALIDATE_INT);
+                if ($expected === false || $expected === null || $expected < 0) throw new \Athar\Http\ApiError('invalid_fields',422);
+                $service = new \Athar\Progress\Khatmah(db());
+                $input = ['expected_revision'=>$expected];
+                if ($action === 'plan-status') {
+                    $actions = ['paused'=>'pause','active'=>'resume','finished'=>'finish'];
+                    $input['action'] = $actions[(string)($_POST['status'] ?? '')] ?? '';
+                    $service->action((int)$user['id'],$input);
+                } else {
+                    $input['start_date'] = (string)($_POST['start_date'] ?? gmdate('Y-m-d'));
+                    $input['target_date'] = (string)($_POST['target_date'] ?? '');
+                    if ($action === 'plan-restart') {
+                        $input['action']='restart'; $service->action((int)$user['id'],$input);
+                    } else {
+                        $completed=filter_var($_POST['completed_pages'] ?? null,FILTER_VALIDATE_INT);
+                        if ($completed === false || $completed === null) throw new \Athar\Http\ApiError('invalid_fields',422);
+                        $input['completed_pages']=$completed; $service->save((int)$user['id'],$input);
+                    }
+                }
                 flash('تم تحديث خطة الختمة.'); redirect('/account');
+            } catch (\Athar\Http\ApiError $error) {
+                $accountError=$error->status===409?'تغيرت الخطة في جلسة أخرى. احتفظ بمدخلاتك وراجع الخطة الحالية قبل إعادة الحفظ.':'تعذر حفظ الخطة. تحقق من التواريخ والصفحات والحالة الحالية؛ إنهاء الخطة يتطلب إكمال 604 صفحات.';
             }
         } elseif ($action === 'bookmark-delete') {
             db()->prepare('DELETE FROM quran_bookmarks WHERE id=? AND user_id=?')->execute([(int) ($_POST['id'] ?? 0), $user['id']]);
@@ -551,8 +562,7 @@ if ($path === '/account') {
     $statement->execute([$user['id']]); $bookmarks = $statement->fetchAll();
     $statement = db()->prepare('SELECT surah,ayah,updated_at FROM quran_positions WHERE user_id=?');
     $statement->execute([$user['id']]); $position = $statement->fetch() ?: null;
-    $statement = db()->prepare('SELECT * FROM khatmah_plans WHERE user_id=? ORDER BY id DESC LIMIT 1');
-    $statement->execute([$user['id']]); $plan = $statement->fetch() ?: null;
+    $plan = (new \Athar\Progress\Khatmah(db()))->get((int)$user['id']);
     $statement = db()->prepare('SELECT l.id,l.title,l.youtube_id,v.position_seconds,v.duration_seconds,v.is_complete,v.updated_at FROM video_progress v JOIN lessons l ON l.id=v.lesson_id WHERE v.user_id=? ORDER BY v.updated_at DESC');
     $statement->execute([$user['id']]); $videoProgress = $statement->fetchAll();
     $statement = db()->prepare("SELECT b.id,b.title,b.author,'book' AS target_type FROM user_favorites f JOIN books b ON f.target_id=b.id WHERE f.user_id=? AND f.target_type='book' AND b.is_published=1 UNION ALL SELECT l.id,l.title,s.name AS author,'lesson' AS target_type FROM user_favorites f JOIN lessons l ON f.target_id=l.id LEFT JOIN scholars s ON s.id=l.scholar_id WHERE f.user_id=? AND f.target_type='lesson' AND l.is_published=1 ORDER BY title");

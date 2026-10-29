@@ -27,7 +27,7 @@ isolated_database(static function(PDO $db):void{
         $progress->savePosition($owner,['surah'=>114,'ayah'=>6,'expected_revision'=>0]);
         $progress->favorite($owner,'lesson',1,true);
         $progress->saveLessonProgress($owner,['lesson_id'=>1,'position_seconds'=>10,'duration_seconds'=>20,'is_complete'=>false]);
-        $progress->saveKhatmah($owner,['target_date'=>gmdate('Y-m-d',time()+86400),'completed_pages'=>10,'status'=>'active']);
+        $progress->saveKhatmah($owner,['target_date'=>gmdate('Y-m-d',time()+86400),'completed_pages'=>10,'status'=>'active','expected_revision'=>0]);
         $progress->activity($owner,test_uuid(),'book_download');
         $db->prepare("INSERT INTO adhkar_progress(user_id,item_key,current_count,repeat_count,revision,updated_at) VALUES(?,'curated:1',1,3,1,UTC_TIMESTAMP())")->execute([$owner]);
         $night->preferences($owner,['expected_revision'=>0,'timezone'=>'Africa/Cairo']);

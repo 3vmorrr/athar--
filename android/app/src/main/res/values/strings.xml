@@ -345,4 +345,23 @@
     <string name="book_activity_pending">أحداث تنزيل مكتملة تنتظر تأكيد المزامنة: %1$d</string>
     <string name="book_activity_sync">مزامنة سجل التنزيلات</string>
     <string name="book_activity_sync_unconfirmed">تعذر تأكيد مزامنة سجل التنزيلات. احتُفظ بالأحداث لإعادة المحاولة أو التصدير.</string>
+    <string name="khatmah_plan_hint">خطة 604 صفحات بتواريخ UTC شاملة ليوم الإتمام. الحفظ لا يسجّل قراءة أو إنجازًا تلقائيًا.</string>
+    <string name="khatmah_offline">هذه نسخة محفوظة. تحديث الخطة يحتاج اتصالًا؛ تبقى مسودتك هنا حتى تعود الشبكة.</string>
+    <string name="khatmah_start">تاريخ البداية</string>
+    <string name="khatmah_invalid">تحقق من التواريخ والصفحات (0–604). تعديل موعد انتهى يتطلب موعدًا جديدًا صالحًا؛ الخطة المكتملة تتطلب بدء ختمة جديدة.</string>
+    <string name="khatmah_conflict">تغيرت الخطة في جلسة أخرى. مسودتك محفوظة هنا. حدّث العرض للمقارنة، أو اختر إلغاء المسودة وتحميل الخطة الحالية.</string>
+    <string name="khatmah_unconfirmed">لم نتأكد من نتيجة الحفظ. احتفظنا بالمسودة؛ أعد المحاولة بنفس البيانات أو حدّث العرض للمراجعة.</string>
+    <string name="khatmah_summary">المنجز %1$d من 604 · %2$d٪ · المتبقي %3$d صفحة</string>
+    <string name="khatmah_schedule">%1$d يومًا متبقيًا · %2$s إلى %3$s · UTC</string>
+    <string name="khatmah_overdue">انتهى الموعد المستهدف. عدّل الموعد أو سجّل التقدم صراحةً؛ لا تُحتسب صفحات تلقائيًا.</string>
+    <string name="khatmah_preview">معاينة غير محفوظة: ورد اليوم %1$d صفحة · %2$d يومًا متبقيًا.</string>
+    <string name="khatmah_resume">استئناف الخطة</string>
+    <string name="khatmah_finish">إنهاء الخطة</string>
+    <string name="khatmah_restart">بدء ختمة جديدة</string>
+    <string name="khatmah_discard">إلغاء المسودة وتحميل الخطة الحالية</string>
+    <string name="khatmah_discard_confirm">ستُلغى هذه المسودة عند نجاح تحميل الخطة الحالية. هل تريد المتابعة؟</string>
+    <string name="khatmah_restart_confirm">بدء ختمة جديدة يصفّر الصفحات المنجزة. اختر الموعد الجديد وأكّد هذا الإجراء.</string>
+    <string name="khatmah_finish_confirm">تأكيد إكمال هذه الخطة بعد تسجيل 604 صفحات؟ لا يضيف هذا الإجراء جلسات قراءة.</string>
+    <string name="khatmah_action_confirm">تأكيد تغيير حالة الخطة الحالية؟</string>
+    <string name="khatmah_saved_with_draft">حُفظت النسخة المرسلة. التعديلات التي كتبتها أثناء الحفظ ما زالت مسودة غير محفوظة.</string>
 </resources>

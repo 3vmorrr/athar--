@@ -159,6 +159,9 @@ final class ApiKernel
             if($r->method==='GET')return [$this->progress->khatmah($user),200];
             $this->method($r,'PUT');return [$this->progress->saveKhatmah($user,$r->body),200];
         }
+        if($path==='/me/khatmah/action'){
+            $this->method($r,'POST');return [(new \Athar\Progress\Khatmah($this->db))->action($user,$r->body),200];
+        }
         if($path==='/me/lesson-progress'){
             if($r->method==='GET')return [$this->progress->lessonProgress($user,(int)($r->query['lesson_id']??0)),200];
             $this->method($r,'PUT');return [$this->progress->saveLessonProgress($user,$r->body),200];

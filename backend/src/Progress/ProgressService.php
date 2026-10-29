@@ -110,13 +110,11 @@ final class ProgressService
     }
     public function khatmah(int $user): ?array
     {
-        $q=$this->db->prepare('SELECT start_date,target_date,total_pages,completed_pages,status,updated_at FROM khatmah_plans WHERE user_id=?');$q->execute([$user]);$plan=$q->fetch();if(!$plan)return null;
-        $remaining=max(0,(int)$plan['total_pages']-(int)$plan['completed_pages']);$days=max(1,(int)(new \DateTimeImmutable(gmdate('Y-m-d')))->diff(new \DateTimeImmutable($plan['target_date']))->format('%r%a')+1);$plan['remaining_pages']=$remaining;$plan['daily_pages']=$plan['status']==='active'?(int)ceil($remaining/$days):0;return $plan;
+        return (new Khatmah($this->db))->get($user);
     }
     public function saveKhatmah(int $user,array $data): array
     {
-        $date=(string)($data['target_date']??'');if(!NightPrayer::validDate($date)||$date<gmdate('Y-m-d')||$date>gmdate('Y-m-d',time()+5*366*86400))throw new ApiError('invalid_fields',422,['target_date'=>'invalid']);$completed=$this->integer($data,'completed_pages',0,604);$status=(string)($data['status']??'active');if(!in_array($status,['active','paused','finished'],true)||($status==='finished'&&$completed!==604))throw new ApiError('invalid_fields',422,['status'=>'invalid']);
-        $this->db->prepare('INSERT INTO khatmah_plans (user_id,start_date,target_date,completed_pages,status) VALUES (?,UTC_DATE(),?,?,?) ON DUPLICATE KEY UPDATE target_date=VALUES(target_date),completed_pages=VALUES(completed_pages),status=VALUES(status)')->execute([$user,$date,$completed,$status]);return (array)$this->khatmah($user);
+        return (new Khatmah($this->db))->save($user,$data);
     }
     public function comments(int $user,int $lesson): array{$this->catalog->detail('lessons',$lesson);$q=$this->db->prepare("SELECT c.id,c.body,c.status,c.created_at,u.display_name,u.username FROM lesson_comments c JOIN users u ON u.id=c.user_id WHERE c.lesson_id=? AND c.parent_id IS NULL AND (c.status='visible' OR (c.user_id=? AND c.status='pending')) ORDER BY c.id DESC LIMIT 50");$q->execute([$lesson,$user]);return $q->fetchAll();}
     public function addComment(int $user,int $lesson,string $body): array

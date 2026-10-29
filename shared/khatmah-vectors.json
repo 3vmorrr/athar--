@@ -1,0 +1,10 @@
+[
+  {"start":"2026-10-29","target":"2026-10-29","today":"2026-10-29","completed":600,"status":"active","expected":{"total_days":1,"daily_pages":4,"days_remaining":1,"progress_percent":99,"overdue":false}},
+  {"start":"2026-10-29","target":"2026-10-30","today":"2026-10-29","completed":600,"status":"active","expected":{"total_days":2,"daily_pages":2,"expected_pages_today":302,"pages_ahead":298}},
+  {"start":"2026-10-30","target":"2026-10-31","today":"2026-10-29","completed":0,"status":"active","expected":{"total_days":2,"daily_pages":0,"days_remaining":2,"starts_in_days":1,"expected_pages_today":0}},
+  {"start":"2026-10-27","target":"2026-10-28","today":"2026-10-29","completed":603,"status":"active","expected":{"daily_pages":0,"days_remaining":0,"overdue":true,"progress_percent":99}},
+  {"start":"2026-10-27","target":"2026-10-28","today":"2026-10-29","completed":604,"status":"finished","expected":{"daily_pages":0,"days_remaining":0,"overdue":false,"progress_percent":100}},
+  {"start":"2028-02-28","target":"2028-03-01","today":"2028-02-29","completed":0,"status":"active","expected":{"total_days":3,"daily_pages":302,"days_remaining":2,"elapsed_days":2,"expected_pages_today":402}},
+  {"start":"2026-10-29","target":"2026-10-30","today":"2026-10-29","completed":100,"status":"paused","expected":{"daily_pages":0,"planned_daily_pages":302,"pages_behind":202}},
+  {"start":"2026-10-29","target":"2026-10-29","today":"2026-10-29","completed":604,"status":"active","expected":{"daily_pages":0,"progress_percent":100,"overdue":false}}
+]

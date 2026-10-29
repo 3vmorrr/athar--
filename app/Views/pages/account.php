@@ -67,20 +67,27 @@
                     <article class="knowledge-card account-card">
                         <span class="eyebrow">خطة شخصية</span>
                         <h2>خطة الختمة</h2>
-                        <?php if ($plan): $remaining = max(0, (int) $plan['total_pages'] - (int) $plan['completed_pages']); $days = max(1, (int) (new DateTimeImmutable('today'))->diff(new DateTimeImmutable($plan['target_date']))->format('%r%a')); ?>
-                            <p>المتبقي <?= $remaining ?> صفحة حتى <?= e($plan['target_date']) ?> · الحالة: <?= $plan['status'] === 'active' ? 'نشطة' : ($plan['status'] === 'paused' ? 'متوقفة مؤقتًا' : 'مكتملة') ?>.</p>
-                            <p class="plan-rate">المعدل الحالي: <strong><?= (int) ceil($remaining / $days) ?> صفحة يوميًا</strong> على <?= $days ?> يومًا متبقيًا.</p>
-                            <div class="plan-actions">
-                                <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="status" value="paused"><button class="button button-secondary" type="submit">إيقاف مؤقت</button></form>
-                                <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="status" value="active"><button class="button button-secondary" type="submit">استئناف</button></form>
-                                <form method="post" data-confirm="تسجيل هذه الخطة كمكتملة؟"><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="status" value="finished"><button class="button button-secondary" type="submit">إنهاء الخطة</button></form>
-                            </div>
-                        <?php else: ?><p>اختر موعدًا مستهدفًا، ويمكنك تعديل خطتك لاحقًا.</p><?php endif; ?>
-                        <form class="form-stack account-plan-form" method="post" action="/account">
-                            <?= csrf_field() ?><input type="hidden" name="action" value="plan">
-                            <label for="plan-target">موعد الإتمام<input id="plan-target" name="target_date" type="date" min="<?= e(date('Y-m-d', strtotime('+1 day'))) ?>" value="<?= e((string) ($plan['target_date'] ?? '')) ?>" required></label>
-                            <label for="plan-pages">الصفحات المنجزة من 604<input id="plan-pages" name="completed_pages" type="number" min="0" max="604" value="<?= (int) ($plan['completed_pages'] ?? 0) ?>" required></label>
-                            <button class="button button-primary" type="submit">حفظ الخطة</button>
+                        <?php $planDraft=$accountError!==''&&in_array($_POST['action']??'', ['plan','plan-restart'],true);
+                        $draftValue=static fn(string $key,string $fallback):string=>$planDraft&&is_string($_POST[$key]??null)?mb_substr($_POST[$key],0,20,'UTF-8'):$fallback;
+                        $draftRevision=$planDraft?(int)($_POST['expected_revision']??0):(int)($plan['revision']??0); ?>
+                        <?php if ($plan): ?>
+                            <p>المتبقي <?= (int)$plan['remaining_pages'] ?> صفحة حتى <?= e($plan['target_date']) ?> · الحالة: <?= $plan['status']==='active'?'نشطة':($plan['status']==='paused'?'متوقفة مؤقتًا':'مكتملة') ?>.</p>
+                            <p class="plan-rate">ورد اليوم: <strong><?= (int)$plan['daily_pages'] ?> صفحة</strong> · <?= (int)$plan['days_remaining'] ?> يومًا متبقيًا (بتوقيت UTC، ويشمل يوم الإتمام).</p>
+                            <?php if ($plan['overdue']): ?><p>انتهى الموعد المستهدف. حدّث الموعد أو سجّل تقدمك صراحةً؛ لا تُحتسب الصفحات تلقائيًا.</p><?php endif; ?>
+                            <?php if ($plan['status']!=='finished'): ?><div class="plan-actions">
+                                <?php foreach (['paused'=>'إيقاف مؤقت','active'=>'استئناف','finished'=>'إنهاء الخطة'] as $status=>$label): ?>
+                                <form method="post"<?= $status==='finished'?' data-confirm="تسجيل هذه الخطة كمكتملة بعد إكمال 604 صفحات؟"':'' ?>><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="expected_revision" value="<?= (int)$plan['revision'] ?>"><input type="hidden" name="status" value="<?= e($status) ?>"><button class="button button-secondary" type="submit"<?= ($status==='finished'&&(int)$plan['completed_pages']!==604)||$status===$plan['status']?' disabled':'' ?>><?= e($label) ?></button></form>
+                                <?php endforeach; ?>
+                            </div><?php endif; ?>
+                        <?php else: ?><p>اختر تاريخ البداية وموعد الإتمام. التقدم يُسجّل باختيارك فقط.</p><?php endif; ?>
+                        <form class="form-stack account-plan-form" method="post" action="/account"<?= ($plan['status']??'')==='finished'?' data-confirm="بدء ختمة جديدة وتصفير صفحات هذه الخطة؟"':'' ?>>
+                            <?= csrf_field() ?><input type="hidden" name="action" value="<?= ($plan['status']??'')==='finished'?'plan-restart':'plan' ?>">
+                            <input type="hidden" name="expected_revision" value="<?= $draftRevision ?>">
+                            <label for="plan-start">تاريخ البداية<input id="plan-start" name="start_date" type="date" value="<?= e($draftValue('start_date',($plan['status']??'')==='finished'?gmdate('Y-m-d'):($plan['start_date']??gmdate('Y-m-d')))) ?>" required></label>
+                            <label for="plan-target">موعد الإتمام<input id="plan-target" name="target_date" type="date" value="<?= e($draftValue('target_date',($plan['status']??'')==='finished'?gmdate('Y-m-d',time()+30*86400):($plan['target_date']??gmdate('Y-m-d',time()+30*86400)))) ?>" required></label>
+                            <?php if (($plan['status']??'')!=='finished'): ?><label for="plan-pages">الصفحات المنجزة من 604<input id="plan-pages" name="completed_pages" type="number" min="0" max="604" value="<?= e($draftValue('completed_pages',(string)($plan['completed_pages']??0))) ?>" required></label><?php endif; ?>
+                            <button class="button button-primary" type="submit"><?= ($plan['status']??'')==='finished'?'بدء ختمة جديدة':'حفظ الخطة' ?></button>
+                            <?php if ($planDraft): ?><a class="text-button" href="/account">مراجعة الخطة الحالية وإلغاء هذه المسودة</a><?php endif; ?>
                         </form>
                     </article>
                 </div>
