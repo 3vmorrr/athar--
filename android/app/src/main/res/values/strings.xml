@@ -285,7 +285,7 @@
 <string name="remove_bookmark">حذف العلامة</string>
 <string name="your_journey">مساحتك في أثر</string>
 <string name="your_activity">نشاطك</string>
-<string name="quick_actions">اختصارات</string>
+<string name="quick_actions">اختصارات</string><string name="home_quick_actions_title">أبواب العبادة والعلم</string><string name="home_quran_action_body">تلاوة وتفسير ومراجعة</string><string name="home_night_action_body">خطة ومواقيت وتنبيهات</string><string name="home_adhkar_action_body">الحصن والورد اليومي</string><string name="home_knowledge_action_body">دروس وسلاسل وكتب</string>
 <string name="reading_sessions">جلسات قراءة</string>
 <string name="completed_lessons">دروس مكتملة</string>
 <string name="completed_adhkar">أذكار مكتملة</string>
