@@ -21,6 +21,7 @@ BASELINE_SHA = '2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474'
 BASELINE_AUDIT_COMMIT = '9492f1453e3a1dccb7d80e161deff03b83273f6b'
 INPUT = PROGRESS/'ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json'
 CHECKPOINT = json.loads(INPUT.read_text(encoding='utf-8')) if INPUT.exists() else {}
+TASK_CHECKPOINTS = CHECKPOINT.get('prior_checkpoints', []) + ([CHECKPOINT] if CHECKPOINT else [])
 TARGET = CHECKPOINT.get('main_sha', BASELINE_SHA)
 SOURCE = '7392e93b088990c3478cf32197781f831eb10f83'
 DATE = CHECKPOINT.get('date', '2026-10-29')
@@ -269,9 +270,10 @@ def main():
         elif old[task_id] == 'COMPLETE' and verdict != 'A':
             accuracy = 'Reopened for current acceptance: relevant production call paths changed after the old hardware receipt.'
         else: accuracy = 'Retained only for the bounded scope supported by source and receipts; not a release-readiness claim.'
-        if task_id in CHECKPOINT.get('reviewed_tasks',[]):
-            accuracy='Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.'
-            tests.append({'kind':'new_focused_functional_checkpoint','source_ref':TARGET,'result':CHECKPOINT['validation']})
+        for checkpoint in TASK_CHECKPOINTS:
+            if task_id in checkpoint.get('reviewed_tasks',[]):
+                accuracy='Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.'
+                tests.append({'kind':'new_focused_functional_checkpoint','source_ref':checkpoint['main_sha'],'result':checkpoint['validation']})
         main_status = implementation if location == 'main' else ('PARTIALLY_IMPLEMENTED' if task_id[:2] in {'07','08','21'} else 'NOT_IMPLEMENTED')
         rows.append({'id':task_id,'name':task['name'],'scope':task['scope'],'definition_of_done':task['definition_of_done'],
                      'old_status':old[task_id],'implementation_status':implementation,'implementation_location':location,
@@ -506,7 +508,8 @@ def reconcile_documents(data):
         note=f"{marker_start}\n> **Current authority —{DATE}:** [{metrics['total']}-task actual source audit]({link}). {metrics['fully_implemented_any_reviewed_branch']} tasks have implemented source ({metrics['fully_implemented_main']} in main, {metrics['implemented_only_unmerged']} only unmerged); {metrics['formally_closed']} are accepted/closed, {metrics['acceptance_only_current_app']} need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.\n\n"
         if name.endswith('ACCOUNT_FUNCTIONAL_INTEGRATION.md'):
             note+='> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE:2b7d7de baseline and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit. '
-            note+=(CHECKPOINT['summary']+' See KHATMAH_FUNCTIONAL_INTEGRATION.md and current focused receipts.' if CHECKPOINT else '07.7–07.9 still require Khatmah contract/conflict code and integration.')+'\n\n'
+            account_checkpoint=next((cp for cp in reversed(TASK_CHECKPOINTS) if any(t.startswith('07.') for t in cp.get('reviewed_tasks',[]))),None)
+            note+=(account_checkpoint['summary']+' See KHATMAH_FUNCTIONAL_INTEGRATION.md and its focused receipts.' if account_checkpoint else '07.7–07.9 still require Khatmah contract/conflict code and integration.')+'\n\n'
         note+=marker_end+'\n\n'
         first, separator, rest=source.partition('\n')
         path.write_text(first+'\n\n'+note+rest.lstrip('\n') if separator else note+source,encoding='utf-8')

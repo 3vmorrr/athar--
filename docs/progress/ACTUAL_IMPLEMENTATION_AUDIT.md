@@ -1,12 +1,12 @@
 # Actual implementation audit —149 tasks
 
-Audit date: 2026-10-30. Active branch `codex/android-ecosystem` at `4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6`. Parallel `parallel/admin-foundation` at `7392e93b088990c3478cf32197781f831eb10f83`.
+Audit date: 2026-10-30. Active branch `codex/android-ecosystem` at `bef33f6e6ed7bbc330a971f2659f990ffc12cf0c`. Parallel `parallel/admin-foundation` at `7392e93b088990c3478cf32197781f831eb10f83`.
 
 ## Functional update after the original audit
 
-07.7–07.9 are now IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL. The current editor uses durable encrypted owned intents, ordered lifecycle synchronization, captured session generations, semantic acknowledgments, additive owner/plan fingerprints, explicit reviewed cloud/device recovery, retained rejection/unreadable bytes, and validated export/deletion. Full native HTTP/OS/physical acceptance remains open.
+08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open.
 
-Current focused validation, separate from the inherited baseline: **66 JVM / 335 backend assertions / 29 actual cookie/API HTTP assertions**. Debug/test APK PASS; lint0 errors/64 warnings;462 paired resources. 6 scoped emulator cases executed; physical acceptance remains pending. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.
+Current focused validation, separate from the inherited baseline: **11 JVM / 32 backend assertions / 0 actual cookie/API HTTP assertions**. Debug/test APK PASS; lint0 errors/66 warnings;475 paired resources. 6 scoped emulator cases executed; physical acceptance remains pending. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.
 
 This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED snapshot as an implementation inventory. Historical receipts remain dated records. Original audit9492f14 changed no application code. Later functional checkpoints are separately identified; changed task findings advance only with explicit source review and focused evidence. Seven previously closed native scopes remain reopened because changed call paths have not received the required current hardware acceptance.
 
@@ -15,23 +15,23 @@ This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED sna
 | Metric | Tasks |
 |---|---:|
 | total | 149 |
-| fully_implemented_any_reviewed_branch | 113 |
-| fully_implemented_main | 74 |
-| integrated_active_application | 74 |
+| fully_implemented_any_reviewed_branch | 114 |
+| fully_implemented_main | 75 |
+| integrated_active_application | 75 |
 | passed_all_required_verification | 19 |
 | formally_closed | 19 |
-| fully_implemented_outstanding_verification | 94 |
-| acceptance_only_current_app | 55 |
-| partially_implemented_needing_code | 21 |
-| partial_tasks_needing_production_code | 20 |
+| fully_implemented_outstanding_verification | 95 |
+| acceptance_only_current_app | 56 |
+| partially_implemented_needing_code | 20 |
+| partial_tasks_needing_production_code | 19 |
 | partial_tasks_needing_only_test_code | 1 |
 | not_implemented | 0 |
 | external_blocked | 4 |
 | implemented_only_unmerged | 39 |
-| any_implementation_or_scaffold_only_unmerged | 50 |
-| production_code_remaining_including_integration | 62 |
-| feature_code_remaining | 21 |
-| integration_code_remaining | 46 |
+| any_implementation_or_scaffold_only_unmerged | 49 |
+| production_code_remaining_including_integration | 61 |
+| feature_code_remaining | 20 |
+| integration_code_remaining | 45 |
 | reopened_previous_complete | 7 |
 
 Counts overlap. Fully implemented includes unmerged reviewed source and can have failing verification; main-only count is separate. Integrated excludes partial call paths. All required verification is a whole-task gate, not passing unit tests. Production code remaining includes integration ports; feature coding is separately counted. No weighted percentage is claimed.
@@ -42,9 +42,9 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 |---|---:|
 | accepted | 19 |
 | external_blocked | 4 |
-| implemented_integrated_awaiting_acceptance | 55 |
+| implemented_integrated_awaiting_acceptance | 56 |
 | implemented_unmerged | 39 |
-| partially_implemented | 21 |
+| partially_implemented | 20 |
 | scaffold_or_unmeasured_gate | 11 |
 | **Total** | **149** |
 
@@ -53,7 +53,7 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 | Old state | Actual categories |
 |---|---|
 | COMPLETE | accepted: 19; implemented_integrated_awaiting_acceptance: 7 |
-| PARTIAL | implemented_integrated_awaiting_acceptance: 47; implemented_unmerged: 7; partially_implemented: 18; scaffold_or_unmeasured_gate: 5 |
+| PARTIAL | implemented_integrated_awaiting_acceptance: 48; implemented_unmerged: 7; partially_implemented: 17; scaffold_or_unmeasured_gate: 5 |
 | NOT STARTED | implemented_integrated_awaiting_acceptance: 1; implemented_unmerged: 32; partially_implemented: 3; scaffold_or_unmeasured_gate: 6 |
 | BLOCKED | external_blocked: 4 |
 
@@ -102,7 +102,7 @@ Retained closures are backed by implementation review and available inherited re
 
 TASK_QUEUE.json/MD and FUNCTIONAL_INTEGRATION_LEDGER.json now carry IMPLEMENTATION / INTEGRATION / VERIFICATION / CLOSURE / MISSING / EVIDENCE for every task. The explicit review TSV records individual scope findings; this JSON is the generated authoritative evidence/metrics view. ACCOUNT_FUNCTIONAL_INTEGRATION and current progress/testing headers point here. Historical percentages/counts remain labeled historical and cannot override this audit. The renderer/validator rejects missing axes and inconsistent totals.
 
-Next executable task: **08.1**. Reconcile the Night Prayer tonight route with current protected ownership; refresh sourced night identity across Maghrib/Fajr, lifecycle return and clock/timezone changes before porting dependent08.x screens. Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.
+Next executable task: **08.2**. Reconcile private verse-target/range planning, saved-plan/copy and deliberate record-completed actions with the current Quran route, owner generation/deletion fences and existing Night Prayer conflict/rejection recovery. Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.
 
 ## Full task reclassification table
 
@@ -154,7 +154,7 @@ I: IMPLEMENTED / PARTIALLY_IMPLEMENTED / SCAFFOLDED / IMPLEMENTATION_BLOCKED. In
 | 07.7 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:backend/src/Progress/Khatmah.php |
 | 07.8 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:backend/src/Progress/Khatmah.php |
 | 07.9 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahJournal.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:android/app/src/main/java/org/athar/app/core/sync/PrivateSyncWorker.kt; main:backend/src/Progress/Khatmah.php |
-| 08.1 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt |
+| 08.1 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt; main:android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt |
 | 08.2 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
 | 08.3 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
 | 08.4 | NOT STARTED | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimer.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimerCard.kt |
@@ -616,11 +616,11 @@ Old status: Implementation advanced after original audit9492f14. Earlier partial
 
 ### 08.1 — Tonight dashboard and Islamic night identity
 
-IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel tonight summary/milestones/recent rows resolve a sourced Maghrib night context on initial composition.
-INTEGRATION: `NOT_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
-MISSING: Refresh night identity on Maghrib/Fajr boundary, lifecycle return and clock/timezone change: current remember(settings,retry) captures Instant.now once and keeps the old tonight date until explicit retry/settings change. Fix this before porting the route with current protected ownership.
-EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt`; `parallel:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
-Old status: Closure remains open; concrete code/integration/measurement deficit is now explicit.
+IMPLEMENTATION: `IMPLEMENTED` (main); Current Tonight route uses saved supported prayer settings and owned recorded sessions; live Maghrib/Fajr identity survives civil midnight and refreshes at boundaries/lifecycle return/system clock events. Missing settings/unreadable/loading states do not fabricate metrics; milestones/recent history preserve current recovery navigation.11 JVM/32 backend assertions and3 AR+3 EN API34 UI cases pass.
+INTEGRATION: `INTEGRATED`. VERIFICATION: `ACCEPTANCE_PENDING`. CLOSURE: `PARTIAL`.
+MISSING: Execute authenticated native preference/navigation journeys and actual OS clock/timezone/date/foreground return, travel/process and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility acceptance. Native city editing remains08.6; no setup-completion or hardware-event claim.
+EVIDENCE: `main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt`; `main:android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt`; `main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
+Old status: Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.
 
 ### 08.2 — Verse target and range workflow
 

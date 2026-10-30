@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-29",
-  "current_task": "08.1",
+  "current_task": "08.2",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -1888,24 +1888,29 @@
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Implement personalized tonight summary/milestones/recent log using fixed local Maghrib date and existing rules. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Refresh night identity on Maghrib/Fajr boundary, lifecycle return and clock/timezone change: current remember(settings,retry) captures Instant.now once and keeps the old tonight date until explicit retry/settings change. Fix this before porting the route with current protected ownership."
+        "Execute authenticated native preference/navigation journeys and actual OS clock/timezone/date/foreground return, travel/process and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility acceptance. Native city editing remains08.6; no setup-completion or hardware-event claim."
       ],
       "audit_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         },
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83"
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt",
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -2059,7 +2064,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -4719,7 +4724,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         },
         {
           "location": "main",
@@ -5192,7 +5197,7 @@
         "android/app/src/main/java/org/athar/app/core/ui/",
         "docs/testing/"
       ],
-      "automated_tests": "Current paired resource format checks (462 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "automated_tests": "Current paired resource format checks (475 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.1579,
@@ -5213,7 +5218,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -5732,12 +5737,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -5996,24 +6001,24 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 74,
-    "integrated_active_application": 74,
+    "fully_implemented_any_reviewed_branch": 114,
+    "fully_implemented_main": 75,
+    "integrated_active_application": 75,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 55,
-    "partially_implemented_needing_code": 21,
-    "partial_tasks_needing_production_code": 20,
+    "fully_implemented_outstanding_verification": 95,
+    "acceptance_only_current_app": 56,
+    "partially_implemented_needing_code": 20,
+    "partial_tasks_needing_production_code": 19,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 50,
-    "production_code_remaining_including_integration": 62,
-    "feature_code_remaining": 21,
-    "integration_code_remaining": 46,
+    "any_implementation_or_scaffold_only_unmerged": 49,
+    "production_code_remaining_including_integration": 61,
+    "feature_code_remaining": 20,
+    "integration_code_remaining": 45,
     "reopened_previous_complete": 7
   },
-  "active_checkpoint": "149-task source findings reconciled; exact current checkpoint/validation in ACTUAL_IMPLEMENTATION_AUDIT.json. Next feature08.1. Original audit retained as dated evidence."
+  "active_checkpoint": "149-task source findings reconciled; exact current checkpoint/validation in ACTUAL_IMPLEMENTATION_AUDIT.json. Next feature08.2. Original audit retained as dated evidence."
 }

@@ -5304,9 +5304,9 @@
       "name": "Tonight dashboard and Islamic night identity",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "34acf58f5b483c52a6772490f6494f68899ac866",
         "4e34ee7f43d430f1755ef258430629a89b03ad3d",
@@ -5404,27 +5404,33 @@
       "external_blockers": null,
       "remaining_acceptance": "Implement personalized tonight summary/milestones/recent log using fixed local Maghrib date and existing rules. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Refresh night identity on Maghrib/Fajr boundary, lifecycle return and clock/timezone change: current remember(settings,retry) captures Instant.now once and keeps the old tonight date until explicit retry/settings change. Fix this before porting the route with current protected ownership."
+        "Execute authenticated native preference/navigation journeys and actual OS clock/timezone/date/foreground return, travel/process and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility acceptance. Native city editing remains08.6; no setup-completion or hardware-event claim."
       ],
       "actual_audit_record": "08.1",
       "actual_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "018ce1fef374bb70154ebdff04efd57b16dbe28b"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "01d9241160dc8c4ea520c78ceeac1da0bddc1c1f"
         },
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "55e64d671d32d67ac702603e26b1399933fc6798"
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt",
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "0824df1c8fc8e120bc13d7cc26b099fa0bfb136e"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -6035,8 +6041,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "2e963c1693f20851d28c9228ffba677c292a64f3"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -11924,8 +11930,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "2e963c1693f20851d28c9228ffba677c292a64f3"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
         },
         {
           "location": "main",
@@ -13014,8 +13020,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
-          "git_blob": "1a37ac93450de2d60eac63e2104ef83fb72a5f91"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "git_blob": "a939e85f9b86c2d9f08bf56d166d10c003f957d1"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16098,12 +16104,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18057,26 +18063,26 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "actual_audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 74,
-    "integrated_active_application": 74,
+    "fully_implemented_any_reviewed_branch": 114,
+    "fully_implemented_main": 75,
+    "integrated_active_application": 75,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 55,
-    "partially_implemented_needing_code": 21,
-    "partial_tasks_needing_production_code": 20,
+    "fully_implemented_outstanding_verification": 95,
+    "acceptance_only_current_app": 56,
+    "partially_implemented_needing_code": 20,
+    "partial_tasks_needing_production_code": 19,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 50,
-    "production_code_remaining_including_integration": 62,
-    "feature_code_remaining": 21,
-    "integration_code_remaining": 46,
+    "any_implementation_or_scaffold_only_unmerged": 49,
+    "production_code_remaining_including_integration": 61,
+    "feature_code_remaining": 20,
+    "integration_code_remaining": 45,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+  "audit_target_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }
