@@ -1,4 +1,4 @@
-name: Android UI compile gate
+name: Android UI validation gate
 
 on:
   push:
@@ -36,3 +36,6 @@ jobs:
 
       - name: Compile debug Kotlin
         run: ./gradlew :app:compileDebugKotlin --no-daemon --stacktrace
+
+      - name: Run debug unit tests
+        run: ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace
