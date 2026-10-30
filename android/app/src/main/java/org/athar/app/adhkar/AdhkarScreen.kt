@@ -138,27 +138,61 @@ fun AdhkarScreen(graph: AppGraph) {
                         }
                         LazyColumn(modifier = Modifier.testTag("adhkar-entries"), state = entriesScroll, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             item(key = "heading", contentType = "heading") {
-                                AtharImmersiveHero(
-                                    presentation = AtharHeroPresentation(
-                                        artwork = AtharHeroArtwork.Adhkar,
-                                        eyebrow = stringResource(R.string.adhkar),
-                                        title = if (category == allCategories) {
-                                            stringResource(R.string.all_categories)
-                                        } else {
-                                            category
-                                        },
-                                        supportingText = stringResource(
-                                            R.string.adhkar_item_position,
-                                            (page - 1) * 20 + index + 1,
-                                            catalog.asJsonObject["pagination"]
-                                                .text("total")
-                                                .toIntOrNull() ?: 0,
-                                        ),
-                                    ),
+                                Surface(
                                     modifier = Modifier
                                         .widthIn(max = 720.dp)
                                         .fillMaxWidth(),
-                                )
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outlineVariant,
+                                    ),
+                                ) {
+                                    Row(
+                                        Modifier.padding(AtharSpacing.Lg),
+                                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Surface(
+                                            shape = MaterialTheme.shapes.medium,
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                        ) {
+                                            Icon(
+                                                AtharIcons.Spa,
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .padding(AtharSpacing.Sm)
+                                                    .size(24.dp),
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            )
+                                        }
+                                        Column(
+                                            Modifier.weight(1f),
+                                            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                                        ) {
+                                            Text(
+                                                if (category == allCategories) {
+                                                    stringResource(R.string.adhkar)
+                                                } else {
+                                                    category
+                                                },
+                                                style = MaterialTheme.typography.titleLarge,
+                                            )
+                                            Text(
+                                                stringResource(
+                                                    R.string.adhkar_item_position,
+                                                    (page - 1) * 20 + index + 1,
+                                                    catalog.asJsonObject["pagination"]
+                                                        .text("total")
+                                                        .toIntOrNull() ?: 0,
+                                                ),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
                             }
                             if (rows.isEmpty()) item(key = "empty", contentType = "state") { QuietEmptyState(stringResource(R.string.empty_state)) }
                             rows.getOrNull(index)?.let { dhikr ->
@@ -170,7 +204,7 @@ fun AdhkarScreen(graph: AppGraph) {
                                             .widthIn(max = 720.dp)
                                             .fillMaxWidth(),
                                         shape = MaterialTheme.shapes.extraLarge,
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
                                         border = androidx.compose.foundation.BorderStroke(
                                             1.dp,
                                             MaterialTheme.colorScheme.outlineVariant,
