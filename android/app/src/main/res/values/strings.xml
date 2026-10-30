@@ -346,10 +346,10 @@
     <string name="book_activity_sync">مزامنة سجل التنزيلات</string>
     <string name="book_activity_sync_unconfirmed">تعذر تأكيد مزامنة سجل التنزيلات. احتُفظ بالأحداث لإعادة المحاولة أو التصدير.</string>
     <string name="khatmah_plan_hint">خطة 604 صفحات بتواريخ UTC شاملة ليوم الإتمام. الحفظ لا يسجّل قراءة أو إنجازًا تلقائيًا.</string>
-    <string name="khatmah_offline">هذه نسخة محفوظة. تحديث الخطة يحتاج اتصالًا؛ تبقى مسودتك هنا حتى تعود الشبكة.</string>
+    <string name="khatmah_offline">أنت غير متصل. يمكنك حفظ التعديلات على هذا الجهاز لمزامنتها لاحقًا.</string>
     <string name="khatmah_start">تاريخ البداية</string>
     <string name="khatmah_invalid">تحقق من التواريخ والصفحات (0–604). تعديل موعد انتهى يتطلب موعدًا جديدًا صالحًا؛ الخطة المكتملة تتطلب بدء ختمة جديدة.</string>
-    <string name="khatmah_conflict">تغيرت الخطة في جلسة أخرى. مسودتك محفوظة هنا. حدّث العرض للمقارنة، أو اختر إلغاء المسودة وتحميل الخطة الحالية.</string>
+    <string name="khatmah_conflict">تغيرت الخطة. خطة الجهاز والمسودة غير المحفوظة محفوظتان. راجع النسخة السحابية قبل اختيار طريقة المتابعة.</string>
     <string name="khatmah_unconfirmed">لم نتأكد من نتيجة الحفظ. احتفظنا بالمسودة؛ أعد المحاولة بنفس البيانات أو حدّث العرض للمراجعة.</string>
     <string name="khatmah_summary">المنجز %1$d من 604 · %2$d٪ · المتبقي %3$d صفحة</string>
     <string name="khatmah_schedule">%1$d يومًا متبقيًا · %2$s إلى %3$s · UTC</string>
@@ -358,10 +358,21 @@
     <string name="khatmah_resume">استئناف الخطة</string>
     <string name="khatmah_finish">إنهاء الخطة</string>
     <string name="khatmah_restart">بدء ختمة جديدة</string>
-    <string name="khatmah_discard">إلغاء المسودة وتحميل الخطة الحالية</string>
-    <string name="khatmah_discard_confirm">ستُلغى هذه المسودة عند نجاح تحميل الخطة الحالية. هل تريد المتابعة؟</string>
+    <string name="khatmah_discard">إلغاء المسودة غير المحفوظة</string>
+    <string name="khatmah_discard_confirm">هل تريد إلغاء المسودة غير المحفوظة بعد تحميل خطة الجهاز المحفوظة بنجاح؟ تبقى التعديلات المنتظرة محفوظة.</string>
     <string name="khatmah_restart_confirm">بدء ختمة جديدة يصفّر الصفحات المنجزة. اختر الموعد الجديد وأكّد هذا الإجراء.</string>
     <string name="khatmah_finish_confirm">تأكيد إكمال هذه الخطة بعد تسجيل 604 صفحات؟ لا يضيف هذا الإجراء جلسات قراءة.</string>
     <string name="khatmah_action_confirm">تأكيد تغيير حالة الخطة الحالية؟</string>
     <string name="khatmah_saved_with_draft">حُفظت النسخة المرسلة. التعديلات التي كتبتها أثناء الحفظ ما زالت مسودة غير محفوظة.</string>
+    <string name="khatmah_local_saved">حُفظت على هذا الجهاز، في انتظار المزامنة.</string>
+    <string name="khatmah_local_with_draft">حُفظت على هذا الجهاز. مسودتك الأحدث لم تُحفظ بعد.</string>
+    <string name="khatmah_cloud_unknown">لم تُراجع الخطة السحابية بعد. ستُفحص التعديلات المحلية قبل المزامنة.</string>
+    <string name="khatmah_pending">%1$d تعديلات محلية في انتظار المزامنة</string>
+    <string name="khatmah_rejected">رفض الخادم تعديلًا. خطتك المحلية محفوظة. راجع الحقول واختر طريقة المتابعة.</string>
+    <string name="khatmah_cloud_absent">السحابة: لا توجد خطة</string>
+    <string name="khatmah_cloud_plan">السحابة: %1$d صفحات · من %2$s إلى %3$s · %4$s</string>
+    <string name="khatmah_use_server">استخدام الخطة السحابية</string>
+    <string name="khatmah_keep_device">استخدام خطة الجهاز المراجعة</string>
+    <string name="khatmah_use_server_confirm">هل تريد استبدال الخطة المحلية والتعديلات المنتظرة بأحدث خطة سحابية؟</string>
+    <string name="khatmah_keep_device_confirm">هل تريد تطبيق خطة الجهاز بالحقول المعروضة على الخطة السحابية المراجعة؟ قد تُعاد بداية خطة منتهية ويُستبدل تقدمها.</string>
 </resources>

@@ -96,11 +96,13 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
     suspend fun forgot(email: String) { transport.request("POST", "auth/forgot-password", mapOf("email" to email.trim()), language = language()) }
     suspend fun reset(email: String, code: String, password: String, confirmation: String) { transport.request("POST", "auth/reset-password", mapOf("email" to email.trim(), "code" to OtpInput.normalize(code).also { require(it.length == 6) }, "password" to password, "password_confirmation" to confirmation), language = language()) }
 
-    suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {
-        val epoch = generation.get()
+    suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement = requestCaptured(generation.get(), method, path, body, query, expectedUser)
+    internal suspend fun requestLeased(lease: SessionLease, method: String, path: String, body: Map<String, Any?> = emptyMap()): JsonElement = requestCaptured(lease.generation, method, path, body, emptyMap(), lease.owner)
+    private suspend fun requestCaptured(epoch: Long, method: String, path: String, body: Map<String, Any?>, query: Map<String, String>, expectedUser: Long?): JsonElement {
+        checkGeneration(epoch)
         var current = stored ?: throw ApiException(401, "unauthenticated", "")
         checkAccess(path,current,expectedUser)
-        if (now() >= current.expiresAt - 30_000) { refresh(current.credentials.accessToken); current = stored ?: throw ApiException(401, "unauthenticated", "") }
+        if (now() >= current.expiresAt - 30_000) { refresh(current.credentials.accessToken, epoch); current = stored ?: throw ApiException(401, "unauthenticated", "") }
         checkGeneration(epoch)
         checkAccess(path,current,expectedUser)
         return try { transport.request(method, path, body, query, current.credentials.accessToken, language()).also { checkGeneration(epoch);checkAccess(path,current,expectedUser) } }
@@ -108,7 +110,7 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
             if (failure.status == 403 && failure.code in listOf("email_verification_required", "account_suspended")) clear(epoch)
             if (failure.status != 401) throw failure
             checkGeneration(epoch)
-            refresh(current.credentials.accessToken)
+            refresh(current.credentials.accessToken, epoch)
             checkGeneration(epoch)
             val updated = stored ?: throw ApiException(401, "unauthenticated", "")
             checkAccess(path,updated,expectedUser)
@@ -122,8 +124,9 @@ class SessionRepository(private val transport: ApiTransport, private val store: 
         if(path!="auth/verify-email"&&path!="auth/resend")requireVerifiedOwner(current.user.id)
     }
 
-    private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {
-        val epoch = generation.get()
+    private suspend fun refresh(previousAccess: String, expectedEpoch: Long? = null) = refreshMutex.withLock {
+        val epoch = expectedEpoch ?: generation.get()
+        checkGeneration(epoch)
         val current = stored ?: throw ApiException(401, "unauthenticated", "")
         if (current.credentials.accessToken != previousAccess) return@withLock
         try { accept(transport.request("POST", "auth/refresh", mapOf("refresh_token" to current.credentials.refreshToken), language = language()), epoch) }

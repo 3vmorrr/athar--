@@ -42,7 +42,8 @@ object AccountExportPolicy {
     fun requireDevice(owner: Long, namespace: String, device: JsonObject) {
         require(owner > 0 && namespace.matches(Regex("[a-f0-9]{12}")))
         require(integer(device["owner_id"]) == owner && device["namespace"].asString == namespace)
-        require(device.keySet() == deviceSections + setOf("owner_id", "namespace"))
+        val legacyKeys = deviceSections + setOf("owner_id", "namespace")
+        require(device.keySet() == legacyKeys || device.keySet() == legacyKeys + "device_khatmah_state")
         deviceSections.forEach { section ->
             val value = requireNotNull(device[section])
             if (section == "device_reading_position") require(value.isJsonNull || value.isJsonObject)
@@ -55,6 +56,10 @@ object AccountExportPolicy {
         device.getAsJsonArray("device_book_activity").forEach { row ->
             val request = row.asJsonObject["event_id"].asString
             BookCompletionEvent.parse(row, namespace, owner, request)
+        }
+        device["device_khatmah_state"]?.let { value ->
+            require(value.isJsonArray && value.asJsonArray.size() <= 1)
+            value.asJsonArray.forEach { org.athar.app.khatmah.KhatmahJournalCodec.decode(it.toString(), owner, namespace) }
         }
         safe(device)
     }

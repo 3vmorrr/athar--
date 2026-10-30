@@ -1,10 +1,115 @@
 [
-  {"start":"2026-10-29","target":"2026-10-29","today":"2026-10-29","completed":600,"status":"active","expected":{"total_days":1,"daily_pages":4,"days_remaining":1,"progress_percent":99,"overdue":false}},
-  {"start":"2026-10-29","target":"2026-10-30","today":"2026-10-29","completed":600,"status":"active","expected":{"total_days":2,"daily_pages":2,"expected_pages_today":302,"pages_ahead":298}},
-  {"start":"2026-10-30","target":"2026-10-31","today":"2026-10-29","completed":0,"status":"active","expected":{"total_days":2,"daily_pages":0,"days_remaining":2,"starts_in_days":1,"expected_pages_today":0}},
-  {"start":"2026-10-27","target":"2026-10-28","today":"2026-10-29","completed":603,"status":"active","expected":{"daily_pages":0,"days_remaining":0,"overdue":true,"progress_percent":99}},
-  {"start":"2026-10-27","target":"2026-10-28","today":"2026-10-29","completed":604,"status":"finished","expected":{"daily_pages":0,"days_remaining":0,"overdue":false,"progress_percent":100}},
-  {"start":"2028-02-28","target":"2028-03-01","today":"2028-02-29","completed":0,"status":"active","expected":{"total_days":3,"daily_pages":302,"days_remaining":2,"elapsed_days":2,"expected_pages_today":402}},
-  {"start":"2026-10-29","target":"2026-10-30","today":"2026-10-29","completed":100,"status":"paused","expected":{"daily_pages":0,"planned_daily_pages":302,"pages_behind":202}},
-  {"start":"2026-10-29","target":"2026-10-29","today":"2026-10-29","completed":604,"status":"active","expected":{"daily_pages":0,"progress_percent":100,"overdue":false}}
+  {
+    "start": "2026-10-29",
+    "target": "2026-10-29",
+    "today": "2026-10-29",
+    "completed": 600,
+    "status": "active",
+    "expected": {
+      "total_days": 1,
+      "daily_pages": 4,
+      "days_remaining": 1,
+      "progress_percent": 99,
+      "overdue": false
+    },
+    "hash": "e138090eb17dc97a7c44a77ce7975fe7a42c9cb1eb4678d52d3c2fc8a5668bf2"
+  },
+  {
+    "start": "2026-10-29",
+    "target": "2026-10-30",
+    "today": "2026-10-29",
+    "completed": 600,
+    "status": "active",
+    "expected": {
+      "total_days": 2,
+      "daily_pages": 2,
+      "expected_pages_today": 302,
+      "pages_ahead": 298
+    },
+    "hash": "f91508c6811a824fa2c1da47ae89c2f11aa89c43ce119aa4d785b678c8c26fff"
+  },
+  {
+    "start": "2026-10-30",
+    "target": "2026-10-31",
+    "today": "2026-10-29",
+    "completed": 0,
+    "status": "active",
+    "expected": {
+      "total_days": 2,
+      "daily_pages": 0,
+      "days_remaining": 2,
+      "starts_in_days": 1,
+      "expected_pages_today": 0
+    },
+    "hash": "73ebb331cf651e8e0bcad8d76484b6ab4094a87eb45824c25a82579841c160b4"
+  },
+  {
+    "start": "2026-10-27",
+    "target": "2026-10-28",
+    "today": "2026-10-29",
+    "completed": 603,
+    "status": "active",
+    "expected": {
+      "daily_pages": 0,
+      "days_remaining": 0,
+      "overdue": true,
+      "progress_percent": 99
+    },
+    "hash": "b69da8a741f05704845c7a51e92f9cd258defb237a3bda9981761e7c8bc3f070"
+  },
+  {
+    "start": "2026-10-27",
+    "target": "2026-10-28",
+    "today": "2026-10-29",
+    "completed": 604,
+    "status": "finished",
+    "expected": {
+      "daily_pages": 0,
+      "days_remaining": 0,
+      "overdue": false,
+      "progress_percent": 100
+    },
+    "hash": "06c071b77c7cecccbfea7ea23841a794a63b3b376756f1a25440c5705c40a7cd"
+  },
+  {
+    "start": "2028-02-28",
+    "target": "2028-03-01",
+    "today": "2028-02-29",
+    "completed": 0,
+    "status": "active",
+    "expected": {
+      "total_days": 3,
+      "daily_pages": 302,
+      "days_remaining": 2,
+      "elapsed_days": 2,
+      "expected_pages_today": 402
+    },
+    "hash": "451609f2438e9e9bd11fa0a88ad3574ba6456e21c71d4ac2d594de8eae34691a"
+  },
+  {
+    "start": "2026-10-29",
+    "target": "2026-10-30",
+    "today": "2026-10-29",
+    "completed": 100,
+    "status": "paused",
+    "expected": {
+      "daily_pages": 0,
+      "planned_daily_pages": 302,
+      "pages_behind": 202
+    },
+    "hash": "bee099f2fa28fa46546f132688c1b5863443411c37246361a2675cc8b7bcfbda"
+  },
+  {
+    "start": "2026-10-29",
+    "target": "2026-10-29",
+    "today": "2026-10-29",
+    "completed": 604,
+    "status": "active",
+    "expected": {
+      "daily_pages": 0,
+      "progress_percent": 100,
+      "overdue": false
+    },
+    "hash": "1b581ca55211edb0baf7b7655b10204f59c8c79c10f63638dfb815a0d34eacae"
+  }
 ]

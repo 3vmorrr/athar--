@@ -69,20 +69,22 @@
                         <h2>خطة الختمة</h2>
                         <?php $planDraft=$accountError!==''&&in_array($_POST['action']??'', ['plan','plan-restart'],true);
                         $draftValue=static fn(string $key,string $fallback):string=>$planDraft&&is_string($_POST[$key]??null)?mb_substr($_POST[$key],0,20,'UTF-8'):$fallback;
-                        $draftRevision=$planDraft?(int)($_POST['expected_revision']??0):(int)($plan['revision']??0); ?>
+                        $draftRevision=$planDraft?(int)($_POST['expected_revision']??0):(int)($plan['revision']??0);
+                        $planHash=$plan?\Athar\Progress\Khatmah::fingerprint((int)$user['id'],$plan):\Athar\Progress\Khatmah::fingerprint((int)$user['id'],null);
+                        $draftHash=$planDraft&&is_string($_POST['expected_plan_hash']??null)?mb_substr($_POST['expected_plan_hash'],0,64,'UTF-8'):$planHash; ?>
                         <?php if ($plan): ?>
                             <p>المتبقي <?= (int)$plan['remaining_pages'] ?> صفحة حتى <?= e($plan['target_date']) ?> · الحالة: <?= $plan['status']==='active'?'نشطة':($plan['status']==='paused'?'متوقفة مؤقتًا':'مكتملة') ?>.</p>
                             <p class="plan-rate">ورد اليوم: <strong><?= (int)$plan['daily_pages'] ?> صفحة</strong> · <?= (int)$plan['days_remaining'] ?> يومًا متبقيًا (بتوقيت UTC، ويشمل يوم الإتمام).</p>
                             <?php if ($plan['overdue']): ?><p>انتهى الموعد المستهدف. حدّث الموعد أو سجّل تقدمك صراحةً؛ لا تُحتسب الصفحات تلقائيًا.</p><?php endif; ?>
                             <?php if ($plan['status']!=='finished'): ?><div class="plan-actions">
                                 <?php foreach (['paused'=>'إيقاف مؤقت','active'=>'استئناف','finished'=>'إنهاء الخطة'] as $status=>$label): ?>
-                                <form method="post"<?= $status==='finished'?' data-confirm="تسجيل هذه الخطة كمكتملة بعد إكمال 604 صفحات؟"':'' ?>><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="expected_revision" value="<?= (int)$plan['revision'] ?>"><input type="hidden" name="status" value="<?= e($status) ?>"><button class="button button-secondary" type="submit"<?= ($status==='finished'&&(int)$plan['completed_pages']!==604)||$status===$plan['status']?' disabled':'' ?>><?= e($label) ?></button></form>
+                                <form method="post"<?= $status==='finished'?' data-confirm="تسجيل هذه الخطة كمكتملة بعد إكمال 604 صفحات؟"':'' ?>><?= csrf_field() ?><input type="hidden" name="action" value="plan-status"><input type="hidden" name="expected_revision" value="<?= (int)$plan['revision'] ?>"><input type="hidden" name="expected_plan_hash" value="<?= e($planHash) ?>"><input type="hidden" name="status" value="<?= e($status) ?>"><button class="button button-secondary" type="submit"<?= ($status==='finished'&&(int)$plan['completed_pages']!==604)||$status===$plan['status']?' disabled':'' ?>><?= e($label) ?></button></form>
                                 <?php endforeach; ?>
                             </div><?php endif; ?>
                         <?php else: ?><p>اختر تاريخ البداية وموعد الإتمام. التقدم يُسجّل باختيارك فقط.</p><?php endif; ?>
                         <form class="form-stack account-plan-form" method="post" action="/account"<?= ($plan['status']??'')==='finished'?' data-confirm="بدء ختمة جديدة وتصفير صفحات هذه الخطة؟"':'' ?>>
                             <?= csrf_field() ?><input type="hidden" name="action" value="<?= ($plan['status']??'')==='finished'?'plan-restart':'plan' ?>">
-                            <input type="hidden" name="expected_revision" value="<?= $draftRevision ?>">
+                            <input type="hidden" name="expected_revision" value="<?= $draftRevision ?>"><input type="hidden" name="expected_plan_hash" value="<?= e($draftHash) ?>">
                             <label for="plan-start">تاريخ البداية<input id="plan-start" name="start_date" type="date" value="<?= e($draftValue('start_date',($plan['status']??'')==='finished'?gmdate('Y-m-d'):($plan['start_date']??gmdate('Y-m-d')))) ?>" required></label>
                             <label for="plan-target">موعد الإتمام<input id="plan-target" name="target_date" type="date" value="<?= e($draftValue('target_date',($plan['status']??'')==='finished'?gmdate('Y-m-d',time()+30*86400):($plan['target_date']??gmdate('Y-m-d',time()+30*86400)))) ?>" required></label>
                             <?php if (($plan['status']??'')!=='finished'): ?><label for="plan-pages">الصفحات المنجزة من 604<input id="plan-pages" name="completed_pages" type="number" min="0" max="604" value="<?= e($draftValue('completed_pages',(string)($plan['completed_pages']??0))) ?>" required></label><?php endif; ?>

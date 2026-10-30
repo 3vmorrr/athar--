@@ -53,6 +53,7 @@ internal class AccountLocalSnapshot(
                 add("device_reading_position", gson.toJsonTree(reading.saved(owner)))
                 add("device_adhkar_counters", gson.toJsonTree(counters.retained(owner)))
                 add("device_book_activity", retainedBookActivity(namespace, owner, database.dao(), cipher))
+                add("device_khatmah_state", org.athar.app.khatmah.retainedKhatmah(namespace, owner, database.dao(), cipher))
                 org.athar.app.books.retainedBookData(namespace, owner, database.dao(), cipher, session).entrySet().forEach { add(it.key, it.value) }
             }
             session.requireLease(lease)

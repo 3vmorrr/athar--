@@ -476,6 +476,7 @@ if ($path === '/account') {
                 if ($expected === false || $expected === null || $expected < 0) throw new \Athar\Http\ApiError('invalid_fields',422);
                 $service = new \Athar\Progress\Khatmah(db());
                 $input = ['expected_revision'=>$expected];
+                if (array_key_exists('expected_plan_hash',$_POST)) $input['expected_plan_hash']=$_POST['expected_plan_hash'];
                 if ($action === 'plan-status') {
                     $actions = ['paused'=>'pause','active'=>'resume','finished'=>'finish'];
                     $input['action'] = $actions[(string)($_POST['status'] ?? '')] ?? '';

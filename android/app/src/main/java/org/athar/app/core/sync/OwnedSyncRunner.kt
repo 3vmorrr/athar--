@@ -5,7 +5,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.athar.app.core.network.ApiException
 import java.io.IOException
 
-enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY }
+enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY, KHATMAH }
 enum class SyncOutcome { COMPLETE, RETRY, AUTH_REQUIRED, ACTION_REQUIRED }
 interface OwnedSyncOperations {
     val owner:Long?

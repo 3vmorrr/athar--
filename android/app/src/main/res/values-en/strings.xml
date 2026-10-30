@@ -318,10 +318,10 @@
     <string name="book_activity_sync">Sync download records</string>
     <string name="book_activity_sync_unconfirmed">Download record sync could not be confirmed. Events were retained for retry or export.</string>
     <string name="khatmah_plan_hint">A 604-page plan using inclusive UTC calendar days. Saving never records reading or completion automatically.</string>
-    <string name="khatmah_offline">This is a saved copy. Changes need a connection; your draft stays here while you reconnect.</string>
+    <string name="khatmah_offline">Offline. You can save changes on this device for later sync.</string>
     <string name="khatmah_start">Start date</string>
     <string name="khatmah_invalid">Check dates and pages (0–604). Changing an overdue schedule needs a valid new target; a finished plan requires an explicit restart.</string>
-    <string name="khatmah_conflict">The plan changed in another session. Your draft is retained. Refresh to compare, or deliberately discard it and load the current plan.</string>
+    <string name="khatmah_conflict">The plan changed. Your device plan and unsaved form are retained. Review the cloud version before choosing how to continue.</string>
     <string name="khatmah_unconfirmed">The save outcome is unconfirmed. Your draft is retained; retry the same data or refresh to review.</string>
     <string name="khatmah_summary">%1$d of 604 completed · %2$d%% · %3$d pages remaining</string>
     <string name="khatmah_schedule">%1$d days remaining · %2$s to %3$s · UTC</string>
@@ -330,10 +330,21 @@
     <string name="khatmah_resume">Resume plan</string>
     <string name="khatmah_finish">Finish plan</string>
     <string name="khatmah_restart">Restart plan</string>
-    <string name="khatmah_discard">Discard draft and load current plan</string>
-    <string name="khatmah_discard_confirm">Discard this draft after the current plan loads successfully?</string>
+    <string name="khatmah_discard">Discard unsaved form</string>
+    <string name="khatmah_discard_confirm">Discard only the unsaved form after the saved device plan loads successfully? Queued changes remain saved.</string>
     <string name="khatmah_restart_confirm">Restarting resets completed pages to zero. Choose the new dates and confirm.</string>
     <string name="khatmah_finish_confirm">Confirm finishing this plan after recording 604 pages? This does not add reading sessions.</string>
     <string name="khatmah_action_confirm">Confirm changing the current plan status?</string>
     <string name="khatmah_saved_with_draft">The submitted version was saved. Changes typed while saving remain an unsaved draft.</string>
+    <string name="khatmah_local_saved">Saved on this device. Waiting for sync.</string>
+    <string name="khatmah_local_with_draft">Saved on this device. Your newer draft is still unsaved.</string>
+    <string name="khatmah_cloud_unknown">The cloud plan has not been checked yet. Local edits will be checked before sync.</string>
+    <string name="khatmah_pending">%1$d local changes waiting for sync</string>
+    <string name="khatmah_rejected">The server refused a change. Your local plan is retained. Review the fields and choose how to continue.</string>
+    <string name="khatmah_cloud_absent">Cloud: no plan</string>
+    <string name="khatmah_cloud_plan">Cloud: %1$d pages · %2$s to %3$s · %4$s</string>
+    <string name="khatmah_use_server">Use cloud plan</string>
+    <string name="khatmah_keep_device">Use reviewed device plan</string>
+    <string name="khatmah_use_server_confirm">Replace the retained local plan and queued changes with the latest cloud plan?</string>
+    <string name="khatmah_keep_device_confirm">Apply the device plan with the fields shown here to the reviewed cloud plan? A finished plan may be restarted and its progress replaced.</string>
 </resources>

@@ -12,6 +12,29 @@ import org.athar.app.core.security.*
 import org.athar.app.core.data.*
 
 class SessionRepositoryTest {
+    @Test fun capturedLeaseCannotBorrowCredentialsFromSameOwnerReauthentication()=runTest {
+        var privateCalls=0
+        val repo=SessionRepository(FakeTransport{path,_->if(path=="auth/login")reply() else {privateCalls++;JsonParser.parseString("{}")}},MemoryStore())
+        repo.login("one@example.test","Fixture123!");val lease=repo.lease(1)
+        repo.login("one@example.test","Fixture123!")
+        assertTrue(runCatching{repo.requestLeased(lease,"PUT","me/khatmah",mapOf("completed_pages" to 10))}.isFailure)
+        assertEquals(0,privateCalls);assertEquals(1L,repo.userId)
+    }
+    @Test fun staleRefreshMutexWaiterCannotRefreshANewerSameOwnerSession()=runTest {
+        var now=0L;var refreshes=0
+        val started=CompletableDeferred<Unit>();val finish=CompletableDeferred<Unit>();val store=MemoryStore()
+        val repo=SessionRepository(FakeTransport{path,_->when(path){
+            "auth/refresh"->{refreshes++;started.complete(Unit);finish.await();reply("same")}
+            "auth/login"->reply("same")
+            else->error("Stale private request must not dispatch")
+        }},store,now={now})
+        repo.login("one@example.test","Fixture123!");val lease=repo.lease(1);now=901_000
+        val first=async{runCatching{repo.requestLeased(lease,"GET","me/khatmah")}};started.await()
+        val waiter=async{runCatching{repo.requestLeased(lease,"GET","me/khatmah")}};yield()
+        repo.login("one@example.test","Fixture123!");finish.complete(Unit)
+        assertTrue(first.await().isFailure);assertTrue(waiter.await().isFailure)
+        assertEquals(1,refreshes);assertEquals(1L,store.value!!.user.id)
+    }
     @Test fun coldDeletionCleanupClearsOnlyTheOwnedPersistedCredentialFile()=runTest {
         val store=MemoryStore();SessionRepository(FakeTransport{_,_->reply()},store).login("one@example.test","Fixture123!")
         val cold=SessionRepository(FakeTransport{_,_->error("No network needed")},store)

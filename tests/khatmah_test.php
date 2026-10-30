@@ -22,6 +22,7 @@ function kh_reject(callable $call,int $status,string $label):void {
 foreach(json_decode(file_get_contents(dirname(__DIR__).'/shared/khatmah-vectors.json'),true,32,JSON_THROW_ON_ERROR) as $vector){
     $actual=Khatmah::decorate(['start_date'=>$vector['start'],'target_date'=>$vector['target'],'completed_pages'=>$vector['completed'],'total_pages'=>604,'status'=>$vector['status'],'revision'=>1],$vector['today']);
     foreach($vector['expected'] as $key=>$value)kh_check($actual[$key]===$value,'shared workload vector '.$key);
+    kh_check(Khatmah::fingerprint(1,$actual)===$vector['hash'],'shared baseline fingerprint vector');
 }
 isolated_database(static function(PDO $db):void {
     $db->exec("INSERT INTO users(email,username,display_name,password_hash,email_verified_at) VALUES('kh1@example.invalid','kh1','Fixture','unused',UTC_TIMESTAMP()),('kh2@example.invalid','kh2','Other','unused',UTC_TIMESTAMP())");
@@ -30,6 +31,12 @@ isolated_database(static function(PDO $db):void {
     $body=['start_date'=>$today,'target_date'=>$tomorrow,'completed_pages'=>600,'expected_revision'=>0];
     $first=$service->save(1,$body);
     kh_check($first['revision']===1&&$first['daily_pages']===2&&$first['remaining_pages']===4,'inclusive two-day creation');
+    kh_reject(fn()=>$service->save(1,array_merge($body,['completed_pages'=>601,'expected_revision'=>1,'expected_plan_hash'=>str_repeat('0',64)])),409,'baseline fingerprint prevents unseen overwrite');
+    kh_reject(fn()=>$service->save(1,array_merge($body,['expected_revision'=>1,'expected_plan_hash'=>str_repeat('0',63)])),422,'malformed fingerprint rejected');
+    $db->exec('UPDATE khatmah_plans SET completed_pages=599 WHERE user_id=1');
+    kh_reject(fn()=>$service->save(1,array_merge($body,['completed_pages'=>601,'expected_revision'=>1,'expected_plan_hash'=>$first['plan_hash']])),409,'same revision with restored different values conflicts');
+    kh_check($service->get(1)['completed_pages']===599,'ABA rejection retains restored plan');
+    $db->exec('UPDATE khatmah_plans SET completed_pages=600 WHERE user_id=1');
     kh_check($service->get(2)===null,'owner isolation');
     kh_check($service->save(1,$body)['revision']===1,'lost committed response exact replay does not increment');
     kh_reject(fn()=>$service->save(1,array_merge($body,['start_date'=>null])),409,'malformed start cannot be acknowledged as a committed replay');

@@ -6,7 +6,8 @@ import java.time.temporal.ChronoUnit
 
 data class KhatmahPlan(val start: LocalDate, val target: LocalDate, val completed: Int, val status: String, val revision: Int) {
     init {
-        require(!target.isBefore(start) && completed in 0..604 && revision in 1..Int.MAX_VALUE)
+        // Zero is reserved for a local, explicitly unacknowledged projection.
+        require(!target.isBefore(start) && completed in 0..604 && revision in 0..Int.MAX_VALUE)
         require(status in setOf("active", "paused", "finished") && (status != "finished" || completed == 604))
     }
 }
@@ -30,6 +31,11 @@ data class KhatmahDraft(val start: String, val target: String, val pages: String
 }
 
 object KhatmahContract {
+    fun fingerprint(owner: Long, plan: KhatmahPlan?): String {
+        require(owner > 0)
+        val value = if (plan == null) "$owner|absent" else "$owner|${plan.start}|${plan.target}|604|${plan.completed}|${plan.status}|${plan.revision}"
+        return java.security.MessageDigest.getInstance("SHA-256").digest(value.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+    }
     fun date(value: String): LocalDate {
         require(value.matches(Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}")))
         return LocalDate.parse(value)
@@ -54,7 +60,8 @@ object KhatmahContract {
             return value.toString().toLong().also { require(it <= Int.MAX_VALUE) }.toInt()
         }
         require(integer("total_pages") == 604)
-        return KhatmahPlan(date(text("start_date")), date(text("target_date")), integer("completed_pages"), text("status"), integer("revision"))
+        val revision = integer("revision"); require(revision > 0)
+        return KhatmahPlan(date(text("start_date")), date(text("target_date")), integer("completed_pages"), text("status"), revision)
     }
     fun metrics(plan: KhatmahPlan, today: LocalDate): Map<String, Int> {
         val total = ChronoUnit.DAYS.between(plan.start, plan.target).toInt() + 1

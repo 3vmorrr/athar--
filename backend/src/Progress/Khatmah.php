@@ -17,8 +17,15 @@ final class Khatmah
     public function get(int $owner):?array
     {
         $q=$this->db->prepare('SELECT start_date,target_date,total_pages,completed_pages,status,revision,updated_at FROM khatmah_plans WHERE user_id=?');
-        $q->execute([$owner]);$row=$q->fetch();return $row?self::decorate($row):null;
+        $q->execute([$owner]);$row=$q->fetch();return $row?self::owned($owner,$row):null;
     }
+
+    public static function fingerprint(int $owner,?array $row):string
+    {
+        $values=$row?[$owner,$row['start_date'],$row['target_date'],604,(int)$row['completed_pages'],$row['status'],(int)$row['revision']]:[$owner,'absent'];
+        return hash('sha256',implode('|',$values));
+    }
+    private static function owned(int $owner,array $row):array { return array_merge(self::decorate($row),['plan_hash'=>self::fingerprint($owner,$row)]); }
 
     public static function decorate(array $row,?string $today=null):array
     {
@@ -68,8 +75,9 @@ final class Khatmah
 
     private function mutate(int $owner,array $data,bool $action):array
     {
-        $allowed=$action?['expected_revision','action','start_date','target_date']:['expected_revision','start_date','target_date','completed_pages','status'];
+        $allowed=$action?['expected_revision','expected_plan_hash','action','start_date','target_date']:['expected_revision','expected_plan_hash','start_date','target_date','completed_pages','status'];
         if(array_diff(array_keys($data),$allowed))throw new ApiError('invalid_fields',422);
+        if(array_key_exists('expected_plan_hash',$data)&&(!is_string($data['expected_plan_hash'])||!preg_match('/^[a-f0-9]{64}$/D',$data['expected_plan_hash'])))throw new ApiError('invalid_fields',422,['expected_plan_hash'=>'invalid']);
         $expected=self::integer($data,'expected_revision',0,2147483646);
         $this->db->beginTransaction();
         try{
@@ -87,13 +95,16 @@ final class Khatmah
                 // An unchanged exact save replay can acknowledge a committed lost reply.
                 // Lifecycle actions have their own semantics; they never use this shortcut.
                 if(!$action&&$revision===$expected+1&&$current&&$this->matches($current,$data)){
-                    $this->db->commit();return self::decorate($current);
+                    $this->db->commit();return self::owned($owner,$current);
                 }
                 if($action&&$revision===$expected+1&&$current&&$this->actionReplay($current,$data,$kind)){
-                    $this->db->commit();return self::decorate($current);
+                    $this->db->commit();return self::owned($owner,$current);
                 }
-                throw new ApiError('conflict',409,['current'=>$current?self::decorate($current):null]);
+                throw new ApiError('conflict',409,['current'=>$current?self::owned($owner,$current):null]);
             }
+            // Bind the observed baseline as well as its revision: restore/ABA cannot reuse
+            // an old revision with different plan values and silently overwrite them.
+            if(isset($data['expected_plan_hash'])&&!hash_equals(self::fingerprint($owner,$current),$data['expected_plan_hash']))throw new ApiError('conflict',409,['current'=>$current?self::owned($owner,$current):null]);
             $start=array_key_exists('start_date',$data)?$data['start_date']:($current['start_date']??gmdate('Y-m-d'));
             $target=array_key_exists('target_date',$data)?$data['target_date']:($current['target_date']??null);
             $completed=$action?(int)$current['completed_pages']:self::integer($data,'completed_pages',0,604);
