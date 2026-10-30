@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -122,22 +123,76 @@ fun BooksCatalogScreen(
             contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
             verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
         ) {
-            item(key = "books-hero", contentType = "hero") {
-                AtharImmersiveHero(
-                    presentation = AtharHeroPresentation(
-                        artwork = AtharHeroArtwork.Books,
-                        eyebrow = stringResource(R.string.knowledge),
-                        title = stringResource(R.string.books),
-                        supportingText = stringResource(R.string.books_catalog_intro),
-                        primaryActionLabel = stringResource(R.string.search),
+            item(key = "books-intro", contentType = "intro") {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = AtharSpacing.Lg,
+                            end = AtharSpacing.Lg,
+                            top = AtharSpacing.Md,
+                        ),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
                     ),
-                    onPrimaryAction = {
-                        scope.launch {
-                            if (reduced) listState.scrollToItem(1)
-                            else listState.animateScrollToItem(1)
+                ) {
+                    Column(
+                        Modifier.padding(AtharSpacing.Xl),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            Surface(
+                                modifier = Modifier.size(48.dp),
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                            ) {
+                                Icon(
+                                    AtharIcons.MenuBook,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(AtharSpacing.Md),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            }
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.books),
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    stringResource(R.string.books_catalog_intro),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
-                    },
-                )
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    if (reduced) listState.scrollToItem(1)
+                                    else listState.animateScrollToItem(1)
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp),
+                        ) {
+                            Icon(
+                                AtharIcons.Search,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+                            Spacer(Modifier.width(AtharSpacing.Sm))
+                            Text(stringResource(R.string.search))
+                        }
+                    }
+                }
             }
 
             item(key = "books-controls", contentType = "controls") {
