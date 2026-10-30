@@ -136,7 +136,7 @@ android {
     }
     testOptions { unitTests.isIncludeAndroidResources = true }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
-    sourceSets.getByName("main").assets.srcDir(generatedReviewModelAssets)
+    sourceSets.getByName("main").assets.srcDir(generatedReviewModelAssets.get().asFile)
 }
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
