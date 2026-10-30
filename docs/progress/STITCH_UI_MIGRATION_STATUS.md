@@ -1,83 +1,101 @@
 # Stitch UI migration status
 
-Branch: `chatgpt/stitch-ui-integration`
+Branch: `chatgpt/stitch-ui-integration`  
 Base: `preview/athar-ui-showcase@12f82f19610d9a4d68250ad93d78af7dbcfa6412`
 
-This file tracks **actual code/UI migration state**, not planned task counts.
+This file tracks **actual native code/UI state**, not planned task counts.
 
 ## Status meanings
 
-- **BASELINE PRESENT**: native feature/screen exists before Stitch migration.
-- **MIGRATED**: Stitch composition has been applied without replacing real behavior.
-- **PARTIAL**: some Stitch structure is applied or the functionality exists but the dedicated surface is missing.
-- **GAP**: no equivalent dedicated native screen exists yet.
-- **VARIANT**: visual state/theme variant, not a separate feature.
+- **MIGRATED** — Stitch hierarchy/composition was applied while preserving real native behavior.
+- **IMPLEMENTED** — a dedicated native surface that was genuinely missing has now been added.
+- **REVIEWED-PRESERVED** — the native implementation was reviewed against Stitch and deliberately retained because replacing it would regress behavior, correctness, startup, accessibility, or data integrity.
+- **THEME-VALIDATED** — the requested dark/night variant is provided by the canonical Material theme without hardcoded per-screen colors.
+- **PARTIAL-BY-CONTRACT** — the visual reference contains features/data for which the application currently has no real storage/API contract; fake controls/data were intentionally not added.
 
 ## Screen matrix
 
-| ID | Screen | Baseline | Migration |
+| ID | Screen | Current migration state | Notes |
 |---|---|---|---|
-| A01 | Splash | BASELINE PRESENT | queued |
-| A02 | Onboarding | BASELINE PRESENT | queued |
-| A07 | Login | BASELINE PRESENT | queued |
-| B01 | Home | BASELINE PRESENT | **MIGRATED checkpoint 1** |
-| B01 dark | Home night variant | VARIANT | theme adaptation queued |
-| C01 | Quran Hub | BASELINE PRESENT | queued |
-| C04 | Mushaf Reader | BASELINE PRESENT | queued |
-| C04 dark | Mushaf night reading | VARIANT | queued |
-| C11 | Tafsir | BASELINE PRESENT | queued |
-| D02 | Audio Player | BASELINE PRESENT | queued |
-| E01 | Adhkar Hub | BASELINE PRESENT | queued |
-| E06 | Dhikr Reader/Counter | BASELINE PRESENT inside module | queued |
-| E06 dark | Night dhikr | VARIANT | queued |
-| F01 | Knowledge Hub | BASELINE PRESENT | queued |
-| G01 | Lesson Watch | BASELINE PRESENT | queued |
-| I01 | Books Catalog | BASELINE PRESENT | queued |
-| I04 | Book Detail | BASELINE PRESENT | queued |
-| J01 | Night Prayer Hub | BASELINE PRESENT | queued |
-| J01 dark | Night Prayer dark | VARIANT | queued |
-| K01 | Khatmah Planner | BASELINE PRESENT | queued |
-| L01 | Global Search | **GAP dedicated screen** | queued after API/index contract |
-| M01 | Account Overview | BASELINE PRESENT | queued |
-| M05 | Downloads/Offline | PARTIAL distributed infrastructure | dedicated surface queued |
-| M08 | Reading/Appearance | PARTIAL embedded settings | dedicated surface queued |
+| A01 | Splash | **REVIEWED-PRESERVED** | Uses Android SplashScreen API, official `athar_logo`, canonical page color; no HTML splash runtime. |
+| A02 | Onboarding | **REVIEWED-PRESERVED** | Native 4-page pager, real RTL/LTR, reduced motion, Skip/Continue. |
+| A07 | Login/Auth | **REVIEWED-PRESERVED** | Native validation, OTP, forgot/reset, IME-safe flow retained. |
+| B01 | Home | **MIGRATED** | Compact expressive hero, real reading continuation, real home/upcoming data, corrected quick-action hierarchy. |
+| B01 dark | Home night variant | **THEME-VALIDATED** | Canonical Athar dark palette; no hardcoded Stitch night colors. |
+| C01 | Quran Hub | **MIGRATED** | Calm internal layout, real continuation, direct canonical 114-surah index. |
+| C04 | Mushaf Reader | **REVIEWED-PRESERVED** | Existing reader already has continuous Mushaf flow, inline ayah markers, long-press actions, no bottom reading bar. |
+| C04 dark | Mushaf night reading | **THEME-VALIDATED** | Reader inherits canonical dark surfaces/text; Quran font stays independent. |
+| C11 | Tafsir | **MIGRATED** | Refined reading surfaces; Quran text and tafsir content remain real/canonical/API-backed. |
+| D02 | Audio Player | **MIGRATED** | Visual header compacted; Media3 playback/background behavior retained. |
+| E01 | Adhkar Hub | **MIGRATED** | Giant section hero replaced with calmer contextual header. |
+| E06 | Dhikr Reader/Counter | **REVIEWED-PRESERVED** | Integrated native counter/reminder/sync flow retained rather than split into a fake duplicate screen. |
+| E06 dark | Night dhikr | **THEME-VALIDATED** | No hardcoded colors; Material dark contract drives the reader. |
+| F01 | Knowledge Hub | **MIGRATED** | Uses real retained lesson continuation/progress, not Stitch percentages. |
+| G01 | Lesson Watch | **REVIEWED-PRESERVED** | Existing player-top + description/actions + collapsible comments + related/series flow already matches product requirement. |
+| I01 | Books Catalog | **MIGRATED** | Quiet library intro/search composition over real catalog API and pagination. |
+| I04 | Book Detail | **MIGRATED** | Calm metadata card; rights, source, favorite, secure download and local-reader behavior preserved. |
+| J01 | Night Prayer Hub | **MIGRATED** | Night visual identity retained but hero is compact/inset; private data/conflict/rejection behavior preserved. |
+| J01 dark | Night Prayer dark | **THEME-VALIDATED** | Canonical dark tokens drive the section. |
+| K01 | Khatmah Planner | **REVIEWED-PRESERVED** | Existing calm `AtharHeroSurface`, real plan metrics/conflicts/reminders/editor retained. |
+| L01 | Global Search | **IMPLEMENTED** | Native search across canonical Quran + books + lessons + series + scholars + adhkar. No fake hadith domain. |
+| M01 | Account Overview | **MIGRATED** | Giant profile hero replaced by quiet identity card; tools kept real. |
+| M05 | Downloads/Offline | **IMPLEMENTED / PARTIAL-BY-CONTRACT** | Dedicated offline library for real downloaded books, real file sizes/open/delete. Stitch audio/lesson downloads are not shown because those storage contracts do not exist yet. |
+| M08 | Reading/Appearance | **IMPLEMENTED / PARTIAL-BY-CONTRACT** | Dedicated real theme + Quran font-size settings. Unsupported Stitch toggles are not rendered as fake controls. |
 
-## Completed in checkpoint 1
+## Implemented correctness rules
 
-- Created authoritative Stitch-to-Compose implementation specification.
-- Preserved official Athar palette; generated Stitch palette cannot override brand source of truth.
-- Preserved official Android logo resource.
-- Added screen-specific hero shape support without changing existing callers.
-- Home hero now uses the approved compact margin/rounded composition.
-- Home Quran continuation now reads the encrypted real saved reading position.
-- Quran preview text comes from the canonical bundled Quran dataset.
-- No hardcoded fake Quran position, progress percentage, location, prayer time, or religious attribution was added.
-- Quick-action order now follows the approved Home hierarchy: Quran, Night Prayer, Adhkar, Knowledge.
-- Added a branch-only GitHub Actions Kotlin compile gate.
+- Official brand primary remains `#24694F`; generated Stitch `#005039` is not the app primary.
+- Official logo remains `android/app/src/main/res/drawable-nodpi/athar_logo.png`.
+- Arabic remains default and RTL-first; English/LTR resources remain paired.
+- Light remains the default theme.
+- Quran text remains canonical and uses Amiri Quran.
+- No fake city, Hijri date, prayer time, third-of-night time, progress percentage, dhikr count, user statistic, religious quote, or attribution was inserted.
+- No fake hadith catalog/search source was invented.
+- Book download metadata now stores the real server-provided title locally alongside the verified PDF/digest.
+- Offline-library disk scans and deletion run off the UI thread.
+- Book local copies remain explicitly removable without changing favorites or remote catalog metadata.
+- Home/Quran/Adhkar/Night screens contain no hardcoded light/night color forks; they inherit the canonical theme.
 
-## Home checkpoint deliberately not implemented yet
+## Build/compile repairs completed on this branch
 
-These Stitch details are **not** hardcoded because the current Home contract does not provide verified values:
+The baseline branch could not reach Kotlin compilation. During this migration the following blockers were repaired rather than hidden:
 
-- city/location badge;
-- Hijri/time-context badge;
-- last-third start time;
-- 75% Quran progress bar;
-- daily dhikr 18/24 card;
-- attributed daily benefit/quote.
+- Gradle `java.io.File` Kotlin DSL resolution.
+- generated assets Provider/source-set registration.
+- missing Compose/Kotlin imports (`dp`, `rememberSaveable`, coroutine `launch`, etc.).
+- stale `MarkToggle` call contract.
+- Khatmah reminder planner invocation and composable-scope metrics.
+- Night-plan suspend Quran lookup.
+- stale notification string references.
+- Quran Material3 opt-in/import.
+- Tafsir delegated smart-cast.
+- Android PCM 16-bit constant.
+- WorkManager 2.10.x flow usage/import and worker response-body nullability.
+- invalid `CoroutineWorker.onStopped` override.
 
-They will only appear after being connected to their real repositories/contracts. This is intentional correctness, not missing polish.
+A full `:app:compileDebugKotlin` GitHub Actions gate passed on run **41108335586** at commit `94632f6d884f21ccb3f5621796d16f1e12c3c06c` before the final offline-library I/O polish. The latest head must continue to pass the CI gate.
 
-## Next code checkpoint
+## Deliberately omitted Stitch-only data/controls
 
-1. Verify Home compile gate.
-2. Bring the top Home app bar closer to the Stitch composition while preserving navigation and accessibility.
-3. Quran Hub + Mushaf migration.
-4. Adhkar + Night Prayer.
-5. Learning/Watch + Books.
-6. Khatmah/Account/offline/settings.
-7. Implement missing global search after a real aggregate-search contract is defined.
+These are not counted as defects until a real product/data contract exists:
 
-## Merge rule
+- Home city/location and Hijri/time-context badges.
+- Hardcoded third-of-night start/end times.
+- Fake 75% Quran progress.
+- Fake daily dhikr 18/24 progress.
+- Attributed daily benefit/quote without a reviewed source.
+- Hadith search results without a canonical hadith source.
+- Audio/lesson offline storage totals when the app currently persists verified book PDFs only.
+- Reading settings such as alternate Quran font families, continuous-scroll toggle, automatic ayah audio highlight, default offline tafsir, or cloud preference backup where no corresponding persisted setting/behavior exists.
 
-Nothing from this branch should be merged into a Codex integration branch merely because the visual diff looks correct. The corresponding compile/test/device gate must be recorded first.
+## Validation gates
+
+1. **Compile gate:** `:app:compileDebugKotlin` — must pass on latest head.
+2. **Unit gate:** `:app:testDebugUnitTest` — enabled in CI after compile.
+3. **Static review:** Arabic/English resources, theme inheritance, navigation and existing feature contracts.
+4. **Device gate:** physical-device/emulator validation for touch, IME, Media3, WorkManager, notification permission flows, reader rendering, RTL/LTR, font scale and screenshots.
+5. **Merge rule:** no blind merge into the Codex integration branch; only validated commits/chunks should be integrated.
+
+## Remaining work after CI green
+
+The visual migration itself is no longer blocked by missing dedicated Stitch screens. Remaining work is validation and visual-diff refinement on real device(s): screenshot comparison at matched viewports, large-font/accessibility pass, English/LTR pass, dark pass, and instrumentation/device journeys.
