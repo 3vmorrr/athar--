@@ -91,6 +91,7 @@ private fun AtharNavIcon(
     val currentEntry by navigation.currentBackStackEntryAsState()
     val route = currentEntry?.destination?.route ?: "home"
     val topLevel = destinations.any { it.key == route }
+    val settings by vm.settings.collectAsStateWithLifecycle()
     val reduced = reducedMotion()
     LaunchedEffect(route) { if (destinations.any { it.key == route }) selected = route }
     val navigateTab: (String) -> Unit = { key ->
@@ -434,7 +435,6 @@ private fun AtharNavIcon(
     auth: AuthState.SignedIn,
     onOpenAppearance: () -> Unit,
 ) {
-    val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
     val context = LocalContext.current.applicationContext
     var name by remember(auth.user) {
