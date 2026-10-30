@@ -4,7 +4,7 @@ Audit date: 2026-10-30. Active branch `codex/android-ecosystem` at `bef33f6e6ed7
 
 ## Functional update after the original audit
 
-08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open.
+08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.
 
 Current focused validation, separate from the inherited baseline: **11 JVM / 32 backend assertions / 0 actual cookie/API HTTP assertions**. Debug/test APK PASS; lint0 errors/66 warnings;475 paired resources. 6 scoped emulator cases executed; physical acceptance remains pending. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.
 
@@ -15,22 +15,22 @@ This report supersedes the26 COMPLETE /77 PARTIAL /42 NOT STARTED /4 BLOCKED sna
 | Metric | Tasks |
 |---|---:|
 | total | 149 |
-| fully_implemented_any_reviewed_branch | 114 |
+| fully_implemented_any_reviewed_branch | 113 |
 | fully_implemented_main | 75 |
 | integrated_active_application | 75 |
 | passed_all_required_verification | 19 |
 | formally_closed | 19 |
-| fully_implemented_outstanding_verification | 95 |
+| fully_implemented_outstanding_verification | 94 |
 | acceptance_only_current_app | 56 |
-| partially_implemented_needing_code | 20 |
-| partial_tasks_needing_production_code | 19 |
+| partially_implemented_needing_code | 21 |
+| partial_tasks_needing_production_code | 20 |
 | partial_tasks_needing_only_test_code | 1 |
 | not_implemented | 0 |
 | external_blocked | 4 |
-| implemented_only_unmerged | 39 |
+| implemented_only_unmerged | 38 |
 | any_implementation_or_scaffold_only_unmerged | 49 |
 | production_code_remaining_including_integration | 61 |
-| feature_code_remaining | 20 |
+| feature_code_remaining | 21 |
 | integration_code_remaining | 45 |
 | reopened_previous_complete | 7 |
 
@@ -43,8 +43,8 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 | accepted | 19 |
 | external_blocked | 4 |
 | implemented_integrated_awaiting_acceptance | 56 |
-| implemented_unmerged | 39 |
-| partially_implemented | 20 |
+| implemented_unmerged | 38 |
+| partially_implemented | 21 |
 | scaffold_or_unmeasured_gate | 11 |
 | **Total** | **149** |
 
@@ -53,7 +53,7 @@ Counts overlap. Fully implemented includes unmerged reviewed source and can have
 | Old state | Actual categories |
 |---|---|
 | COMPLETE | accepted: 19; implemented_integrated_awaiting_acceptance: 7 |
-| PARTIAL | implemented_integrated_awaiting_acceptance: 48; implemented_unmerged: 7; partially_implemented: 17; scaffold_or_unmeasured_gate: 5 |
+| PARTIAL | implemented_integrated_awaiting_acceptance: 48; implemented_unmerged: 6; partially_implemented: 18; scaffold_or_unmeasured_gate: 5 |
 | NOT STARTED | implemented_integrated_awaiting_acceptance: 1; implemented_unmerged: 32; partially_implemented: 3; scaffold_or_unmeasured_gate: 6 |
 | BLOCKED | external_blocked: 4 |
 
@@ -102,7 +102,7 @@ Retained closures are backed by implementation review and available inherited re
 
 TASK_QUEUE.json/MD and FUNCTIONAL_INTEGRATION_LEDGER.json now carry IMPLEMENTATION / INTEGRATION / VERIFICATION / CLOSURE / MISSING / EVIDENCE for every task. The explicit review TSV records individual scope findings; this JSON is the generated authoritative evidence/metrics view. ACCOUNT_FUNCTIONAL_INTEGRATION and current progress/testing headers point here. Historical percentages/counts remain labeled historical and cannot override this audit. The renderer/validator rejects missing axes and inconsistent totals.
 
-Next executable task: **08.2**. Reconcile private verse-target/range planning, saved-plan/copy and deliberate record-completed actions with the current Quran route, owner generation/deletion fences and existing Night Prayer conflict/rejection recovery. Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.
+Next executable task: **08.2**. Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged. Integrate08.x without regressing current conflict/rejection recovery; reconcile runtime/build/PHP contracts before09–16, then canonical push campaigns/combined mail. Batch authorized physical acceptance for finished native tasks and reopened foundations. Keep03.8/15.3/20.5/24.1 external gates explicit; final security/performance/release gates follow stable integration.
 
 ## Full task reclassification table
 
@@ -155,7 +155,7 @@ I: IMPLEMENTED / PARTIALLY_IMPLEMENTED / SCAFFOLDED / IMPLEMENTATION_BLOCKED. In
 | 07.8 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:backend/src/Progress/Khatmah.php |
 | 07.9 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/khatmah/KhatmahJournal.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt; main:android/app/src/main/java/org/athar/app/core/sync/PrivateSyncWorker.kt; main:backend/src/Progress/Khatmah.php |
 | 08.1 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt; main:android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt |
-| 08.2 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
+| 08.2 | PARTIAL | PARTIALLY_IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
 | 08.3 | PARTIAL | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt |
 | 08.4 | NOT STARTED | IMPLEMENTED | NOT_INTEGRATED | TESTS_FAILING | PARTIAL | parallel:android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimer.kt; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightSessionTimerCard.kt |
 | 08.5 | PARTIAL | IMPLEMENTED | INTEGRATED | ACCEPTANCE_PENDING | PARTIAL | main:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt |
@@ -624,9 +624,9 @@ Old status: Implementation advanced after original audit9492f14. Earlier partial
 
 ### 08.2 — Verse target and range workflow
 
-IMPLEMENTATION: `IMPLEMENTED` (parallel); Parallel canonical range/target planning, saved private plan/copy and explicit completed-record actions exist.
+IMPLEMENTATION: `PARTIALLY_IMPLEMENTED` (parallel); Parallel range/target preview, saved-plan/copy and explicit record actions exist, but the private storage candidate is incomplete under current ownership/restart contracts.
 INTEGRATION: `NOT_INTEGRATED`. VERIFICATION: `TESTS_FAILING`. CLOSURE: `PARTIAL`.
-MISSING: Integrate private planning storage and actual Quran route without losing current rejection/conflict recovery; validate end to end.
+MISSING: Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration.
 EVIDENCE: `parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt`; `parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt`. Exact refs, symbols/lines, blobs, commits, inherited tests, still-required tests and confidence are in the JSON record.
 Old status: Closure remains open; concrete code/integration/measurement deficit is now explicit.
 

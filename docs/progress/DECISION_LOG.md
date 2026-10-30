@@ -1,7 +1,7 @@
 # Engineering decision log
 
 <!-- actual-implementation-audit:start -->
-> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 114 tasks have implemented source (75 in main, 39 only unmerged); 19 are accepted/closed, 56 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (75 in main, 38 only unmerged); 19 are accepted/closed, 56 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
 
 <!-- actual-implementation-audit:end -->
 
@@ -47,3 +47,8 @@ Formal checkpoint2026-10-25: audit actual source against all approved addenda; p
 | 2026-10-26 | Integrate premium primitives separately with a controlled stable page transition | Keep repositories/auth/private recovery unchanged; use existing Compose1.9 SeekableTransitionState to cancel motion without swapping the current content tree. Two-frame effect/composition tests, draft retention, contrast, disabled semantics and large-font device gates precede screen-specific adoption. No external runtime or extra haptic. |
 
 Further irreversible, recurring-cost or scope-changing decisions require explicit user authorization. Routine reversible implementation choices are documented and executed.
+
+
+## 2026-10-30 —08.2 candidate ownership audit correction
+
+Follow-on source review of parallel7392e93 `NightVersePlanRepository.kt` found a common-key encrypted plan without owner/environment fields, permissive Gson reconstruction (constructor invariants are bypassed; decode rechecks only verse count), and a read/version/write sequence outside a Room transaction. The after-write actor check cannot roll back a stale write. Clear also lacks a transactional captured-generation/deletion fence. These are production implementation deficits, not missing device evidence. Correct08.2 from implemented-unmerged to partially implemented; preserve its real range/preview/copy/explicit-record work as input. Main integrated75 and accepted19 remain unchanged. The next implementation must bind/validate retained data and linearize writes before UI transfer; no whole-branch import is authorized.

@@ -735,11 +735,11 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 ## 08.2 — Verse target and range workflow
 
 - Parent: Work package 8: Night Prayer; state: **PARTIAL**; dependencies: 08.1.
-- IMPLEMENTATION: **IMPLEMENTED**.
+- IMPLEMENTATION: **PARTIALLY_IMPLEMENTED**.
 - INTEGRATION: **NOT_INTEGRATED**.
 - VERIFICATION: **TESTS_FAILING**.
 - CLOSURE: **PARTIAL**.
-- MISSING: Integrate private planning storage and actual Quran route without losing current rejection/conflict recovery; validate end to end.
+- MISSING: Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration.
 - EVIDENCE: parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt @ 7392e93b0889; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt @ 7392e93b0889. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Finish target/range planning, copy reference, save plan and explicit record-completed actions.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/quran/.

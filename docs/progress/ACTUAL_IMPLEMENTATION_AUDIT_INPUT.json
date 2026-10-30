@@ -4,7 +4,7 @@
   "reviewed_tasks": [
     "08.1"
   ],
-  "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open.",
+  "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.",
   "validation": {
     "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
     "execution_date": "2026-10-30",
@@ -94,7 +94,7 @@
   "additional_main_evidence": {},
   "next_task": {
     "id": "08.2",
-    "action": "Reconcile private verse-target/range planning, saved-plan/copy and deliberate record-completed actions with the current Quran route, owner generation/deletion fences and existing Night Prayer conflict/rejection recovery.",
+    "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
     "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
   },
   "prior_checkpoints": [

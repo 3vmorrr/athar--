@@ -1932,13 +1932,13 @@
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Finish target/range planning, copy reference, save plan and explicit record-completed actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
-      "implementation_status": "IMPLEMENTED",
+      "implementation_status": "PARTIALLY_IMPLEMENTED",
       "integration_status": "NOT_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "production_code_remaining": true,
       "missing": [
-        "Integrate private planning storage and actual Quran route without losing current rejection/conflict recovery; validate end to end."
+        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
       ],
       "audit_evidence": [
         {
@@ -6001,22 +6001,22 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 114,
+    "fully_implemented_any_reviewed_branch": 113,
     "fully_implemented_main": 75,
     "integrated_active_application": 75,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 95,
+    "fully_implemented_outstanding_verification": 94,
     "acceptance_only_current_app": 56,
-    "partially_implemented_needing_code": 20,
-    "partial_tasks_needing_production_code": 19,
+    "partially_implemented_needing_code": 21,
+    "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
-    "implemented_only_unmerged": 39,
+    "implemented_only_unmerged": 38,
     "any_implementation_or_scaffold_only_unmerged": 49,
     "production_code_remaining_including_integration": 61,
-    "feature_code_remaining": 20,
+    "feature_code_remaining": 21,
     "integration_code_remaining": 45,
     "reopened_previous_complete": 7
   },
