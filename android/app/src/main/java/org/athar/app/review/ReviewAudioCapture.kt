@@ -86,17 +86,26 @@ class ReviewAudioCapture(private val context: Context) {
             ReviewAudioCaptureContract.CHUNK_SAMPLES *
                 Short.SIZE_BYTES * 2,
         )
-        val audioRecord = AudioRecord.Builder()
-            .setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
-            .setAudioFormat(
-                AudioFormat.Builder()
-                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                    .setSampleRate(ReviewAudioCaptureContract.SAMPLE_RATE_HZ)
-                    .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
-                    .build(),
-            )
-            .setBufferSizeInBytes(bufferBytes)
-            .build()
+        val audioRecord = try {
+            if (!hasPermission()) {
+                onStopped(ReviewAudioStopReason.PermissionRevoked)
+                return
+            }
+            AudioRecord.Builder()
+                .setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
+                .setAudioFormat(
+                    AudioFormat.Builder()
+                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                        .setSampleRate(ReviewAudioCaptureContract.SAMPLE_RATE_HZ)
+                        .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
+                        .build(),
+                )
+                .setBufferSizeInBytes(bufferBytes)
+                .build()
+        } catch (_: SecurityException) {
+            onStopped(ReviewAudioStopReason.PermissionRevoked)
+            return
+        }
         check(audioRecord.state == AudioRecord.STATE_INITIALIZED)
         recorder = audioRecord
 
