@@ -31,6 +31,12 @@ import java.net.URI
 import java.security.MessageDigest
 import kotlin.coroutines.coroutineContext
 
+internal data class LocalBookDownload(
+    val bookId: Int,
+    val title: String?,
+    val sizeBytes: Long,
+)
+
 internal object BookStorage {
     private const val BOOKS = "books"
     const val READER_PREFERENCES = "athar-book-reader"
@@ -82,8 +88,60 @@ internal object BookStorage {
     fun digest(context: Context, owner: Long, bookId: Int): File =
         File(directory(context, owner), "book-$bookId.sha256")
 
+    private fun titleFile(context: Context, owner: Long, bookId: Int): File =
+        File(directory(context, owner), "book-$bookId.title")
+
     fun temp(context: Context, owner: Long, bookId: Int): File =
         File(directory(context, owner), "book-$bookId.part")
+
+    fun title(context: Context, owner: Long, bookId: Int): String? =
+        titleFile(context, owner, bookId)
+            .takeIf { it.isFile }
+            ?.readText(Charsets.UTF_8)
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+
+    fun downloaded(context: Context, owner: Long): List<LocalBookDownload> {
+        require(owner > 0L)
+        if (ownerRevoked(context, owner)) return emptyList()
+        val root = ownerRoot(context, owner)
+        if (!root.isDirectory) return emptyList()
+        return root.listFiles()
+            .orEmpty()
+            .asSequence()
+            .filter { it.isFile && it.name.matches(Regex("""book-[1-9][0-9]*\.pdf""")) }
+            .mapNotNull { pdf ->
+                val id = pdf.name.removePrefix("book-").removeSuffix(".pdf").toIntOrNull()
+                    ?: return@mapNotNull null
+                val digest = File(root, "book-$id.sha256")
+                if (!digest.isFile) return@mapNotNull null
+                LocalBookDownload(
+                    bookId = id,
+                    title = File(root, "book-$id.title")
+                        .takeIf { it.isFile }
+                        ?.readText(Charsets.UTF_8)
+                        ?.trim()
+                        ?.takeIf { it.isNotEmpty() },
+                    sizeBytes = pdf.length().coerceAtLeast(0L),
+                )
+            }
+            .sortedBy { it.title?.lowercase() ?: it.bookId.toString() }
+            .toList()
+    }
+
+    fun writeTitle(
+        context: Context,
+        owner: Long,
+        bookId: Int,
+        value: String,
+    ) {
+        val safe = value
+            .filterNot { it.isISOControl() }
+            .trim()
+            .take(180)
+        if (safe.isBlank()) return
+        titleFile(context, owner, bookId).writeText(safe, Charsets.UTF_8)
+    }
 
     fun isDownloaded(context: Context, owner: Long, bookId: Int): Boolean =
         pdf(context, owner, bookId).isFile &&
@@ -93,6 +151,7 @@ internal object BookStorage {
         temp(context, owner, bookId).delete()
         pdf(context, owner, bookId).delete()
         digest(context, owner, bookId).delete()
+        titleFile(context, owner, bookId).delete()
     }
 
     suspend fun verify(
@@ -206,6 +265,7 @@ class BookDownloadWorker(
         val owner = inputData.getLong(KEY_OWNER, -1L)
         val bookId = inputData.getInt(KEY_BOOK_ID, -1)
         val source = inputData.getString(KEY_URL).orEmpty()
+        val title = inputData.getString(KEY_TITLE).orEmpty()
 
         if (
             owner < 1L ||
@@ -329,6 +389,12 @@ class BookDownloadWorker(
                     temporary.delete()
                 }
                 digestFile.writeText(hash)
+                BookStorage.writeTitle(
+                    applicationContext,
+                    owner,
+                    bookId,
+                    title,
+                )
                 setProgress(workDataOf(KEY_PROGRESS to 100))
                 Result.success(
                     workDataOf(
@@ -360,6 +426,7 @@ class BookDownloadWorker(
         const val KEY_OWNER = "owner"
         const val KEY_BOOK_ID = "book_id"
         const val KEY_URL = "url"
+        const val KEY_TITLE = "title"
         const val KEY_PROGRESS = "progress"
         const val KEY_PATH = "path"
         const val KEY_SHA256 = "sha256"
@@ -375,6 +442,7 @@ private object BookDownloads {
         owner: Long,
         bookId: Int,
         url: String,
+        title: String,
     ) {
         require(BookDownloadPolicy.safeHttps(url))
         require(!BookStorage.ownerRevoked(context, owner))
@@ -384,6 +452,7 @@ private object BookDownloads {
                     BookDownloadWorker.KEY_OWNER to owner,
                     BookDownloadWorker.KEY_BOOK_ID to bookId,
                     BookDownloadWorker.KEY_URL to url,
+                    BookDownloadWorker.KEY_TITLE to title.take(180),
                 ),
             )
             .setConstraints(
@@ -505,6 +574,7 @@ internal fun BookDownloadActions(
                                 expectedUser = owner,
                             )
                             val url = response.text("url")
+                            val title = response.text("title")
                             if (!BookDownloadPolicy.safeHttps(url)) {
                                 throw IllegalArgumentException("unsafe_download_url")
                             }
@@ -513,6 +583,7 @@ internal fun BookDownloadActions(
                                 owner = owner,
                                 bookId = bookId,
                                 url = url,
+                                title = title,
                             )
                             localRevision++
                         } catch (failure: CancellationException) {
