@@ -343,17 +343,25 @@ fun NightPlanScreen(
                         ) {
                             nightPlanContinuationIndex(plan, completedRanges)
                         }
-                        val continuation = remember(continuationIndex) {
-                            continuationIndex?.let { index ->
+                        var continuation by remember(
+                            plan.localVersion,
+                            continuationIndex,
+                        ) {
+                            mutableStateOf<Pair<Int, Int>?>(null)
+                        }
+                        LaunchedEffect(continuationIndex) {
+                            continuation = continuationIndex?.let { index ->
                                 runCatching {
                                     graph.quran.data().index.position(index)
-                                }.getOrNull()
+                                }.getOrNull()?.let { position ->
+                                    position.surah to position.ayah
+                                }
                             }
                         }
                         NightSavedPlanCard(
                             plan = plan,
-                            continuationSurah = continuation?.surah,
-                            continuationAyah = continuation?.ayah,
+                            continuationSurah = continuation?.first,
+                            continuationAyah = continuation?.second,
                             busy = busy,
                             copy = {
                                 val clipboard = context.getSystemService(
