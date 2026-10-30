@@ -6,6 +6,10 @@ on:
       - chatgpt/stitch-ui-integration
   workflow_dispatch:
 
+concurrency:
+  group: android-ui-compile-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
