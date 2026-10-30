@@ -5429,8 +5429,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "1d580fc108963a249774ff4dc6b96070f34839f3"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5829,8 +5829,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "1d580fc108963a249774ff4dc6b96070f34839f3"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5983,8 +5983,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "1d580fc108963a249774ff4dc6b96070f34839f3"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5994,7 +5994,7 @@
       "name": "Measured reading pace insights",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
       "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
@@ -6094,27 +6094,33 @@
       "external_blockers": null,
       "remaining_acceptance": "Use valid measured samples only for pace and explain insufficient data; no speed pressure. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "PARTIALLY_INTEGRATED",
-      "verification_status": "NOT_TESTED",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Add truthful measured/insufficient-data presentation with no inferred recitation speed or speed pressure, review sample validity and test actual timer-to-history pace integration; native/physical acceptance remains required."
+        "Full authenticated native history/navigation, physical API27/light/landscape/accessibility acceptance remains batched. Focused domain/Room/component checks do not close these gates."
       ],
       "actual_audit_record": "08.5",
       "actual_evidence": [
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "af2adf79a314cb5a46e146ca6b8758d0059f82b9"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "3b3a0a79fdd2cc157ecea6603ed319d06a289c5d"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPaceContent.kt",
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "e797a642f32d8049fc2d44ce55a845f035380e48"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "1d580fc108963a249774ff4dc6b96070f34839f3"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -6124,9 +6130,9 @@
       "name": "Saved city and prayer method",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; implemented_unmerged",
+      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
       "parallel_candidate_commits": [
         "34acf58f5b483c52a6772490f6494f68899ac866",
         "4e34ee7f43d430f1755ef258430629a89b03ad3d",
@@ -6224,13 +6230,13 @@
       "external_blockers": null,
       "remaining_acceptance": "Persist chosen city/timezone/method and expose source/manual/polar unavailable behavior without silent GPS permission. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "IMPLEMENTED",
+      "implementation_status": "PARTIALLY_IMPLEMENTED",
       "integration_status": "NOT_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "production_code_remaining": true,
       "missing": [
-        "Integrate durable preferences/public-default choice with current graph and preserve manual/no-silent-GPS behavior."
+        "Reconcile empty/partial/complete current API preferences, strict typed/revision decoding, captured generation and stale-draft/CAS guards; wire current graph/cache invalidation and explicit public-default/manual choice without silent GPS. Validate saved preference recovery and protected ownership before acceptance."
       ],
       "actual_audit_record": "08.6",
       "actual_evidence": [
@@ -7059,8 +7065,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "af2adf79a314cb5a46e146ca6b8758d0059f82b9"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "3b3a0a79fdd2cc157ecea6603ed319d06a289c5d"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -12002,8 +12008,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "1d580fc108963a249774ff4dc6b96070f34839f3"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
         },
         {
           "location": "main",
@@ -13092,8 +13098,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "fc5d0aa628f90a1a39fabcdd00f8c43c52f6449d"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+          "git_blob": "13298d6dc0af2cd9e8210fd3d207574924f11b81"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16176,12 +16182,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f"
+          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18136,25 +18142,25 @@
   "actual_audit_metrics": {
     "total": 149,
     "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 77,
-    "integrated_active_application": 77,
+    "fully_implemented_main": 78,
+    "integrated_active_application": 78,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
     "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 58,
+    "acceptance_only_current_app": 59,
     "partially_implemented_needing_code": 21,
     "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
-    "implemented_only_unmerged": 36,
+    "implemented_only_unmerged": 35,
     "any_implementation_or_scaffold_only_unmerged": 46,
-    "production_code_remaining_including_integration": 59,
+    "production_code_remaining_including_integration": 58,
     "feature_code_remaining": 21,
     "integration_code_remaining": 42,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "40820d478164c5214a3e88ab636d9162a7ef213f",
+  "audit_target_sha": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }

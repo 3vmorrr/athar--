@@ -1,167 +1,122 @@
 {
-  "main_sha": "40820d478164c5214a3e88ab636d9162a7ef213f",
+  "main_sha": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
   "date": "2026-10-30",
   "reviewed_tasks": [
-    "08.4"
+    "08.5"
   ],
-  "summary": "08.4 is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL: Tonight has an owned monotonic foreground timer, strict encrypted versioned frames, captured-generation/deletion fences, honest paused recovery and atomic idempotent measured session/outbox/receipt/timer cleanup. Lifecycle callbacks are source-fenced; stale/uncertain error handling reads without pausing a newer timer. Finishing alone does not record worship. Actual native HTTP/OS/full navigation/physical acceptance stays open. Follow-on08.5 main source review corrects its earlier acceptance-only classification: null pace has no insufficient-data explanation, so that task remains PARTIALLY_IMPLEMENTED/PARTIALLY_INTEGRATED.",
+  "summary": "08.5 is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL: readable history presents a weighted measured-time average and sample coverage, or an explicit insufficient-data explanation, with neutral context. Unmeasured/out-of-contract samples cannot invent pace; actual timer recording, history edits and deletion recompute the aggregate. Native HTTP/full navigation/physical acceptance stays open. Follow-on08.6 source review corrects its fully implemented candidate claim: valid partial current API preferences are rejected, blocking save, with permissive coercion and absent captured caller generation; it is PARTIALLY_IMPLEMENTED/NOT_INTEGRATED pending reconciliation.",
   "validation": {
-    "source_sha": "40820d478164c5214a3e88ab636d9162a7ef213f",
+    "source_sha": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
     "execution_date": "2026-10-30",
-    "provenance": "Scoped08.4/subsystem checkpoint:85 JVM across11 classes;39 backend assertions;30 API34 storage/export +15 AR+15 EN UI executions (60 executions/45 unique). Earlier08.3,08.2,08.1,Khatmah and original167-case baseline remain separate; reruns are not summed or treated as full-project/physical acceptance.",
-    "jvm_cases": 85,
-    "jvm_classes": 11,
+    "provenance": "Scoped08.5 checkpoint:43 JVM across5 classes;1 actual API34 timer-to-history pace storage case and2 AR+2 EN Compose executions (5 executions/3 unique). Earlier08.4 85/39/60 and other checkpoints remain separately pinned; no repeated-count sum, full-project or physical acceptance claim.",
+    "jvm_cases": 43,
+    "jvm_classes": 5,
     "junit_receipts": [
       {
-        "name": "org.athar.app.AccountExportTest",
-        "tests": 5,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
-        "sha256": "5a37ce9dbcba5b6ac22ea4ed192a0433985f98279739330d669337ad163c7ea1",
-        "bytes": 1006
-      },
-      {
-        "name": "org.athar.app.AccountExportWriterTest",
-        "tests": 4,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
-        "sha256": "a0e7a2c00d9a293ff6d2685261b0ad35b01e76af60f71c8d15aba8ebf2fd9149",
-        "bytes": 866
+        "name": "org.athar.app.DomainTest",
+        "tests": 8,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.DomainTest.xml",
+        "sha256": "ffc1fa262c432c36999b90d6e2421e93cbcf261ca658163779e4d72af2b86927",
+        "bytes": 1232
       },
       {
         "name": "org.athar.app.NightIdentityTest",
         "tests": 8,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
-        "sha256": "a1cfe2d4b3590f5d51aa45abda15945de60e45b03239be0efd301320e7a16755",
+        "sha256": "386a01695b661601e10692c418a59b56d0d923bf8fdd69ff2fb7b8a882de429e",
         "bytes": 1401
+      },
+      {
+        "name": "org.athar.app.NightMeasuredPaceTest",
+        "tests": 3,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightMeasuredPaceTest.xml",
+        "sha256": "ff5a6417e15280adbde29435c7a713fc0ab851241b97a33cf967ab6bcf927290",
+        "bytes": 722
       },
       {
         "name": "org.athar.app.NightMeasuredTimerTest",
         "tests": 11,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightMeasuredTimerTest.xml",
-        "sha256": "fb8d22d04decda1916a967ba1f50f78bc47b84c5fbeafb9f3aea2cb5d8c321c1",
+        "sha256": "65666888a2c11fc98eb482a430581eb70dedb30293db6bc52ec29965ff7f9806",
         "bytes": 1899
-      },
-      {
-        "name": "org.athar.app.NightPlanViewModelTest",
-        "tests": 9,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
-        "sha256": "9e2fdbadb66b425b7601b97764a0c789278a2c2d6deec673338b05a60a7655d5",
-        "bytes": 1635
-      },
-      {
-        "name": "org.athar.app.NightReaderViewModelTest",
-        "tests": 12,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightReaderViewModelTest.xml",
-        "sha256": "6cfb9a69874c71f52337fdba98fd8f9a7ad608db9ba75065953e9539c22237e2",
-        "bytes": 1996
-      },
-      {
-        "name": "org.athar.app.NightReadingPositionTest",
-        "tests": 9,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightReadingPositionTest.xml",
-        "sha256": "c289cc00ee03ea6be24dfa34608ab62f68a09824bf94549cb57577b7ada533fa",
-        "bytes": 1625
-      },
-      {
-        "name": "org.athar.app.NightRejectionTest",
-        "tests": 3,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
-        "sha256": "7ff172aa2893d107339f26eed2441d660d90ba9b990ecec5e62399d970ed3132",
-        "bytes": 724
       },
       {
         "name": "org.athar.app.NightTimerViewModelTest",
         "tests": 13,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightTimerViewModelTest.xml",
-        "sha256": "56bbe4347d2e7ba38de41b4a44b1e1140165421ca1b9927eeed8fb7e05eaeb82",
-        "bytes": 2196
-      },
-      {
-        "name": "org.athar.app.NightVersePlanTest",
-        "tests": 8,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
-        "sha256": "a3e850cdb803fdfe56d8ba870694f209e1f20097278d4bd2fd31f5704cbb64b7",
-        "bytes": 1442
-      },
-      {
-        "name": "org.athar.app.QuranSelectionTest",
-        "tests": 3,
-        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSelectionTest.xml",
-        "sha256": "a73432c0b4185c9808d97735d9d810ff177bb4dbad64e36e005b13ae2f3ef335",
-        "bytes": 726
+        "sha256": "af47e99dac35cb0437214a43bdbf80a98c9f1fb92ea3b28a9b5aa49236122690",
+        "bytes": 2195
       }
     ],
-    "backend_suites": 1,
-    "backend_assertions": 39,
-    "backend_components": {
-      "night_prayer": 39
-    },
+    "backend_suites": 0,
+    "backend_assertions": 0,
+    "backend_components": {},
     "actual_cookie_api_http_assertions": 0,
     "debug_apk": "PASS",
     "test_apk": "PASS",
     "lint_errors": 0,
     "lint_warnings": 69,
-    "resources_paired": 544,
-    "new_instrumentation_cases": 15,
-    "instrumentation_cases_executed": 60,
-    "instrumentation_result": "60/60 PASS on API34:10 timer+10 reader+9 planner storage+1 extended export;5 timer+3 Tonight+3 reader+4 planner UI per AR/EN dark1.5 font.45 unique cases;15 new instrumentation cases.",
+    "resources_paired": 548,
+    "new_instrumentation_cases": 3,
+    "instrumentation_cases_executed": 5,
+    "instrumentation_result": "5/5 PASS on API34:1 actual timer->Room->owned history->pace edit/deletion case;2 plain measured/insufficient-data UI cases per AR/EN dark1.5 font.3 unique/new instrumentation cases.",
     "physical_acceptance": "NOT_EXECUTED",
     "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/night-timer-final-gate.log",
-        "sha256": "1b071285723755d9765888b0d3f2c1cbfb7b4219277812de079540cecf9f50e7",
-        "bytes": 8393
+        "path": "artifacts/functional-integration/night-pace-focused-gate.log",
+        "sha256": "b7023f5b14c7dfad36aa29ed3687331749f0ac0ebffd57700ca87f417cbba210",
+        "bytes": 8294
       },
       {
-        "path": "artifacts/functional-integration/night-timer-api-contract-corrected.log",
-        "sha256": "7b51ef0568ec39ca4e31d0209e9f4c2f7907bfbdf8616af7e90b0ec9b24a0676",
-        "bytes": 96
+        "path": "artifacts/functional-integration/night-pace-domain-regression.log",
+        "sha256": "e01eb5a3de036280c2a7b783b275c375a3ce96e1ea8921bf4881872bc4d0b8cc",
+        "bytes": 2019
       },
       {
-        "path": "artifacts/functional-integration/night-timer-final-api34-storage.private.log",
-        "sha256": "34eb6fffdcce38c6ce42be47ff8e7654faaec172be4eb73616c6262666c7ea15",
-        "bytes": 21209
+        "path": "artifacts/functional-integration/night-pace-api34-storage.private.log",
+        "sha256": "2866231efdb07324f36f13a62b03f5b4e0f603a8ef8741f45790fbe7b30ec779",
+        "bytes": 829
       },
       {
-        "path": "artifacts/functional-integration/night-timer-ar-api34.private.log",
-        "sha256": "db883be7437a3548d2b0133a55aab32cd60c7fe254e687c5282f4072167bc252",
-        "bytes": 10201
+        "path": "artifacts/functional-integration/night-pace-ar-api34.private.log",
+        "sha256": "0aa5edceb8dcf95f51a92208ab14338797ad2ebd38ca15def457e00738cac3ff",
+        "bytes": 1474
       },
       {
-        "path": "artifacts/functional-integration/night-timer-en-api34.private.log",
-        "sha256": "5622817f64030b046bc9f4e2c1adbd1bf6bdb51ac55615df398ac6491b1b3994",
-        "bytes": 10201
+        "path": "artifacts/functional-integration/night-pace-en-api34.private.log",
+        "sha256": "0db3064eafc2b06653fa7d8feedec62b78b6e3dadb39c7d65d5563794aa0764b",
+        "bytes": 1474
       }
     ],
     "apk_receipts": [
       {
         "path": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "sha256": "0a74e6e5c14b82236f3ea29735ea309c353da4ba149721c7d483cf239573abb8",
+        "sha256": "e19ed1e475e61ec1a003c98218fef016402bde073b4a631ad10f9e92fb9d3121",
         "bytes": 25415917
       },
       {
         "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-        "sha256": "8cce581b61ca5065940d0e1860e2907ea9c22e6cde02c425f5eb32723a7627b1",
+        "sha256": "6ae77e592f90baa0dd5badad43a0a9fe8edf80f2eb5072e5b5e49e0da13d8e59",
         "bytes": 2300210
       }
     ],
     "limits": [
-      "No production backend contract changed;39 assertions are disposable MariaDB/in-process API-kernel checks, not native HTTP or provider delivery.",
-      "Controlled coroutine/lifecycle calls and Room reopen do not establish actual app ON_STOP/navigation/process/reboot/clock-broadcast or physical API27 acceptance.",
-      "Only checkpoints and explicit recordings are durable; private dialog drafts/frozen retries stay in memory. Process recovery may lose the last uncheckpointed foreground interval and never invents the gap.",
-      "AR/EN component checks use dark theme/1.5 font; actual light/landscape/physical accessibility and release performance remain queued.",
-      "Lint0 errors/69 warnings: prior68 plus1 quantity-string plural candidate; no suppressions.544 paired resources; assets/dependencies/permissions unchanged.",
-      "08.5 source review corrects an unsupported earlier claim: history hides null pace without an insufficient-data explanation. It is partial main code, not acceptance-only; these tests do not validate the missing pace UI.",
-      "Original public/index.php and scripts/test-admin-recovery.ps1 dirty changes remain excluded; raw device identifiers/captures/logs remain ignored.",
-      "No equivalent retry of the previously policy-rejected normal app relaunch; foreground restoration is not claimed."
+      "No backend code/test suite or native HTTP newly executed; prior08.4 39-assertion backend contract remains inherited, not relabeled.",
+      "Actual authenticated history/navigation and physical API27/light/landscape/accessibility acceptance remain queued. Component and deterministic Room cases do not close those gates.",
+      "Pace describes explicit recorded measurements only, including valid local pending records; it does not infer timing from unmeasured verse counts or create a speed target.",
+      "Lint0 errors/69 warnings unchanged;548 paired resources. No assets/dependencies/permissions/storage/schema/global-progress changes.",
+      "08.6 static review found the parallel parser rejects valid partial API preference objects and disables save; loose DTO coercion and missing caller-generation capture require reconciliation. No preference-editor acceptance claimed.",
+      "Original public/index.php and scripts/test-admin-recovery.ps1 dirty changes remain excluded; raw device identifiers/captures/logs stay ignored.",
+      "Normal foreground app launch was previously policy-rejected and not retried; no normal foreground restoration claimed."
     ]
   },
   "integration_overrides": {},
   "additional_main_evidence": {},
   "next_task": {
-    "id": "08.5",
-    "action": "Complete truthful measured/insufficient-data pace insights using valid samples from actual timer records. Keep neutral language without inferred recitation speed or pressure; add representative plain UI/domain/storage evidence and preserve protected unreadable state.",
-    "deferred": "Native real HTTP/full navigation/OS/process/reboot/clock broadcasts and physical acceptance for08.1–08.4 and earlier Khatmah remains batched; component/Room/in-process backend checks do not close those gates."
+    "id": "08.6",
+    "action": "Reconcile saved city/timezone/method preferences with current empty/partial/complete API objects, strict typed/revision decoding, captured SessionLease and stale-draft/CAS guards. Preserve explicit public-default/manual choice, cached owned data and no silent GPS; then wire Tonight/calculator consumers.",
+    "deferred": "Full native HTTP/navigation/OS and physical acceptance for08.1–08.5 and Khatmah remains batched; focused component/storage/domain cases do not close those gates."
   },
   "prior_checkpoints": [
     {
@@ -663,6 +618,172 @@
         "id": "08.4",
         "action": "Reconcile measured prayer timer with strict owner/environment-bound retained state, captured generation and transactional versions, monotonic foreground accumulation, honest paused recovery/background/boundary behavior and atomic idempotent measured recording. Preserve current history/recovery and Tonight UI.",
         "deferred": "Native real HTTP/OS/process/reboot/full navigation and physical acceptance for08.1–08.3 and Khatmah remains batched; focused fixtures do not close those gates."
+      }
+    },
+    {
+      "main_sha": "40820d478164c5214a3e88ab636d9162a7ef213f",
+      "date": "2026-10-30",
+      "reviewed_tasks": [
+        "08.4"
+      ],
+      "summary": "08.4 is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL: Tonight has an owned monotonic foreground timer, strict encrypted versioned frames, captured-generation/deletion fences, honest paused recovery and atomic idempotent measured session/outbox/receipt/timer cleanup. Lifecycle callbacks are source-fenced; stale/uncertain error handling reads without pausing a newer timer. Finishing alone does not record worship. Actual native HTTP/OS/full navigation/physical acceptance stays open. Follow-on08.5 main source review corrects its earlier acceptance-only classification: null pace has no insufficient-data explanation, so that task remains PARTIALLY_IMPLEMENTED/PARTIALLY_INTEGRATED.",
+      "validation": {
+        "source_sha": "40820d478164c5214a3e88ab636d9162a7ef213f",
+        "execution_date": "2026-10-30",
+        "provenance": "Scoped08.4/subsystem checkpoint:85 JVM across11 classes;39 backend assertions;30 API34 storage/export +15 AR+15 EN UI executions (60 executions/45 unique). Earlier08.3,08.2,08.1,Khatmah and original167-case baseline remain separate; reruns are not summed or treated as full-project/physical acceptance.",
+        "jvm_cases": 85,
+        "jvm_classes": 11,
+        "junit_receipts": [
+          {
+            "name": "org.athar.app.AccountExportTest",
+            "tests": 5,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+            "sha256": "5a37ce9dbcba5b6ac22ea4ed192a0433985f98279739330d669337ad163c7ea1",
+            "bytes": 1006
+          },
+          {
+            "name": "org.athar.app.AccountExportWriterTest",
+            "tests": 4,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+            "sha256": "a0e7a2c00d9a293ff6d2685261b0ad35b01e76af60f71c8d15aba8ebf2fd9149",
+            "bytes": 866
+          },
+          {
+            "name": "org.athar.app.NightIdentityTest",
+            "tests": 8,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
+            "sha256": "a1cfe2d4b3590f5d51aa45abda15945de60e45b03239be0efd301320e7a16755",
+            "bytes": 1401
+          },
+          {
+            "name": "org.athar.app.NightMeasuredTimerTest",
+            "tests": 11,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightMeasuredTimerTest.xml",
+            "sha256": "fb8d22d04decda1916a967ba1f50f78bc47b84c5fbeafb9f3aea2cb5d8c321c1",
+            "bytes": 1899
+          },
+          {
+            "name": "org.athar.app.NightPlanViewModelTest",
+            "tests": 9,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
+            "sha256": "9e2fdbadb66b425b7601b97764a0c789278a2c2d6deec673338b05a60a7655d5",
+            "bytes": 1635
+          },
+          {
+            "name": "org.athar.app.NightReaderViewModelTest",
+            "tests": 12,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightReaderViewModelTest.xml",
+            "sha256": "6cfb9a69874c71f52337fdba98fd8f9a7ad608db9ba75065953e9539c22237e2",
+            "bytes": 1996
+          },
+          {
+            "name": "org.athar.app.NightReadingPositionTest",
+            "tests": 9,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightReadingPositionTest.xml",
+            "sha256": "c289cc00ee03ea6be24dfa34608ab62f68a09824bf94549cb57577b7ada533fa",
+            "bytes": 1625
+          },
+          {
+            "name": "org.athar.app.NightRejectionTest",
+            "tests": 3,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
+            "sha256": "7ff172aa2893d107339f26eed2441d660d90ba9b990ecec5e62399d970ed3132",
+            "bytes": 724
+          },
+          {
+            "name": "org.athar.app.NightTimerViewModelTest",
+            "tests": 13,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightTimerViewModelTest.xml",
+            "sha256": "56bbe4347d2e7ba38de41b4a44b1e1140165421ca1b9927eeed8fb7e05eaeb82",
+            "bytes": 2196
+          },
+          {
+            "name": "org.athar.app.NightVersePlanTest",
+            "tests": 8,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
+            "sha256": "a3e850cdb803fdfe56d8ba870694f209e1f20097278d4bd2fd31f5704cbb64b7",
+            "bytes": 1442
+          },
+          {
+            "name": "org.athar.app.QuranSelectionTest",
+            "tests": 3,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.QuranSelectionTest.xml",
+            "sha256": "a73432c0b4185c9808d97735d9d810ff177bb4dbad64e36e005b13ae2f3ef335",
+            "bytes": 726
+          }
+        ],
+        "backend_suites": 1,
+        "backend_assertions": 39,
+        "backend_components": {
+          "night_prayer": 39
+        },
+        "actual_cookie_api_http_assertions": 0,
+        "debug_apk": "PASS",
+        "test_apk": "PASS",
+        "lint_errors": 0,
+        "lint_warnings": 69,
+        "resources_paired": 544,
+        "new_instrumentation_cases": 15,
+        "instrumentation_cases_executed": 60,
+        "instrumentation_result": "60/60 PASS on API34:10 timer+10 reader+9 planner storage+1 extended export;5 timer+3 Tonight+3 reader+4 planner UI per AR/EN dark1.5 font.45 unique cases;15 new instrumentation cases.",
+        "physical_acceptance": "NOT_EXECUTED",
+        "provider_delivery": "NOT_APPLICABLE",
+        "logs": [
+          {
+            "path": "artifacts/functional-integration/night-timer-final-gate.log",
+            "sha256": "1b071285723755d9765888b0d3f2c1cbfb7b4219277812de079540cecf9f50e7",
+            "bytes": 8393
+          },
+          {
+            "path": "artifacts/functional-integration/night-timer-api-contract-corrected.log",
+            "sha256": "7b51ef0568ec39ca4e31d0209e9f4c2f7907bfbdf8616af7e90b0ec9b24a0676",
+            "bytes": 96
+          },
+          {
+            "path": "artifacts/functional-integration/night-timer-final-api34-storage.private.log",
+            "sha256": "34eb6fffdcce38c6ce42be47ff8e7654faaec172be4eb73616c6262666c7ea15",
+            "bytes": 21209
+          },
+          {
+            "path": "artifacts/functional-integration/night-timer-ar-api34.private.log",
+            "sha256": "db883be7437a3548d2b0133a55aab32cd60c7fe254e687c5282f4072167bc252",
+            "bytes": 10201
+          },
+          {
+            "path": "artifacts/functional-integration/night-timer-en-api34.private.log",
+            "sha256": "5622817f64030b046bc9f4e2c1adbd1bf6bdb51ac55615df398ac6491b1b3994",
+            "bytes": 10201
+          }
+        ],
+        "apk_receipts": [
+          {
+            "path": "android/app/build/outputs/apk/debug/app-debug.apk",
+            "sha256": "0a74e6e5c14b82236f3ea29735ea309c353da4ba149721c7d483cf239573abb8",
+            "bytes": 25415917
+          },
+          {
+            "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+            "sha256": "8cce581b61ca5065940d0e1860e2907ea9c22e6cde02c425f5eb32723a7627b1",
+            "bytes": 2300210
+          }
+        ],
+        "limits": [
+          "No production backend contract changed;39 assertions are disposable MariaDB/in-process API-kernel checks, not native HTTP or provider delivery.",
+          "Controlled coroutine/lifecycle calls and Room reopen do not establish actual app ON_STOP/navigation/process/reboot/clock-broadcast or physical API27 acceptance.",
+          "Only checkpoints and explicit recordings are durable; private dialog drafts/frozen retries stay in memory. Process recovery may lose the last uncheckpointed foreground interval and never invents the gap.",
+          "AR/EN component checks use dark theme/1.5 font; actual light/landscape/physical accessibility and release performance remain queued.",
+          "Lint0 errors/69 warnings: prior68 plus1 quantity-string plural candidate; no suppressions.544 paired resources; assets/dependencies/permissions unchanged.",
+          "08.5 source review corrects an unsupported earlier claim: history hides null pace without an insufficient-data explanation. It is partial main code, not acceptance-only; these tests do not validate the missing pace UI.",
+          "Original public/index.php and scripts/test-admin-recovery.ps1 dirty changes remain excluded; raw device identifiers/captures/logs remain ignored.",
+          "No equivalent retry of the previously policy-rejected normal app relaunch; foreground restoration is not claimed."
+        ]
+      },
+      "integration_overrides": {},
+      "additional_main_evidence": {},
+      "next_task": {
+        "id": "08.5",
+        "action": "Complete truthful measured/insufficient-data pace insights using valid samples from actual timer records. Keep neutral language without inferred recitation speed or pressure; add representative plain UI/domain/storage evidence and preserve protected unreadable state.",
+        "deferred": "Native real HTTP/full navigation/OS/process/reboot/clock broadcasts and physical acceptance for08.1–08.4 and earlier Khatmah remains batched; component/Room/in-process backend checks do not close those gates."
       }
     }
   ]

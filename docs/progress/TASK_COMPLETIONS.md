@@ -1,7 +1,7 @@
 # Task completion receipts
 
 <!-- actual-implementation-audit:start -->
-> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (77 in main, 36 only unmerged); 19 are accepted/closed, 58 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (78 in main, 35 only unmerged); 19 are accepted/closed, 59 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
 
 <!-- actual-implementation-audit:end -->
 
@@ -9,6 +9,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|08.5 measured pace (acceptance pending)|60d990f0a19dbce0c703c63555af81cc0af4acd8|Normal push/exact remote verified2026-10-30;43 JVM,1 actual timer/history edit/delete pace case +2 AR+2 EN UI executions. APKs/lint0 errors69 warnings;548 paired resources. Weighted valid samples and truthful insufficient-data copy; full native/physical acceptance open. NIGHT_PACE_FUNCTIONAL_INTEGRATION.md;08.6 partial-preference/generation source gaps remain code work.|
 |08.4 measured timer (acceptance pending)|40820d478164c5214a3e88ab636d9162a7ef213f|Normal push/exact remote verified2026-10-30;85 JVM/39 backend,30 API34 storage/export +15 AR+15 EN UI executions. APKs/lint0 errors69 warnings;544 paired resources. Owned monotonic timer and atomic idempotent recording; actual native HTTP/OS/navigation/physical gates open. NIGHT_TIMER_FUNCTIONAL_INTEGRATION.md includes source reconciliation and08.5 insufficient-data audit correction.|
 |08.3 bounded prayer reader (acceptance pending)|1c9f11a7e3974938420822e5359bbdfd631d3f52|Normal push/exact remote verified2026-10-30;50 JVM,20 API34 Room/Keystore/export +7 AR+7 EN UI executions; APKs/lint0 errors68 warnings,516 paired resources. Independent encrypted markers, current-plan coverage and unchanged Quran rendering. Native HTTP/full navigation/OS/physical acceptance open. NIGHT_READER_FUNCTIONAL_INTEGRATION.md includes the08.2 actual-key canary correction.|
 |08.2 owned planning/confirmed recording (acceptance pending)|dfe74075f47392161b2fc576b508167f5ea1a49c|Normal push/exact remote verified2026-10-30;37 JVM,10 actual Room/Keystore/export +3 AR+3 EN UI executions, APKs/lint0 errors68 warnings and499 paired resources. Native HTTP/OS/clipboard/physical acceptance open. Details in NIGHT_PLAN_FUNCTIONAL_INTEGRATION.md;08.3 remains code work, not falsely accepted from a label.|
