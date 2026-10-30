@@ -4803,8 +4803,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "f13cb7947330e0bbb57278506b8a7dfb196f85a7"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "d2b1ca73e4986b21ad58c2bbc8d597fab577bad2"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5417,8 +5417,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "58bf832cb9f2ebe396085c1a76b694221e04bc14"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "7abc244ce94556f8291dea8cad987ca860a9148f"
         },
         {
           "location": "main",
@@ -5429,8 +5429,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "6e4b9cccfc626a57466790cb824d904dece7e038"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5623,8 +5623,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "f13cb7947330e0bbb57278506b8a7dfb196f85a7"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "d2b1ca73e4986b21ad58c2bbc8d597fab577bad2"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5829,8 +5829,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "6e4b9cccfc626a57466790cb824d904dece7e038"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5977,14 +5977,14 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
-          "ref": "40820d478164c5214a3e88ab636d9162a7ef213f",
-          "git_blob": "58bf832cb9f2ebe396085c1a76b694221e04bc14"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "7abc244ce94556f8291dea8cad987ca860a9148f"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "6e4b9cccfc626a57466790cb824d904dece7e038"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -6119,8 +6119,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "6e4b9cccfc626a57466790cb824d904dece7e038"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -6130,9 +6130,9 @@
       "name": "Saved city and prayer method",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "34acf58f5b483c52a6772490f6494f68899ac866",
         "4e34ee7f43d430f1755ef258430629a89b03ad3d",
@@ -6230,27 +6230,57 @@
       "external_blockers": null,
       "remaining_acceptance": "Persist chosen city/timezone/method and expose source/manual/polar unavailable behavior without silent GPS permission. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Reconcile empty/partial/complete current API preferences, strict typed/revision decoding, captured generation and stale-draft/CAS guards; wire current graph/cache invalidation and explicit public-default/manual choice without silent GPS. Validate saved preference recovery and protected ownership before acceptance."
+        "Real authenticated native HTTP/full settings navigation, OS/process/reboot/clock behavior and physical API27/light/landscape/accessibility acceptance remain batched. Scoped injected transport, Room and component evidence does not close these gates."
       ],
       "actual_audit_record": "08.6",
       "actual_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "2a513b2e41f680bb86fd1635c11e99e2e5a9c6f0"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "a9e372ae42a71aaecf9ab4be98f22fa52986acf3"
         },
         {
-          "location": "parallel",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesViewModel.kt",
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "9c4d0c707614e73cc9253b4051daaab171e00789"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesScreen.kt",
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "5cc48dd064a15560bb0be7a69cb789fcf8c05f78"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPreferences.kt",
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "7cd16029b64cc6317afd6a47066b6e0e514a3794"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesSnapshot.kt",
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "e6ac81753630397169dc678b82018ea45f95a200"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt",
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "7abc244ce94556f8291dea8cad987ca860a9148f"
+        },
+        {
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "f5f0e1fa9db974c41c172ef28605a78250ccd820"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "e9b6baa2b57146ba5e0c29425e718a3d73e5bc96"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -12008,14 +12038,14 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "64ab0116deaa63ab5e715e9a0ca436ee29944706"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "6e4b9cccfc626a57466790cb824d904dece7e038"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "03b946543c6758869e53f55b1ded26e1dc6953d3"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "e9b6baa2b57146ba5e0c29425e718a3d73e5bc96"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -13098,8 +13128,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
-          "git_blob": "13298d6dc0af2cd9e8210fd3d207574924f11b81"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
+          "git_blob": "3983daf5595f054899dbcc219c9bdad38e97ff30"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16182,12 +16212,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "60d990f0a19dbce0c703c63555af81cc0af4acd8"
+          "ref": "e224d68f955e51875f764c14e8a4ac79f3086cd9"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18141,26 +18171,26 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "actual_audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 78,
-    "integrated_active_application": 78,
+    "fully_implemented_any_reviewed_branch": 114,
+    "fully_implemented_main": 79,
+    "integrated_active_application": 79,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 59,
-    "partially_implemented_needing_code": 21,
-    "partial_tasks_needing_production_code": 20,
+    "fully_implemented_outstanding_verification": 95,
+    "acceptance_only_current_app": 60,
+    "partially_implemented_needing_code": 20,
+    "partial_tasks_needing_production_code": 19,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 35,
-    "any_implementation_or_scaffold_only_unmerged": 46,
-    "production_code_remaining_including_integration": 58,
-    "feature_code_remaining": 21,
-    "integration_code_remaining": 42,
+    "any_implementation_or_scaffold_only_unmerged": 45,
+    "production_code_remaining_including_integration": 57,
+    "feature_code_remaining": 20,
+    "integration_code_remaining": 41,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "60d990f0a19dbce0c703c63555af81cc0af4acd8",
+  "audit_target_sha": "e224d68f955e51875f764c14e8a4ac79f3086cd9",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }

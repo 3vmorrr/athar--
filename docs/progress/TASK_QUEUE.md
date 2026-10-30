@@ -1,10 +1,10 @@
 # Ordered execution queue
 
-The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative at its recorded source refs. Later functional checkpoints update affected task findings explicitly; next feature **08.6**. Four axes below distinguish finished code from integration and acceptance.
+The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative at its recorded source refs. Later functional checkpoints update affected task findings explicitly; next feature **08.7**. Four axes below distinguish finished code from integration and acceptance.
 
 Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.
 
-Snapshot: 2026-10-29. Next feature task after audit: **08.6**. Open integration/acceptance tasks: **130**. Historical weighted estimates are obsolete; use the generated audit counts.
+Snapshot: 2026-10-29. Next feature task after audit: **08.7**. Open integration/acceptance tasks: **130**. Historical weighted estimates are obsolete; use the generated audit counts.
 
 Four independent axes and concrete missing/evidence fields are authoritative. Historical51.38 estimate is frozen/obsolete; never use it as actual engineering completion. See ACTUAL_IMPLEMENTATION_AUDIT.md.
 
@@ -628,7 +628,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native HTTP lost-reply/process termination/restart and physical account-switch acceptance.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionCoordinator.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionStore.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ 40820d478164. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionCoordinator.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionStore.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Complete confirmation/authentication/revocation/deletion and safe owned cleanup without affecting another actor.
 - Files/modules: android/app/src/main/java/org/athar/app/auth/; android/app/src/main/java/org/athar/app/core/data/; backend/src/Identity/.
 - Automated gates: Delete/reauth/tokens/local rows/worker cancellation/failure recovery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -724,7 +724,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Execute authenticated native preference/navigation journeys and actual OS clock/timezone/date/foreground return, travel/process and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility acceptance. Native city editing remains08.6; no setup-completion or hardware-event claim.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt @ bef33f6e6ed7; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightIdentity.kt @ bef33f6e6ed7; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Implement personalized tonight summary/milestones/recent log using fixed local Maghrib date and existing rules.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Maghrib/midnight/UTC/DST/no inferred prayer cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -740,7 +740,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt @ dfe74075f473; main:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt @ dfe74075f473; main:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ 40820d478164. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt @ dfe74075f473; main:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt @ dfe74075f473; main:android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Finish target/range planning, copy reference, save plan and explicit record-completed actions.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/quran/.
 - Automated gates: 10/100/1000/exact inclusive/cross-surah/range UX tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -756,7 +756,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native real HTTP, full route/back/reentry, process/reboot, physical API27 and accessibility/light/landscape acceptance remain batched; focused component/storage evidence does not close these gates.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightReaderScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReaderViewModel.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReadingPosition.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReadingRepository.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/quran/QuranAyahText.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightReaderScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReaderViewModel.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReadingPosition.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightReadingRepository.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/quran/QuranAyahText.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt @ 1c9f11a7e397; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/quran/.
 - Automated gates: Exact boundaries/cross-surah/recreation/owner tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -772,7 +772,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Actual native HTTP, OS background/process/reboot/clock broadcasts, full navigation and physical API27/light/landscape/accessibility acceptance remain batched. Focused model/storage/component gates do not close those requirements.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightMeasuredTimer.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerRepository.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerViewModel.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerCard.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightMeasuredTimer.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerRepository.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerViewModel.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTimerCard.kt @ 40820d478164; main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Implement pause/resume/finish/cancel and durable measured duration without counting background wall time as recitation.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Monotonic/wall clock/process/interruption/save-once cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -788,7 +788,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Full authenticated native history/navigation, physical API27/light/landscape/accessibility acceptance remains batched. Focused domain/Room/component checks do not close these gates.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt @ 60d990f0a19d; main:android/app/src/main/java/org/athar/app/nightprayer/NightPaceContent.kt @ 60d990f0a19d; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightRules.kt @ 60d990f0a19d; main:android/app/src/main/java/org/athar/app/nightprayer/NightPaceContent.kt @ 60d990f0a19d; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Use valid measured samples only for pace and explain insufficient data; no speed pressure.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Weighted pace/outlier/zero/edited/deleted sample tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -799,12 +799,12 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 ## 08.6 — Saved city and prayer method
 
 - Parent: Work package 8: Night Prayer; state: **PARTIAL**; dependencies: 08.5.
-- IMPLEMENTATION: **PARTIALLY_IMPLEMENTED**.
-- INTEGRATION: **NOT_INTEGRATED**.
-- VERIFICATION: **TESTS_FAILING**.
+- IMPLEMENTATION: **IMPLEMENTED**.
+- INTEGRATION: **INTEGRATED**.
+- VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
-- MISSING: Reconcile empty/partial/complete current API preferences, strict typed/revision decoding, captured generation and stale-draft/CAS guards; wire current graph/cache invalidation and explicit public-default/manual choice without silent GPS. Validate saved preference recovery and protected ownership before acceptance.
-- EVIDENCE: parallel:android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesRepository.kt @ 7392e93b0889; parallel:android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt @ 7392e93b0889. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- MISSING: Real authenticated native HTTP/full settings navigation, OS/process/reboot/clock behavior and physical API27/light/landscape/accessibility acceptance remain batched. Scoped injected transport, Room and component evidence does not close these gates.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesRepository.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesViewModel.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesScreen.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightPreferences.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightPreferencesSnapshot.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightTonightScreen.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Persist chosen city/timezone/method and expose source/manual/polar unavailable behavior without silent GPS permission.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Method/location/DST/polar/old tzdb parity tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -1892,7 +1892,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **NOT_TESTED**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Port Tonight/plan/insights/timer hierarchy and deep-night context hero from reviewed source; retain screen space and privacy.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ 60d990f0a19d; main:android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt @ e224d68f955e; main:android/app/src/main/java/org/athar/app/nightprayer/NightToolsScreen.kt @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Close history/calendar/tools/tonight hierarchy with protected private states and no fixed overhead starving content. Original deep-night hero, only validated night context/countdown and implemented session CTA; retain explicit history/calendar/tools and local-only exemptions. Apply IMMERSIVE_SECTION_HERO/SECTION_VISUAL_LANGUAGE/HERO_MOTION_AND_SCROLL_BEHAVIOR and ARTWORK_LIBRARY; preserve newer logic/security/tests and verify actual screen/hardware acceptance.
 - Files/modules: android/app/src/main/java/org/athar/app/nightprayer/.
 - Automated gates: Calendar/history/tools/empty/error/unreadable/large-font cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -2100,10 +2100,10 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **NOT_TESTED**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Complete screen matrix and correct any residual mixed numbers/dates/RTL mirroring/contrast issues; resource parity alone cannot establish visual completion.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/ui/Theme.kt @ 2b7d7de0fc3a; main:android/app/src/main/res/values-en/strings.xml @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/ui/Theme.kt @ 2b7d7de0fc3a; main:android/app/src/main/res/values-en/strings.xml @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens.
 - Files/modules: android/app/src/main/res/; android/app/src/main/java/org/athar/app/core/ui/; docs/testing/.
-- Automated gates: Current paired resource format checks (548 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
+- Automated gates: Current paired resource format checks (583 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
 - Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
 - Definition of Done: Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.16 overall percentage points.
@@ -2292,7 +2292,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **NOT_TESTED**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Implement missing cross-system journeys for new notification/review/reminder modules, then run final integrated regression;35 API34 cases are a bounded subset.
-- EVIDENCE: main:android/app/src/androidTest/java/org/athar/app @ 60d990f0a19d; main:tests @ 60d990f0a19d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/androidTest/java/org/athar/app @ e224d68f955e; main:tests @ e224d68f955e. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures.
 - Files/modules: android/app/src/androidTest/; tests/; admin/ (new).
 - Automated gates: Full cross-stack matrix plus documented external delivery evidence. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
