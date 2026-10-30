@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-29",
-  "current_task": "08.2",
+  "current_task": "08.3",
   "overall_estimate_percent": 51,
   "overall_estimate_detail": 51.38,
   "estimate_uncertainty_pp": 10,
@@ -1632,7 +1632,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -1910,7 +1910,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -1932,24 +1932,39 @@
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Finish target/range planning, copy reference, save plan and explicit record-completed actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
+        "Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open."
       ],
       "audit_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         },
         {
-          "location": "parallel",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
+        },
+        {
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -1971,13 +1986,13 @@
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.4472,
-      "implementation_status": "IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
+      "implementation_status": "PARTIALLY_IMPLEMENTED",
+      "integration_status": "PARTIALLY_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "production_code_remaining": true,
       "missing": [
-        "Port exact-range/continuation call path and prove no Quran/Khatmah progress conflation."
+        "Implement real exact bounded plan/session reading and separately encrypted prayer resume positions. Correlate recorded ranges to this plan/session rather than all historical ranges; prove actual Quran text/bismillah preservation, no Quran/Khatmah mutation, stale callback/clear/account-switch/process recovery and native reader/back navigation."
       ],
       "audit_evidence": [
         {
@@ -1989,6 +2004,21 @@
           "location": "parallel",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
           "ref": "7392e93b088990c3478cf32197781f831eb10f83"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -2064,7 +2094,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -4724,7 +4754,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         },
         {
           "location": "main",
@@ -5197,7 +5227,7 @@
         "android/app/src/main/java/org/athar/app/core/ui/",
         "docs/testing/"
       ],
-      "automated_tests": "Current paired resource format checks (475 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+      "automated_tests": "Current paired resource format checks (499 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
       "physical_device": "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
       "definition_of_done": "Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "estimated_contribution_pp": 0.1579,
@@ -5218,7 +5248,7 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -5737,12 +5767,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "audit_old_status": "PARTIAL"
@@ -6002,23 +6032,23 @@
   "audit_metrics": {
     "total": 149,
     "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 75,
-    "integrated_active_application": 75,
+    "fully_implemented_main": 76,
+    "integrated_active_application": 76,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
     "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 56,
+    "acceptance_only_current_app": 57,
     "partially_implemented_needing_code": 21,
     "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
-    "implemented_only_unmerged": 38,
-    "any_implementation_or_scaffold_only_unmerged": 49,
-    "production_code_remaining_including_integration": 61,
+    "implemented_only_unmerged": 37,
+    "any_implementation_or_scaffold_only_unmerged": 48,
+    "production_code_remaining_including_integration": 60,
     "feature_code_remaining": 21,
-    "integration_code_remaining": 45,
+    "integration_code_remaining": 44,
     "reopened_previous_complete": 7
   },
-  "active_checkpoint": "149-task source findings reconciled; exact current checkpoint/validation in ACTUAL_IMPLEMENTATION_AUDIT.json. Next feature08.2. Original audit retained as dated evidence."
+  "active_checkpoint": "149-task source findings reconciled; exact current checkpoint/validation in ACTUAL_IMPLEMENTATION_AUDIT.json. Next feature08.3. Original audit retained as dated evidence."
 }

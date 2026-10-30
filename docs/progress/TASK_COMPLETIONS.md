@@ -1,7 +1,7 @@
 # Task completion receipts
 
 <!-- actual-implementation-audit:start -->
-> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (75 in main, 38 only unmerged); 19 are accepted/closed, 56 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (76 in main, 37 only unmerged); 19 are accepted/closed, 57 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
 
 <!-- actual-implementation-audit:end -->
 
@@ -9,6 +9,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|08.2 owned planning/confirmed recording (acceptance pending)|dfe74075f47392161b2fc576b508167f5ea1a49c|Normal push/exact remote verified2026-10-30;37 JVM,10 actual Room/Keystore/export +3 AR+3 EN UI executions, APKs/lint0 errors68 warnings and499 paired resources. Native HTTP/OS/clipboard/physical acceptance open. Details in NIGHT_PLAN_FUNCTIONAL_INTEGRATION.md;08.3 remains code work, not falsely accepted from a label.|
 |08.1 Tonight dashboard (acceptance pending)|bef33f6e6ed7bbc330a971f2659f990ffc12cf0c|Normal push/exact remote verified2026-10-30;11 JVM/32 backend,3 AR+3 EN API34 Compose cases, debug/test APK/lint0 errors66 warnings,475 paired resources. Captured actor generation and live sourced Maghrib identity; native HTTP/OS/physical acceptance and separate08.6 saved-city editor remain open. Details in NIGHT_TONIGHT_FUNCTIONAL_INTEGRATION.md; prior Khatmah receipts preserved in audit checkpoint history.|
 |07.9 durable Khatmah integration (acceptance pending)|4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6|Normal push/exact remote verified2026-10-30.66 JVM,335 backend,29 actual cookie/API assertions,6 API34 Room/Keystore cases, debug/test APK/lint0 errors64 warnings and462 paired resources. IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL; real native HTTP/OS/physical gates remain open. Preserved original2 dirty paths. Source and receipt digests in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json; details in KHATMAH_FUNCTIONAL_INTEGRATION.md.|
 |20.1/20.2/20.3 branded consent-safe Email queue|c6a0c13e7a00e068aec51592f33d6c846a287ec0 +645d09bb6c4a1585aca336b36ed55c974150697f|Tested component commit plus previously unstaged public wiring;both normal pushes/exact remote verified;EMAIL_OUTBOX.md.26 validated;20.4 partial/20.5 real Gmail blocked. Native queue-wording reconciliation follows next UI batch.|

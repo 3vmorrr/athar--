@@ -2,7 +2,7 @@
   "schema_version": 1,
   "date": "2026-10-30",
   "main_branch": "codex/android-ecosystem",
-  "main_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+  "main_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
   "parallel_branch": "parallel/admin-foundation",
   "parallel_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "other_reviewed_branches": {
@@ -17,29 +17,29 @@
   "metrics": {
     "total": 149,
     "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 75,
-    "integrated_active_application": 75,
+    "fully_implemented_main": 76,
+    "integrated_active_application": 76,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
     "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 56,
+    "acceptance_only_current_app": 57,
     "partially_implemented_needing_code": 21,
     "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
-    "implemented_only_unmerged": 38,
-    "any_implementation_or_scaffold_only_unmerged": 49,
-    "production_code_remaining_including_integration": 61,
+    "implemented_only_unmerged": 37,
+    "any_implementation_or_scaffold_only_unmerged": 48,
+    "production_code_remaining_including_integration": 60,
     "feature_code_remaining": 21,
-    "integration_code_remaining": 45,
+    "integration_code_remaining": 44,
     "reopened_previous_complete": 7
   },
   "exclusive_partition": {
     "accepted": 19,
     "external_blocked": 4,
-    "implemented_integrated_awaiting_acceptance": 56,
-    "implemented_unmerged": 38,
+    "implemented_integrated_awaiting_acceptance": 57,
+    "implemented_unmerged": 37,
     "partially_implemented": 21,
     "scaffold_or_unmeasured_gate": 11
   },
@@ -49,8 +49,8 @@
       "implemented_integrated_awaiting_acceptance": 7
     },
     "PARTIAL": {
-      "implemented_integrated_awaiting_acceptance": 48,
-      "implemented_unmerged": 6,
+      "implemented_integrated_awaiting_acceptance": 49,
+      "implemented_unmerged": 5,
       "partially_implemented": 18,
       "scaffold_or_unmeasured_gate": 5
     },
@@ -75,88 +75,120 @@
     "Main implementation state for unmerged scopes indicates only an older partial baseline when explicitly present; never imported branch code."
   ],
   "current_validation": {
-    "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+    "source_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
     "execution_date": "2026-10-30",
-    "provenance": "Scoped Night Prayer checkpoint:11 JVM,32 backend assertions,6 API34 UI executions (3 unique cases x2 languages). Earlier Khatmah66/335/29/6 and original167-case baseline remain separate pinned receipts; no full-project or physical acceptance is claimed.",
-    "jvm_cases": 11,
-    "jvm_classes": 2,
+    "provenance": "Scoped native planner checkpoint:37 JVM across6 classes;10 API34 Room/Keystore/export cases and3 AR+3 EN UI executions (16 executions/13 unique cases). Earlier Night11/32/6, Khatmah66/335/29/6 and original167-case baseline remain separately pinned; counts are not summed across reruns.",
+    "jvm_cases": 37,
+    "jvm_classes": 6,
     "junit_receipts": [
+      {
+        "name": "org.athar.app.AccountExportTest",
+        "tests": 5,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+        "sha256": "8693866d1ef3d6fb232e57c671a5e7e52f658a5025161fca4f235ccb1a3dfa0e",
+        "bytes": 1005
+      },
+      {
+        "name": "org.athar.app.AccountExportWriterTest",
+        "tests": 4,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+        "sha256": "1a82f9a64e671b136497d4fd0758c510d0c269f056f6b1f467f949cbc157d482",
+        "bytes": 867
+      },
       {
         "name": "org.athar.app.NightIdentityTest",
         "tests": 8,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
-        "sha256": "2e3d187fe26f744ae08e9bf612f24beda03d224550e928c8c5aee3950dd045d8",
-        "bytes": 1398
+        "sha256": "032e222ffd506d8c5b4e9d221f2777234e1eadc3c3738af4221b8349d4ce6a7b",
+        "bytes": 1401
+      },
+      {
+        "name": "org.athar.app.NightPlanViewModelTest",
+        "tests": 9,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
+        "sha256": "0b2ee61a1c3dfaa2512c5c030c3c8c75f56fbfdb75cc1e61ac1a2d0a47ef5667",
+        "bytes": 1637
       },
       {
         "name": "org.athar.app.NightRejectionTest",
         "tests": 3,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
-        "sha256": "e1842b3b169555690ca9ce53f74bc50fe84ebc6199cfdf0572a55795bff7857a",
+        "sha256": "516c26c6f22fffd72b75a423feeff272854c1e5b34fbae64d4910795ba533bce",
         "bytes": 726
+      },
+      {
+        "name": "org.athar.app.NightVersePlanTest",
+        "tests": 8,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
+        "sha256": "3904580e627bf807dbd88e09e39c3fff07e7e7344ea0572ba23def9dbb03aff4",
+        "bytes": 1440
       }
     ],
-    "backend_suites": 1,
-    "backend_assertions": 32,
-    "backend_components": {
-      "night_prayer": 32
-    },
+    "backend_suites": 0,
+    "backend_assertions": 0,
+    "backend_components": {},
     "actual_cookie_api_http_assertions": 0,
     "debug_apk": "PASS",
     "test_apk": "PASS",
     "lint_errors": 0,
-    "lint_warnings": 66,
-    "resources_paired": 475,
-    "new_instrumentation_cases": 3,
-    "instrumentation_cases_executed": 6,
-    "instrumentation_result": "API34:3/3 Arabic RTL +3/3 English LTR; actual Compose fixture rendering, dark theme and1.5 font scale. Unreadable/no invented empty or metrics, absent settings/no zero counters, actual dated records/milestone/pending scroll.",
+    "lint_warnings": 68,
+    "resources_paired": 499,
+    "new_instrumentation_cases": 12,
+    "instrumentation_cases_executed": 16,
+    "instrumentation_result": "API34:9 new NightVersePlanStorageTest +1 extended AccountExportStorageTest PASS;3 Arabic RTL +3 English LTR NightPlanUiTest PASS, dark theme/1.5 font. Room/Keystore are real, login transport is deterministic; no actual native HTTP/OS/physical claim.",
     "physical_acceptance": "NOT_EXECUTED",
     "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/night-identity-focused.log",
-        "sha256": "a686790739739c93c9f70b04238632dc647eef9c15d3f63b78878ba9cf9958a0",
-        "bytes": 2077
+        "path": "artifacts/functional-integration/night-plan-core-export-corrected.log",
+        "sha256": "109d1e62880f97f3093091fc0e59e47af966f9ff17e3c835e090395855deebcc",
+        "bytes": 1968
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-subsystem.log",
-        "sha256": "a428f3825b0249a87fa4bd661f74dd6635e44b109303b92e21fd7528664b62be",
+        "path": "artifacts/functional-integration/night-plan-state-storage-compile.log",
+        "sha256": "edaa4a5c75f4ffa553d6bc102cbaba181e854ed05de1e78d40cbb8560dc1f177",
+        "bytes": 7239
+      },
+      {
+        "path": "artifacts/functional-integration/night-plan-subsystem-gate.log",
+        "sha256": "801a4ab342b7b7ccdb7f74da171ef8ad2ae960a5355d1f9c1170c0ab09829f11",
         "bytes": 8294
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-backend.log",
-        "sha256": "30ce553624cafde91fad08c0e2078da77b0a56e51216691164eea6566562c7d0",
-        "bytes": 96
+        "path": "artifacts/functional-integration/night-plan-api34-storage.private.log",
+        "sha256": "5ccf9da44fff412146210f6fb7ae2b0dee7fd6bf7462d8c398614c14c07c7c37",
+        "bytes": 7195
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-ar-api34.private.log",
-        "sha256": "9d8d310a6b9a087b03d91a07e7b1a2e73fd0fca0c4ccbcf46ec5869a038c62ae",
-        "bytes": 2135
+        "path": "artifacts/functional-integration/night-plan-ar-api34.private.log",
+        "sha256": "d933d0df24dc92f175fd24e2fa412534f85b605fa03bec1e5e535344affebd98",
+        "bytes": 2110
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-en-api34.private.log",
-        "sha256": "08319be19a8c32d0e33a750f822a8a4fa4f71cca92076aff54b05289c2f03bcf",
-        "bytes": 2134
+        "path": "artifacts/functional-integration/night-plan-en-api34.private.log",
+        "sha256": "a7ac111e6575a0d01c8d2208c5b8c7447fdc0f325c8b8e749f4a27f3b8d17347",
+        "bytes": 2108
       }
     ],
     "apk_receipts": [
       {
         "path": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "sha256": "d3f2caa6164331582373d4784a7b683a5822b4740a5610d44653c241b3f19094",
+        "sha256": "763289583b1174c6daed139cd0697bdcdcdac8a9911cd4d7165e356e56cc625c",
         "bytes": 25415917
       },
       {
         "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-        "sha256": "6a32179f3724366c4b1f1b90d08b6571af1667332a91a860344a9cd91aa85ad2",
+        "sha256": "ae9ed97e8e63491fcfd9e141a1201ec634d63a1e1bffbe908cf9764f4ec46139",
         "bytes": 2300210
       }
     ],
     "limits": [
-      "No new actual HTTP journey executed; current consumer schema and32 isolated backend assertions were checked.",
-      "Component tests do not prove authenticated navigation, actual lifecycle/time/date/timezone broadcasts, OS restart, travel, landscape/light theme or physical accessibility.",
-      "Native saved-city editing remains the separate08.6 integration; the dashboard consumes existing preferences and shows unavailable settings honestly.",
-      "Lint0 errors/66 warnings: prior64 plus2 new quantity-string plural candidates; no suppressions added.",
-      "Original public queued-mail wording and Admin-runner additions remain dirty and outside feature commits."
+      "No backend code changed or new backend/HTTP suite executed; earlier32 Night Prayer API assertions remain inherited, not relabeled.",
+      "Native real HTTP/OS clipboard/lifecycle/process/reboot/account-switch and physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys remain queued.",
+      "Only explicitly saved plans and recorded intents are durable; unsubmitted private forms/dialogs remain ViewModel state.",
+      "Lint0 errors/68 warnings, prior66 plus2 quantity-string plural candidates; no suppressions.",
+      "08.3 candidate source was reviewed statically; these native tests do not establish its missing reader behavior.",
+      "Original public queued-mail wording and Admin-runner suite additions remain outside commits."
     ]
   },
   "preserved_dirty_paths": [
@@ -165,18 +197,18 @@
   ],
   "parallel_dirty_caveat": "Pre-existing android/app/build.gradle.kts File/import repair preserved; configuration failure is on that working tree, not a clean7392 build.",
   "next_task": {
-    "id": "08.2",
-    "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
-    "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
+    "id": "08.3",
+    "action": "Implement an actual canonical bounded plan/session Quran reader with separate encrypted prayer positions and plan-specific recorded-range correlation. Do not infer this plan completion from unrelated older historical ranges or mutate global Quran/Khatmah positions. Preserve current Quran text/font/bismillah and existing history/recovery.",
+    "deferred": "Required real native HTTP/clipboard/OS/process and physical acceptance for08.1–08.2 and earlier Khatmah scopes remains batched; no task closure from focused component/storage tests."
   },
   "wiring_evidence": {
     "main_graph": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/AtharApplication.kt",
-      "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-      "git_blob": "9d79ac10ba0f8bdd957b78426a664de139da236a",
-      "sha256": "03c9e47c242b1079c994d7362a9927666b849c807c6145075bf241c84c13a55f",
-      "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+      "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+      "git_blob": "87c0389722ede00ec2f3e7f3b0272c9bf5df647f",
+      "sha256": "4ad45efb9c18b03e49b0defc88c3b766d09c98336d76969d6068135815949f21",
+      "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
       "symbols": [
         {
           "line": 13,
@@ -204,7 +236,7 @@
     "main_navigation": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
-      "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+      "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
       "git_blob": "330e54590d0d39f6d58daad266d0e61ece15ae63",
       "sha256": "02aa13e7396cd79a8841f8fbbcec255e0c4f97285bfac322bce5ae6d39ecbae6",
       "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
@@ -274,7 +306,7 @@
     "main_api": {
       "location": "main",
       "path": "backend/src/Http/ApiKernel.php",
-      "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+      "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
       "git_blob": "6b09406162eee3813c067ab2e7d2ad650d4f284e",
       "sha256": "70ff011001b9b363519350184652b2e00201bdb77d20422b25459e1d99e200ec",
       "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
@@ -448,7 +480,7 @@
     },
     "main_admin_entry": {
       "path": "public/index.php",
-      "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+      "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
       "git_blob": "7738677c4298e7a7e59e173c09afd27305d44758",
       "read_source": "Committed snapshot; two unrelated pre-existing mail wording lines remain dirty in working tree.",
       "anchors": [
@@ -8083,10 +8115,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
-          "git_blob": "ad41ead3d5edd8782fc1d90bd6c61586ad5b2402",
-          "sha256": "c92729464b19d10a11012c45917e128782a7813ab5020b1e1f227fbc00d82711",
-          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "3606080884c1c5ee8aa10772ec3d3de0f86352ea",
+          "sha256": "231ada099303cb2a0269890f7cadf0fea623ab95530cc5f086ca42402e51e5ad",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
               "line": 16,
@@ -8109,7 +8141,7 @@
         }
       ],
       "related_commits": [
-        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+        "dfe74075f47392161b2fc576b508167f5ea1a49c",
         "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
       ],
       "alternative_branch_evidence": [],
@@ -10178,10 +10210,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70",
-          "sha256": "14bc7b47a34a79eaf849307a9be3e07cf09f582189a7714e535a5bb45c8ecc0d",
-          "last_path_commit": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485",
+          "sha256": "ffff1afcfc316f7d491ac322484251e882add7900656048c213e438c33116b32",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
               "line": 28,
@@ -10252,15 +10284,15 @@
               "symbol": "@Composable fun NightPrayerScreen(graph: AppGraph) {"
             },
             {
-              "line": 126,
+              "line": 127,
               "symbol": "@Composable private fun NightHistoryScreen(graph: AppGraph) {"
             },
             {
-              "line": 196,
+              "line": 197,
               "symbol": "@Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {"
             },
             {
-              "line": 239,
+              "line": 240,
               "symbol": "@Composable private fun NumberField(value: String, change: (String) -> Unit, label: String, modifier: Modifier) { OutlinedTextField(value, { change(it.filter(Char::isDigit).take(6)) }, modifier, label = { Text(label) }, "
             }
           ],
@@ -10268,7 +10300,8 @@
         }
       ],
       "related_commits": [
-        "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+        "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+        "dfe74075f47392161b2fc576b508167f5ea1a49c"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -10398,7 +10431,7 @@
         {
           "receipt_commit": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "same_blob": true
+          "same_blob": false
         }
       ],
       "tests_still_required": [
@@ -10419,21 +10452,673 @@
       "scope": "Finish target/range planning, copy reference, save plan and explicit record-completed actions.",
       "definition_of_done": "Finish target/range planning, copy reference, save plan and explicit record-completed actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "old_status": "PARTIAL",
+      "implementation_status": "IMPLEMENTED",
+      "implementation_location": "main",
+      "main_implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
+      "closure_status": "PARTIAL",
+      "exclusive_category": "implemented_integrated_awaiting_acceptance",
+      "implemented_requirements": [
+        "Current target/range planner derives canonical references, persists strict owned/environment frames and tombstones, uses transactional CAS/generation/deletion fences, retains unreadable bytes, exports validated plans/receipt IDs, and separates save/copy/clear from confirmed atomic/idempotent Night recording.37 JVM and10 storage/export+3 AR+3 EN API34 executions pass."
+      ],
+      "missing_requirements": [
+        "Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open."
+      ],
+      "exact_remaining_work": [
+        "Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open."
+      ],
+      "feature_code_remaining": false,
+      "integration_code_remaining": false,
+      "test_code_remaining": false,
+      "production_code_remaining": false,
+      "acceptance_only_in_current_app": true,
+      "evidence": [
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "0affdec3cad2fc31ae46061a9ae965248a877c72",
+          "sha256": "6a5b9a2d0ed9d794b60b4b15c9b1886ca0dbb4a4186d36a6cd0108d839f49be0",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 31,
+              "symbol": "internal sealed interface NightPlanEvent {"
+            },
+            {
+              "line": 32,
+              "symbol": "data class Edit(val draft: NightPlanDraft) : NightPlanEvent"
+            },
+            {
+              "line": 33,
+              "symbol": "data object Calculate : NightPlanEvent"
+            },
+            {
+              "line": 34,
+              "symbol": "data object Save : NightPlanEvent"
+            },
+            {
+              "line": 35,
+              "symbol": "data object Retry : NightPlanEvent"
+            },
+            {
+              "line": 36,
+              "symbol": "data object Reload : NightPlanEvent"
+            },
+            {
+              "line": 37,
+              "symbol": "data class Clear(val version: Long) : NightPlanEvent"
+            },
+            {
+              "line": 38,
+              "symbol": "data class Copy(val range: QuranRange) : NightPlanEvent"
+            },
+            {
+              "line": 39,
+              "symbol": "data object OpenRecord : NightPlanEvent"
+            },
+            {
+              "line": 40,
+              "symbol": "data class EditRecord(val date: String, val zone: String, val note: String) : NightPlanEvent"
+            },
+            {
+              "line": 41,
+              "symbol": "data object Record : NightPlanEvent"
+            },
+            {
+              "line": 42,
+              "symbol": "data object CloseRecord : NightPlanEvent"
+            },
+            {
+              "line": 45,
+              "symbol": "@Composable internal fun NightPlanScreen(graph: AppGraph) {"
+            },
+            {
+              "line": 52,
+              "symbol": "@Composable private fun NightPlanOwned(graph: AppGraph, lease: SessionLease) {"
+            },
+            {
+              "line": 57,
+              "symbol": "override fun requireActive() = graph.session.requireLease(lease)"
+            },
+            {
+              "line": 58,
+              "symbol": "override fun changes() = graph.nightPlans.observe(lease)"
+            },
+            {
+              "line": 59,
+              "symbol": "override suspend fun index() = graph.quran.data().index"
+            },
+            {
+              "line": 60,
+              "symbol": "override suspend fun read() = graph.nightPlans.read(lease)"
+            },
+            {
+              "line": 61,
+              "symbol": "override suspend fun save(range: QuranRange, expected: Long) = graph.nightPlans.save(lease, range, expected)"
+            },
+            {
+              "line": 62,
+              "symbol": "override suspend fun clear(expected: Long) = graph.nightPlans.clear(lease, expected)"
+            },
+            {
+              "line": 63,
+              "symbol": "override suspend fun record(record: NightPlanRecord, expected: Long) = graph.nightPlans.record(lease, expected, record.plan, record.id,"
+            },
+            {
+              "line": 98,
+              "symbol": "@Composable internal fun NightPlanContent(state: NightPlanUiState, event: (NightPlanEvent) -> Unit) {"
+            },
+            {
+              "line": 167,
+              "symbol": "private fun planReference(range: QuranRange) = \"${range.start.surah}:${range.start.ayah} — ${range.end.surah}:${range.end.ayah}\""
+            },
+            {
+              "line": 168,
+              "symbol": "private fun planFeedback(feedback: NightPlanFeedback, record: Boolean) = when (feedback) {"
+            },
+            {
+              "line": 178,
+              "symbol": "@Composable private fun PlanNumber(value: String, label: Int, enabled: Boolean, tag: String, change: (String) -> Unit) {"
+            },
+            {
+              "line": 181,
+              "symbol": "@Composable private fun PlanConfirmation(message: Int, enabled: Boolean, dismiss: () -> Unit, confirm: () -> Unit) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "6b57ab70f5c5f3b031844112e5896071ef0ef7f6",
+          "sha256": "32214c4ff89922061208c3e67da6d9a3175eb9024fd686b82c7d1ffb9fd815f5",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 13,
+              "symbol": "internal data class NightPlanDraft(val startSurah: String = \"1\", val startAyah: String = \"1\", val byTarget: Boolean = true, val count: String = \"100\", val endSurah: String = \"1\", val endAyah: String = \"7\") {"
+            },
+            {
+              "line": 14,
+              "symbol": "fun range(index: QuranIndex): QuranRange {"
+            },
+            {
+              "line": 15,
+              "symbol": "fun number(value: String): Int { require(value.matches(Regex(\"[0-9]{1,5}\"))); return value.toInt() }"
+            },
+            {
+              "line": 20,
+              "symbol": "fun from(range: QuranRange?) = range?.let { NightPlanDraft(it.start.surah.toString(), it.start.ayah.toString(), false, it.verseCount.toString(), it.end.surah.toString(), it.end.ayah.toString()) } ?: NightPlanDraft()"
+            },
+            {
+              "line": 21,
+              "symbol": "fun numberInput(value: String) = value.take(16).map { when (it) { in '٠'..'٩' -> '0' + (it - '٠'); in '۰'..'۹' -> '0' + (it - '۰'); else -> it } }.joinToString(\"\")"
+            },
+            {
+              "line": 25,
+              "symbol": "internal enum class NightPlanFeedback { SAVED, SAVED_WITH_DRAFT, CLEARED, RECORDED_LOCALLY, INVALID, CHANGED, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 26,
+              "symbol": "internal data class NightRecordDialog(val selected: NightPlanState, val range: QuranRange, val operation: String = UUID.randomUUID().toString(), val date: String = \"\", val zone: String = NightRules.serverTimezone(ZoneId."
+            },
+            {
+              "line": 27,
+              "symbol": "internal data class NightPlanUiState("
+            },
+            {
+              "line": 40,
+              "symbol": "internal interface NightPlanGateway {"
+            },
+            {
+              "line": 41,
+              "symbol": "fun requireActive()"
+            },
+            {
+              "line": 42,
+              "symbol": "fun changes(): Flow<ProtectedRead<NightPlanState>>"
+            },
+            {
+              "line": 43,
+              "symbol": "suspend fun index(): QuranIndex"
+            },
+            {
+              "line": 44,
+              "symbol": "suspend fun read(): NightPlanState"
+            },
+            {
+              "line": 45,
+              "symbol": "suspend fun save(range: QuranRange, expected: Long): NightPlanState"
+            },
+            {
+              "line": 46,
+              "symbol": "suspend fun clear(expected: Long): NightPlanState"
+            },
+            {
+              "line": 47,
+              "symbol": "suspend fun record(record: NightPlanRecord, expected: Long)"
+            },
+            {
+              "line": 51,
+              "symbol": "internal class NightPlanViewModel(private val gateway: NightPlanGateway) : ViewModel() {"
+            },
+            {
+              "line": 60,
+              "symbol": "fun retry() {"
+            },
+            {
+              "line": 82,
+              "symbol": "private fun merge(value: NightPlanState, force: Boolean = false) {"
+            },
+            {
+              "line": 90,
+              "symbol": "fun clearPrivate() {"
+            },
+            {
+              "line": 94,
+              "symbol": "private fun active(): Boolean = try { gateway.requireActive(); true } catch (_: Exception) { clearPrivate(); false }"
+            },
+            {
+              "line": 95,
+              "symbol": "fun edit(draft: NightPlanDraft) {"
+            },
+            {
+              "line": 99,
+              "symbol": "fun calculate() {"
+            },
+            {
+              "line": 104,
+              "symbol": "fun save() {"
+            },
+            {
+              "line": 123,
+              "symbol": "fun reloadForm() {"
+            },
+            {
+              "line": 138,
+              "symbol": "fun clear(reviewedVersion: Long) {"
+            },
+            {
+              "line": 149,
+              "symbol": "fun openRecord() {"
+            },
+            {
+              "line": 156,
+              "symbol": "fun editRecord(date: String, zone: String, note: String) {"
+            },
+            {
+              "line": 161,
+              "symbol": "fun closeRecord() { if (!mutable.value.busy) { frozenRecord = null; mutable.value = mutable.value.copy(record = null) } }"
+            },
+            {
+              "line": 162,
+              "symbol": "fun record() {"
+            },
+            {
+              "line": 178,
+              "symbol": "private suspend fun failed(failure: Exception) {"
+            },
+            {
+              "line": 189,
+              "symbol": "private fun fail(feedback: NightPlanFeedback) { if (active()) mutable.value = mutable.value.copy(busy = false, feedback = feedback) }"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "e007beffedb46ab8ea05c8c70ad173f1d49510c5",
+          "sha256": "97bf1db45261a2cc822fbf7bd8765f3542fa6ff9b287192d5489ddf80b17d617",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 9,
+              "symbol": "internal data class NightVersePlan(val id: String, val startIndex: Int, val endIndex: Int, val updatedAt: String) {"
+            },
+            {
+              "line": 12,
+              "symbol": "fun range(index: QuranIndex) = QuranRange(index.position(startIndex), index.position(endIndex))"
+            },
+            {
+              "line": 16,
+              "symbol": "internal data class NightPlanState(val owner: Long, val namespace: String, val version: Long = 0, val plan: NightVersePlan? = null) {"
+            },
+            {
+              "line": 18,
+              "symbol": "fun save(start: Int, end: Int, expected: Long, now: Instant): NightPlanState {"
+            },
+            {
+              "line": 24,
+              "symbol": "fun clear(expected: Long): NightPlanState {"
+            },
+            {
+              "line": 30,
+              "symbol": "internal fun planUuid(value: String) { require(value.matches(Regex(\"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\"))) }"
+            },
+            {
+              "line": 31,
+              "symbol": "private fun planOwner(owner: Long, namespace: String) { require(owner > 0 && namespace.matches(Regex(\"[a-f0-9]{12}\"))) }"
+            },
+            {
+              "line": 34,
+              "symbol": "internal data class NightPlanRecord(val owner: Long, val namespace: String, val id: String, val plan: NightVersePlan, val body: JsonObject) {"
+            },
+            {
+              "line": 46,
+              "symbol": "fun receipt(): NightPlanReceipt {"
+            },
+            {
+              "line": 52,
+              "symbol": "fun create(owner: Long, namespace: String, id: String, plan: NightVersePlan, date: LocalDate, zone: ZoneId, note: String): NightPlanRecord ="
+            },
+            {
+              "line": 63,
+              "symbol": "internal data class NightPlanReceipt(val owner: Long, val namespace: String, val id: String, val planId: String, val fingerprint: String) {"
+            },
+            {
+              "line": 67,
+              "symbol": "private object PlanJson {"
+            },
+            {
+              "line": 68,
+              "symbol": "fun text(root: JsonObject, key: String) = requireNotNull(root[key]).also { require(it.isJsonPrimitive && it.asJsonPrimitive.isString) }.asString"
+            },
+            {
+              "line": 69,
+              "symbol": "fun number(root: JsonObject, key: String) = requireNotNull(root[key]).also {"
+            },
+            {
+              "line": 72,
+              "symbol": "fun plan(plan: NightVersePlan): JsonObject = JsonObject().apply {"
+            },
+            {
+              "line": 75,
+              "symbol": "fun plan(value: JsonElement): NightVersePlan = value.asJsonObject.let {"
+            },
+            {
+              "line": 80,
+              "symbol": "fun parse(raw: String, keys: Set<String>, owner: Long, namespace: String): JsonObject {"
+            },
+            {
+              "line": 86,
+              "symbol": "fun root(owner: Long, namespace: String) = JsonObject().apply { addProperty(\"schema\", 1); addProperty(\"owner\", owner); addProperty(\"namespace\", namespace) }"
+            },
+            {
+              "line": 89,
+              "symbol": "internal object NightPlanCodec {"
+            },
+            {
+              "line": 92,
+              "symbol": "fun encode(state: NightPlanState): String = PlanJson.root(state.owner, state.namespace).apply {"
+            },
+            {
+              "line": 95,
+              "symbol": "fun decode(raw: String, owner: Long, namespace: String): NightPlanState {"
+            },
+            {
+              "line": 99,
+              "symbol": "fun encode(record: NightPlanReceipt): String = PlanJson.root(record.owner, record.namespace).apply {"
+            },
+            {
+              "line": 102,
+              "symbol": "fun decodeReceipt(raw: String, owner: Long, namespace: String): NightPlanReceipt {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "8c59585d947d7bfceb02e123ebafcf86458878a6",
+          "sha256": "5dad02f8d2be3052a7b2d8a7bc139eea0b38d5067074ed13ab4ffeecee89c8e4",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 20,
+              "symbol": "internal class NightVersePlanRepository("
+            },
+            {
+              "line": 29,
+              "symbol": "private suspend fun readInside(owner: Long): NightPlanState = database.dao().cache(owner, NightPlanCodec.KEY)?.let {"
+            },
+            {
+              "line": 34,
+              "symbol": "fun observe(lease: SessionLease) = database.dao().observeCache(lease.owner, NightPlanCodec.KEY).map { row ->"
+            },
+            {
+              "line": 43,
+              "symbol": "suspend fun read(lease: SessionLease): NightPlanState = withContext(Dispatchers.IO) {"
+            },
+            {
+              "line": 46,
+              "symbol": "private suspend fun change(lease: SessionLease, expected: Long, transform: (NightPlanState) -> NightPlanState): NightPlanState = withContext(Dispatchers.IO) {"
+            },
+            {
+              "line": 57,
+              "symbol": "suspend fun save(lease: SessionLease, range: QuranRange, expected: Long): NightPlanState {"
+            },
+            {
+              "line": 66,
+              "symbol": "suspend fun clear(lease: SessionLease, expected: Long) = change(lease, expected) { it.clear(expected) }"
+            },
+            {
+              "line": 69,
+              "symbol": "suspend fun record(lease: SessionLease, expected: Long, selected: NightVersePlan, operation: String, date: LocalDate, zone: ZoneId, note: String) = withContext(Dispatchers.IO) {"
+            },
+            {
+              "line": 93,
+              "symbol": "internal fun decodeNightPlanRecord(row: CachedDocument, owner: Long, namespace: String, cipher: PrivateCipher): NightPlanReceipt {"
+            },
+            {
+              "line": 101,
+              "symbol": "internal suspend fun retainedNightPlans(owner: Long, namespace: String, dao: AtharDao, cipher: PrivateCipher): JsonObject = JsonObject().apply {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "3606080884c1c5ee8aa10772ec3d3de0f86352ea",
+          "sha256": "231ada099303cb2a0269890f7cadf0fea623ab95530cc5f086ca42402e51e5ad",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 16,
+              "symbol": "suspend fun retainedAccountData(owner:Long,session:SessionRepository,lessons:LessonRepository,night:NightPrayerRepository):JsonObject {"
+            },
+            {
+              "line": 28,
+              "symbol": "internal suspend fun retainedAccountData(owner: Long, graph: AppGraph): JsonObject {"
+            },
+            {
+              "line": 34,
+              "symbol": "internal class AccountLocalSnapshot("
+            },
+            {
+              "line": 44,
+              "symbol": "suspend fun read(owner: Long): JsonObject = withContext(Dispatchers.IO) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        }
+      ],
+      "related_commits": [
+        "dfe74075f47392161b2fc576b508167f5ea1a49c"
+      ],
+      "alternative_branch_evidence": [],
+      "integration_call_path_evidence": [
+        "main_graph",
+        "main_navigation",
+        "main_manifest",
+        "main_api"
+      ],
+      "tests_executed": [
+        {
+          "kind": "inherited_baseline_JVM_subset",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "classes": [
+            "org.athar.app.DomainTest",
+            "org.athar.app.NightRejectionTest"
+          ],
+          "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
+        },
+        {
+          "kind": "inherited_baseline_backend_subsystem_gate",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
+          "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
+        },
+        {
+          "kind": "new_focused_functional_checkpoint",
+          "source_ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "result": {
+            "source_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+            "execution_date": "2026-10-30",
+            "provenance": "Scoped native planner checkpoint:37 JVM across6 classes;10 API34 Room/Keystore/export cases and3 AR+3 EN UI executions (16 executions/13 unique cases). Earlier Night11/32/6, Khatmah66/335/29/6 and original167-case baseline remain separately pinned; counts are not summed across reruns.",
+            "jvm_cases": 37,
+            "jvm_classes": 6,
+            "junit_receipts": [
+              {
+                "name": "org.athar.app.AccountExportTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+                "sha256": "8693866d1ef3d6fb232e57c671a5e7e52f658a5025161fca4f235ccb1a3dfa0e",
+                "bytes": 1005
+              },
+              {
+                "name": "org.athar.app.AccountExportWriterTest",
+                "tests": 4,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+                "sha256": "1a82f9a64e671b136497d4fd0758c510d0c269f056f6b1f467f949cbc157d482",
+                "bytes": 867
+              },
+              {
+                "name": "org.athar.app.NightIdentityTest",
+                "tests": 8,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
+                "sha256": "032e222ffd506d8c5b4e9d221f2777234e1eadc3c3738af4221b8349d4ce6a7b",
+                "bytes": 1401
+              },
+              {
+                "name": "org.athar.app.NightPlanViewModelTest",
+                "tests": 9,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
+                "sha256": "0b2ee61a1c3dfaa2512c5c030c3c8c75f56fbfdb75cc1e61ac1a2d0a47ef5667",
+                "bytes": 1637
+              },
+              {
+                "name": "org.athar.app.NightRejectionTest",
+                "tests": 3,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
+                "sha256": "516c26c6f22fffd72b75a423feeff272854c1e5b34fbae64d4910795ba533bce",
+                "bytes": 726
+              },
+              {
+                "name": "org.athar.app.NightVersePlanTest",
+                "tests": 8,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
+                "sha256": "3904580e627bf807dbd88e09e39c3fff07e7e7344ea0572ba23def9dbb03aff4",
+                "bytes": 1440
+              }
+            ],
+            "backend_suites": 0,
+            "backend_assertions": 0,
+            "backend_components": {},
+            "actual_cookie_api_http_assertions": 0,
+            "debug_apk": "PASS",
+            "test_apk": "PASS",
+            "lint_errors": 0,
+            "lint_warnings": 68,
+            "resources_paired": 499,
+            "new_instrumentation_cases": 12,
+            "instrumentation_cases_executed": 16,
+            "instrumentation_result": "API34:9 new NightVersePlanStorageTest +1 extended AccountExportStorageTest PASS;3 Arabic RTL +3 English LTR NightPlanUiTest PASS, dark theme/1.5 font. Room/Keystore are real, login transport is deterministic; no actual native HTTP/OS/physical claim.",
+            "physical_acceptance": "NOT_EXECUTED",
+            "provider_delivery": "NOT_APPLICABLE",
+            "logs": [
+              {
+                "path": "artifacts/functional-integration/night-plan-core-export-corrected.log",
+                "sha256": "109d1e62880f97f3093091fc0e59e47af966f9ff17e3c835e090395855deebcc",
+                "bytes": 1968
+              },
+              {
+                "path": "artifacts/functional-integration/night-plan-state-storage-compile.log",
+                "sha256": "edaa4a5c75f4ffa553d6bc102cbaba181e854ed05de1e78d40cbb8560dc1f177",
+                "bytes": 7239
+              },
+              {
+                "path": "artifacts/functional-integration/night-plan-subsystem-gate.log",
+                "sha256": "801a4ab342b7b7ccdb7f74da171ef8ad2ae960a5355d1f9c1170c0ab09829f11",
+                "bytes": 8294
+              },
+              {
+                "path": "artifacts/functional-integration/night-plan-api34-storage.private.log",
+                "sha256": "5ccf9da44fff412146210f6fb7ae2b0dee7fd6bf7462d8c398614c14c07c7c37",
+                "bytes": 7195
+              },
+              {
+                "path": "artifacts/functional-integration/night-plan-ar-api34.private.log",
+                "sha256": "d933d0df24dc92f175fd24e2fa412534f85b605fa03bec1e5e535344affebd98",
+                "bytes": 2110
+              },
+              {
+                "path": "artifacts/functional-integration/night-plan-en-api34.private.log",
+                "sha256": "a7ac111e6575a0d01c8d2208c5b8c7447fdc0f325c8b8e749f4a27f3b8d17347",
+                "bytes": 2108
+              }
+            ],
+            "apk_receipts": [
+              {
+                "path": "android/app/build/outputs/apk/debug/app-debug.apk",
+                "sha256": "763289583b1174c6daed139cd0697bdcdcdac8a9911cd4d7165e356e56cc625c",
+                "bytes": 25415917
+              },
+              {
+                "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+                "sha256": "ae9ed97e8e63491fcfd9e141a1201ec634d63a1e1bffbe908cf9764f4ec46139",
+                "bytes": 2300210
+              }
+            ],
+            "limits": [
+              "No backend code changed or new backend/HTTP suite executed; earlier32 Night Prayer API assertions remain inherited, not relabeled.",
+              "Native real HTTP/OS clipboard/lifecycle/process/reboot/account-switch and physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys remain queued.",
+              "Only explicitly saved plans and recorded intents are durable; unsubmitted private forms/dialogs remain ViewModel state.",
+              "Lint0 errors/68 warnings, prior66 plus2 quantity-string plural candidates; no suppressions.",
+              "08.3 candidate source was reviewed statically; these native tests do not establish its missing reader behavior.",
+              "Original public queued-mail wording and Admin-runner suite additions remain outside commits."
+            ]
+          }
+        }
+      ],
+      "inherited_acceptance_receipts": [],
+      "receipt_blob_continuity": [
+        {
+          "receipt_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+          "same_blob": true
+        },
+        {
+          "receipt_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt",
+          "same_blob": true
+        },
+        {
+          "receipt_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "same_blob": true
+        },
+        {
+          "receipt_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+          "same_blob": true
+        },
+        {
+          "receipt_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+          "same_blob": true
+        }
+      ],
+      "tests_still_required": [
+        "10/100/1000/exact inclusive/cross-surah/range UX tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+        "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
+        "Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open."
+      ],
+      "external_blockers": [],
+      "confidence": "medium",
+      "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
+      "old_closure_accurate": true,
+      "old_status_assessment": "Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.",
+      "reporting_verdict": "V"
+    },
+    {
+      "id": "08.3",
+      "name": "Exact prayer reading continuation",
+      "scope": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress.",
+      "definition_of_done": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
+      "old_status": "PARTIAL",
       "implementation_status": "PARTIALLY_IMPLEMENTED",
       "implementation_location": "parallel",
       "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
+      "integration_status": "PARTIALLY_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "exclusive_category": "partially_implemented",
       "implemented_requirements": [
-        "Parallel range/target preview, saved-plan/copy and explicit record actions exist, but the private storage candidate is incomplete under current ownership/restart contracts."
+        "Parallel code calculates/displays a possible continuation label, but the card only has record/copy/clear callbacks; no planned/session reader route or independent retained prayer position is wired. Current main08.2 provides bound plan IDs and recording receipts as a foundation."
       ],
       "missing_requirements": [
-        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
+        "Implement real exact bounded plan/session reading and separately encrypted prayer resume positions. Correlate recorded ranges to this plan/session rather than all historical ranges; prove actual Quran text/bismillah preservation, no Quran/Khatmah mutation, stale callback/clear/account-switch/process recovery and native reader/back navigation."
       ],
       "exact_remaining_work": [
-        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
+        "Implement real exact bounded plan/session reading and separately encrypted prayer resume positions. Correlate recorded ranges to this plan/session rather than all historical ranges; prove actual Quran text/bismillah preservation, no Quran/Khatmah mutation, stale callback/clear/account-switch/process recovery and native reader/back navigation."
       ],
       "feature_code_remaining": true,
       "integration_code_remaining": true,
@@ -10514,139 +11199,272 @@
             }
           ],
           "worktree_matches_ref": true
-        }
-      ],
-      "related_commits": [
-        "4d2b70a770fbd97f71245fec3f8c18679925e195",
-        "e54713045ef1ddeafdef52520d6e9086c582a1e8"
-      ],
-      "alternative_branch_evidence": [],
-      "integration_call_path_evidence": [
-        "parallel_graph",
-        "parallel_navigation",
-        "parallel_manifest",
-        "parallel_api",
-        "main_graph"
-      ],
-      "tests_executed": [
+        },
         {
-          "kind": "new_parallel_configuration_failure",
-          "receipt": "artifacts/functional-integration/audit-parallel-configuration.log",
-          "limit": "Gradle :app:tasks fails at SourceSet Provider configuration. Local pre-existing File/import repair present; pristine branch has an additional script compilation issue. No JVM/instrumentation pass on this source claimed."
-        }
-      ],
-      "inherited_acceptance_receipts": [],
-      "receipt_blob_continuity": [],
-      "tests_still_required": [
-        "10/100/1000/exact inclusive/cross-surah/range UX tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
-        "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
-      ],
-      "external_blockers": [],
-      "confidence": "medium",
-      "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
-      "old_closure_accurate": true,
-      "old_status_assessment": "Closure remains open; concrete code/integration/measurement deficit is now explicit.",
-      "reporting_verdict": "R"
-    },
-    {
-      "id": "08.3",
-      "name": "Exact prayer reading continuation",
-      "scope": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress.",
-      "definition_of_done": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
-      "old_status": "PARTIAL",
-      "implementation_status": "IMPLEMENTED",
-      "implementation_location": "parallel",
-      "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
-      "closure_status": "PARTIAL",
-      "exclusive_category": "implemented_unmerged",
-      "implemented_requirements": [
-        "Parallel planned/session reader continuation preserves separate prayer position."
-      ],
-      "missing_requirements": [
-        "Port exact-range/continuation call path and prove no Quran/Khatmah progress conflation."
-      ],
-      "exact_remaining_work": [
-        "Port exact-range/continuation call path and prove no Quran/Khatmah progress conflation."
-      ],
-      "feature_code_remaining": false,
-      "integration_code_remaining": true,
-      "test_code_remaining": false,
-      "production_code_remaining": true,
-      "acceptance_only_in_current_app": false,
-      "evidence": [
-        {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "12007984b40c4e3e016a744c78d327debf17ba9f",
-          "sha256": "1d5f3f6bfc4e0b1ba86fa9a0a35e782448af2fbf3204e8a7c0f25daf43d2e85e",
-          "last_path_commit": "e54713045ef1ddeafdef52520d6e9086c582a1e8",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "e007beffedb46ab8ea05c8c70ad173f1d49510c5",
+          "sha256": "97bf1db45261a2cc822fbf7bd8765f3542fa6ff9b287192d5489ddf80b17d617",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
+              "line": 9,
+              "symbol": "internal data class NightVersePlan(val id: String, val startIndex: Int, val endIndex: Int, val updatedAt: String) {"
+            },
+            {
+              "line": 12,
+              "symbol": "fun range(index: QuranIndex) = QuranRange(index.position(startIndex), index.position(endIndex))"
+            },
+            {
+              "line": 16,
+              "symbol": "internal data class NightPlanState(val owner: Long, val namespace: String, val version: Long = 0, val plan: NightVersePlan? = null) {"
+            },
+            {
+              "line": 18,
+              "symbol": "fun save(start: Int, end: Int, expected: Long, now: Instant): NightPlanState {"
+            },
+            {
+              "line": 24,
+              "symbol": "fun clear(expected: Long): NightPlanState {"
+            },
+            {
+              "line": 30,
+              "symbol": "internal fun planUuid(value: String) { require(value.matches(Regex(\"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\"))) }"
+            },
+            {
               "line": 31,
-              "symbol": "private data class NightPlanSelection("
+              "symbol": "private fun planOwner(owner: Long, namespace: String) { require(owner > 0 && namespace.matches(Regex(\"[a-f0-9]{12}\"))) }"
             },
             {
-              "line": 45,
-              "symbol": "fun NightPlanScreen("
+              "line": 34,
+              "symbol": "internal data class NightPlanRecord(val owner: Long, val namespace: String, val id: String, val plan: NightVersePlan, val body: JsonObject) {"
             },
             {
-              "line": 439,
-              "symbol": "private fun NightSavedPlanCard("
+              "line": 46,
+              "symbol": "fun receipt(): NightPlanReceipt {"
             },
             {
-              "line": 515,
-              "symbol": "private fun RecordCompletedPlanDialog("
+              "line": 52,
+              "symbol": "fun create(owner: Long, namespace: String, id: String, plan: NightVersePlan, date: LocalDate, zone: ZoneId, note: String): NightPlanRecord ="
             },
             {
-              "line": 598,
-              "symbol": "private fun PlanNumberField("
+              "line": 63,
+              "symbol": "internal data class NightPlanReceipt(val owner: Long, val namespace: String, val id: String, val planId: String, val fingerprint: String) {"
+            },
+            {
+              "line": 67,
+              "symbol": "private object PlanJson {"
+            },
+            {
+              "line": 68,
+              "symbol": "fun text(root: JsonObject, key: String) = requireNotNull(root[key]).also { require(it.isJsonPrimitive && it.asJsonPrimitive.isString) }.asString"
+            },
+            {
+              "line": 69,
+              "symbol": "fun number(root: JsonObject, key: String) = requireNotNull(root[key]).also {"
+            },
+            {
+              "line": 72,
+              "symbol": "fun plan(plan: NightVersePlan): JsonObject = JsonObject().apply {"
+            },
+            {
+              "line": 75,
+              "symbol": "fun plan(value: JsonElement): NightVersePlan = value.asJsonObject.let {"
+            },
+            {
+              "line": 80,
+              "symbol": "fun parse(raw: String, keys: Set<String>, owner: Long, namespace: String): JsonObject {"
+            },
+            {
+              "line": 86,
+              "symbol": "fun root(owner: Long, namespace: String) = JsonObject().apply { addProperty(\"schema\", 1); addProperty(\"owner\", owner); addProperty(\"namespace\", namespace) }"
+            },
+            {
+              "line": 89,
+              "symbol": "internal object NightPlanCodec {"
+            },
+            {
+              "line": 92,
+              "symbol": "fun encode(state: NightPlanState): String = PlanJson.root(state.owner, state.namespace).apply {"
+            },
+            {
+              "line": 95,
+              "symbol": "fun decode(raw: String, owner: Long, namespace: String): NightPlanState {"
+            },
+            {
+              "line": 99,
+              "symbol": "fun encode(record: NightPlanReceipt): String = PlanJson.root(record.owner, record.namespace).apply {"
+            },
+            {
+              "line": 102,
+              "symbol": "fun decodeReceipt(raw: String, owner: Long, namespace: String): NightPlanReceipt {"
             }
           ],
           "worktree_matches_ref": true
         },
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "ba1573aa0e4a6ae46d6859d7736c9fd78d3b15e4",
-          "sha256": "6456d99f5ae205e442e36755b408772fc9a7cb9ff7738c36b810f9250d21fd0f",
-          "last_path_commit": "4d2b70a770fbd97f71245fec3f8c18679925e195",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "8c59585d947d7bfceb02e123ebafcf86458878a6",
+          "sha256": "5dad02f8d2be3052a7b2d8a7bc139eea0b38d5067074ed13ab4ffeecee89c8e4",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
-              "line": 17,
-              "symbol": "data class NightVersePlan("
+              "line": 20,
+              "symbol": "internal class NightVersePlanRepository("
+            },
+            {
+              "line": 29,
+              "symbol": "private suspend fun readInside(owner: Long): NightPlanState = database.dao().cache(owner, NightPlanCodec.KEY)?.let {"
+            },
+            {
+              "line": 34,
+              "symbol": "fun observe(lease: SessionLease) = database.dao().observeCache(lease.owner, NightPlanCodec.KEY).map { row ->"
             },
             {
               "line": 43,
-              "symbol": "class NightVersePlanRepository("
+              "symbol": "suspend fun read(lease: SessionLease): NightPlanState = withContext(Dispatchers.IO) {"
             },
             {
-              "line": 51,
-              "symbol": "fun observe(owner: Long): Flow<NightVersePlan?> ="
+              "line": 46,
+              "symbol": "private suspend fun change(lease: SessionLease, expected: Long, transform: (NightPlanState) -> NightPlanState): NightPlanState = withContext(Dispatchers.IO) {"
             },
             {
-              "line": 56,
-              "symbol": "suspend fun saved(owner: Long): NightVersePlan? ="
+              "line": 57,
+              "symbol": "suspend fun save(lease: SessionLease, range: QuranRange, expected: Long): NightPlanState {"
+            },
+            {
+              "line": 66,
+              "symbol": "suspend fun clear(lease: SessionLease, expected: Long) = change(lease, expected) { it.clear(expected) }"
+            },
+            {
+              "line": 69,
+              "symbol": "suspend fun record(lease: SessionLease, expected: Long, selected: NightVersePlan, operation: String, date: LocalDate, zone: ZoneId, note: String) = withContext(Dispatchers.IO) {"
+            },
+            {
+              "line": 93,
+              "symbol": "internal fun decodeNightPlanRecord(row: CachedDocument, owner: Long, namespace: String, cipher: PrivateCipher): NightPlanReceipt {"
+            },
+            {
+              "line": 101,
+              "symbol": "internal suspend fun retainedNightPlans(owner: Long, namespace: String, dao: AtharDao, cipher: PrivateCipher): JsonObject = JsonObject().apply {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "0affdec3cad2fc31ae46061a9ae965248a877c72",
+          "sha256": "6a5b9a2d0ed9d794b60b4b15c9b1886ca0dbb4a4186d36a6cd0108d839f49be0",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "symbols": [
+            {
+              "line": 31,
+              "symbol": "internal sealed interface NightPlanEvent {"
+            },
+            {
+              "line": 32,
+              "symbol": "data class Edit(val draft: NightPlanDraft) : NightPlanEvent"
+            },
+            {
+              "line": 33,
+              "symbol": "data object Calculate : NightPlanEvent"
+            },
+            {
+              "line": 34,
+              "symbol": "data object Save : NightPlanEvent"
+            },
+            {
+              "line": 35,
+              "symbol": "data object Retry : NightPlanEvent"
+            },
+            {
+              "line": 36,
+              "symbol": "data object Reload : NightPlanEvent"
+            },
+            {
+              "line": 37,
+              "symbol": "data class Clear(val version: Long) : NightPlanEvent"
+            },
+            {
+              "line": 38,
+              "symbol": "data class Copy(val range: QuranRange) : NightPlanEvent"
+            },
+            {
+              "line": 39,
+              "symbol": "data object OpenRecord : NightPlanEvent"
+            },
+            {
+              "line": 40,
+              "symbol": "data class EditRecord(val date: String, val zone: String, val note: String) : NightPlanEvent"
+            },
+            {
+              "line": 41,
+              "symbol": "data object Record : NightPlanEvent"
+            },
+            {
+              "line": 42,
+              "symbol": "data object CloseRecord : NightPlanEvent"
+            },
+            {
+              "line": 45,
+              "symbol": "@Composable internal fun NightPlanScreen(graph: AppGraph) {"
+            },
+            {
+              "line": 52,
+              "symbol": "@Composable private fun NightPlanOwned(graph: AppGraph, lease: SessionLease) {"
+            },
+            {
+              "line": 57,
+              "symbol": "override fun requireActive() = graph.session.requireLease(lease)"
+            },
+            {
+              "line": 58,
+              "symbol": "override fun changes() = graph.nightPlans.observe(lease)"
+            },
+            {
+              "line": 59,
+              "symbol": "override suspend fun index() = graph.quran.data().index"
+            },
+            {
+              "line": 60,
+              "symbol": "override suspend fun read() = graph.nightPlans.read(lease)"
+            },
+            {
+              "line": 61,
+              "symbol": "override suspend fun save(range: QuranRange, expected: Long) = graph.nightPlans.save(lease, range, expected)"
             },
             {
               "line": 62,
-              "symbol": "suspend fun save("
+              "symbol": "override suspend fun clear(expected: Long) = graph.nightPlans.clear(lease, expected)"
             },
             {
-              "line": 99,
-              "symbol": "suspend fun clear(owner: Long) = withContext(Dispatchers.IO) {"
+              "line": 63,
+              "symbol": "override suspend fun record(record: NightPlanRecord, expected: Long) = graph.nightPlans.record(lease, expected, record.plan, record.id,"
             },
             {
-              "line": 104,
-              "symbol": "private fun decode(row: CachedDocument): NightVersePlan {"
+              "line": 98,
+              "symbol": "@Composable internal fun NightPlanContent(state: NightPlanUiState, event: (NightPlanEvent) -> Unit) {"
             },
             {
-              "line": 122,
-              "symbol": "fun nightPlanContinuationIndex("
+              "line": 167,
+              "symbol": "private fun planReference(range: QuranRange) = \"${range.start.surah}:${range.start.ayah} — ${range.end.surah}:${range.end.ayah}\""
+            },
+            {
+              "line": 168,
+              "symbol": "private fun planFeedback(feedback: NightPlanFeedback, record: Boolean) = when (feedback) {"
+            },
+            {
+              "line": 178,
+              "symbol": "@Composable private fun PlanNumber(value: String, label: Int, enabled: Boolean, tag: String, change: (String) -> Unit) {"
+            },
+            {
+              "line": 181,
+              "symbol": "@Composable private fun PlanConfirmation(message: Int, enabled: Boolean, dismiss: () -> Unit, confirm: () -> Unit) {"
             }
           ],
           "worktree_matches_ref": true
@@ -10654,6 +11472,7 @@
       ],
       "related_commits": [
         "4d2b70a770fbd97f71245fec3f8c18679925e195",
+        "dfe74075f47392161b2fc576b508167f5ea1a49c",
         "e54713045ef1ddeafdef52520d6e9086c582a1e8"
       ],
       "alternative_branch_evidence": [],
@@ -10676,14 +11495,14 @@
       "tests_still_required": [
         "Exact boundaries/cross-surah/recreation/owner tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Port exact-range/continuation call path and prove no Quran/Khatmah progress conflation."
+        "Implement real exact bounded plan/session reading and separately encrypted prayer resume positions. Correlate recorded ranges to this plan/session rather than all historical ranges; prove actual Quran text/bismillah preservation, no Quran/Khatmah mutation, stale callback/clear/account-switch/process recovery and native reader/back navigation."
       ],
       "external_blockers": [],
       "confidence": "medium",
       "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
       "old_closure_accurate": true,
       "old_status_assessment": "Closure remains open; concrete code/integration/measurement deficit is now explicit.",
-      "reporting_verdict": "U"
+      "reporting_verdict": "R"
     },
     {
       "id": "08.4",
@@ -10943,10 +11762,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70",
-          "sha256": "14bc7b47a34a79eaf849307a9be3e07cf09f582189a7714e535a5bb45c8ecc0d",
-          "last_path_commit": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485",
+          "sha256": "ffff1afcfc316f7d491ac322484251e882add7900656048c213e438c33116b32",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
               "line": 28,
@@ -11017,15 +11836,15 @@
               "symbol": "@Composable fun NightPrayerScreen(graph: AppGraph) {"
             },
             {
-              "line": 126,
+              "line": 127,
               "symbol": "@Composable private fun NightHistoryScreen(graph: AppGraph) {"
             },
             {
-              "line": 196,
+              "line": 197,
               "symbol": "@Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {"
             },
             {
-              "line": 239,
+              "line": 240,
               "symbol": "@Composable private fun NumberField(value: String, change: (String) -> Unit, label: String, modifier: Modifier) { OutlinedTextField(value, { change(it.filter(Char::isDigit).take(6)) }, modifier, label = { Text(label) }, "
             }
           ],
@@ -11034,7 +11853,7 @@
       ],
       "related_commits": [
         "8cc7fb626273fa7bf2254c0d0634f70b5fd9b717",
-        "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+        "dfe74075f47392161b2fc576b508167f5ea1a49c"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -23006,10 +23825,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70",
-          "sha256": "14bc7b47a34a79eaf849307a9be3e07cf09f582189a7714e535a5bb45c8ecc0d",
-          "last_path_commit": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485",
+          "sha256": "ffff1afcfc316f7d491ac322484251e882add7900656048c213e438c33116b32",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
               "line": 28,
@@ -23080,15 +23899,15 @@
               "symbol": "@Composable fun NightPrayerScreen(graph: AppGraph) {"
             },
             {
-              "line": 126,
+              "line": 127,
               "symbol": "@Composable private fun NightHistoryScreen(graph: AppGraph) {"
             },
             {
-              "line": 196,
+              "line": 197,
               "symbol": "@Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {"
             },
             {
-              "line": 239,
+              "line": 240,
               "symbol": "@Composable private fun NumberField(value: String, change: (String) -> Unit, label: String, modifier: Modifier) { OutlinedTextField(value, { change(it.filter(Char::isDigit).take(6)) }, modifier, label = { Text(label) }, "
             }
           ],
@@ -23127,8 +23946,8 @@
         }
       ],
       "related_commits": [
-        "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-        "d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f"
+        "d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f",
+        "dfe74075f47392161b2fc576b508167f5ea1a49c"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -24582,10 +25401,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "a939e85f9b86c2d9f08bf56d166d10c003f957d1",
-          "sha256": "8532d9edc7fecd610b7cbe51ff78ab7a756476fffba669bd9da836d361421efc",
-          "last_path_commit": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "f4a8c4b02c15e963f59934f38bc7f4ab72231e4f",
+          "sha256": "75dfd4d4ad764d8777da93cd661eace1f45221e183e24a939cb1fe42b1aac67f",
+          "last_path_commit": "dfe74075f47392161b2fc576b508167f5ea1a49c",
           "symbols": [
             {
               "line": 1,
@@ -24596,7 +25415,7 @@
         }
       ],
       "related_commits": [
-        "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+        "dfe74075f47392161b2fc576b508167f5ea1a49c",
         "f66a05a5c567afb6acd7d2bf55b8e0593493bb1c"
       ],
       "alternative_branch_evidence": [],
@@ -24621,7 +25440,7 @@
       "inherited_acceptance_receipts": [],
       "receipt_blob_continuity": [],
       "tests_still_required": [
-        "Current paired resource format checks (475 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+        "Current paired resource format checks (499 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
         "Complete screen matrix and correct any residual mixed numbers/dates/RTL mirroring/contrast issues; resource parity alone cannot establish visual completion."
       ],
@@ -26759,13 +27578,13 @@
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
           "kind": "test tree",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         },
         {
           "location": "main",
           "path": "tests",
           "kind": "test tree",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "related_commits": [],
@@ -27816,103 +28635,143 @@
     ]
   },
   "functional_checkpoint": {
-    "main_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+    "main_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
     "date": "2026-10-30",
     "reviewed_tasks": [
-      "08.1"
+      "08.2"
     ],
-    "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.",
+    "summary": "08.2 is now IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL: current main has canonical target/range planning, owner/environment-bound encrypted frames, transactionally versioned save/clear, retained unreadable state, actor/deletion fences, validated export, private copy and separately confirmed atomic/idempotent Night recording.08.3 static review corrects its earlier implemented-candidate claim: it only displays a continuation label from historical ranges and lacks a bounded reader and independent prayer position. That scope remains PARTIALLY_IMPLEMENTED; the current plan IDs/receipts provide a reviewed foundation, not reader acceptance.",
     "validation": {
-      "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+      "source_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
       "execution_date": "2026-10-30",
-      "provenance": "Scoped Night Prayer checkpoint:11 JVM,32 backend assertions,6 API34 UI executions (3 unique cases x2 languages). Earlier Khatmah66/335/29/6 and original167-case baseline remain separate pinned receipts; no full-project or physical acceptance is claimed.",
-      "jvm_cases": 11,
-      "jvm_classes": 2,
+      "provenance": "Scoped native planner checkpoint:37 JVM across6 classes;10 API34 Room/Keystore/export cases and3 AR+3 EN UI executions (16 executions/13 unique cases). Earlier Night11/32/6, Khatmah66/335/29/6 and original167-case baseline remain separately pinned; counts are not summed across reruns.",
+      "jvm_cases": 37,
+      "jvm_classes": 6,
       "junit_receipts": [
+        {
+          "name": "org.athar.app.AccountExportTest",
+          "tests": 5,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+          "sha256": "8693866d1ef3d6fb232e57c671a5e7e52f658a5025161fca4f235ccb1a3dfa0e",
+          "bytes": 1005
+        },
+        {
+          "name": "org.athar.app.AccountExportWriterTest",
+          "tests": 4,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+          "sha256": "1a82f9a64e671b136497d4fd0758c510d0c269f056f6b1f467f949cbc157d482",
+          "bytes": 867
+        },
         {
           "name": "org.athar.app.NightIdentityTest",
           "tests": 8,
           "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
-          "sha256": "2e3d187fe26f744ae08e9bf612f24beda03d224550e928c8c5aee3950dd045d8",
-          "bytes": 1398
+          "sha256": "032e222ffd506d8c5b4e9d221f2777234e1eadc3c3738af4221b8349d4ce6a7b",
+          "bytes": 1401
+        },
+        {
+          "name": "org.athar.app.NightPlanViewModelTest",
+          "tests": 9,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
+          "sha256": "0b2ee61a1c3dfaa2512c5c030c3c8c75f56fbfdb75cc1e61ac1a2d0a47ef5667",
+          "bytes": 1637
         },
         {
           "name": "org.athar.app.NightRejectionTest",
           "tests": 3,
           "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
-          "sha256": "e1842b3b169555690ca9ce53f74bc50fe84ebc6199cfdf0572a55795bff7857a",
+          "sha256": "516c26c6f22fffd72b75a423feeff272854c1e5b34fbae64d4910795ba533bce",
           "bytes": 726
+        },
+        {
+          "name": "org.athar.app.NightVersePlanTest",
+          "tests": 8,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
+          "sha256": "3904580e627bf807dbd88e09e39c3fff07e7e7344ea0572ba23def9dbb03aff4",
+          "bytes": 1440
         }
       ],
-      "backend_suites": 1,
-      "backend_assertions": 32,
-      "backend_components": {
-        "night_prayer": 32
-      },
+      "backend_suites": 0,
+      "backend_assertions": 0,
+      "backend_components": {},
       "actual_cookie_api_http_assertions": 0,
       "debug_apk": "PASS",
       "test_apk": "PASS",
       "lint_errors": 0,
-      "lint_warnings": 66,
-      "resources_paired": 475,
-      "new_instrumentation_cases": 3,
-      "instrumentation_cases_executed": 6,
-      "instrumentation_result": "API34:3/3 Arabic RTL +3/3 English LTR; actual Compose fixture rendering, dark theme and1.5 font scale. Unreadable/no invented empty or metrics, absent settings/no zero counters, actual dated records/milestone/pending scroll.",
+      "lint_warnings": 68,
+      "resources_paired": 499,
+      "new_instrumentation_cases": 12,
+      "instrumentation_cases_executed": 16,
+      "instrumentation_result": "API34:9 new NightVersePlanStorageTest +1 extended AccountExportStorageTest PASS;3 Arabic RTL +3 English LTR NightPlanUiTest PASS, dark theme/1.5 font. Room/Keystore are real, login transport is deterministic; no actual native HTTP/OS/physical claim.",
       "physical_acceptance": "NOT_EXECUTED",
       "provider_delivery": "NOT_APPLICABLE",
       "logs": [
         {
-          "path": "artifacts/functional-integration/night-identity-focused.log",
-          "sha256": "a686790739739c93c9f70b04238632dc647eef9c15d3f63b78878ba9cf9958a0",
-          "bytes": 2077
+          "path": "artifacts/functional-integration/night-plan-core-export-corrected.log",
+          "sha256": "109d1e62880f97f3093091fc0e59e47af966f9ff17e3c835e090395855deebcc",
+          "bytes": 1968
         },
         {
-          "path": "artifacts/functional-integration/night-tonight-subsystem.log",
-          "sha256": "a428f3825b0249a87fa4bd661f74dd6635e44b109303b92e21fd7528664b62be",
+          "path": "artifacts/functional-integration/night-plan-state-storage-compile.log",
+          "sha256": "edaa4a5c75f4ffa553d6bc102cbaba181e854ed05de1e78d40cbb8560dc1f177",
+          "bytes": 7239
+        },
+        {
+          "path": "artifacts/functional-integration/night-plan-subsystem-gate.log",
+          "sha256": "801a4ab342b7b7ccdb7f74da171ef8ad2ae960a5355d1f9c1170c0ab09829f11",
           "bytes": 8294
         },
         {
-          "path": "artifacts/functional-integration/night-tonight-backend.log",
-          "sha256": "30ce553624cafde91fad08c0e2078da77b0a56e51216691164eea6566562c7d0",
-          "bytes": 96
+          "path": "artifacts/functional-integration/night-plan-api34-storage.private.log",
+          "sha256": "5ccf9da44fff412146210f6fb7ae2b0dee7fd6bf7462d8c398614c14c07c7c37",
+          "bytes": 7195
         },
         {
-          "path": "artifacts/functional-integration/night-tonight-ar-api34.private.log",
-          "sha256": "9d8d310a6b9a087b03d91a07e7b1a2e73fd0fca0c4ccbcf46ec5869a038c62ae",
-          "bytes": 2135
+          "path": "artifacts/functional-integration/night-plan-ar-api34.private.log",
+          "sha256": "d933d0df24dc92f175fd24e2fa412534f85b605fa03bec1e5e535344affebd98",
+          "bytes": 2110
         },
         {
-          "path": "artifacts/functional-integration/night-tonight-en-api34.private.log",
-          "sha256": "08319be19a8c32d0e33a750f822a8a4fa4f71cca92076aff54b05289c2f03bcf",
-          "bytes": 2134
+          "path": "artifacts/functional-integration/night-plan-en-api34.private.log",
+          "sha256": "a7ac111e6575a0d01c8d2208c5b8c7447fdc0f325c8b8e749f4a27f3b8d17347",
+          "bytes": 2108
         }
       ],
       "apk_receipts": [
         {
           "path": "android/app/build/outputs/apk/debug/app-debug.apk",
-          "sha256": "d3f2caa6164331582373d4784a7b683a5822b4740a5610d44653c241b3f19094",
+          "sha256": "763289583b1174c6daed139cd0697bdcdcdac8a9911cd4d7165e356e56cc625c",
           "bytes": 25415917
         },
         {
           "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-          "sha256": "6a32179f3724366c4b1f1b90d08b6571af1667332a91a860344a9cd91aa85ad2",
+          "sha256": "ae9ed97e8e63491fcfd9e141a1201ec634d63a1e1bffbe908cf9764f4ec46139",
           "bytes": 2300210
         }
       ],
       "limits": [
-        "No new actual HTTP journey executed; current consumer schema and32 isolated backend assertions were checked.",
-        "Component tests do not prove authenticated navigation, actual lifecycle/time/date/timezone broadcasts, OS restart, travel, landscape/light theme or physical accessibility.",
-        "Native saved-city editing remains the separate08.6 integration; the dashboard consumes existing preferences and shows unavailable settings honestly.",
-        "Lint0 errors/66 warnings: prior64 plus2 new quantity-string plural candidates; no suppressions added.",
-        "Original public queued-mail wording and Admin-runner additions remain dirty and outside feature commits."
+        "No backend code changed or new backend/HTTP suite executed; earlier32 Night Prayer API assertions remain inherited, not relabeled.",
+        "Native real HTTP/OS clipboard/lifecycle/process/reboot/account-switch and physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys remain queued.",
+        "Only explicitly saved plans and recorded intents are durable; unsubmitted private forms/dialogs remain ViewModel state.",
+        "Lint0 errors/68 warnings, prior66 plus2 quantity-string plural candidates; no suppressions.",
+        "08.3 candidate source was reviewed statically; these native tests do not establish its missing reader behavior.",
+        "Original public queued-mail wording and Admin-runner suite additions remain outside commits."
       ]
     },
-    "integration_overrides": {},
-    "additional_main_evidence": {},
+    "integration_overrides": {
+      "08.3": "PARTIALLY_INTEGRATED"
+    },
+    "additional_main_evidence": {
+      "08.3": [
+        "NightVersePlan.kt",
+        "NightVersePlanRepository.kt",
+        "NightPlanScreen.kt"
+      ]
+    },
     "next_task": {
-      "id": "08.2",
-      "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
-      "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
+      "id": "08.3",
+      "action": "Implement an actual canonical bounded plan/session Quran reader with separate encrypted prayer positions and plan-specific recorded-range correlation. Do not infer this plan completion from unrelated older historical ranges or mutate global Quran/Khatmah positions. Preserve current Quran text/font/bismillah and existing history/recovery.",
+      "deferred": "Required real native HTTP/clipboard/OS/process and physical acceptance for08.1–08.2 and earlier Khatmah scopes remains batched; no task closure from focused component/storage tests."
     },
     "prior_checkpoints": [
       {
@@ -28044,6 +28903,106 @@
           "deferred": "07.7–07.9 native real HTTP/OS/physical acceptance is queued with the related device batch; no closure from scoped local/emulator tests."
         },
         "date": "2026-10-30"
+      },
+      {
+        "main_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+        "date": "2026-10-30",
+        "reviewed_tasks": [
+          "08.1"
+        ],
+        "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.",
+        "validation": {
+          "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+          "execution_date": "2026-10-30",
+          "provenance": "Scoped Night Prayer checkpoint:11 JVM,32 backend assertions,6 API34 UI executions (3 unique cases x2 languages). Earlier Khatmah66/335/29/6 and original167-case baseline remain separate pinned receipts; no full-project or physical acceptance is claimed.",
+          "jvm_cases": 11,
+          "jvm_classes": 2,
+          "junit_receipts": [
+            {
+              "name": "org.athar.app.NightIdentityTest",
+              "tests": 8,
+              "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
+              "sha256": "2e3d187fe26f744ae08e9bf612f24beda03d224550e928c8c5aee3950dd045d8",
+              "bytes": 1398
+            },
+            {
+              "name": "org.athar.app.NightRejectionTest",
+              "tests": 3,
+              "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
+              "sha256": "e1842b3b169555690ca9ce53f74bc50fe84ebc6199cfdf0572a55795bff7857a",
+              "bytes": 726
+            }
+          ],
+          "backend_suites": 1,
+          "backend_assertions": 32,
+          "backend_components": {
+            "night_prayer": 32
+          },
+          "actual_cookie_api_http_assertions": 0,
+          "debug_apk": "PASS",
+          "test_apk": "PASS",
+          "lint_errors": 0,
+          "lint_warnings": 66,
+          "resources_paired": 475,
+          "new_instrumentation_cases": 3,
+          "instrumentation_cases_executed": 6,
+          "instrumentation_result": "API34:3/3 Arabic RTL +3/3 English LTR; actual Compose fixture rendering, dark theme and1.5 font scale. Unreadable/no invented empty or metrics, absent settings/no zero counters, actual dated records/milestone/pending scroll.",
+          "physical_acceptance": "NOT_EXECUTED",
+          "provider_delivery": "NOT_APPLICABLE",
+          "logs": [
+            {
+              "path": "artifacts/functional-integration/night-identity-focused.log",
+              "sha256": "a686790739739c93c9f70b04238632dc647eef9c15d3f63b78878ba9cf9958a0",
+              "bytes": 2077
+            },
+            {
+              "path": "artifacts/functional-integration/night-tonight-subsystem.log",
+              "sha256": "a428f3825b0249a87fa4bd661f74dd6635e44b109303b92e21fd7528664b62be",
+              "bytes": 8294
+            },
+            {
+              "path": "artifacts/functional-integration/night-tonight-backend.log",
+              "sha256": "30ce553624cafde91fad08c0e2078da77b0a56e51216691164eea6566562c7d0",
+              "bytes": 96
+            },
+            {
+              "path": "artifacts/functional-integration/night-tonight-ar-api34.private.log",
+              "sha256": "9d8d310a6b9a087b03d91a07e7b1a2e73fd0fca0c4ccbcf46ec5869a038c62ae",
+              "bytes": 2135
+            },
+            {
+              "path": "artifacts/functional-integration/night-tonight-en-api34.private.log",
+              "sha256": "08319be19a8c32d0e33a750f822a8a4fa4f71cca92076aff54b05289c2f03bcf",
+              "bytes": 2134
+            }
+          ],
+          "apk_receipts": [
+            {
+              "path": "android/app/build/outputs/apk/debug/app-debug.apk",
+              "sha256": "d3f2caa6164331582373d4784a7b683a5822b4740a5610d44653c241b3f19094",
+              "bytes": 25415917
+            },
+            {
+              "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+              "sha256": "6a32179f3724366c4b1f1b90d08b6571af1667332a91a860344a9cd91aa85ad2",
+              "bytes": 2300210
+            }
+          ],
+          "limits": [
+            "No new actual HTTP journey executed; current consumer schema and32 isolated backend assertions were checked.",
+            "Component tests do not prove authenticated navigation, actual lifecycle/time/date/timezone broadcasts, OS restart, travel, landscape/light theme or physical accessibility.",
+            "Native saved-city editing remains the separate08.6 integration; the dashboard consumes existing preferences and shows unavailable settings honestly.",
+            "Lint0 errors/66 warnings: prior64 plus2 new quantity-string plural candidates; no suppressions added.",
+            "Original public queued-mail wording and Admin-runner additions remain dirty and outside feature commits."
+          ]
+        },
+        "integration_overrides": {},
+        "additional_main_evidence": {},
+        "next_task": {
+          "id": "08.2",
+          "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
+          "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
+        }
       }
     ]
   }

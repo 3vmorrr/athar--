@@ -1,101 +1,141 @@
 {
-  "main_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+  "main_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
   "date": "2026-10-30",
   "reviewed_tasks": [
-    "08.1"
+    "08.2"
   ],
-  "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.",
+  "summary": "08.2 is now IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL: current main has canonical target/range planning, owner/environment-bound encrypted frames, transactionally versioned save/clear, retained unreadable state, actor/deletion fences, validated export, private copy and separately confirmed atomic/idempotent Night recording.08.3 static review corrects its earlier implemented-candidate claim: it only displays a continuation label from historical ranges and lacks a bounded reader and independent prayer position. That scope remains PARTIALLY_IMPLEMENTED; the current plan IDs/receipts provide a reviewed foundation, not reader acceptance.",
   "validation": {
-    "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+    "source_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
     "execution_date": "2026-10-30",
-    "provenance": "Scoped Night Prayer checkpoint:11 JVM,32 backend assertions,6 API34 UI executions (3 unique cases x2 languages). Earlier Khatmah66/335/29/6 and original167-case baseline remain separate pinned receipts; no full-project or physical acceptance is claimed.",
-    "jvm_cases": 11,
-    "jvm_classes": 2,
+    "provenance": "Scoped native planner checkpoint:37 JVM across6 classes;10 API34 Room/Keystore/export cases and3 AR+3 EN UI executions (16 executions/13 unique cases). Earlier Night11/32/6, Khatmah66/335/29/6 and original167-case baseline remain separately pinned; counts are not summed across reruns.",
+    "jvm_cases": 37,
+    "jvm_classes": 6,
     "junit_receipts": [
+      {
+        "name": "org.athar.app.AccountExportTest",
+        "tests": 5,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+        "sha256": "8693866d1ef3d6fb232e57c671a5e7e52f658a5025161fca4f235ccb1a3dfa0e",
+        "bytes": 1005
+      },
+      {
+        "name": "org.athar.app.AccountExportWriterTest",
+        "tests": 4,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+        "sha256": "1a82f9a64e671b136497d4fd0758c510d0c269f056f6b1f467f949cbc157d482",
+        "bytes": 867
+      },
       {
         "name": "org.athar.app.NightIdentityTest",
         "tests": 8,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
-        "sha256": "2e3d187fe26f744ae08e9bf612f24beda03d224550e928c8c5aee3950dd045d8",
-        "bytes": 1398
+        "sha256": "032e222ffd506d8c5b4e9d221f2777234e1eadc3c3738af4221b8349d4ce6a7b",
+        "bytes": 1401
+      },
+      {
+        "name": "org.athar.app.NightPlanViewModelTest",
+        "tests": 9,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightPlanViewModelTest.xml",
+        "sha256": "0b2ee61a1c3dfaa2512c5c030c3c8c75f56fbfdb75cc1e61ac1a2d0a47ef5667",
+        "bytes": 1637
       },
       {
         "name": "org.athar.app.NightRejectionTest",
         "tests": 3,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
-        "sha256": "e1842b3b169555690ca9ce53f74bc50fe84ebc6199cfdf0572a55795bff7857a",
+        "sha256": "516c26c6f22fffd72b75a423feeff272854c1e5b34fbae64d4910795ba533bce",
         "bytes": 726
+      },
+      {
+        "name": "org.athar.app.NightVersePlanTest",
+        "tests": 8,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightVersePlanTest.xml",
+        "sha256": "3904580e627bf807dbd88e09e39c3fff07e7e7344ea0572ba23def9dbb03aff4",
+        "bytes": 1440
       }
     ],
-    "backend_suites": 1,
-    "backend_assertions": 32,
-    "backend_components": {
-      "night_prayer": 32
-    },
+    "backend_suites": 0,
+    "backend_assertions": 0,
+    "backend_components": {},
     "actual_cookie_api_http_assertions": 0,
     "debug_apk": "PASS",
     "test_apk": "PASS",
     "lint_errors": 0,
-    "lint_warnings": 66,
-    "resources_paired": 475,
-    "new_instrumentation_cases": 3,
-    "instrumentation_cases_executed": 6,
-    "instrumentation_result": "API34:3/3 Arabic RTL +3/3 English LTR; actual Compose fixture rendering, dark theme and1.5 font scale. Unreadable/no invented empty or metrics, absent settings/no zero counters, actual dated records/milestone/pending scroll.",
+    "lint_warnings": 68,
+    "resources_paired": 499,
+    "new_instrumentation_cases": 12,
+    "instrumentation_cases_executed": 16,
+    "instrumentation_result": "API34:9 new NightVersePlanStorageTest +1 extended AccountExportStorageTest PASS;3 Arabic RTL +3 English LTR NightPlanUiTest PASS, dark theme/1.5 font. Room/Keystore are real, login transport is deterministic; no actual native HTTP/OS/physical claim.",
     "physical_acceptance": "NOT_EXECUTED",
     "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/night-identity-focused.log",
-        "sha256": "a686790739739c93c9f70b04238632dc647eef9c15d3f63b78878ba9cf9958a0",
-        "bytes": 2077
+        "path": "artifacts/functional-integration/night-plan-core-export-corrected.log",
+        "sha256": "109d1e62880f97f3093091fc0e59e47af966f9ff17e3c835e090395855deebcc",
+        "bytes": 1968
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-subsystem.log",
-        "sha256": "a428f3825b0249a87fa4bd661f74dd6635e44b109303b92e21fd7528664b62be",
+        "path": "artifacts/functional-integration/night-plan-state-storage-compile.log",
+        "sha256": "edaa4a5c75f4ffa553d6bc102cbaba181e854ed05de1e78d40cbb8560dc1f177",
+        "bytes": 7239
+      },
+      {
+        "path": "artifacts/functional-integration/night-plan-subsystem-gate.log",
+        "sha256": "801a4ab342b7b7ccdb7f74da171ef8ad2ae960a5355d1f9c1170c0ab09829f11",
         "bytes": 8294
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-backend.log",
-        "sha256": "30ce553624cafde91fad08c0e2078da77b0a56e51216691164eea6566562c7d0",
-        "bytes": 96
+        "path": "artifacts/functional-integration/night-plan-api34-storage.private.log",
+        "sha256": "5ccf9da44fff412146210f6fb7ae2b0dee7fd6bf7462d8c398614c14c07c7c37",
+        "bytes": 7195
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-ar-api34.private.log",
-        "sha256": "9d8d310a6b9a087b03d91a07e7b1a2e73fd0fca0c4ccbcf46ec5869a038c62ae",
-        "bytes": 2135
+        "path": "artifacts/functional-integration/night-plan-ar-api34.private.log",
+        "sha256": "d933d0df24dc92f175fd24e2fa412534f85b605fa03bec1e5e535344affebd98",
+        "bytes": 2110
       },
       {
-        "path": "artifacts/functional-integration/night-tonight-en-api34.private.log",
-        "sha256": "08319be19a8c32d0e33a750f822a8a4fa4f71cca92076aff54b05289c2f03bcf",
-        "bytes": 2134
+        "path": "artifacts/functional-integration/night-plan-en-api34.private.log",
+        "sha256": "a7ac111e6575a0d01c8d2208c5b8c7447fdc0f325c8b8e749f4a27f3b8d17347",
+        "bytes": 2108
       }
     ],
     "apk_receipts": [
       {
         "path": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "sha256": "d3f2caa6164331582373d4784a7b683a5822b4740a5610d44653c241b3f19094",
+        "sha256": "763289583b1174c6daed139cd0697bdcdcdac8a9911cd4d7165e356e56cc625c",
         "bytes": 25415917
       },
       {
         "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-        "sha256": "6a32179f3724366c4b1f1b90d08b6571af1667332a91a860344a9cd91aa85ad2",
+        "sha256": "ae9ed97e8e63491fcfd9e141a1201ec634d63a1e1bffbe908cf9764f4ec46139",
         "bytes": 2300210
       }
     ],
     "limits": [
-      "No new actual HTTP journey executed; current consumer schema and32 isolated backend assertions were checked.",
-      "Component tests do not prove authenticated navigation, actual lifecycle/time/date/timezone broadcasts, OS restart, travel, landscape/light theme or physical accessibility.",
-      "Native saved-city editing remains the separate08.6 integration; the dashboard consumes existing preferences and shows unavailable settings honestly.",
-      "Lint0 errors/66 warnings: prior64 plus2 new quantity-string plural candidates; no suppressions added.",
-      "Original public queued-mail wording and Admin-runner additions remain dirty and outside feature commits."
+      "No backend code changed or new backend/HTTP suite executed; earlier32 Night Prayer API assertions remain inherited, not relabeled.",
+      "Native real HTTP/OS clipboard/lifecycle/process/reboot/account-switch and physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys remain queued.",
+      "Only explicitly saved plans and recorded intents are durable; unsubmitted private forms/dialogs remain ViewModel state.",
+      "Lint0 errors/68 warnings, prior66 plus2 quantity-string plural candidates; no suppressions.",
+      "08.3 candidate source was reviewed statically; these native tests do not establish its missing reader behavior.",
+      "Original public queued-mail wording and Admin-runner suite additions remain outside commits."
     ]
   },
-  "integration_overrides": {},
-  "additional_main_evidence": {},
+  "integration_overrides": {
+    "08.3": "PARTIALLY_INTEGRATED"
+  },
+  "additional_main_evidence": {
+    "08.3": [
+      "NightVersePlan.kt",
+      "NightVersePlanRepository.kt",
+      "NightPlanScreen.kt"
+    ]
+  },
   "next_task": {
-    "id": "08.2",
-    "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
-    "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
+    "id": "08.3",
+    "action": "Implement an actual canonical bounded plan/session Quran reader with separate encrypted prayer positions and plan-specific recorded-range correlation. Do not infer this plan completion from unrelated older historical ranges or mutate global Quran/Khatmah positions. Preserve current Quran text/font/bismillah and existing history/recovery.",
+    "deferred": "Required real native HTTP/clipboard/OS/process and physical acceptance for08.1–08.2 and earlier Khatmah scopes remains batched; no task closure from focused component/storage tests."
   },
   "prior_checkpoints": [
     {
@@ -227,6 +267,106 @@
         "deferred": "07.7–07.9 native real HTTP/OS/physical acceptance is queued with the related device batch; no closure from scoped local/emulator tests."
       },
       "date": "2026-10-30"
+    },
+    {
+      "main_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+      "date": "2026-10-30",
+      "reviewed_tasks": [
+        "08.1"
+      ],
+      "summary": "08.1 now has an integrated personalized Tonight dashboard with live sourced Maghrib-date identity, protected owned records, genuine milestones/recent history, unavailable/loading/retry states and current history/recovery navigation preserved. It is IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.7–07.9 remain integrated with their separately pinned Khatmah evidence; real native HTTP/OS/physical acceptance remains open. Follow-on08.2 source review found missing owner/environment binding, strict retained decoding and atomic generation-fenced saves in the parallel plan repository; its previous fully-implemented candidate classification is corrected to PARTIALLY_IMPLEMENTED. Main integration count does not regress.",
+      "validation": {
+        "source_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+        "execution_date": "2026-10-30",
+        "provenance": "Scoped Night Prayer checkpoint:11 JVM,32 backend assertions,6 API34 UI executions (3 unique cases x2 languages). Earlier Khatmah66/335/29/6 and original167-case baseline remain separate pinned receipts; no full-project or physical acceptance is claimed.",
+        "jvm_cases": 11,
+        "jvm_classes": 2,
+        "junit_receipts": [
+          {
+            "name": "org.athar.app.NightIdentityTest",
+            "tests": 8,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightIdentityTest.xml",
+            "sha256": "2e3d187fe26f744ae08e9bf612f24beda03d224550e928c8c5aee3950dd045d8",
+            "bytes": 1398
+          },
+          {
+            "name": "org.athar.app.NightRejectionTest",
+            "tests": 3,
+            "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.NightRejectionTest.xml",
+            "sha256": "e1842b3b169555690ca9ce53f74bc50fe84ebc6199cfdf0572a55795bff7857a",
+            "bytes": 726
+          }
+        ],
+        "backend_suites": 1,
+        "backend_assertions": 32,
+        "backend_components": {
+          "night_prayer": 32
+        },
+        "actual_cookie_api_http_assertions": 0,
+        "debug_apk": "PASS",
+        "test_apk": "PASS",
+        "lint_errors": 0,
+        "lint_warnings": 66,
+        "resources_paired": 475,
+        "new_instrumentation_cases": 3,
+        "instrumentation_cases_executed": 6,
+        "instrumentation_result": "API34:3/3 Arabic RTL +3/3 English LTR; actual Compose fixture rendering, dark theme and1.5 font scale. Unreadable/no invented empty or metrics, absent settings/no zero counters, actual dated records/milestone/pending scroll.",
+        "physical_acceptance": "NOT_EXECUTED",
+        "provider_delivery": "NOT_APPLICABLE",
+        "logs": [
+          {
+            "path": "artifacts/functional-integration/night-identity-focused.log",
+            "sha256": "a686790739739c93c9f70b04238632dc647eef9c15d3f63b78878ba9cf9958a0",
+            "bytes": 2077
+          },
+          {
+            "path": "artifacts/functional-integration/night-tonight-subsystem.log",
+            "sha256": "a428f3825b0249a87fa4bd661f74dd6635e44b109303b92e21fd7528664b62be",
+            "bytes": 8294
+          },
+          {
+            "path": "artifacts/functional-integration/night-tonight-backend.log",
+            "sha256": "30ce553624cafde91fad08c0e2078da77b0a56e51216691164eea6566562c7d0",
+            "bytes": 96
+          },
+          {
+            "path": "artifacts/functional-integration/night-tonight-ar-api34.private.log",
+            "sha256": "9d8d310a6b9a087b03d91a07e7b1a2e73fd0fca0c4ccbcf46ec5869a038c62ae",
+            "bytes": 2135
+          },
+          {
+            "path": "artifacts/functional-integration/night-tonight-en-api34.private.log",
+            "sha256": "08319be19a8c32d0e33a750f822a8a4fa4f71cca92076aff54b05289c2f03bcf",
+            "bytes": 2134
+          }
+        ],
+        "apk_receipts": [
+          {
+            "path": "android/app/build/outputs/apk/debug/app-debug.apk",
+            "sha256": "d3f2caa6164331582373d4784a7b683a5822b4740a5610d44653c241b3f19094",
+            "bytes": 25415917
+          },
+          {
+            "path": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+            "sha256": "6a32179f3724366c4b1f1b90d08b6571af1667332a91a860344a9cd91aa85ad2",
+            "bytes": 2300210
+          }
+        ],
+        "limits": [
+          "No new actual HTTP journey executed; current consumer schema and32 isolated backend assertions were checked.",
+          "Component tests do not prove authenticated navigation, actual lifecycle/time/date/timezone broadcasts, OS restart, travel, landscape/light theme or physical accessibility.",
+          "Native saved-city editing remains the separate08.6 integration; the dashboard consumes existing preferences and shows unavailable settings honestly.",
+          "Lint0 errors/66 warnings: prior64 plus2 new quantity-string plural candidates; no suppressions added.",
+          "Original public queued-mail wording and Admin-runner additions remain dirty and outside feature commits."
+        ]
+      },
+      "integration_overrides": {},
+      "additional_main_evidence": {},
+      "next_task": {
+        "id": "08.2",
+        "action": "Reconcile08.2 private range planning with an owner/environment-bound strict codec, atomic versioned save/clear under captured session/deletion fences, validated export and current Quran/rejection/recovery routes; the parallel candidate cannot be imported unchanged.",
+        "deferred": "08.1 actual native HTTP/OS/physical clock/travel acceptance and07.7–07.9 lifecycle acceptance remain queued; no closure from component/JVM/emulator gates."
+      }
     }
   ]
 }

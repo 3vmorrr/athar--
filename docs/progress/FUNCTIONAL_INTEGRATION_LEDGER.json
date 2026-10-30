@@ -4803,8 +4803,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
-          "git_blob": "ad41ead3d5edd8782fc1d90bd6c61586ad5b2402"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "3606080884c1c5ee8aa10772ec3d3de0f86352ea"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5429,8 +5429,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5440,9 +5440,9 @@
       "name": "Verse target and range workflow",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "97f26e53c4e8e4dad27423904a095553275d6bb9",
         "34121064da6edcb754a4a65405fa74c9aaa3eb76",
@@ -5586,27 +5586,45 @@
       "external_blockers": null,
       "remaining_acceptance": "Finish target/range planning, copy reference, save plan and explicit record-completed actions. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Reconcile owner/environment-bound strict payload decoding (Gson bypasses constructor validation and current decode checks only count), transactional versioned save/clear with captured generation and deletion fences, and validated local export. Keep Quran/Khatmah progress separate and preserve current rejection/conflict recovery; validate real Room tamper/account-switch/concurrent saves and end-to-end planning before integration."
+        "Execute actual native HTTP/clipboard/OS/process/account-switch and authorized physical RTL/LTR/light/dark/large-font/landscape/accessibility journeys. Unsubmitted forms are not durable saved plans; strict full acceptance stays open."
       ],
       "actual_audit_record": "08.2",
       "actual_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "12007984b40c4e3e016a744c78d327debf17ba9f"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "0affdec3cad2fc31ae46061a9ae965248a877c72"
         },
         {
-          "location": "parallel",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanViewModel.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "6b57ab70f5c5f3b031844112e5896071ef0ef7f6"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "e007beffedb46ab8ea05c8c70ad173f1d49510c5"
+        },
+        {
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "ba1573aa0e4a6ae46d6859d7736c9fd78d3b15e4"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "8c59585d947d7bfceb02e123ebafcf86458878a6"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "3606080884c1c5ee8aa10772ec3d3de0f86352ea"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5616,9 +5634,9 @@
       "name": "Exact prayer reading continuation",
       "work_package": "Work package 8: Night Prayer",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; implemented_unmerged",
+      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
       "parallel_candidate_commits": [
         "97f26e53c4e8e4dad27423904a095553275d6bb9",
         "34121064da6edcb754a4a65405fa74c9aaa3eb76",
@@ -5762,13 +5780,13 @@
       "external_blockers": null,
       "remaining_acceptance": "Link planned/session Quran range with separate Quran/Khatmah positions; resume without conflating progress. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "IMPLEMENTED",
-      "integration_status": "NOT_INTEGRATED",
+      "implementation_status": "PARTIALLY_IMPLEMENTED",
+      "integration_status": "PARTIALLY_INTEGRATED",
       "verification_status": "TESTS_FAILING",
       "closure_status": "PARTIAL",
       "production_code_remaining": true,
       "missing": [
-        "Port exact-range/continuation call path and prove no Quran/Khatmah progress conflation."
+        "Implement real exact bounded plan/session reading and separately encrypted prayer resume positions. Correlate recorded ranges to this plan/session rather than all historical ranges; prove actual Quran text/bismillah preservation, no Quran/Khatmah mutation, stale callback/clear/account-switch/process recovery and native reader/back navigation."
       ],
       "actual_audit_record": "08.3",
       "actual_evidence": [
@@ -5783,6 +5801,24 @@
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
           "ref": "7392e93b088990c3478cf32197781f831eb10f83",
           "git_blob": "ba1573aa0e4a6ae46d6859d7736c9fd78d3b15e4"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlan.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "e007beffedb46ab8ea05c8c70ad173f1d49510c5"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightVersePlanRepository.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "8c59585d947d7bfceb02e123ebafcf86458878a6"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPlanScreen.kt",
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "0affdec3cad2fc31ae46061a9ae965248a877c72"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -6041,8 +6077,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -11930,8 +11966,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/nightprayer/NightPrayerScreen.kt",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "8392e9f567c94a833f9759356df9dc2235d2ea70"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "fa79a138ce6d968b9a3f7be76747143709804485"
         },
         {
           "location": "main",
@@ -13020,8 +13056,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
-          "git_blob": "a939e85f9b86c2d9f08bf56d166d10c003f957d1"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c",
+          "git_blob": "f4a8c4b02c15e963f59934f38bc7f4ab72231e4f"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16104,12 +16140,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c"
+          "ref": "dfe74075f47392161b2fc576b508167f5ea1a49c"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18064,25 +18100,25 @@
   "actual_audit_metrics": {
     "total": 149,
     "fully_implemented_any_reviewed_branch": 113,
-    "fully_implemented_main": 75,
-    "integrated_active_application": 75,
+    "fully_implemented_main": 76,
+    "integrated_active_application": 76,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
     "fully_implemented_outstanding_verification": 94,
-    "acceptance_only_current_app": 56,
+    "acceptance_only_current_app": 57,
     "partially_implemented_needing_code": 21,
     "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
-    "implemented_only_unmerged": 38,
-    "any_implementation_or_scaffold_only_unmerged": 49,
-    "production_code_remaining_including_integration": 61,
+    "implemented_only_unmerged": 37,
+    "any_implementation_or_scaffold_only_unmerged": 48,
+    "production_code_remaining_including_integration": 60,
     "feature_code_remaining": 21,
-    "integration_code_remaining": 45,
+    "integration_code_remaining": 44,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "bef33f6e6ed7bbc330a971f2659f990ffc12cf0c",
+  "audit_target_sha": "dfe74075f47392161b2fc576b508167f5ea1a49c",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }
