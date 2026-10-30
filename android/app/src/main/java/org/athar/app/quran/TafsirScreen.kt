@@ -355,7 +355,9 @@ fun TafsirScreen(
             state.contentLoading && state.reading == null -> LoadingScreen()
 
             state.contentIssue != null && state.reading == null -> {
-                TafsirIssuePanel(state.contentIssue) { vm.loadContent(1) }
+                TafsirIssuePanel(requireNotNull(state.contentIssue)) {
+                    vm.loadContent(1)
+                }
             }
 
             state.reading != null -> {
