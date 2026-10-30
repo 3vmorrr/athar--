@@ -429,4 +429,8 @@
     <string name="night_timer_too_short">Run the timer for at least one second before finishing.</string>
     <string name="night_timer_unconfirmed">Saving could not be confirmed. Counting stopped at the last verified checkpoint; retry.</string>
     <string name="night_timer_check_clock">Check the device clock and date before retrying. The measured time and recording intent are preserved.</string>
+    <string name="night_pace_heading">Measured reading time</string>
+    <string name="night_pace_unavailable">Record a measured session to see an average. Verse counts alone do not provide timing.</string>
+    <string name="night_pace_samples">Measured sessions: %1$d · Measured verses: %2$d</string>
+    <string name="night_pace_notice">Read at a comfortable pace. This average describes only your recorded measurements.</string>
 </resources>

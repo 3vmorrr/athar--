@@ -197,4 +197,22 @@ class NightTimerStorageTest {
             assertEquals(finished, repo.read(lease)); assertTrue(f.db.dao().allNights(1).isEmpty())
         } finally { f.close() }
     }
+    @Test fun measuredInsightsUseLiveTimerHistoryAndRecomputeAfterEditsAndDeletion() = runBlocking {
+        val f = Fixture()
+        try {
+            f.login(1); val lease = f.session.lease(1); val finished = f.finished(); val timer = finished.timer!!
+            f.repository().record(lease, finished.version, timer, f.entry())
+            val nights = f.nights()
+            nights.save(JsonObject().apply {
+                addProperty("night_date", timer.date); addProperty("timezone", timer.zone); addProperty("boundary_source", "manual")
+                addProperty("entry_type", "manual"); addProperty("verse_count", 1000); addProperty("note", "fixture unmeasured")
+            }, UUID.randomUUID().toString(), 1)
+            suspend fun pace() = NightRules.measuredPace(nights.observe(1).first().mapNotNull { row -> row.first.measuredSeconds?.let { row.first.verseCount to it } })
+            assertEquals(1, pace()!!.sessions); assertEquals(10L, pace()!!.verses); assertEquals(0.5, pace()!!.secondsPerVerse, 0.0)
+            nights.save(timer.body(f.entry().apply { addProperty("verse_count", 20) }), timer.id, 1)
+            assertEquals(20L, pace()!!.verses); assertEquals(0.25, pace()!!.secondsPerVerse, 0.0)
+            nights.delete(timer.id, 1); assertNull(pace())
+            assertEquals(1, nights.observe(1).first().size)
+        } finally { f.close() }
+    }
 }

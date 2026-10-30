@@ -457,4 +457,8 @@
     <string name="night_timer_too_short">شغّل القياس لثانية واحدة على الأقل قبل إنهائه.</string>
     <string name="night_timer_unconfirmed">تعذر تأكيد الحفظ. توقف العد عند آخر نقطة مؤكدة؛ أعد المحاولة.</string>
     <string name="night_timer_check_clock">راجع ساعة الجهاز وتاريخه قبل إعادة المحاولة. لم يُغيّر الوقت المقاس أو نية التسجيل.</string>
+    <string name="night_pace_heading">الوقت المقاس للقراءة</string>
+    <string name="night_pace_unavailable">سجّل جلسة بوقت مقاس لعرض المتوسط. عدد الآيات وحده لا يوفر قياسًا للوقت.</string>
+    <string name="night_pace_samples">الجلسات المقاسة: %1$d · الآيات المقاسة: %2$d</string>
+    <string name="night_pace_notice">اقرأ بطمأنينة وبالوتيرة المناسبة لك. يصف هذا المتوسط القياسات التي سجلتها فقط.</string>
 </resources>
