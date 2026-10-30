@@ -511,7 +511,7 @@ private fun NotificationInboxDetail(
                         enabled = !busy,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(stringResource(R.string.delete))
+                        Text(stringResource(R.string.delete_action))
                     }
                 }
             }
