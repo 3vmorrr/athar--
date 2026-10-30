@@ -120,8 +120,9 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             FilterChip(section == "history", { section = "history" }, label = { Text(stringResource(R.string.night_history)) })
             FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
             FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
+            FilterChip(section == "preferences", { section = "preferences" }, label = { Text(stringResource(R.string.night_preferences_title)) })
         }
-        AtharPageTransition(section,Modifier.weight(1f)){when(it){"plan"->NightPlanScreen(graph, fontSize);"tonight"->NightTonightScreen(graph, history = { section = "history" }, tools = { section = "tools" });"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph, fontSize)}}
+        AtharPageTransition(section,Modifier.weight(1f)){when(it){"preferences"->NightPreferencesScreen(graph){section="tools"};"plan"->NightPlanScreen(graph, fontSize);"tonight"->NightTonightScreen(graph, history = { section = "history" }, tools = { section = "tools" });"tools"->NightToolsScreen(graph){section="preferences"};"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph, fontSize)}}
     }
 }
 

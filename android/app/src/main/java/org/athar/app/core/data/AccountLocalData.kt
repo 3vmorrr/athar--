@@ -57,6 +57,7 @@ internal class AccountLocalSnapshot(
                 org.athar.app.nightprayer.retainedNightPlans(owner, namespace, database.dao(), cipher).entrySet().forEach { add(it.key, it.value) }
                 add("device_night_reading_positions", org.athar.app.nightprayer.retainedNightReading(owner, namespace, database.dao(), cipher))
                 org.athar.app.nightprayer.retainedNightTimers(owner, namespace, database.dao(), cipher).entrySet().forEach { add(it.key, it.value) }
+                add("device_night_preferences", org.athar.app.nightprayer.retainedNightPreferences(owner, namespace, database.dao(), cipher))
                 org.athar.app.books.retainedBookData(namespace, owner, database.dao(), cipher, session).entrySet().forEach { add(it.key, it.value) }
             }
             session.requireLease(lease)

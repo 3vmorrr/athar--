@@ -73,13 +73,28 @@ private fun NightTonightOwned(graph: AppGraph, lease: SessionLease, history: () 
         loading = true
         try {
             graph.session.requireLease(lease)
-            val result = graph.content.get("night-prayer/preferences", expectedOwner = owner)
+            val result = graph.nightPreferences.load(lease)
             graph.session.requireLease(lease)
-            settings = NightSavedSettings.parse(result.data.asJsonObject.getAsJsonObject("values"))
-            offline = result.offline
+            settings = result.calculationSettings()
+            offline = result.offline || result.newerCachedRevision
         } catch (failure: CancellationException) { throw failure }
         catch (_: Exception) { settings = null; offline = false }
         finally { loading = false }
+    }
+    LaunchedEffect(graph, lease) {
+        var initial = true
+        graph.nightPreferences.observe(lease).collect { result ->
+            graph.session.requireLease(lease)
+            when (result) {
+                is ProtectedRead.Ready -> {
+                    settings = result.value?.account?.values?.calculationSettings()
+                    if (!initial && result.value != null) offline = false
+                    initial = false
+                }
+                ProtectedRead.Unreadable -> settings = null
+                ProtectedRead.Loading -> Unit
+            }
+        }
     }
     DisposableEffect(context, lifecycle, lease) {
         val receiver = object : BroadcastReceiver() {
