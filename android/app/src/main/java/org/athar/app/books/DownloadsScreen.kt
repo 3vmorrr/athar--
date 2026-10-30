@@ -18,6 +18,9 @@ import org.athar.app.core.ui.AtharIcons
 import org.athar.app.core.ui.AtharSectionHeader
 import org.athar.app.core.ui.AtharSpacing
 import org.athar.app.core.ui.QuietEmptyState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun DownloadsScreen(
@@ -27,13 +30,20 @@ fun DownloadsScreen(
     val context = LocalContext.current
     val owner = graph.session.userId ?: return
     var revision by remember(owner) { mutableIntStateOf(0) }
-    val downloads = remember(owner, revision) {
-        BookStorage.downloaded(context, owner)
+    val downloads by produceState<List<LocalBookDownload>>(
+        initialValue = emptyList(),
+        owner,
+        revision,
+    ) {
+        value = withContext(Dispatchers.IO) {
+            BookStorage.downloaded(context, owner)
+        }
     }
     val totalBytes = remember(downloads) {
         downloads.sumOf { it.sizeBytes }
     }
     var pendingRemoval by remember(owner) { mutableStateOf<LocalBookDownload?>(null) }
+    val scope = rememberCoroutineScope()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -202,9 +212,13 @@ fun DownloadsScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        BookStorage.remove(context, owner, book.bookId)
-                        revision++
-                        pendingRemoval = null
+                        scope.launch {
+                            withContext(Dispatchers.IO) {
+                                BookStorage.remove(context, owner, book.bookId)
+                            }
+                            revision++
+                            pendingRemoval = null
+                        }
                     },
                 ) {
                     Text(stringResource(R.string.delete_action))
