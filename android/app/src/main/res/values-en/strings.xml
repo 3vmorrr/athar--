@@ -347,4 +347,17 @@
     <string name="khatmah_keep_device">Use reviewed device plan</string>
     <string name="khatmah_use_server_confirm">Replace the retained local plan and queued changes with the latest cloud plan?</string>
     <string name="khatmah_keep_device_confirm">Apply the device plan with the fields shown here to the reviewed cloud plan? A finished plan may be restarted and its progress replaced.</string>
+    <string name="night_tonight">Tonight</string>
+    <string name="night_identity_unavailable">A safe night identity cannot be calculated yet. Save the city, time zone, and calculation method first; Maghrib and Fajr will not be guessed.</string>
+    <string name="night_identity_active">The night of %1$s is in progress</string>
+    <string name="night_identity_upcoming">The upcoming night is anchored to Maghrib on %1$s</string>
+    <string name="night_identity_boundaries">Maghrib %1$s · Fajr %2$s</string>
+    <string name="night_identity_last_third">Calculated last third begins at %1$s</string>
+    <string name="night_tonight_verses">Verses recorded tonight</string>
+    <string name="night_tonight_sessions">Sessions recorded tonight</string>
+    <string name="night_reached_milestone">Explicit records reached the %1$d-verse reference</string>
+    <string name="night_next_reference">Next display reference: %1$d verses. It is not an obligation or pressure streak.</string>
+    <string name="night_recent_log">Recently recorded nights</string>
+    <string name="night_recent_summary">%1$d verses · %2$d sessions</string>
+    <string name="night_identity_notice">Night dates follow the local Maghrib date when saved prayer settings are available. After midnight, records remain attached to that Maghrib date until Fajr.</string>
 </resources>

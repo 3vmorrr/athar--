@@ -375,4 +375,17 @@
     <string name="khatmah_keep_device">استخدام خطة الجهاز المراجعة</string>
     <string name="khatmah_use_server_confirm">هل تريد استبدال الخطة المحلية والتعديلات المنتظرة بأحدث خطة سحابية؟</string>
     <string name="khatmah_keep_device_confirm">هل تريد تطبيق خطة الجهاز بالحقول المعروضة على الخطة السحابية المراجعة؟ قد تُعاد بداية خطة منتهية ويُستبدل تقدمها.</string>
+    <string name="night_tonight">الليلة</string>
+    <string name="night_identity_unavailable">تعذر تحديد هوية الليلة بأمان. احفظ المدينة والمنطقة الزمنية وطريقة الحساب أولًا؛ لن نخمن وقت المغرب أو الفجر.</string>
+    <string name="night_identity_active">ليلة %1$s جارية الآن</string>
+    <string name="night_identity_upcoming">الليلة القادمة مرتبطة بمغرب %1$s</string>
+    <string name="night_identity_boundaries">المغرب %1$s · الفجر %2$s</string>
+    <string name="night_identity_last_third">يبدأ الثلث الأخير المحسوب عند %1$s</string>
+    <string name="night_tonight_verses">آيات مسجلة الليلة</string>
+    <string name="night_tonight_sessions">جلسات مسجلة الليلة</string>
+    <string name="night_reached_milestone">وصل السجل الصريح إلى مرجع %1$d آية</string>
+    <string name="night_next_reference">المرجع التالي في العرض: %1$d آية. ليس هدفًا إلزاميًا ولا سلسلة ضغط.</string>
+    <string name="night_recent_log">آخر الليالي المسجلة</string>
+    <string name="night_recent_summary">%1$d آية · %2$d جلسة</string>
+    <string name="night_identity_notice">تاريخ الليلة يتبع تاريخ المغرب المحلي عند توفر إعدادات صلاة محفوظة. بعد منتصف الليل يظل السجل تابعًا لنفس تاريخ المغرب حتى الفجر.</string>
 </resources>

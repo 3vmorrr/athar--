@@ -110,15 +110,16 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 }
 
 @Composable fun NightPrayerScreen(graph: AppGraph) {
-    var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("history") }
+    var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("tonight") }
     val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
     Column(Modifier.fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(section == "tonight", { section = "tonight" }, label = { Text(stringResource(R.string.night_tonight)) })
             FilterChip(section == "history", { section = "history" }, label = { Text(stringResource(R.string.night_history)) })
             FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
             FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
         }
-        AtharPageTransition(section,Modifier.weight(1f)){when(it){"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph)}}
+        AtharPageTransition(section,Modifier.weight(1f)){when(it){"tonight"->NightTonightScreen(graph, history = { section = "history" }, tools = { section = "tools" });"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph)}}
     }
 }
 
