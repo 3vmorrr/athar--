@@ -14,46 +14,52 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CustomRoutineReminderTest {
-    private fun rule(
+    private fun createRule(
         id: String = "0123456789abcdef",
         label: String = "Read",
         enabled: Boolean = true,
         time: String = "18:00",
-        days: Set<Int> = setOf(1, 3, 5),
-    ): CustomRoutineRule = CustomRoutineRule(
-        id = id,
-        label = label,
-        enabled = enabled,
-        time = time,
-        days = days,
-        timezone = "Africa/Cairo",
-        revision = 1,
-        activatedAtMillis = Instant
-            .parse("2026-10-26T00:00:00Z")
-            .toEpochMilli(),
-    )
+        activeDays: kotlin.collections.Set<Int> = setOf(1, 3, 5),
+    ): CustomRoutineRule {
+        return CustomRoutineRule(
+            id = id,
+            label = label,
+            enabled = enabled,
+            time = time,
+            days = activeDays,
+            timezone = "Africa/Cairo",
+            revision = 1,
+            activatedAtMillis = Instant
+                .parse("2026-10-26T00:00:00Z")
+                .toEpochMilli(),
+        )
+    }
 
     @Test
     fun validationIsBoundedAndExplicit() {
-        assertTrue(runCatching { rule(label = "").validated() }.isFailure)
+        assertTrue(runCatching { createRule(label = "").validated() }.isFailure)
         assertTrue(
             runCatching {
-                rule(label = "x".repeat(61)).validated()
+                createRule(label = "x".repeat(61)).validated()
             }.isFailure,
         )
-        assertTrue(runCatching { rule(days = emptySet()).validated() }.isFailure)
-        assertTrue(runCatching { rule(id = "bad").validated() }.isFailure)
-        assertTrue(rule().validated().enabled)
+        assertTrue(
+            runCatching {
+                createRule(activeDays = emptySet()).validated()
+            }.isFailure,
+        )
+        assertTrue(runCatching { createRule(id = "bad").validated() }.isFailure)
+        assertTrue(createRule().validated().enabled)
     }
 
     @Test
     fun multipleSchedulesRemainIndependent() {
-        val first = rule(
+        val first = createRule(
             id = "0123456789abcdef",
             label = "A",
             time = "10:00",
         )
-        val second = rule(
+        val second = createRule(
             id = "fedcba9876543210",
             label = "B",
             time = "20:00",
@@ -71,7 +77,7 @@ class CustomRoutineReminderTest {
 
     @Test
     fun editKeepsStableIdentityAndRestartRoundTrips() {
-        val original = rule()
+        val original = createRule()
         val edited = original.copy(
             label = "Edited",
             time = "21:30",
@@ -80,6 +86,7 @@ class CustomRoutineReminderTest {
         val state = CustomRoutineState(emptyList())
             .upsert(original)
             .upsert(edited)
+
         assertEquals(1, state.rules.size)
         assertEquals("Edited", state.rules.single().label)
 
@@ -91,7 +98,7 @@ class CustomRoutineReminderTest {
 
     @Test
     fun pauseAndDeleteAreDeterministic() {
-        val paused = rule(enabled = false)
+        val paused = createRule(enabled = false)
         assertFalse(paused.enabled)
         assertNull(
             CustomRoutinePlanner.next(
@@ -101,7 +108,7 @@ class CustomRoutineReminderTest {
             ),
         )
 
-        val state = CustomRoutineState(listOf(rule())).validated()
+        val state = CustomRoutineState(listOf(createRule())).validated()
         assertTrue(
             state.remove("0123456789abcdef").rules.isEmpty(),
         )
@@ -111,14 +118,15 @@ class CustomRoutineReminderTest {
     fun plannerUsesLocalDayAndExpiresBeforeAnotherDay() {
         val plan = requireNotNull(
             CustomRoutinePlanner.next(
-                rule(
+                createRule(
                     time = "18:00",
-                    days = setOf(1),
+                    activeDays = setOf(1),
                 ),
                 Instant.parse("2026-10-26T05:00:00Z"),
                 "Custom",
             ),
         )
+
         val zone = ZoneId.of("Africa/Cairo")
         val due = Instant
             .ofEpochMilli(plan.scheduledAtMillis)
@@ -128,10 +136,7 @@ class CustomRoutineReminderTest {
             .atZone(zone)
 
         assertEquals(18, due.hour)
-        assertEquals(
-            due.toLocalDate().plusDays(1),
-            expiry.toLocalDate(),
-        )
+        assertEquals(due.toLocalDate().plusDays(1), expiry.toLocalDate())
         assertEquals(0, expiry.hour)
     }
 }
