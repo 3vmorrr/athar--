@@ -1,15 +1,7 @@
 package org.athar.app.review
 
 import android.content.Context
-import androidx.work.BackoffPolicy
-import androidx.work.CoroutineWorker
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
-import androidx.work.getWorkInfosForUniqueWorkFlow
-import androidx.work.workDataOf
+import androidx.work.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -291,7 +283,7 @@ class ReviewModelDownloadWorker(
         currentCall = call
         call.execute().use { response ->
             if (!response.isSuccessful) throw ReviewModelHttpException(response.code)
-            val body = response.body
+            val body = response.body ?: throw IOException("empty_model_body")
             val declared = body.contentLength()
             if (declared >= 0 && declared != artifact.sizeBytes) {
                 throw ReviewModelIntegrityException()
@@ -332,11 +324,6 @@ class ReviewModelDownloadWorker(
         }
     }
 
-    override fun onStopped() {
-        currentCall?.cancel()
-        currentTemporary?.delete()
-        super.onStopped()
-    }
 
     companion object {
         const val ACTOR = "actor_id"
