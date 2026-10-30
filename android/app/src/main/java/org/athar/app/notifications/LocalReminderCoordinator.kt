@@ -163,8 +163,9 @@ class LocalReminderCoordinator(
             }
             NotificationPolicyDecision.Deliver -> {
                 session.requireVerifiedOwner(owner)
-                if (!poster.canPost()) return ReminderExecutionOutcome.PERMISSION_REQUIRED
-                poster.post(owner, spec)
+                if (!poster.post(owner, spec)) {
+                    return ReminderExecutionOutcome.PERMISSION_REQUIRED
+                }
                 ledger.recordDelivered(spec.idempotencyKey, spec.category, now, owner)
                 session.requireVerifiedOwner(owner)
                 store.remove(spec.id, owner)
@@ -188,7 +189,8 @@ private class LocalNotificationPoster(
         return manager.areNotificationsEnabled()
     }
 
-    fun post(owner: Long, spec: LocalReminderSpec) {
+    fun post(owner: Long, spec: LocalReminderSpec): Boolean {
+        if (!canPost()) return false
         val destination = NotificationDeepLinks.decode(spec.destinationToken)
             ?: throw IllegalArgumentException("Unsupported notification destination")
         val channel = NotificationChannels.channelIdForCategory(spec.category)
@@ -210,7 +212,12 @@ private class LocalNotificationPoster(
             .setOnlyAlertOnce(true)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .build()
-        manager.notify(ownerTag(owner), id, notification)
+        return try {
+            manager.notify(ownerTag(owner), id, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
     }
 
     fun cancelOwner(owner: Long) {
