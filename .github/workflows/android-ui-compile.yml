@@ -42,3 +42,6 @@ jobs:
 
       - name: Run debug unit tests
         run: ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Run Android lint
+        run: ./gradlew :app:lintDebug --no-daemon --stacktrace
