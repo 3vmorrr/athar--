@@ -47,7 +47,7 @@
 <string name="saved_items_total">Total: %1$d</string>
 <string name="saved_quran_reference">Surah %1$s · Ayah %2$s</string>
 <string name="bookmark_exact_open_pending">Exact ayah opening will be connected when the current Quran navigation work is integrated.</string>
-<string name="page_number">Page %1$d</string><string name="add_favorite">Add to favorites</string><string name="remove_favorite">Remove favorite</string><string name="download_book">Download book</string>
+<string name="page_number">Page %1$d</string><string name="add_favorite">Add to favorites</string><string name="remove_favorite">Remove favorite</string><string name="download_book">Download book</string><string name="downloads">Downloads</string><string name="offline_library">Offline library</string><string name="offline_library_intro">Books saved on this device remain available without an internet connection.</string><string name="downloaded_books_count">%1$d saved books</string><string name="downloaded_book_id">Book %1$d</string><string name="local_storage_used">Storage used: %1$s</string><string name="local_copy_only">Removing a copy here deletes only the local file. It does not change the book or your account favorites.</string><string name="remove_local_copy">Remove local copy</string><string name="no_downloaded_books">No books are downloaded on this device.</string>
 <string name="book_download_allowed">Download permitted by the recorded rights basis</string>
 <string name="book_download_unavailable">Download is not available for this book</string>
 <string name="book_metadata">Book details</string>
