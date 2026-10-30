@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -53,26 +54,72 @@ fun BookDetailScreen(
                 contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
                 verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
             ) {
-                item(key = "book-hero", contentType = "hero") {
-                    AtharImmersiveHero(
-                        presentation = AtharHeroPresentation(
-                            artwork = AtharHeroArtwork.Books,
-                            eyebrow = stringResource(R.string.books),
-                            title = item.text("title"),
-                            supportingText = item.text("author").takeIf { it.isNotBlank() },
-                            statusText = if (canDownload) {
-                                stringResource(R.string.book_download_allowed)
-                            } else {
-                                stringResource(R.string.book_download_unavailable)
-                            },
-                            statusTone = if (canDownload) {
-                                AtharHeroStatusTone.Neutral
-                            } else {
-                                AtharHeroStatusTone.Warning
-                            },
+                item(key = "book-intro", contentType = "intro") {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = AtharSpacing.Lg,
+                                end = AtharSpacing.Lg,
+                                top = AtharSpacing.Md,
+                            ),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        border = BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
                         ),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    ) {
+                        Column(
+                            Modifier.padding(AtharSpacing.Xl),
+                            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        ) {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(52.dp),
+                                    shape = MaterialTheme.shapes.medium,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                ) {
+                                    Icon(
+                                        AtharIcons.MenuBook,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(AtharSpacing.Md),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                }
+                                Column(
+                                    Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                                ) {
+                                    Text(
+                                        item.text("title"),
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                    item.text("author").takeIf { it.isNotBlank() }?.let {
+                                        Text(
+                                            it,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
+                            }
+                            AtharStatusPill(
+                                text = stringResource(
+                                    if (canDownload) {
+                                        R.string.book_download_allowed
+                                    } else {
+                                        R.string.book_download_unavailable
+                                    },
+                                ),
+                                emphasized = canDownload,
+                            )
+                        }
+                    }
                 }
 
                 item(key = "book-metadata", contentType = "metadata") {
