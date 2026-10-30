@@ -315,7 +315,7 @@ private fun HomeQuickActions(
     navigate: (String) -> Unit,
     open: (String) -> Unit,
 ) {
-    AtharSectionHeader(stringResource(R.string.quick_actions))
+    AtharSectionHeader(stringResource(R.string.home_quick_actions_title))
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val twoColumns = maxWidth >= 360.dp
         if (twoColumns) {
@@ -327,6 +327,7 @@ private fun HomeQuickActions(
                     AtharQuickAction(
                         icon = AtharIcons.MenuBook,
                         label = stringResource(R.string.quran),
+                        supportingText = stringResource(R.string.home_quran_action_body),
                         onClick = { navigate("quran") },
                         modifier = Modifier.weight(1f),
                         emphasized = true,
@@ -334,6 +335,7 @@ private fun HomeQuickActions(
                     AtharQuickAction(
                         icon = AtharIcons.NightsStay,
                         label = stringResource(R.string.night_prayer),
+                        supportingText = stringResource(R.string.home_night_action_body),
                         onClick = { open("night-prayer") },
                         modifier = Modifier.weight(1f),
                     )
@@ -345,12 +347,14 @@ private fun HomeQuickActions(
                     AtharQuickAction(
                         icon = AtharIcons.Spa,
                         label = stringResource(R.string.adhkar),
+                        supportingText = stringResource(R.string.home_adhkar_action_body),
                         onClick = { navigate("adhkar") },
                         modifier = Modifier.weight(1f),
                     )
                     AtharQuickAction(
                         icon = AtharIcons.School,
                         label = stringResource(R.string.knowledge),
+                        supportingText = stringResource(R.string.home_knowledge_action_body),
                         onClick = { navigate("knowledge") },
                         modifier = Modifier.weight(1f),
                     )
