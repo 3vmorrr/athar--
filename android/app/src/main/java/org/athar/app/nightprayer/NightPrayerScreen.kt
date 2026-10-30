@@ -213,9 +213,15 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
 }
 
 @Composable internal fun NightEntryDialog(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted:Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
+    NightEntryFields(graph, editing, busy, conflicted, null, dismiss, save)
+}
+@Composable internal fun NightMeasuredEntryDialog(graph: AppGraph, timer: NightMeasuredTimer, busy: Boolean, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
+    NightEntryFields(graph, null, busy, false, timer, dismiss, save)
+}
+@Composable private fun NightEntryFields(graph: AppGraph, editing: Pair<LocalNightSession, JsonObject>?, busy: Boolean, conflicted: Boolean, timer: NightMeasuredTimer?, dismiss: () -> Unit, save: (JsonObject) -> Unit) {
     val initial = editing?.second
-    var date by remember { mutableStateOf(initial?.text("night_date") ?: LocalDate.now().toString()) }
-    var zone by remember { mutableStateOf(initial?.text("timezone") ?: NightRules.serverTimezone(ZoneId.systemDefault())) }
+    var date by remember { mutableStateOf(timer?.date ?: initial?.text("night_date") ?: LocalDate.now().toString()) }
+    var zone by remember { mutableStateOf(timer?.zone ?: initial?.text("timezone") ?: NightRules.serverTimezone(ZoneId.systemDefault())) }
     var range by remember { mutableStateOf(initial?.text("entry_type") == "range") }
     var count by remember { mutableStateOf(initial?.text("verse_count").orEmpty()) }
     var startSurah by remember { mutableStateOf("1") }; var startAyah by remember { mutableStateOf("1") }
@@ -228,11 +234,17 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
         val start = index.position(initial["start_index"].asInt); val end = index.position(initial["end_index"].asInt)
         startSurah = "${start.surah}"; startAyah = "${start.ayah}"; endSurah = "${end.surah}"; endAyah = "${end.ayah}"
     } }
-    AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(if (editing == null) R.string.night_add else R.string.edit)) }, text = {
+    AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(if (timer != null) R.string.night_timer_record else if (editing == null) R.string.night_add else R.string.edit)) }, text = {
         LazyColumn(Modifier.testTag("night-entry-fields"),verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if(conflicted)item{Text(stringResource(R.string.night_edit_conflict),color=MaterialTheme.colorScheme.error)}
-            item { Text(stringResource(R.string.night_date_explanation)); DateField(date, { date = it }, stringResource(R.string.night_date), latest = LocalDate.now()) }
-            item { OutlinedTextField(zone, { zone = it.take(80) }, label = { Text(stringResource(R.string.timezone)) }, singleLine = true) }
+            if (timer == null) {
+                item { Text(stringResource(R.string.night_date_explanation)); DateField(date, { date = it }, stringResource(R.string.night_date), latest = LocalDate.now()) }
+                item { OutlinedTextField(zone, { zone = it.take(80) }, label = { Text(stringResource(R.string.timezone)) }, singleLine = true) }
+            } else item {
+                Text(stringResource(R.string.night_timer_record_notice))
+                Text("${timer.date} · ${timer.zone}")
+                Text(stringResource(R.string.night_timer_measured_seconds, timer.millis / 1000))
+            }
             item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(!range, { range = false }, label = { Text(stringResource(R.string.night_manual_count)) }); FilterChip(range, { range = true }, label = { Text(stringResource(R.string.night_range)) }) } }
             if (range) {
                 item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { NumberField(startSurah, { startSurah = it }, stringResource(R.string.start_surah), Modifier.weight(1f)); NumberField(startAyah, { startAyah = it }, stringResource(R.string.start_ayah), Modifier.weight(1f)) } }

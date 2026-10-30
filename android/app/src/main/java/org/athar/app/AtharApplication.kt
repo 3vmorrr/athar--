@@ -36,6 +36,7 @@ class AppGraph(application: Application, val apiBaseUrl: String = BuildConfig.AP
     val nightPrayer = org.athar.app.nightprayer.NightPrayerRepository(database, session, cipher,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.NIGHT_PRAYER)})
     internal val nightPlans = org.athar.app.nightprayer.NightVersePlanRepository(partition, database, cipher, session, nightPrayer, index = { quran.data().index })
     internal val nightReading = org.athar.app.nightprayer.NightReadingRepository(partition, database, cipher, session, nightPrayer)
+    internal val nightTimer = org.athar.app.nightprayer.NightTimerRepository(partition, database, cipher, session, nightPrayer)
     val counters = CounterRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.COUNTERS)})
     val lessons = org.athar.app.learning.LessonRepository(database.dao(), cipher, session,requestSync={requestSync(it,org.athar.app.core.sync.SyncModule.LESSONS)})
     internal val khatmah = org.athar.app.khatmah.KhatmahRepository(partition, database, cipher, session, requestSync = { requestSync(it, org.athar.app.core.sync.SyncModule.KHATMAH) })

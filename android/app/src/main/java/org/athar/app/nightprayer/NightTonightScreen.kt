@@ -56,6 +56,8 @@ internal fun NightTonightScreen(graph: AppGraph, history: () -> Unit, tools: () 
 @Composable
 private fun NightTonightOwned(graph: AppGraph, lease: SessionLease, history: () -> Unit, tools: () -> Unit) {
     val owner = lease.owner
+    val timer = nightTimerViewModel(graph, lease)
+    val timerState by timer.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     var retry by remember(lease) { mutableIntStateOf(0) }
@@ -97,7 +99,14 @@ private fun NightTonightOwned(graph: AppGraph, lease: SessionLease, history: () 
     }
     // Captured generations prevent an old same-owner screen from borrowing a new login.
     if (runCatching { graph.session.requireLease(lease) }.isFailure) return
-    NightTonightContent(identity, rows, loading, offline, { retry++ }, history, tools)
+    NightTonightContent(identity, rows, loading, offline, { retry++ }, history, tools, timerContent = {
+        val selected = timerState.frame?.timer
+        val resumeAllowed = selected != null && now >= Instant.parse(selected.activeAt) && now < Instant.parse(selected.fajr)
+        NightTimerCardContent(timerState, identity, settings?.method, resumeAllowed) { event ->
+            if (runCatching { graph.session.requireLease(lease) }.isSuccess) timer.handle(event) else timer.clearPrivate()
+        }
+    })
+    NightTimerRecordingDialog(graph, timerState, timer)
 }
 
 /** Plain content keeps clock, preferences, Room and actor wiring outside rendering. */
@@ -105,11 +114,15 @@ private fun NightTonightOwned(graph: AppGraph, lease: SessionLease, history: () 
 internal fun NightTonightContent(
     identity: NightIdentity?, records: ProtectedRead<List<Pair<LocalNightSession, JsonObject>>>,
     settingsLoading: Boolean, offline: Boolean, retry: () -> Unit, history: () -> Unit, tools: () -> Unit,
+    timerContent: (@Composable () -> Unit)? = null,
 ) {
     if (records == ProtectedRead.Unreadable) {
-        Box(Modifier.padding(AtharSpacing.Xl)) { MessagePanel(stringResource(R.string.local_data_unreadable), true) {
-            TextButton(onClick = retry) { Text(stringResource(R.string.retry)) }
-        } }; return
+        LazyColumn(Modifier.fillMaxSize().testTag("night-tonight"), contentPadding = PaddingValues(AtharSpacing.Xl), verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg)) {
+            item(key = "unreadable") { MessagePanel(stringResource(R.string.local_data_unreadable), true) {
+                TextButton(onClick = retry) { Text(stringResource(R.string.retry)) }
+            } }
+            if (timerContent != null) item(key = "timer", contentType = "timer") { timerContent() }
+        }; return
     }
     val rows = (records as? ProtectedRead.Ready)?.value?.map { it.first }.orEmpty()
     val recent = remember(rows) { rows.groupBy { it.nightDate }.toSortedMap(reverseOrder()).entries.take(5) }
@@ -152,6 +165,7 @@ internal fun NightTonightContent(
             }
         }
         if (rows.any { it.dirty }) item(key = "pending") { AtharStatusPill(stringResource(R.string.night_pending), emphasized = true) }
+        if (timerContent != null) item(key = "timer", contentType = "timer") { timerContent() }
         item(key = "recent-heading", contentType = "heading") { AtharSectionHeader(stringResource(R.string.night_recent_log)) }
         if (records is ProtectedRead.Ready && recent.isEmpty()) item(key = "empty") { QuietEmptyState(stringResource(R.string.night_empty)) }
         items(recent, key = { it.key }, contentType = { "night" }) { (date, sessions) ->
