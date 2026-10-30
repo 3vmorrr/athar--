@@ -18,11 +18,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.CancellationException
 import com.google.gson.JsonElement
 import org.athar.app.AppGraph
 import org.athar.app.R
 import org.athar.app.auth.AuthState
+import org.athar.app.core.data.ProtectedRead
+import org.athar.app.core.data.protectedReads
 import org.athar.app.learning.UpcomingHomeSection
 
 @Composable
@@ -44,22 +48,34 @@ fun PremiumHomeScreen(
                 contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
             ) {
                 item(key = "home-hero", contentType = "hero") {
-                    AtharImmersiveHero(
-                        presentation = AtharHeroPresentation(
-                            artwork = AtharHeroArtwork.Home,
-                            eyebrow = stringResource(R.string.your_journey),
-                            title = stringResource(
-                                R.string.hello_name,
-                                auth.user.displayName ?: auth.user.username.orEmpty(),
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = AtharSpacing.Lg,
+                                end = AtharSpacing.Lg,
+                                top = AtharSpacing.Md,
                             ),
-                            supportingText = stringResource(R.string.home_invitation),
-                            primaryActionLabel = stringResource(R.string.read),
-                            secondaryActionLabel = stringResource(R.string.night_prayer),
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        onPrimaryAction = { navigate("quran") },
-                        onSecondaryAction = { open("night-prayer") },
-                    )
+                    ) {
+                        AtharImmersiveHero(
+                            presentation = AtharHeroPresentation(
+                                artwork = AtharHeroArtwork.Home,
+                                eyebrow = stringResource(R.string.your_journey),
+                                title = stringResource(
+                                    R.string.hello_name,
+                                    auth.user.displayName ?: auth.user.username.orEmpty(),
+                                ),
+                                supportingText = stringResource(R.string.home_invitation),
+                                primaryActionLabel = stringResource(R.string.read),
+                                secondaryActionLabel = stringResource(R.string.night_prayer),
+                                transitionKey = "home:${auth.user.id}",
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onPrimaryAction = { navigate("quran") },
+                            onSecondaryAction = { open("night-prayer") },
+                        )
+                    }
                 }
 
                 item(key = "home-layer", contentType = "layered-content") {
@@ -67,6 +83,8 @@ fun PremiumHomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         overlap = 24.dp,
                     ) {
+                        HomeReadingContinuation(graph = graph, open = open)
+
                         HomeQuickActions(navigate = navigate, open = open)
 
                         UpcomingHomeSection(graph, open)
@@ -128,6 +146,171 @@ fun PremiumHomeScreen(
 }
 
 @Composable
+private fun HomeReadingContinuation(
+    graph: AppGraph,
+    open: (String) -> Unit,
+) {
+    val owner = graph.session.userId ?: return
+    val readingFlow = remember(owner) {
+        graph.reading.observe(owner).protectedReads()
+    }
+    val read by readingFlow.collectAsStateWithLifecycle(
+        initialValue = ProtectedRead.Loading,
+    )
+
+    LaunchedEffect(owner) {
+        try {
+            graph.reading.refresh(owner)
+        } catch (failure: CancellationException) {
+            throw failure
+        } catch (_: Exception) {
+            // The encrypted local marker remains the source of truth while offline.
+        }
+    }
+
+    when (val current = read) {
+        ProtectedRead.Loading -> Unit
+        ProtectedRead.Unreadable -> {
+            MessagePanel(
+                message = stringResource(R.string.local_data_unreadable),
+                error = true,
+            )
+        }
+        is ProtectedRead.Ready -> {
+            val position = current.value ?: return
+            var surahName by remember(position.surah) {
+                mutableStateOf<String?>(null)
+            }
+            var ayahPreview by remember(position.surah, position.ayah) {
+                mutableStateOf<String?>(null)
+            }
+
+            LaunchedEffect(position.surah, position.ayah) {
+                try {
+                    val data = graph.quran.data()
+                    surahName = data.index.surahs
+                        .getOrNull(position.surah - 1)
+                        ?.name
+                    ayahPreview = data.surah(position.surah)
+                        .getOrNull(position.ayah - 1)
+                        ?.text
+                } catch (failure: CancellationException) {
+                    throw failure
+                } catch (_: Exception) {
+                    // The continuation control still works from the canonical numeric reference.
+                }
+            }
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
+                Box(Modifier.fillMaxWidth()) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .align(Alignment.TopCenter),
+                    )
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(AtharSpacing.Xl)
+                            .padding(top = AtharSpacing.Xs),
+                        verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Surface(
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            ) {
+                                Icon(
+                                    AtharIcons.MenuBook,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .padding(AtharSpacing.Sm)
+                                        .size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.resume_reading),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                )
+                                Text(
+                                    stringResource(
+                                        R.string.reading_position_label,
+                                        surahName ?: position.surah.toString(),
+                                        position.ayah,
+                                    ),
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                            }
+                            when {
+                                position.conflict -> AtharStatusPill(
+                                    text = stringResource(R.string.reading_conflict),
+                                    emphasized = true,
+                                )
+                                position.pending -> AtharStatusPill(
+                                    text = stringResource(R.string.reading_pending),
+                                )
+                            }
+                        }
+
+                        ayahPreview?.takeIf { it.isNotBlank() }?.let { ayah ->
+                            Surface(
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            ) {
+                                Text(
+                                    text = ayah,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(AtharSpacing.Lg),
+                                    fontFamily = QuranFont,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = {
+                                open("quran/${position.surah}/${position.ayah}")
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp),
+                        ) {
+                            Icon(
+                                AtharIcons.MenuBook,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+                            Spacer(Modifier.width(AtharSpacing.Sm))
+                            Text(stringResource(R.string.resume_reading))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
 private fun HomeQuickActions(
     navigate: (String) -> Unit,
     open: (String) -> Unit,
@@ -149,9 +332,9 @@ private fun HomeQuickActions(
                         emphasized = true,
                     )
                     AtharQuickAction(
-                        icon = AtharIcons.School,
-                        label = stringResource(R.string.knowledge),
-                        onClick = { navigate("knowledge") },
+                        icon = AtharIcons.NightsStay,
+                        label = stringResource(R.string.night_prayer),
+                        onClick = { open("night-prayer") },
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -166,9 +349,9 @@ private fun HomeQuickActions(
                         modifier = Modifier.weight(1f),
                     )
                     AtharQuickAction(
-                        icon = AtharIcons.NightsStay,
-                        label = stringResource(R.string.night_prayer),
-                        onClick = { open("night-prayer") },
+                        icon = AtharIcons.School,
+                        label = stringResource(R.string.knowledge),
+                        onClick = { navigate("knowledge") },
                         modifier = Modifier.weight(1f),
                     )
                 }
