@@ -365,6 +365,7 @@ private fun HomeQuickActions(
                 AtharQuickAction(
                     icon = AtharIcons.MenuBook,
                     label = stringResource(R.string.quran),
+                    supportingText = stringResource(R.string.home_quran_action_body),
                     onClick = { navigate("quran") },
                     modifier = Modifier.fillMaxWidth(),
                     emphasized = true,
@@ -372,18 +373,21 @@ private fun HomeQuickActions(
                 AtharQuickAction(
                     icon = AtharIcons.School,
                     label = stringResource(R.string.knowledge),
+                    supportingText = stringResource(R.string.home_knowledge_action_body),
                     onClick = { navigate("knowledge") },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AtharQuickAction(
                     icon = AtharIcons.Spa,
                     label = stringResource(R.string.adhkar),
+                    supportingText = stringResource(R.string.home_adhkar_action_body),
                     onClick = { navigate("adhkar") },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AtharQuickAction(
                     icon = AtharIcons.NightsStay,
                     label = stringResource(R.string.night_prayer),
+                    supportingText = stringResource(R.string.home_night_action_body),
                     onClick = { open("night-prayer") },
                     modifier = Modifier.fillMaxWidth(),
                 )
