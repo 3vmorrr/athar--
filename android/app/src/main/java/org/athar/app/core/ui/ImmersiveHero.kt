@@ -186,6 +186,7 @@ fun AtharImmersiveHero(
     presentation: AtharHeroPresentation,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+    minimumHeight: Dp? = null,
     collapseFraction: Float = 0f,
     reduceMotion: Boolean = false,
     onPrimaryAction: (() -> Unit)? = null,
@@ -273,7 +274,7 @@ fun AtharImmersiveHero(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = layout.minimumHeightDp.dp)
+                    .heightIn(min = minimumHeight ?: layout.minimumHeightDp.dp)
                     .padding(
                         horizontal = horizontalPadding,
                         vertical = verticalPadding,
