@@ -1,95 +1,130 @@
 {
-  "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+  "main_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
   "reviewed_tasks": [
     "07.7",
     "07.8",
     "07.9"
   ],
-  "summary": "Functional integration after original audit:07.7/07.8 now have canonical inclusive UTC workload/date validation, revisioned shared web/API writes, native owner-leased editing and deliberate lifecycle actions. Both are IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.9 has server CAS/replay and retained-draft foundations only; durable offline intent/conflicts are still missing.",
+  "summary": "07.7–07.9 are now IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL. The current editor uses durable encrypted owned intents, ordered lifecycle synchronization, captured session generations, semantic acknowledgments, additive owner/plan fingerprints, explicit reviewed cloud/device recovery, retained rejection/unreadable bytes, and validated export/deletion. Full native HTTP/OS/physical acceptance remains open.",
   "validation": {
-    "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-    "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-    "jvm_cases": 8,
-    "jvm_classes": 2,
+    "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+    "execution_date": "2026-10-29",
+    "review_date": "2026-10-30",
+    "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+    "jvm_cases": 66,
+    "jvm_classes": 7,
     "junit_receipts": [
+      {
+        "name": "org.athar.app.AccountExportTest",
+        "tests": 5,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+        "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+        "bytes": 1006
+      },
+      {
+        "name": "org.athar.app.AccountExportWriterTest",
+        "tests": 4,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+        "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+        "bytes": 867
+      },
       {
         "name": "org.athar.app.KhatmahContractTest",
         "tests": 3,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-        "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+        "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
         "bytes": 735
       },
       {
+        "name": "org.athar.app.KhatmahJournalTest",
+        "tests": 10,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+        "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+        "bytes": 1682
+      },
+      {
         "name": "org.athar.app.KhatmahViewModelTest",
-        "tests": 5,
+        "tests": 8,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-        "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-        "bytes": 990
+        "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+        "bytes": 1415
+      },
+      {
+        "name": "org.athar.app.OwnedSyncRunnerTest",
+        "tests": 9,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+        "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+        "bytes": 1562
+      },
+      {
+        "name": "org.athar.app.SessionRepositoryTest",
+        "tests": 27,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+        "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+        "bytes": 4132
       }
     ],
     "backend_suites": 5,
-    "backend_assertions": 323,
+    "backend_assertions": 335,
     "backend_components": {
-      "khatmah": 84,
+      "khatmah": 96,
       "catalog_progress": 103,
       "account_export": 33,
       "account_deletion": 33,
       "recovery": 70
     },
-    "actual_cookie_api_http_assertions": 23,
+    "actual_cookie_api_http_assertions": 29,
     "debug_apk": "PASS",
     "test_apk": "PASS",
     "lint_errors": 0,
-    "lint_warnings": 62,
-    "resources_paired": 451,
-    "new_instrumentation_cases": 0,
+    "lint_warnings": 64,
+    "resources_paired": 462,
+    "new_instrumentation_cases": 5,
+    "instrumentation_cases_executed": 6,
+    "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
     "physical_acceptance": "NOT_EXECUTED",
     "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-        "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-        "bytes": 5326
+        "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+        "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+        "bytes": 8448
       },
       {
-        "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-        "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-        "bytes": 153
+        "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+        "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+        "bytes": 4251
       },
       {
-        "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-        "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-        "bytes": 234
+        "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+        "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+        "bytes": 434
       },
       {
-        "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-        "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-        "bytes": 426
+        "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+        "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+        "bytes": 226
       },
       {
-        "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-        "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+        "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+        "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
         "bytes": 472
       }
     ],
     "limits": [
-      "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-      "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-      "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+      "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+      "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+      "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+      "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+      "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
     ]
   },
-  "integration_overrides": {
-    "07.9": "PARTIALLY_INTEGRATED"
-  },
-  "additional_main_evidence": {
-    "07.9": [
-      "KhatmahViewModel.kt",
-      "backend/src/Progress/Khatmah.php"
-    ]
-  },
+  "integration_overrides": {},
+  "additional_main_evidence": {},
   "next_task": {
-    "id": "07.9",
-    "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
-    "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
-  }
+    "id": "08.1",
+    "action": "Reconcile the Night Prayer tonight route with current protected ownership; refresh sourced night identity across Maghrib/Fajr, lifecycle return and clock/timezone changes before porting dependent08.x screens.",
+    "deferred": "07.7–07.9 native real HTTP/OS/physical acceptance is queued with the related device batch; no closure from scoped local/emulator tests."
+  },
+  "date": "2026-10-30"
 }

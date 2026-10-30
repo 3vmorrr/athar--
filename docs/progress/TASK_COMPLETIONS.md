@@ -1,7 +1,7 @@
 # Task completion receipts
 
 <!-- actual-implementation-audit:start -->
-> **Current authority —2026-10-29:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 112 tasks have implemented source (73 in main, 39 only unmerged); 19 are accepted/closed, 54 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
+> **Current authority —2026-10-30:** [149-task actual source audit](ACTUAL_IMPLEMENTATION_AUDIT.md). 113 tasks have implemented source (74 in main, 39 only unmerged); 19 are accepted/closed, 55 need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.
 
 <!-- actual-implementation-audit:end -->
 
@@ -9,6 +9,7 @@ Each report follows implementation → tests/device → docs → review → comm
 
 | Task | Implementation commit | Verification |
 |---|---|---|
+|07.9 durable Khatmah integration (acceptance pending)|4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6|Normal push/exact remote verified2026-10-30.66 JVM,335 backend,29 actual cookie/API assertions,6 API34 Room/Keystore cases, debug/test APK/lint0 errors64 warnings and462 paired resources. IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL; real native HTTP/OS/physical gates remain open. Preserved original2 dirty paths. Source and receipt digests in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json; details in KHATMAH_FUNCTIONAL_INTEGRATION.md.|
 |20.1/20.2/20.3 branded consent-safe Email queue|c6a0c13e7a00e068aec51592f33d6c846a287ec0 +645d09bb6c4a1585aca336b36ed55c974150697f|Tested component commit plus previously unstaged public wiring;both normal pushes/exact remote verified;EMAIL_OUTBOX.md.26 validated;20.4 partial/20.5 real Gmail blocked. Native queue-wording reconciliation follows next UI batch.|
 |19.1–19.4 campaign foundation (partial)|f69557ece577af17358f85586494d8a0fcc57b18|Normal push/exact remote verified;local gates in ADMIN_CAMPAIGNS.md. Push/follow acceptance remains open;excluded from validated count. Adjacent view regression corrected in the following WP20 checkpoint.|
 |18.5/18.7/18.8 content and secure services|1167b847ff081f4e3546c908c6956e8d52fa98a1|Applicable gates in ADMIN_CONTENT_SERVICES_BATCH.md;normal push/exact remote verified.18.6/18.9 share code commit but remain native-acceptance pending. Strict count23/149.|

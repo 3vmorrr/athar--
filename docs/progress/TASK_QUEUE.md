@@ -1,10 +1,10 @@
 # Ordered execution queue
 
-The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative at its recorded source refs. Later functional checkpoints update affected task findings explicitly; next feature **07.9**. Four axes below distinguish finished code from integration and acceptance.
+The [actual149-task audit](ACTUAL_IMPLEMENTATION_AUDIT.md) is authoritative at its recorded source refs. Later functional checkpoints update affected task findings explicitly; next feature **08.1**. Four axes below distinguish finished code from integration and acceptance.
 
 Integrate and close functional acceptance across WP1-WP24 on codex/android-ecosystem. Review the exact parallel source per task, retain newer correct Codex behavior, reconcile contracts manually, test in layers, commit/push coherent increments and continue automatically. Preserve current UI; defer cosmetic refinement. External/device/provider acceptance remains open until evidenced. No whole-branch merge or source-only completion.
 
-Snapshot: 2026-10-29. Next feature task after audit: **07.9**. Open integration/acceptance tasks: **130**. Historical weighted estimates are obsolete; use the generated audit counts.
+Snapshot: 2026-10-29. Next feature task after audit: **08.1**. Open integration/acceptance tasks: **130**. Historical weighted estimates are obsolete; use the generated audit counts.
 
 Four independent axes and concrete missing/evidence fields are authoritative. Historical51.38 estimate is frozen/obsolete; never use it as actual engineering completion. See ACTUAL_IMPLEMENTATION_AUDIT.md.
 
@@ -36,7 +36,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTED**.
 - CLOSURE: **COMPLETE**.
 - MISSING: None within the bounded accepted scope.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Unique account/environment work, bounded retries, module isolation, logout cancellation and local exemption exclusion; lifecycle delivery gate remains02.8.
 - Files/modules: android/app/src/main/java/org/athar/app/core/sync/.
 - Automated gates: OwnedSyncRunner cases; actual Worker/HTTP and persistent unique-name/cancellation cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -68,7 +68,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Reaccept hardware login/refresh/revocation after new credential/deletion lease behavior;25 current JVM cases do not replace the required hardware gate. No missing feature code identified.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Invalidate former and during-sign-in responses; prevent late refresh success/revocation replacing a new account; serialize slow credential persistence.
 - Files/modules: android/app/src/main/java/org/athar/app/auth/SessionRepository.kt; android/app/src/test/java/org/athar/app/SessionRepositoryTest.kt.
 - Automated gates: SessionRepository deterministic coroutine races; full JVM/build/lint; actual Worker/HTTP and AR/EN auth/reader/counter regression. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -132,7 +132,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Reaccept actor-switch dispatch after current session leases/daily counters/account mutations; original physical receipt predates them. No missing guard code identified.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/quran/ReadingRepository.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/quran/ReadingRepository.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Capture the intended actor before asynchronous private/local or account-action dispatch; reject writes after account switching, including reading, counters, local exemptions and account tools. Preserve existing pending rows and verified-access gating.
 - Files/modules: android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt; android/app/src/main/java/org/athar/app/nightprayer/; android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt; android/app/src/androidTest/; android/app/src/main/java/org/athar/app/auth/SessionRepository.kt; android/app/src/main/java/org/athar/app/learning/DiscussionViewModel.kt; android/app/src/main/java/org/athar/app/core/ui/MainShell.kt.
 - Automated gates: Deterministic actor switch before IO dispatch and during suspended mutation; rejected original-owner write and no new-owner row/API mutation; existing recovery/regression/build/lint/resources.
@@ -180,7 +180,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Rerun cross-module native HTTP lost-response/reopen acceptance after daily-counter/session changes; current account-only API34 fixtures do not reaccept all original modules.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerRepository.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/core/data/CounterRepository.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/nightprayer/NightPrayerRepository.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Verify lost-response/repeated-retry/process recreation/order/conflict behavior across reading, counters, lesson checkpoints and Night Prayer without duplicate completion/activity or lost pending data. Any newly exposed defect must be fixed and retested in a focused logical increment.
 - Files/modules: android/app/src/main/java/org/athar/app/core/data/; android/app/src/main/java/org/athar/app/quran/; android/app/src/main/java/org/athar/app/learning/; android/app/src/main/java/org/athar/app/nightprayer/; tests/.
 - Automated gates: Dropped acknowledgement/repeated retry/restart/order/conflict tests across four modules; no duplicate activity. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -580,7 +580,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native real HTTP and premium profile RTL/LTR acceptance.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/AuthScreens.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 2b7d7de0fc3a; main:backend/src/Identity/AuthService.php @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/AuthScreens.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 4e066a793c13; main:backend/src/Identity/AuthService.php @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Complete display-name/username editing and validation/error recovery; reconcile premium profile/auth presentation where touched.
 - Files/modules: android/app/src/main/java/org/athar/app/auth/; android/app/src/main/java/org/athar/app/core/ui/.
 - Automated gates: Username bounds/duplicate/owner/AR numeric/mixed-content UI/API tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -596,7 +596,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native HTTP/revocation/UI acceptance; real authorized Gmail inbox proof remains20.5, not fake-transport proof.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/AuthScreens.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 2b7d7de0fc3a; main:backend/src/Identity/AuthService.php @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/auth/AuthScreens.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/auth/SessionRepository.kt @ 4e066a793c13; main:backend/src/Identity/AuthService.php @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Complete registration/verification/password reset/change/revocation UI; verify Gmail OTP using isolated/fake transport until explicit recipient gate.
 - Files/modules: android/app/src/main/java/org/athar/app/auth/; backend/src/Identity/.
 - Automated gates: OTP Arabic digits/expiry/rate/session/password/failed submit tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -628,7 +628,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native HTTP lost-reply/process termination/restart and physical account-switch acceptance.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionCoordinator.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionStore.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ 2b7d7de0fc3a. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionCoordinator.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountDeletionStore.kt @ 2b7d7de0fc3a; main:android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Complete confirmation/authentication/revocation/deletion and safe owned cleanup without affecting another actor.
 - Files/modules: android/app/src/main/java/org/athar/app/auth/; android/app/src/main/java/org/athar/app/core/data/; backend/src/Identity/.
 - Automated gates: Delete/reauth/tokens/local rows/worker cancellation/failure recovery tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -676,7 +676,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Actual native HTTP/physical RTL/LTR/date-picker/large-font acceptance; no durable offline intent claim. Failed or conflicting writes retain the draft; durable process/reboot/outbox is07.9.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt @ 11f94da50b2d; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 11f94da50b2d; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt @ 11f94da50b2d; main:backend/src/Progress/Khatmah.php @ 11f94da50b2d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt @ 4e066a793c13; main:backend/src/Progress/Khatmah.php @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Complete canonical daily workload/start/end/target validation and premium editor hierarchy.
 - Files/modules: android/app/src/main/java/org/athar/app/core/ui/AccountToolsScreen.kt; backend/src/Progress/.
 - Automated gates: Cross-surah/day/invalid target/date/workload domain and UI tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -692,7 +692,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Native real HTTP/UI confirmation/recreation/physical acceptance. Durable offline lifecycle queue and process recovery remain07.9.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt @ 11f94da50b2d; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 11f94da50b2d; main:backend/src/Progress/Khatmah.php @ 11f94da50b2d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 4e066a793c13; main:backend/src/Progress/Khatmah.php @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Implement pause/resume/edit/restart/finish with deliberate progress updates and confirmation.
 - Files/modules: android/app/src/main/java/org/athar/app/khatmah/ (new or extracted); backend/src/Progress/.
 - Automated gates: State transitions/idempotency/date/actual progress cases. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -703,12 +703,12 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 ## 07.9 — Khatmah offline and conflicts
 
 - Parent: Work package 7: Account/Khatmah; state: **PARTIAL**; dependencies: 07.8.
-- IMPLEMENTATION: **PARTIALLY_IMPLEMENTED**.
-- INTEGRATION: **PARTIALLY_INTEGRATED**.
-- VERIFICATION: **TESTS_FAILING**.
+- IMPLEMENTATION: **IMPLEMENTED**.
+- INTEGRATION: **INTEGRATED**.
+- VERIFICATION: **ACCEPTANCE_PENDING**.
 - CLOSURE: **PARTIAL**.
-- MISSING: Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage.
-- EVIDENCE: parallel:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt @ 7392e93b0889; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 11f94da50b2d; main:backend/src/Progress/Khatmah.php @ 11f94da50b2d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- MISSING: Execute native real HTTP and actual process/reboot/network-restoration scheduling, plus authorized physical RTL/LTR/theme/font/landscape/accessibility journeys. Unsubmitted typing is distinct from durable saved intents; full acceptance remains pending.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/khatmah/KhatmahJournal.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt @ 4e066a793c13; main:android/app/src/main/java/org/athar/app/core/sync/PrivateSyncWorker.kt @ 4e066a793c13; main:backend/src/Progress/Khatmah.php @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Persist plan edits/progress safely across restart/account changes and reconcile conflicts explicitly.
 - Files/modules: android/app/src/main/java/org/athar/app/khatmah/ (new or extracted); android/app/src/main/java/org/athar/app/core/data/.
 - Automated gates: Offline restart/lost response/conflict/ownership plan tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
@@ -2100,10 +2100,10 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **NOT_TESTED**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Complete screen matrix and correct any residual mixed numbers/dates/RTL mirroring/contrast issues; resource parity alone cannot establish visual completion.
-- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/ui/Theme.kt @ 2b7d7de0fc3a; main:android/app/src/main/res/values-en/strings.xml @ 11f94da50b2d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/main/java/org/athar/app/core/ui/Theme.kt @ 2b7d7de0fc3a; main:android/app/src/main/res/values-en/strings.xml @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens.
 - Files/modules: android/app/src/main/res/; android/app/src/main/java/org/athar/app/core/ui/; docs/testing/.
-- Automated gates: Current paired resource format checks (451 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
+- Automated gates: Current paired resource format checks (462 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.
 - Physical-device gate: Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.
 - Definition of Done: Close mixed content/numbers/dates/icon mirroring/light default/dark contrast across all implemented screens. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.
 - Estimated contribution: 0.16 overall percentage points.
@@ -2292,7 +2292,7 @@ Contribution values and Phase2 weights below are historical planning metadata, n
 - VERIFICATION: **NOT_TESTED**.
 - CLOSURE: **PARTIAL**.
 - MISSING: Implement missing cross-system journeys for new notification/review/reminder modules, then run final integrated regression;35 API34 cases are a bounded subset.
-- EVIDENCE: main:android/app/src/androidTest/java/org/athar/app @ 11f94da50b2d; main:tests @ 11f94da50b2d. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
+- EVIDENCE: main:android/app/src/androidTest/java/org/athar/app @ 4e066a793c13; main:tests @ 4e066a793c13. Per-task symbols, blobs, commits and test limits: ACTUAL_IMPLEMENTATION_AUDIT.json.
 - Exact scope: Exercise complete approved journeys from account through content/private state/Admin moderation/notifications with isolated fixtures.
 - Files/modules: android/app/src/androidTest/; tests/; admin/ (new).
 - Automated gates: Full cross-stack matrix plus documented external delivery evidence. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "date": "2026-10-29",
+  "date": "2026-10-30",
   "main_branch": "codex/android-ecosystem",
-  "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+  "main_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
   "parallel_branch": "parallel/admin-foundation",
   "parallel_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "other_reviewed_branches": {
@@ -16,31 +16,31 @@
   "authority": "Source review TSV + exact source/blob/test receipt evidence; summaries are generated. This audit overrides historic progress estimates.",
   "metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 112,
-    "fully_implemented_main": 73,
-    "integrated_active_application": 73,
+    "fully_implemented_any_reviewed_branch": 113,
+    "fully_implemented_main": 74,
+    "integrated_active_application": 74,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 93,
-    "acceptance_only_current_app": 54,
-    "partially_implemented_needing_code": 22,
-    "partial_tasks_needing_production_code": 21,
+    "fully_implemented_outstanding_verification": 94,
+    "acceptance_only_current_app": 55,
+    "partially_implemented_needing_code": 21,
+    "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 51,
-    "production_code_remaining_including_integration": 63,
-    "feature_code_remaining": 22,
-    "integration_code_remaining": 47,
+    "any_implementation_or_scaffold_only_unmerged": 50,
+    "production_code_remaining_including_integration": 62,
+    "feature_code_remaining": 21,
+    "integration_code_remaining": 46,
     "reopened_previous_complete": 7
   },
   "exclusive_partition": {
     "accepted": 19,
     "external_blocked": 4,
-    "implemented_integrated_awaiting_acceptance": 54,
+    "implemented_integrated_awaiting_acceptance": 55,
     "implemented_unmerged": 39,
-    "partially_implemented": 22,
+    "partially_implemented": 21,
     "scaffold_or_unmeasured_gate": 11
   },
   "historical_status_reclassification": {
@@ -49,9 +49,9 @@
       "implemented_integrated_awaiting_acceptance": 7
     },
     "PARTIAL": {
-      "implemented_integrated_awaiting_acceptance": 46,
+      "implemented_integrated_awaiting_acceptance": 47,
       "implemented_unmerged": 7,
-      "partially_implemented": 19,
+      "partially_implemented": 18,
       "scaffold_or_unmeasured_gate": 5
     },
     "NOT STARTED": {
@@ -75,75 +75,116 @@
     "Main implementation state for unmerged scopes indicates only an older partial baseline when explicitly present; never imported branch code."
   ],
   "current_validation": {
-    "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-    "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-    "jvm_cases": 8,
-    "jvm_classes": 2,
+    "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+    "execution_date": "2026-10-29",
+    "review_date": "2026-10-30",
+    "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+    "jvm_cases": 66,
+    "jvm_classes": 7,
     "junit_receipts": [
+      {
+        "name": "org.athar.app.AccountExportTest",
+        "tests": 5,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+        "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+        "bytes": 1006
+      },
+      {
+        "name": "org.athar.app.AccountExportWriterTest",
+        "tests": 4,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+        "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+        "bytes": 867
+      },
       {
         "name": "org.athar.app.KhatmahContractTest",
         "tests": 3,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-        "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+        "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
         "bytes": 735
       },
       {
+        "name": "org.athar.app.KhatmahJournalTest",
+        "tests": 10,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+        "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+        "bytes": 1682
+      },
+      {
         "name": "org.athar.app.KhatmahViewModelTest",
-        "tests": 5,
+        "tests": 8,
         "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-        "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-        "bytes": 990
+        "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+        "bytes": 1415
+      },
+      {
+        "name": "org.athar.app.OwnedSyncRunnerTest",
+        "tests": 9,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+        "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+        "bytes": 1562
+      },
+      {
+        "name": "org.athar.app.SessionRepositoryTest",
+        "tests": 27,
+        "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+        "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+        "bytes": 4132
       }
     ],
     "backend_suites": 5,
-    "backend_assertions": 323,
+    "backend_assertions": 335,
     "backend_components": {
-      "khatmah": 84,
+      "khatmah": 96,
       "catalog_progress": 103,
       "account_export": 33,
       "account_deletion": 33,
       "recovery": 70
     },
-    "actual_cookie_api_http_assertions": 23,
+    "actual_cookie_api_http_assertions": 29,
     "debug_apk": "PASS",
     "test_apk": "PASS",
     "lint_errors": 0,
-    "lint_warnings": 62,
-    "resources_paired": 451,
-    "new_instrumentation_cases": 0,
+    "lint_warnings": 64,
+    "resources_paired": 462,
+    "new_instrumentation_cases": 5,
+    "instrumentation_cases_executed": 6,
+    "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
     "physical_acceptance": "NOT_EXECUTED",
     "provider_delivery": "NOT_APPLICABLE",
     "logs": [
       {
-        "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-        "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-        "bytes": 5326
+        "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+        "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+        "bytes": 8448
       },
       {
-        "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-        "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-        "bytes": 153
+        "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+        "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+        "bytes": 4251
       },
       {
-        "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-        "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-        "bytes": 234
+        "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+        "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+        "bytes": 434
       },
       {
-        "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-        "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-        "bytes": 426
+        "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+        "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+        "bytes": 226
       },
       {
-        "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-        "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+        "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+        "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
         "bytes": 472
       }
     ],
     "limits": [
-      "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-      "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-      "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+      "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+      "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+      "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+      "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+      "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
     ]
   },
   "preserved_dirty_paths": [
@@ -152,18 +193,18 @@
   ],
   "parallel_dirty_caveat": "Pre-existing android/app/build.gradle.kts File/import repair preserved; configuration failure is on that working tree, not a clean7392 build.",
   "next_task": {
-    "id": "07.9",
-    "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
-    "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
+    "id": "08.1",
+    "action": "Reconcile the Night Prayer tonight route with current protected ownership; refresh sourced night identity across Maghrib/Fajr, lifecycle return and clock/timezone changes before porting dependent08.x screens.",
+    "deferred": "07.7–07.9 native real HTTP/OS/physical acceptance is queued with the related device batch; no closure from scoped local/emulator tests."
   },
   "wiring_evidence": {
     "main_graph": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/AtharApplication.kt",
-      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-      "git_blob": "9374390bcb49c85455dc6779fe7de7afefb696d9",
-      "sha256": "1b64dd6e506363c675da18c358e5b3f3fc97301b1e59d5bc2e4092344263c8c0",
-      "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+      "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+      "git_blob": "9d79ac10ba0f8bdd957b78426a664de139da236a",
+      "sha256": "03c9e47c242b1079c994d7362a9927666b849c807c6145075bf241c84c13a55f",
+      "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
       "symbols": [
         {
           "line": 13,
@@ -191,7 +232,7 @@
     "main_navigation": {
       "location": "main",
       "path": "android/app/src/main/java/org/athar/app/core/ui/MainShell.kt",
-      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+      "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
       "git_blob": "330e54590d0d39f6d58daad266d0e61ece15ae63",
       "sha256": "02aa13e7396cd79a8841f8fbbcec255e0c4f97285bfac322bce5ae6d39ecbae6",
       "last_path_commit": "d6c63a880764373a0992fdf4374efeb149486964",
@@ -261,7 +302,7 @@
     "main_api": {
       "location": "main",
       "path": "backend/src/Http/ApiKernel.php",
-      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+      "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
       "git_blob": "6b09406162eee3813c067ab2e7d2ad650d4f284e",
       "sha256": "70ff011001b9b363519350184652b2e00201bdb77d20422b25459e1d99e200ec",
       "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
@@ -435,8 +476,8 @@
     },
     "main_admin_entry": {
       "path": "public/index.php",
-      "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-      "git_blob": "dc083a3083bd6b395ffd311e7d7364b11bf59e22",
+      "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+      "git_blob": "7738677c4298e7a7e59e173c09afd27305d44758",
       "read_source": "Committed snapshot; two unrelated pre-existing mail wording lines remain dirty in working tree.",
       "anchors": [
         {
@@ -448,55 +489,55 @@
           "text": "$owner = admin_require_auth();"
         },
         {
-          "line": 583,
+          "line": 584,
           "text": "admin_require_auth();"
         },
         {
-          "line": 646,
+          "line": 647,
           "text": "$adminActor = admin_require_auth();"
         },
         {
-          "line": 656,
+          "line": 657,
           "text": "$admin = admin_require_auth();"
         },
         {
-          "line": 668,
+          "line": 669,
           "text": "admin_authorize_kind($admin, $kind);"
         },
         {
-          "line": 733,
+          "line": 734,
           "text": "} elseif ($kind === 'user-profile-update') {"
         },
         {
-          "line": 758,
+          "line": 759,
           "text": "db()->prepare('INSERT INTO audit_logs (actor_id,action,target_type,target_id) VALUES (?,?,?,?)')->execute([$admin['id'], $emailChanged ? 'admin-user-email-updated' : 'admin-user-pr"
         },
         {
-          "line": 798,
+          "line": 799,
           "text": "try { $admin = admin_require_auth(); $artifact = build_backup_archive((int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 808,
+          "line": 809,
           "text": "try { $admin = admin_require_auth(); $restoredOwnerId = restore_backup_archive($backupId, (int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 819,
+          "line": 820,
           "text": "try { $admin = admin_require_auth(); reset_local_data((int) $admin['id']); } finally { release_maintenance_lock(); }"
         },
         {
-          "line": 926,
+          "line": 927,
           "text": "$managedUserWhere = '';"
         },
         {
-          "line": 929,
+          "line": 930,
           "text": "$managedUserWhere = ' WHERE (u.email LIKE ? ESCAPE \\'=\\' OR COALESCE(u.display_name,\\'\\') LIKE ? ESCAPE \\'=\\' OR COALESCE(u.username,\\'\\') LIKE ? ESCAPE \\'=\\'' . (ctype_digit($mana"
         },
         {
-          "line": 934,
+          "line": 935,
           "text": "$managedUserCountQuery = db()->prepare('SELECT COUNT(*) FROM users u' . $managedUserWhere);"
         },
         {
-          "line": 943,
+          "line": 944,
           "text": "FROM users u\" . $managedUserWhere . \" ORDER BY u.id DESC LIMIT {$managedUserPageSize} OFFSET {$managedUserOffset}\");"
         }
       ]
@@ -677,14 +718,14 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "088108e33f9ae7f92eb3c87b2be85d03584b4820",
-          "sha256": "86ee85b1dda12226eace8f9283c8c17b3f73d22e55a78068b127525f533704db",
-          "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "b67ebd4c4673ce38197f5aee8e33ecea85bb0f78",
+          "sha256": "206ee5797c9fb2d2cc3bff378985bc908f65a69c92e3e88bbaa2a8f1e1275817",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 8,
-              "symbol": "enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY }"
+              "symbol": "enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY, KHATMAH }"
             },
             {
               "line": 9,
@@ -719,8 +760,8 @@
         }
       ],
       "related_commits": [
-        "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-        "309efa59da9e3bae5921d727831e0085d9a3b874"
+        "309efa59da9e3bae5921d727831e0085d9a3b874",
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -964,10 +1005,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4",
-          "sha256": "1209a5c2bf654da5822f2514f83f08d435b1d9d80851745a81a19fcae43ee6f3",
-          "last_path_commit": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b",
+          "sha256": "173f84890cc9fa878ddcbba71f7aa236e48cc683e1735be6ac05ac175375abbb",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 20,
@@ -1063,74 +1104,82 @@
             },
             {
               "line": 99,
-              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {"
+              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement = requestCaptured(generation.get(), method, path, "
             },
             {
-              "line": 118,
+              "line": 100,
+              "symbol": "internal suspend fun requestLeased(lease: SessionLease, method: String, path: String, body: Map<String, Any?> = emptyMap()): JsonElement = requestCaptured(lease.generation, method, path, body, emptyMap(), lease.owner)"
+            },
+            {
+              "line": 101,
+              "symbol": "private suspend fun requestCaptured(epoch: Long, method: String, path: String, body: Map<String, Any?>, query: Map<String, String>, expectedUser: Long?): JsonElement {"
+            },
+            {
+              "line": 120,
               "symbol": "private fun checkActor(session:StoredSession,expectedUser:Long?){if(expectedUser!=null&&session.user.id!=expectedUser)throw ApiException(401,\"session_changed\",\"\")}"
             },
             {
-              "line": 119,
+              "line": 121,
               "symbol": "private fun checkAccess(path:String,current:StoredSession,expectedUser:Long?){"
             },
             {
-              "line": 125,
-              "symbol": "private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {"
+              "line": 127,
+              "symbol": "private suspend fun refresh(previousAccess: String, expectedEpoch: Long? = null) = refreshMutex.withLock {"
             },
             {
-              "line": 133,
+              "line": 136,
               "symbol": "suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {"
             },
             {
-              "line": 141,
+              "line": 144,
               "symbol": "suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);require(current.isNotEmpty()&&AccountInput.validPassword(password)&&passw"
             },
             {
-              "line": 142,
+              "line": 145,
               "symbol": "suspend fun revokeOtherSessions(expectedUser:Long?=userId):Int {"
             },
             {
-              "line": 149,
+              "line": 152,
               "symbol": "internal suspend fun submitDeletion(intent:AccountDeletionIntent,password:String) {"
             },
             {
-              "line": 170,
+              "line": 173,
               "symbol": "internal suspend fun deletionProof(intent:AccountDeletionIntent):JsonElement = transport.request(\"POST\",\"auth/deletion-receipt\",mapOf(\"request_id\" to intent.requestId,\"recovery_secret\" to intent.secret),language=language"
             },
             {
-              "line": 171,
+              "line": 174,
               "symbol": "internal suspend fun acknowledgeDeletion(intent:AccountDeletionIntent) {"
             },
             {
-              "line": 175,
+              "line": 178,
               "symbol": "internal suspend fun forgetDeletedOwner(owner:Long) {"
             },
             {
-              "line": 184,
+              "line": 187,
               "symbol": "suspend fun logout(expectedUser:Long?=userId) {"
             },
             {
-              "line": 193,
+              "line": 196,
               "symbol": "private suspend fun accept(data: JsonElement, epoch: Long, rotateRequests:Boolean=false) {"
             },
             {
-              "line": 200,
+              "line": 203,
               "symbol": "private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, \"unauthenticated\", \"\") }"
             },
             {
-              "line": 201,
+              "line": 204,
               "symbol": "private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {"
             },
             {
-              "line": 208,
+              "line": 211,
               "symbol": "private suspend fun offline(session: StoredSession, epoch: Long) = sessionMutex.withLock {"
             },
             {
-              "line": 211,
+              "line": 214,
               "symbol": "private fun publish(session: StoredSession, delivery: String? = null) {"
             },
             {
-              "line": 214,
+              "line": 217,
               "symbol": "private suspend fun clear(epoch: Long) = sessionMutex.withLock {"
             }
           ],
@@ -1138,8 +1187,8 @@
         }
       ],
       "related_commits": [
-        "c5062b6295b31f2ff3c49c332980dec3d4af78b4",
-        "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+        "c5062b6295b31f2ff3c49c332980dec3d4af78b4"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -1766,10 +1815,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4",
-          "sha256": "1209a5c2bf654da5822f2514f83f08d435b1d9d80851745a81a19fcae43ee6f3",
-          "last_path_commit": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b",
+          "sha256": "173f84890cc9fa878ddcbba71f7aa236e48cc683e1735be6ac05ac175375abbb",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 20,
@@ -1865,74 +1914,82 @@
             },
             {
               "line": 99,
-              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {"
+              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement = requestCaptured(generation.get(), method, path, "
             },
             {
-              "line": 118,
+              "line": 100,
+              "symbol": "internal suspend fun requestLeased(lease: SessionLease, method: String, path: String, body: Map<String, Any?> = emptyMap()): JsonElement = requestCaptured(lease.generation, method, path, body, emptyMap(), lease.owner)"
+            },
+            {
+              "line": 101,
+              "symbol": "private suspend fun requestCaptured(epoch: Long, method: String, path: String, body: Map<String, Any?>, query: Map<String, String>, expectedUser: Long?): JsonElement {"
+            },
+            {
+              "line": 120,
               "symbol": "private fun checkActor(session:StoredSession,expectedUser:Long?){if(expectedUser!=null&&session.user.id!=expectedUser)throw ApiException(401,\"session_changed\",\"\")}"
             },
             {
-              "line": 119,
+              "line": 121,
               "symbol": "private fun checkAccess(path:String,current:StoredSession,expectedUser:Long?){"
             },
             {
-              "line": 125,
-              "symbol": "private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {"
+              "line": 127,
+              "symbol": "private suspend fun refresh(previousAccess: String, expectedEpoch: Long? = null) = refreshMutex.withLock {"
             },
             {
-              "line": 133,
+              "line": 136,
               "symbol": "suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {"
             },
             {
-              "line": 141,
+              "line": 144,
               "symbol": "suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);require(current.isNotEmpty()&&AccountInput.validPassword(password)&&passw"
             },
             {
-              "line": 142,
+              "line": 145,
               "symbol": "suspend fun revokeOtherSessions(expectedUser:Long?=userId):Int {"
             },
             {
-              "line": 149,
+              "line": 152,
               "symbol": "internal suspend fun submitDeletion(intent:AccountDeletionIntent,password:String) {"
             },
             {
-              "line": 170,
+              "line": 173,
               "symbol": "internal suspend fun deletionProof(intent:AccountDeletionIntent):JsonElement = transport.request(\"POST\",\"auth/deletion-receipt\",mapOf(\"request_id\" to intent.requestId,\"recovery_secret\" to intent.secret),language=language"
             },
             {
-              "line": 171,
+              "line": 174,
               "symbol": "internal suspend fun acknowledgeDeletion(intent:AccountDeletionIntent) {"
             },
             {
-              "line": 175,
+              "line": 178,
               "symbol": "internal suspend fun forgetDeletedOwner(owner:Long) {"
             },
             {
-              "line": 184,
+              "line": 187,
               "symbol": "suspend fun logout(expectedUser:Long?=userId) {"
             },
             {
-              "line": 193,
+              "line": 196,
               "symbol": "private suspend fun accept(data: JsonElement, epoch: Long, rotateRequests:Boolean=false) {"
             },
             {
-              "line": 200,
+              "line": 203,
               "symbol": "private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, \"unauthenticated\", \"\") }"
             },
             {
-              "line": 201,
+              "line": 204,
               "symbol": "private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {"
             },
             {
-              "line": 208,
+              "line": 211,
               "symbol": "private suspend fun offline(session: StoredSession, epoch: Long) = sessionMutex.withLock {"
             },
             {
-              "line": 211,
+              "line": 214,
               "symbol": "private fun publish(session: StoredSession, delivery: String? = null) {"
             },
             {
-              "line": 214,
+              "line": 217,
               "symbol": "private suspend fun clear(epoch: Long) = sessionMutex.withLock {"
             }
           ],
@@ -2102,9 +2159,9 @@
         }
       ],
       "related_commits": [
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "b7e18217080315e01199e60dbd1df174771f8c4b",
-        "d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f",
-        "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
+        "d9edd6f45f7d3f7c3a2532bf95df26b7c0f52b3f"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -2429,14 +2486,14 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "088108e33f9ae7f92eb3c87b2be85d03584b4820",
-          "sha256": "86ee85b1dda12226eace8f9283c8c17b3f73d22e55a78068b127525f533704db",
-          "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "b67ebd4c4673ce38197f5aee8e33ecea85bb0f78",
+          "sha256": "206ee5797c9fb2d2cc3bff378985bc908f65a69c92e3e88bbaa2a8f1e1275817",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 8,
-              "symbol": "enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY }"
+              "symbol": "enum class SyncModule { READING, COUNTERS, LESSONS, NIGHT_PRAYER, ACTIVITY, KHATMAH }"
             },
             {
               "line": 9,
@@ -2669,7 +2726,7 @@
         }
       ],
       "related_commits": [
-        "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "795cd3939725fe84732412b4d0e60a401ea20cdd",
         "b7e18217080315e01199e60dbd1df174771f8c4b"
       ],
@@ -6909,10 +6966,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4",
-          "sha256": "1209a5c2bf654da5822f2514f83f08d435b1d9d80851745a81a19fcae43ee6f3",
-          "last_path_commit": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b",
+          "sha256": "173f84890cc9fa878ddcbba71f7aa236e48cc683e1735be6ac05ac175375abbb",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 20,
@@ -7008,74 +7065,82 @@
             },
             {
               "line": 99,
-              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {"
+              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement = requestCaptured(generation.get(), method, path, "
             },
             {
-              "line": 118,
+              "line": 100,
+              "symbol": "internal suspend fun requestLeased(lease: SessionLease, method: String, path: String, body: Map<String, Any?> = emptyMap()): JsonElement = requestCaptured(lease.generation, method, path, body, emptyMap(), lease.owner)"
+            },
+            {
+              "line": 101,
+              "symbol": "private suspend fun requestCaptured(epoch: Long, method: String, path: String, body: Map<String, Any?>, query: Map<String, String>, expectedUser: Long?): JsonElement {"
+            },
+            {
+              "line": 120,
               "symbol": "private fun checkActor(session:StoredSession,expectedUser:Long?){if(expectedUser!=null&&session.user.id!=expectedUser)throw ApiException(401,\"session_changed\",\"\")}"
             },
             {
-              "line": 119,
+              "line": 121,
               "symbol": "private fun checkAccess(path:String,current:StoredSession,expectedUser:Long?){"
             },
             {
-              "line": 125,
-              "symbol": "private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {"
+              "line": 127,
+              "symbol": "private suspend fun refresh(previousAccess: String, expectedEpoch: Long? = null) = refreshMutex.withLock {"
             },
             {
-              "line": 133,
+              "line": 136,
               "symbol": "suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {"
             },
             {
-              "line": 141,
+              "line": 144,
               "symbol": "suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);require(current.isNotEmpty()&&AccountInput.validPassword(password)&&passw"
             },
             {
-              "line": 142,
+              "line": 145,
               "symbol": "suspend fun revokeOtherSessions(expectedUser:Long?=userId):Int {"
             },
             {
-              "line": 149,
+              "line": 152,
               "symbol": "internal suspend fun submitDeletion(intent:AccountDeletionIntent,password:String) {"
             },
             {
-              "line": 170,
+              "line": 173,
               "symbol": "internal suspend fun deletionProof(intent:AccountDeletionIntent):JsonElement = transport.request(\"POST\",\"auth/deletion-receipt\",mapOf(\"request_id\" to intent.requestId,\"recovery_secret\" to intent.secret),language=language"
             },
             {
-              "line": 171,
+              "line": 174,
               "symbol": "internal suspend fun acknowledgeDeletion(intent:AccountDeletionIntent) {"
             },
             {
-              "line": 175,
+              "line": 178,
               "symbol": "internal suspend fun forgetDeletedOwner(owner:Long) {"
             },
             {
-              "line": 184,
+              "line": 187,
               "symbol": "suspend fun logout(expectedUser:Long?=userId) {"
             },
             {
-              "line": 193,
+              "line": 196,
               "symbol": "private suspend fun accept(data: JsonElement, epoch: Long, rotateRequests:Boolean=false) {"
             },
             {
-              "line": 200,
+              "line": 203,
               "symbol": "private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, \"unauthenticated\", \"\") }"
             },
             {
-              "line": 201,
+              "line": 204,
               "symbol": "private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {"
             },
             {
-              "line": 208,
+              "line": 211,
               "symbol": "private suspend fun offline(session: StoredSession, epoch: Long) = sessionMutex.withLock {"
             },
             {
-              "line": 211,
+              "line": 214,
               "symbol": "private fun publish(session: StoredSession, delivery: String? = null) {"
             },
             {
-              "line": 214,
+              "line": 217,
               "symbol": "private suspend fun clear(epoch: Long) = sessionMutex.withLock {"
             }
           ],
@@ -7198,6 +7263,7 @@
         }
       ],
       "related_commits": [
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
         "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
       ],
@@ -7313,10 +7379,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4",
-          "sha256": "1209a5c2bf654da5822f2514f83f08d435b1d9d80851745a81a19fcae43ee6f3",
-          "last_path_commit": "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b",
+          "sha256": "173f84890cc9fa878ddcbba71f7aa236e48cc683e1735be6ac05ac175375abbb",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 20,
@@ -7412,74 +7478,82 @@
             },
             {
               "line": 99,
-              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement {"
+              "symbol": "suspend fun request(method: String, path: String, body: Map<String, Any?> = emptyMap(), query: Map<String, String> = emptyMap(), expectedUser: Long? = null): JsonElement = requestCaptured(generation.get(), method, path, "
             },
             {
-              "line": 118,
+              "line": 100,
+              "symbol": "internal suspend fun requestLeased(lease: SessionLease, method: String, path: String, body: Map<String, Any?> = emptyMap()): JsonElement = requestCaptured(lease.generation, method, path, body, emptyMap(), lease.owner)"
+            },
+            {
+              "line": 101,
+              "symbol": "private suspend fun requestCaptured(epoch: Long, method: String, path: String, body: Map<String, Any?>, query: Map<String, String>, expectedUser: Long?): JsonElement {"
+            },
+            {
+              "line": 120,
               "symbol": "private fun checkActor(session:StoredSession,expectedUser:Long?){if(expectedUser!=null&&session.user.id!=expectedUser)throw ApiException(401,\"session_changed\",\"\")}"
             },
             {
-              "line": 119,
+              "line": 121,
               "symbol": "private fun checkAccess(path:String,current:StoredSession,expectedUser:Long?){"
             },
             {
-              "line": 125,
-              "symbol": "private suspend fun refresh(previousAccess: String) = refreshMutex.withLock {"
+              "line": 127,
+              "symbol": "private suspend fun refresh(previousAccess: String, expectedEpoch: Long? = null) = refreshMutex.withLock {"
             },
             {
-              "line": 133,
+              "line": 136,
               "symbol": "suspend fun updateProfile(name: String, username: String,expectedUser:Long?=userId) {"
             },
             {
-              "line": 141,
+              "line": 144,
               "symbol": "suspend fun changePassword(current: String, password: String, confirmation: String,expectedUser:Long?=userId) { requireVerifiedOwner(expectedUser);require(current.isNotEmpty()&&AccountInput.validPassword(password)&&passw"
             },
             {
-              "line": 142,
+              "line": 145,
               "symbol": "suspend fun revokeOtherSessions(expectedUser:Long?=userId):Int {"
             },
             {
-              "line": 149,
+              "line": 152,
               "symbol": "internal suspend fun submitDeletion(intent:AccountDeletionIntent,password:String) {"
             },
             {
-              "line": 170,
+              "line": 173,
               "symbol": "internal suspend fun deletionProof(intent:AccountDeletionIntent):JsonElement = transport.request(\"POST\",\"auth/deletion-receipt\",mapOf(\"request_id\" to intent.requestId,\"recovery_secret\" to intent.secret),language=language"
             },
             {
-              "line": 171,
+              "line": 174,
               "symbol": "internal suspend fun acknowledgeDeletion(intent:AccountDeletionIntent) {"
             },
             {
-              "line": 175,
+              "line": 178,
               "symbol": "internal suspend fun forgetDeletedOwner(owner:Long) {"
             },
             {
-              "line": 184,
+              "line": 187,
               "symbol": "suspend fun logout(expectedUser:Long?=userId) {"
             },
             {
-              "line": 193,
+              "line": 196,
               "symbol": "private suspend fun accept(data: JsonElement, epoch: Long, rotateRequests:Boolean=false) {"
             },
             {
-              "line": 200,
+              "line": 203,
               "symbol": "private fun checkGeneration(epoch: Long) { if (generation.get() != epoch) throw ApiException(401, \"unauthenticated\", \"\") }"
             },
             {
-              "line": 201,
+              "line": 204,
               "symbol": "private suspend fun save(session: StoredSession, epoch: Long, delivery: String? = null,rotateRequests:Boolean=false) = sessionMutex.withLock {"
             },
             {
-              "line": 208,
+              "line": 211,
               "symbol": "private suspend fun offline(session: StoredSession, epoch: Long) = sessionMutex.withLock {"
             },
             {
-              "line": 211,
+              "line": 214,
               "symbol": "private fun publish(session: StoredSession, delivery: String? = null) {"
             },
             {
-              "line": 214,
+              "line": 217,
               "symbol": "private suspend fun clear(epoch: Long) = sessionMutex.withLock {"
             }
           ],
@@ -7602,6 +7676,7 @@
         }
       ],
       "related_commits": [
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "90bc65e15116a74601faeb3f20f73ba1a83c59c1",
         "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
       ],
@@ -8036,10 +8111,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "e52b30d10477a5bde809147315465c334189a2d3",
-          "sha256": "f9044330fb6e38a21b0ae8ab8623824e292a38a17c090164029ab00f7095f332",
-          "last_path_commit": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ad41ead3d5edd8782fc1d90bd6c61586ad5b2402",
+          "sha256": "c92729464b19d10a11012c45917e128782a7813ab5020b1e1f227fbc00d82711",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 16,
@@ -8062,7 +8137,7 @@
         }
       ],
       "related_commits": [
-        "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "e5d9f1cc24e7a146c6b6982dd70e80c715d37ad2"
       ],
       "alternative_branch_evidence": [],
@@ -8538,53 +8613,57 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "453180ea330ae5700d7a6bc811c206391e6ce115",
-          "sha256": "fd84c3c2f0bfbd5ee53a5dd309992ce5e321307d326d34d5a9c407fd02edb657",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "7e15b746461b46d00e312419a644284790dda4e1",
+          "sha256": "c03089473d05f73b10e705d0772a2516f53445d96111c095f85f6249e5afc057",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 7,
               "symbol": "data class KhatmahPlan(val start: LocalDate, val target: LocalDate, val completed: Int, val status: String, val revision: Int) {"
             },
             {
-              "line": 14,
+              "line": 15,
               "symbol": "data class KhatmahDraft(val start: String, val target: String, val pages: String) {"
             },
             {
-              "line": 15,
+              "line": 16,
               "symbol": "fun values(today: LocalDate, baseline: KhatmahPlan?): Triple<LocalDate, LocalDate, Int> {"
             },
             {
-              "line": 26,
+              "line": 27,
               "symbol": "fun from(plan: KhatmahPlan?, today: LocalDate) = KhatmahDraft("
             },
             {
-              "line": 32,
+              "line": 33,
               "symbol": "object KhatmahContract {"
             },
             {
-              "line": 33,
+              "line": 34,
+              "symbol": "fun fingerprint(owner: Long, plan: KhatmahPlan?): String {"
+            },
+            {
+              "line": 39,
               "symbol": "fun date(value: String): LocalDate {"
             },
             {
-              "line": 37,
+              "line": 43,
               "symbol": "fun numberInput(value: String): String = buildString {"
             },
             {
-              "line": 44,
+              "line": 50,
               "symbol": "fun parse(data: JsonElement): KhatmahPlan? {"
             },
             {
-              "line": 47,
+              "line": 53,
               "symbol": "fun text(key: String): String {"
             },
             {
-              "line": 51,
+              "line": 57,
               "symbol": "fun integer(key: String): Int {"
             },
             {
-              "line": 59,
+              "line": 66,
               "symbol": "fun metrics(plan: KhatmahPlan, today: LocalDate): Map<String, Int> {"
             }
           ],
@@ -8593,66 +8672,106 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
-          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0",
+          "sha256": "c5ed5d7d0c018fe2ac494a26eafe7784d6c289f867b15009dd60b80149ec7f4a",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
-              "line": 13,
-              "symbol": "internal interface KhatmahGateway {"
-            },
-            {
               "line": 14,
-              "symbol": "fun requireActive()"
+              "symbol": "internal data class KhatmahRead(val journal: KhatmahJournal, val offline: Boolean = false)"
             },
             {
               "line": 15,
-              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
+              "symbol": "internal interface KhatmahGateway {"
             },
             {
               "line": 16,
-              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
+              "symbol": "fun requireActive()"
+            },
+            {
+              "line": 17,
+              "symbol": "suspend fun load(): KhatmahRead"
+            },
+            {
+              "line": 18,
+              "symbol": "fun changes(): Flow<ProtectedRead<KhatmahJournal>> = emptyFlow()"
             },
             {
               "line": 19,
-              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal"
             },
             {
               "line": 20,
+              "symbol": "suspend fun useServer(expected: Long): KhatmahJournal"
+            },
+            {
+              "line": 21,
+              "symbol": "suspend fun keepDevice(expected: Long, draft: KhatmahDraft): KhatmahJournal"
+            },
+            {
+              "line": 24,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, LOCAL_SAVED, LOCAL_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 25,
               "symbol": "internal data class KhatmahUiState("
             },
             {
-              "line": 35,
+              "line": 44,
               "symbol": "internal class KhatmahViewModel("
             },
             {
-              "line": 44,
+              "line": 54,
+              "symbol": "private fun watch() {"
+            },
+            {
+              "line": 71,
+              "symbol": "private fun merge(journal: KhatmahJournal, reset: Boolean = false, preserveBaseline: Boolean = false) {"
+            },
+            {
+              "line": 90,
               "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
             },
             {
-              "line": 45,
+              "line": 91,
               "symbol": "fun edit(value: KhatmahDraft) {"
             },
             {
-              "line": 51,
+              "line": 96,
               "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
             },
             {
-              "line": 52,
+              "line": 97,
               "symbol": "fun refresh(discard: Boolean = false) {"
             },
             {
-              "line": 75,
-              "symbol": "fun save() = submit(null, null)"
+              "line": 114,
+              "symbol": "fun save() = submit(null, null, null)"
             },
             {
-              "line": 76,
-              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
+              "line": 115,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null, reviewedVersion: Long? = null) = submit(action, restart, reviewedVersion)"
             },
             {
-              "line": 78,
-              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+              "line": 117,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?, reviewedVersion: Long?) {"
+            },
+            {
+              "line": 139,
+              "symbol": "private fun accepted(saved: KhatmahJournal, version: Long) {"
+            },
+            {
+              "line": 166,
+              "symbol": "private fun failed(failure: Exception) {"
+            },
+            {
+              "line": 176,
+              "symbol": "fun useServer(reviewedVersion: Long) {"
+            },
+            {
+              "line": 191,
+              "symbol": "fun keepDevice(reviewedVersion: Long) {"
             }
           ],
           "worktree_matches_ref": true
@@ -8660,10 +8779,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2",
-          "sha256": "6781c87e35880b798c61ede06db7ac1ceaa1bb0ca3ce3392e1ab487da838150b",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4",
+          "sha256": "311f4ca10fe063ccfb01db0d633bb41252875e392713a8be0ba574c949ff68b6",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 28,
@@ -8675,14 +8794,26 @@
             },
             {
               "line": 35,
-              "symbol": "override suspend fun load(): Pair<KhatmahPlan?, Boolean> {"
+              "symbol": "override fun changes() = graph.khatmah.observe(owner, lease)"
             },
             {
-              "line": 40,
-              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan {"
+              "line": 36,
+              "symbol": "override suspend fun load(): KhatmahRead {"
             },
             {
-              "line": 71,
+              "line": 42,
+              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal {"
+            },
+            {
+              "line": 46,
+              "symbol": "override suspend fun useServer(expected: Long) = graph.khatmah.useServer(owner, expected, lease)"
+            },
+            {
+              "line": 47,
+              "symbol": "override suspend fun keepDevice(expected: Long, draft: KhatmahDraft) = graph.khatmah.keepDevice(owner, expected, draft, allowRestart = true, lease = lease)"
+            },
+            {
+              "line": 67,
               "symbol": "internal fun KhatmahContent("
             }
           ],
@@ -8691,10 +8822,10 @@
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
-          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a",
+          "sha256": "fcc2a89acf017e88fa9a96e6ca91c2f004064c1a019353edb8b060c9db05f5d1",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 12,
@@ -8710,34 +8841,42 @@
             },
             {
               "line": 23,
+              "symbol": "public static function fingerprint(int $owner,?array $row):string"
+            },
+            {
+              "line": 28,
+              "symbol": "private static function owned(int $owner,array $row):array { return array_merge(self::decorate($row),['plan_hash'=>self::fingerprint($owner,$row)]); }"
+            },
+            {
+              "line": 30,
               "symbol": "public static function decorate(array $row,?string $today=null):array"
             },
             {
-              "line": 48,
+              "line": 55,
               "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
             },
             {
-              "line": 55,
+              "line": 62,
               "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
             },
             {
-              "line": 66,
+              "line": 73,
               "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
             },
             {
-              "line": 67,
+              "line": 74,
               "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
             },
             {
-              "line": 69,
+              "line": 76,
               "symbol": "private function mutate(int $owner,array $data,bool $action):array"
             },
             {
-              "line": 120,
+              "line": 131,
               "symbol": "private function matches(array $current,array $data):bool"
             },
             {
-              "line": 126,
+              "line": 137,
               "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
             }
           ],
@@ -8745,7 +8884,7 @@
         }
       ],
       "related_commits": [
-        "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -8780,77 +8919,118 @@
         },
         {
           "kind": "new_focused_functional_checkpoint",
-          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "source_ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "result": {
-            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-            "jvm_cases": 8,
-            "jvm_classes": 2,
+            "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+            "execution_date": "2026-10-29",
+            "review_date": "2026-10-30",
+            "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+            "jvm_cases": 66,
+            "jvm_classes": 7,
             "junit_receipts": [
+              {
+                "name": "org.athar.app.AccountExportTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+                "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+                "bytes": 1006
+              },
+              {
+                "name": "org.athar.app.AccountExportWriterTest",
+                "tests": 4,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+                "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+                "bytes": 867
+              },
               {
                 "name": "org.athar.app.KhatmahContractTest",
                 "tests": 3,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
                 "bytes": 735
               },
               {
+                "name": "org.athar.app.KhatmahJournalTest",
+                "tests": 10,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+                "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+                "bytes": 1682
+              },
+              {
                 "name": "org.athar.app.KhatmahViewModelTest",
-                "tests": 5,
+                "tests": 8,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-                "bytes": 990
+                "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+                "bytes": 1415
+              },
+              {
+                "name": "org.athar.app.OwnedSyncRunnerTest",
+                "tests": 9,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+                "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+                "bytes": 1562
+              },
+              {
+                "name": "org.athar.app.SessionRepositoryTest",
+                "tests": 27,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+                "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+                "bytes": 4132
               }
             ],
             "backend_suites": 5,
-            "backend_assertions": 323,
+            "backend_assertions": 335,
             "backend_components": {
-              "khatmah": 84,
+              "khatmah": 96,
               "catalog_progress": 103,
               "account_export": 33,
               "account_deletion": 33,
               "recovery": 70
             },
-            "actual_cookie_api_http_assertions": 23,
+            "actual_cookie_api_http_assertions": 29,
             "debug_apk": "PASS",
             "test_apk": "PASS",
             "lint_errors": 0,
-            "lint_warnings": 62,
-            "resources_paired": 451,
-            "new_instrumentation_cases": 0,
+            "lint_warnings": 64,
+            "resources_paired": 462,
+            "new_instrumentation_cases": 5,
+            "instrumentation_cases_executed": 6,
+            "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
             "physical_acceptance": "NOT_EXECUTED",
             "provider_delivery": "NOT_APPLICABLE",
             "logs": [
               {
-                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-                "bytes": 5326
+                "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+                "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+                "bytes": 8448
               },
               {
-                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-                "bytes": 153
+                "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+                "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+                "bytes": 4251
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-                "bytes": 234
+                "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+                "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+                "bytes": 434
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-                "bytes": 426
+                "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+                "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+                "bytes": 226
               },
               {
-                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+                "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
                 "bytes": 472
               }
             ],
             "limits": [
-              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+              "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+              "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+              "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+              "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+              "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
             ]
           }
         }
@@ -8900,10 +9080,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2",
-          "sha256": "6781c87e35880b798c61ede06db7ac1ceaa1bb0ca3ce3392e1ab487da838150b",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4",
+          "sha256": "311f4ca10fe063ccfb01db0d633bb41252875e392713a8be0ba574c949ff68b6",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 28,
@@ -8915,14 +9095,26 @@
             },
             {
               "line": 35,
-              "symbol": "override suspend fun load(): Pair<KhatmahPlan?, Boolean> {"
+              "symbol": "override fun changes() = graph.khatmah.observe(owner, lease)"
             },
             {
-              "line": 40,
-              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan {"
+              "line": 36,
+              "symbol": "override suspend fun load(): KhatmahRead {"
             },
             {
-              "line": 71,
+              "line": 42,
+              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal {"
+            },
+            {
+              "line": 46,
+              "symbol": "override suspend fun useServer(expected: Long) = graph.khatmah.useServer(owner, expected, lease)"
+            },
+            {
+              "line": 47,
+              "symbol": "override suspend fun keepDevice(expected: Long, draft: KhatmahDraft) = graph.khatmah.keepDevice(owner, expected, draft, allowRestart = true, lease = lease)"
+            },
+            {
+              "line": 67,
               "symbol": "internal fun KhatmahContent("
             }
           ],
@@ -8931,66 +9123,106 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
-          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0",
+          "sha256": "c5ed5d7d0c018fe2ac494a26eafe7784d6c289f867b15009dd60b80149ec7f4a",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
-              "line": 13,
-              "symbol": "internal interface KhatmahGateway {"
-            },
-            {
               "line": 14,
-              "symbol": "fun requireActive()"
+              "symbol": "internal data class KhatmahRead(val journal: KhatmahJournal, val offline: Boolean = false)"
             },
             {
               "line": 15,
-              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
+              "symbol": "internal interface KhatmahGateway {"
             },
             {
               "line": 16,
-              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
+              "symbol": "fun requireActive()"
+            },
+            {
+              "line": 17,
+              "symbol": "suspend fun load(): KhatmahRead"
+            },
+            {
+              "line": 18,
+              "symbol": "fun changes(): Flow<ProtectedRead<KhatmahJournal>> = emptyFlow()"
             },
             {
               "line": 19,
-              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal"
             },
             {
               "line": 20,
+              "symbol": "suspend fun useServer(expected: Long): KhatmahJournal"
+            },
+            {
+              "line": 21,
+              "symbol": "suspend fun keepDevice(expected: Long, draft: KhatmahDraft): KhatmahJournal"
+            },
+            {
+              "line": 24,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, LOCAL_SAVED, LOCAL_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 25,
               "symbol": "internal data class KhatmahUiState("
             },
             {
-              "line": 35,
+              "line": 44,
               "symbol": "internal class KhatmahViewModel("
             },
             {
-              "line": 44,
+              "line": 54,
+              "symbol": "private fun watch() {"
+            },
+            {
+              "line": 71,
+              "symbol": "private fun merge(journal: KhatmahJournal, reset: Boolean = false, preserveBaseline: Boolean = false) {"
+            },
+            {
+              "line": 90,
               "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
             },
             {
-              "line": 45,
+              "line": 91,
               "symbol": "fun edit(value: KhatmahDraft) {"
             },
             {
-              "line": 51,
+              "line": 96,
               "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
             },
             {
-              "line": 52,
+              "line": 97,
               "symbol": "fun refresh(discard: Boolean = false) {"
             },
             {
-              "line": 75,
-              "symbol": "fun save() = submit(null, null)"
+              "line": 114,
+              "symbol": "fun save() = submit(null, null, null)"
             },
             {
-              "line": 76,
-              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
+              "line": 115,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null, reviewedVersion: Long? = null) = submit(action, restart, reviewedVersion)"
             },
             {
-              "line": 78,
-              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+              "line": 117,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?, reviewedVersion: Long?) {"
+            },
+            {
+              "line": 139,
+              "symbol": "private fun accepted(saved: KhatmahJournal, version: Long) {"
+            },
+            {
+              "line": 166,
+              "symbol": "private fun failed(failure: Exception) {"
+            },
+            {
+              "line": 176,
+              "symbol": "fun useServer(reviewedVersion: Long) {"
+            },
+            {
+              "line": 191,
+              "symbol": "fun keepDevice(reviewedVersion: Long) {"
             }
           ],
           "worktree_matches_ref": true
@@ -8998,10 +9230,10 @@
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
-          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a",
+          "sha256": "fcc2a89acf017e88fa9a96e6ca91c2f004064c1a019353edb8b060c9db05f5d1",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 12,
@@ -9017,34 +9249,42 @@
             },
             {
               "line": 23,
+              "symbol": "public static function fingerprint(int $owner,?array $row):string"
+            },
+            {
+              "line": 28,
+              "symbol": "private static function owned(int $owner,array $row):array { return array_merge(self::decorate($row),['plan_hash'=>self::fingerprint($owner,$row)]); }"
+            },
+            {
+              "line": 30,
               "symbol": "public static function decorate(array $row,?string $today=null):array"
             },
             {
-              "line": 48,
+              "line": 55,
               "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
             },
             {
-              "line": 55,
+              "line": 62,
               "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
             },
             {
-              "line": 66,
+              "line": 73,
               "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
             },
             {
-              "line": 67,
+              "line": 74,
               "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
             },
             {
-              "line": 69,
+              "line": 76,
               "symbol": "private function mutate(int $owner,array $data,bool $action):array"
             },
             {
-              "line": 120,
+              "line": 131,
               "symbol": "private function matches(array $current,array $data):bool"
             },
             {
-              "line": 126,
+              "line": 137,
               "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
             }
           ],
@@ -9052,7 +9292,7 @@
         }
       ],
       "related_commits": [
-        "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
@@ -9087,77 +9327,118 @@
         },
         {
           "kind": "new_focused_functional_checkpoint",
-          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "source_ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "result": {
-            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-            "jvm_cases": 8,
-            "jvm_classes": 2,
+            "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+            "execution_date": "2026-10-29",
+            "review_date": "2026-10-30",
+            "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+            "jvm_cases": 66,
+            "jvm_classes": 7,
             "junit_receipts": [
+              {
+                "name": "org.athar.app.AccountExportTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+                "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+                "bytes": 1006
+              },
+              {
+                "name": "org.athar.app.AccountExportWriterTest",
+                "tests": 4,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+                "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+                "bytes": 867
+              },
               {
                 "name": "org.athar.app.KhatmahContractTest",
                 "tests": 3,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
                 "bytes": 735
               },
               {
+                "name": "org.athar.app.KhatmahJournalTest",
+                "tests": 10,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+                "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+                "bytes": 1682
+              },
+              {
                 "name": "org.athar.app.KhatmahViewModelTest",
-                "tests": 5,
+                "tests": 8,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-                "bytes": 990
+                "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+                "bytes": 1415
+              },
+              {
+                "name": "org.athar.app.OwnedSyncRunnerTest",
+                "tests": 9,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+                "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+                "bytes": 1562
+              },
+              {
+                "name": "org.athar.app.SessionRepositoryTest",
+                "tests": 27,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+                "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+                "bytes": 4132
               }
             ],
             "backend_suites": 5,
-            "backend_assertions": 323,
+            "backend_assertions": 335,
             "backend_components": {
-              "khatmah": 84,
+              "khatmah": 96,
               "catalog_progress": 103,
               "account_export": 33,
               "account_deletion": 33,
               "recovery": 70
             },
-            "actual_cookie_api_http_assertions": 23,
+            "actual_cookie_api_http_assertions": 29,
             "debug_apk": "PASS",
             "test_apk": "PASS",
             "lint_errors": 0,
-            "lint_warnings": 62,
-            "resources_paired": 451,
-            "new_instrumentation_cases": 0,
+            "lint_warnings": 64,
+            "resources_paired": 462,
+            "new_instrumentation_cases": 5,
+            "instrumentation_cases_executed": 6,
+            "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
             "physical_acceptance": "NOT_EXECUTED",
             "provider_delivery": "NOT_APPLICABLE",
             "logs": [
               {
-                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-                "bytes": 5326
+                "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+                "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+                "bytes": 8448
               },
               {
-                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-                "bytes": 153
+                "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+                "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+                "bytes": 4251
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-                "bytes": 234
+                "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+                "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+                "bytes": 434
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-                "bytes": 426
+                "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+                "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+                "bytes": 226
               },
               {
-                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+                "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
                 "bytes": 472
               }
             ],
             "limits": [
-              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+              "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+              "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+              "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+              "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+              "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
             ]
           }
         }
@@ -9182,131 +9463,194 @@
       "scope": "Persist plan edits/progress safely across restart/account changes and reconcile conflicts explicitly.",
       "definition_of_done": "Persist plan edits/progress safely across restart/account changes and reconcile conflicts explicitly. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "old_status": "PARTIAL",
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "implementation_location": "parallel",
-      "main_implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "PARTIALLY_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "implementation_location": "main",
+      "main_implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "exclusive_category": "partially_implemented",
+      "exclusive_category": "implemented_integrated_awaiting_acceptance",
       "implemented_requirements": [
-        "Parallel encrypted pending plans/conflict candidate exists; current main additionally has canonical CAS/replay, owner/session-leased requests and in-memory draft retention."
+        "Current main has bounded encrypted owned intents, durable prepared preconditions, ordered lifecycle actions, semantic ACK/newer-tail retention, generation-leased dispatch/refresh, restore-safe fingerprints, explicit reviewed conflicts/rejections, and validated export/deletion;66 JVM and6 real Room/Keystore emulator cases plus335 backend/29 actual cookie/API assertions pass."
       ],
       "missing_requirements": [
-        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
+        "Execute native real HTTP and actual process/reboot/network-restoration scheduling, plus authorized physical RTL/LTR/theme/font/landscape/accessibility journeys. Unsubmitted typing is distinct from durable saved intents; full acceptance remains pending."
       ],
       "exact_remaining_work": [
-        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
+        "Execute native real HTTP and actual process/reboot/network-restoration scheduling, plus authorized physical RTL/LTR/theme/font/landscape/accessibility journeys. Unsubmitted typing is distinct from durable saved intents; full acceptance remains pending."
       ],
-      "feature_code_remaining": true,
-      "integration_code_remaining": true,
+      "feature_code_remaining": false,
+      "integration_code_remaining": false,
       "test_code_remaining": false,
-      "production_code_remaining": true,
-      "acceptance_only_in_current_app": false,
+      "production_code_remaining": false,
+      "acceptance_only_in_current_app": true,
       "evidence": [
         {
-          "location": "parallel",
-          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33",
-          "sha256": "471b8c8bcceafcbf24d58fa68ce9f2ee554f7bdb7e59ddc6be3decc56e5f91fd",
-          "last_path_commit": "fccbd6111d6559200a83b9b04eaeb56ed9536936",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahJournal.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "43cb938c7a7cff3d78ea3ad357d28cc674e4dd50",
+          "sha256": "6ad38dbff3dad7487b55242f4439259567ef8db041b3056aa99828a4d77f9dcb",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
-              "line": 25,
-              "symbol": "data class KhatmahServerVersion("
+              "line": 7,
+              "symbol": "internal data class KhatmahIntent("
             },
             {
-              "line": 35,
-              "symbol": "data class KhatmahPlanState("
+              "line": 15,
+              "symbol": "internal data class KhatmahJournal("
             },
             {
-              "line": 48,
-              "symbol": "data class KhatmahMetrics("
+              "line": 27,
+              "symbol": "fun projected(): KhatmahPlan? = intents.fold(acknowledged, ::applyIntent)"
             },
             {
-              "line": 64,
-              "symbol": "class KhatmahRepository("
+              "line": 29,
+              "symbol": "fun checked(): KhatmahJournal {"
             },
             {
-              "line": 76,
-              "symbol": "fun observe(owner: Long): Flow<KhatmahPlanState?> ="
+              "line": 45,
+              "symbol": "fun append(kind: String, draft: KhatmahDraft?, expectedVersion: Long, today: LocalDate): KhatmahJournal {"
+            },
+            {
+              "line": 59,
+              "symbol": "fun prepare(): KhatmahJournal {"
+            },
+            {
+              "line": 65,
+              "symbol": "fun accept(id: String, server: KhatmahPlan): KhatmahJournal {"
+            },
+            {
+              "line": 77,
+              "symbol": "fun conflict(server: KhatmahPlan?): KhatmahJournal = copy("
             },
             {
               "line": 81,
-              "symbol": "suspend fun saved(owner: Long): KhatmahPlanState? ="
+              "symbol": "fun reject(status: Int): KhatmahJournal = copy(version = version + 1, rejected = status).checked()"
             },
             {
-              "line": 86,
-              "symbol": "suspend fun refresh(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
+              "line": 83,
+              "symbol": "fun refreshed(server: KhatmahPlan?): KhatmahJournal {"
             },
             {
-              "line": 113,
-              "symbol": "suspend fun save("
+              "line": 91,
+              "symbol": "fun useServer(server: KhatmahPlan?, expectedVersion: Long): KhatmahJournal {"
             },
             {
-              "line": 161,
-              "symbol": "suspend fun action("
+              "line": 97,
+              "symbol": "fun keepDevice(server: KhatmahPlan?, expectedVersion: Long, today: LocalDate, correction: KhatmahDraft? = null, allowRestart: Boolean = false): KhatmahJournal {"
             },
             {
-              "line": 233,
-              "symbol": "suspend fun sync(expectedOwner: Long? = session.userId): KhatmahPlanState? ="
+              "line": 123,
+              "symbol": "fun sameValues(a: KhatmahPlan?, b: KhatmahPlan?): Boolean = when {"
             },
             {
-              "line": 296,
-              "symbol": "suspend fun useServer("
+              "line": 127,
+              "symbol": "fun applyIntent(base: KhatmahPlan?, intent: KhatmahIntent): KhatmahPlan {"
             },
             {
-              "line": 320,
-              "symbol": "suspend fun keepDevice("
+              "line": 147,
+              "symbol": "internal object KhatmahJournalCodec {"
             },
             {
-              "line": 345,
-              "symbol": "fun metrics(plan: KhatmahPlanState): KhatmahMetrics ="
+              "line": 150,
+              "symbol": "private fun plan(value: KhatmahPlan?): JsonElement = value?.let {"
             },
             {
-              "line": 348,
-              "symbol": "private suspend fun ensureInitializedForEdit(owner: Long) {"
+              "line": 157,
+              "symbol": "fun encode(journal: KhatmahJournal): String {"
             },
             {
-              "line": 371,
-              "symbol": "private suspend fun syncBestEffort(owner: Long) {"
+              "line": 176,
+              "symbol": "fun decode(raw: String, owner: Long, namespace: String): KhatmahJournal {"
             },
             {
-              "line": 384,
-              "symbol": "private suspend fun fetch(owner: Long): KhatmahServerVersion? {"
+              "line": 180,
+              "symbol": "fun JsonObject.text(key: String): String = requireNotNull(get(key)).also { require(it.isJsonPrimitive && it.asJsonPrimitive.isString) }.asString"
             },
             {
-              "line": 393,
-              "symbol": "private fun parseServer(data: JsonElement): KhatmahServerVersion? {"
+              "line": 181,
+              "symbol": "fun JsonObject.number(key: String): Long = requireNotNull(get(key)).also {"
             },
             {
-              "line": 417,
-              "symbol": "private fun decode(row: CachedDocument): KhatmahPlanState {"
+              "line": 184,
+              "symbol": "fun JsonObject.flag(key: String): Boolean = requireNotNull(get(key)).also { require(it.isJsonPrimitive && it.asJsonPrimitive.isBoolean) }.asBoolean"
             },
             {
-              "line": 436,
-              "symbol": "private suspend fun write(owner: Long, value: KhatmahPlanState) {"
+              "line": 185,
+              "symbol": "fun JsonObject.optionalInt(key: String): Int? = requireNotNull(get(key)).let { if (it.isJsonNull) null else number(key).also { n -> require(n <= Int.MAX_VALUE) }.toInt() }"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "31e12e7633508f96b9e60053bbe863b57ba1cd6a",
+          "sha256": "82015432d0868c5d60094cbb504d69c56c63cb3f1d3290d362a6f5f182c5f85f",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "symbols": [
+            {
+              "line": 23,
+              "symbol": "internal class KhatmahRepository("
             },
             {
-              "line": 448,
-              "symbol": "private suspend fun remove(owner: Long) {"
+              "line": 32,
+              "symbol": "private fun remote(owner: Long) = locks.getOrPut(owner) { Mutex() }"
             },
             {
-              "line": 453,
-              "symbol": "private fun validateStoredDates(start: String, target: String) {"
+              "line": 33,
+              "symbol": "private suspend fun readInside(owner: Long): KhatmahJournal {"
             },
             {
-              "line": 460,
-              "symbol": "private fun validateEditableDates("
+              "line": 38,
+              "symbol": "suspend fun read(owner: Long): KhatmahJournal = withContext(Dispatchers.IO) {"
             },
             {
-              "line": 479,
-              "symbol": "fun calculateMetrics("
+              "line": 44,
+              "symbol": "fun observe(owner: Long, lease: SessionLease = session.lease(owner)): Flow<ProtectedRead<KhatmahJournal>> {"
             },
             {
-              "line": 548,
-              "symbol": "private fun KhatmahServerVersion.toLocal("
+              "line": 53,
+              "symbol": "private suspend fun change(owner: Long, lease: SessionLease = session.lease(owner), transform: (KhatmahJournal) -> KhatmahJournal): KhatmahJournal = withContext(Dispatchers.IO) {"
+            },
+            {
+              "line": 66,
+              "symbol": "suspend fun enqueue(owner: Long, kind: String, draft: KhatmahDraft?, expectedVersion: Long, expectedLease: SessionLease = session.lease(owner)): KhatmahJournal {"
+            },
+            {
+              "line": 74,
+              "symbol": "suspend fun hasPending(owner: Long): Boolean = read(owner).let { it.intents.isNotEmpty() && !it.blocked }"
+            },
+            {
+              "line": 76,
+              "symbol": "private suspend fun fetch(lease: SessionLease): KhatmahPlan? {"
+            },
+            {
+              "line": 82,
+              "symbol": "suspend fun refresh(owner: Long, lease: SessionLease = session.lease(owner)): KhatmahJournal = remote(owner).withLock {"
+            },
+            {
+              "line": 93,
+              "symbol": "suspend fun sync(owner: Long) = remote(owner).withLock {"
+            },
+            {
+              "line": 138,
+              "symbol": "suspend fun useServer(owner: Long, expectedVersion: Long, lease: SessionLease = session.lease(owner)): KhatmahJournal = remote(owner).withLock {"
+            },
+            {
+              "line": 148,
+              "symbol": "suspend fun keepDevice(owner: Long, expectedVersion: Long, correction: KhatmahDraft? = null, allowRestart: Boolean = false, lease: SessionLease = session.lease(owner)): KhatmahJournal = remote(owner).withLock {"
+            },
+            {
+              "line": 162,
+              "symbol": "internal fun decodeRetainedKhatmah(namespace: String, owner: Long, row: CachedDocument, cipher: PrivateCipher): KhatmahJournal {"
+            },
+            {
+              "line": 167,
+              "symbol": "internal suspend fun retainedKhatmah(namespace: String, owner: Long, dao: AtharDao, cipher: PrivateCipher): com.google.gson.JsonArray = com.google.gson.JsonArray().apply {"
             }
           ],
           "worktree_matches_ref": true
@@ -9314,66 +9658,184 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d",
-          "sha256": "01f167a7c1b1efe7bc2f48ce859c1fb05a3c84f34a2074ba1b31ba94f4a3c3d4",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0",
+          "sha256": "c5ed5d7d0c018fe2ac494a26eafe7784d6c289f867b15009dd60b80149ec7f4a",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
-              "line": 13,
-              "symbol": "internal interface KhatmahGateway {"
-            },
-            {
               "line": 14,
-              "symbol": "fun requireActive()"
+              "symbol": "internal data class KhatmahRead(val journal: KhatmahJournal, val offline: Boolean = false)"
             },
             {
               "line": 15,
-              "symbol": "suspend fun load(): Pair<KhatmahPlan?, Boolean>"
+              "symbol": "internal interface KhatmahGateway {"
             },
             {
               "line": 16,
-              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Int, action: String?): KhatmahPlan"
+              "symbol": "fun requireActive()"
+            },
+            {
+              "line": 17,
+              "symbol": "suspend fun load(): KhatmahRead"
+            },
+            {
+              "line": 18,
+              "symbol": "fun changes(): Flow<ProtectedRead<KhatmahJournal>> = emptyFlow()"
             },
             {
               "line": 19,
-              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+              "symbol": "suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal"
             },
             {
               "line": 20,
+              "symbol": "suspend fun useServer(expected: Long): KhatmahJournal"
+            },
+            {
+              "line": 21,
+              "symbol": "suspend fun keepDevice(expected: Long, draft: KhatmahDraft): KhatmahJournal"
+            },
+            {
+              "line": 24,
+              "symbol": "internal enum class KhatmahFeedback { SAVED, SAVED_WITH_DRAFT, LOCAL_SAVED, LOCAL_WITH_DRAFT, INVALID, CONFLICT, UNAVAILABLE, UNCONFIRMED }"
+            },
+            {
+              "line": 25,
               "symbol": "internal data class KhatmahUiState("
             },
             {
-              "line": 35,
+              "line": 44,
               "symbol": "internal class KhatmahViewModel("
             },
             {
-              "line": 44,
+              "line": 54,
+              "symbol": "private fun watch() {"
+            },
+            {
+              "line": 71,
+              "symbol": "private fun merge(journal: KhatmahJournal, reset: Boolean = false, preserveBaseline: Boolean = false) {"
+            },
+            {
+              "line": 90,
               "symbol": "fun dayChanged() { mutable.value = mutable.value.copy(today = now()) }"
             },
             {
-              "line": 45,
+              "line": 91,
               "symbol": "fun edit(value: KhatmahDraft) {"
             },
             {
-              "line": 51,
+              "line": 96,
               "symbol": "fun clearPrivate() { editVersion++; mutable.value = KhatmahUiState(now(), loading = false) }"
             },
             {
-              "line": 52,
+              "line": 97,
               "symbol": "fun refresh(discard: Boolean = false) {"
             },
             {
-              "line": 75,
-              "symbol": "fun save() = submit(null, null)"
+              "line": 114,
+              "symbol": "fun save() = submit(null, null, null)"
             },
             {
-              "line": 76,
-              "symbol": "fun action(action: String, restart: KhatmahDraft? = null) = submit(action, restart)"
+              "line": 115,
+              "symbol": "fun action(action: String, restart: KhatmahDraft? = null, reviewedVersion: Long? = null) = submit(action, restart, reviewedVersion)"
             },
             {
-              "line": 78,
-              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?) {"
+              "line": 117,
+              "symbol": "private fun submit(action: String?, restart: KhatmahDraft?, reviewedVersion: Long?) {"
+            },
+            {
+              "line": 139,
+              "symbol": "private fun accepted(saved: KhatmahJournal, version: Long) {"
+            },
+            {
+              "line": 166,
+              "symbol": "private fun failed(failure: Exception) {"
+            },
+            {
+              "line": 176,
+              "symbol": "fun useServer(reviewedVersion: Long) {"
+            },
+            {
+              "line": 191,
+              "symbol": "fun keepDevice(reviewedVersion: Long) {"
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4",
+          "sha256": "311f4ca10fe063ccfb01db0d633bb41252875e392713a8be0ba574c949ff68b6",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "symbols": [
+            {
+              "line": 28,
+              "symbol": "internal fun KhatmahScreen(graph: AppGraph) {"
+            },
+            {
+              "line": 34,
+              "symbol": "override fun requireActive() = graph.session.requireLease(lease)"
+            },
+            {
+              "line": 35,
+              "symbol": "override fun changes() = graph.khatmah.observe(owner, lease)"
+            },
+            {
+              "line": 36,
+              "symbol": "override suspend fun load(): KhatmahRead {"
+            },
+            {
+              "line": 42,
+              "symbol": "override suspend fun write(draft: KhatmahDraft, expected: Long, action: String?): KhatmahJournal {"
+            },
+            {
+              "line": 46,
+              "symbol": "override suspend fun useServer(expected: Long) = graph.khatmah.useServer(owner, expected, lease)"
+            },
+            {
+              "line": 47,
+              "symbol": "override suspend fun keepDevice(expected: Long, draft: KhatmahDraft) = graph.khatmah.keepDevice(owner, expected, draft, allowRestart = true, lease = lease)"
+            },
+            {
+              "line": 67,
+              "symbol": "internal fun KhatmahContent("
+            }
+          ],
+          "worktree_matches_ref": true
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/core/sync/PrivateSyncWorker.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "990471662465b62aadbb6b6dd57908caafd7c3bc",
+          "sha256": "c3801c0fe0415dcdcebd947942a8e9dd649b0d881e339c5174e61f1050d41e78",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "symbols": [
+            {
+              "line": 11,
+              "symbol": "internal class GraphSyncOperations(private val graph:AppGraph):OwnedSyncOperations {"
+            },
+            {
+              "line": 13,
+              "symbol": "override suspend fun push(module:SyncModule,owner:Long){"
+            },
+            {
+              "line": 23,
+              "symbol": "suspend fun hasPending(module:SyncModule,owner:Long):Boolean=when(module){"
+            },
+            {
+              "line": 31,
+              "symbol": "override suspend fun hasPending(owner:Long)=SyncModule.entries.any{hasPending(it,owner)}"
+            },
+            {
+              "line": 34,
+              "symbol": "class PrivateSyncWorker(context:Context,parameters:WorkerParameters):CoroutineWorker(context,parameters) {"
+            },
+            {
+              "line": 35,
+              "symbol": "override suspend fun doWork():Result {"
             }
           ],
           "worktree_matches_ref": true
@@ -9381,10 +9843,10 @@
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7",
-          "sha256": "a928228343f03174f3a34e2d9bddbf4748a857ed710771719b39004fda9c27b8",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a",
+          "sha256": "fcc2a89acf017e88fa9a96e6ca91c2f004064c1a019353edb8b060c9db05f5d1",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 12,
@@ -9400,34 +9862,42 @@
             },
             {
               "line": 23,
+              "symbol": "public static function fingerprint(int $owner,?array $row):string"
+            },
+            {
+              "line": 28,
+              "symbol": "private static function owned(int $owner,array $row):array { return array_merge(self::decorate($row),['plan_hash'=>self::fingerprint($owner,$row)]); }"
+            },
+            {
+              "line": 30,
               "symbol": "public static function decorate(array $row,?string $today=null):array"
             },
             {
-              "line": 48,
+              "line": 55,
               "symbol": "public static function integer(array $data,string $key,int $min,int $max):int"
             },
             {
-              "line": 55,
+              "line": 62,
               "symbol": "private static function dates(string $start,string $target,bool $unchanged):void"
             },
             {
-              "line": 66,
+              "line": 73,
               "symbol": "public function save(int $owner,array $data):array { return $this->mutate($owner,$data,false); }"
             },
             {
-              "line": 67,
+              "line": 74,
               "symbol": "public function action(int $owner,array $data):array { return $this->mutate($owner,$data,true); }"
             },
             {
-              "line": 69,
+              "line": 76,
               "symbol": "private function mutate(int $owner,array $data,bool $action):array"
             },
             {
-              "line": 120,
+              "line": 131,
               "symbol": "private function matches(array $current,array $data):bool"
             },
             {
-              "line": 126,
+              "line": 137,
               "symbol": "private function actionReplay(array $current,array $data,string $kind):bool"
             }
           ],
@@ -9435,96 +9905,153 @@
         }
       ],
       "related_commits": [
-        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-        "fccbd6111d6559200a83b9b04eaeb56ed9536936"
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
       ],
       "alternative_branch_evidence": [],
       "integration_call_path_evidence": [
-        "parallel_graph",
-        "parallel_navigation",
-        "parallel_manifest",
-        "parallel_api",
-        "main_graph"
+        "main_graph",
+        "main_navigation",
+        "main_manifest",
+        "main_api"
       ],
       "tests_executed": [
         {
-          "kind": "new_parallel_configuration_failure",
-          "receipt": "artifacts/functional-integration/audit-parallel-configuration.log",
-          "limit": "Gradle :app:tasks fails at SourceSet Provider configuration. Local pre-existing File/import repair present; pristine branch has an additional script compilation issue. No JVM/instrumentation pass on this source claimed."
+          "kind": "inherited_baseline_JVM_subset",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "classes": [
+            "org.athar.app.AccountDeletionIntentTest",
+            "org.athar.app.AccountDeletionWorkflowTest",
+            "org.athar.app.AccountExportTest",
+            "org.athar.app.AccountExportWriterTest",
+            "org.athar.app.AccountInputTest",
+            "org.athar.app.AccountPayloadsTest",
+            "org.athar.app.ActivitySummaryTest",
+            "org.athar.app.BookCompletionEventTest",
+            "org.athar.app.BookCompletionJournalTest",
+            "org.athar.app.SavedCollectionsTest"
+          ],
+          "limit": "Passed unit subset only; does not establish native API/physical/provider/final acceptance."
+        },
+        {
+          "kind": "inherited_baseline_backend_subsystem_gate",
+          "source_ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
+          "receipt": "artifacts/functional-integration/book-activity-serial-backend.log",
+          "limit": "24 executed suites/21192 assertions overall, not per-task assertion counts; mocks do not prove provider delivery."
         },
         {
           "kind": "new_focused_functional_checkpoint",
-          "source_ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "source_ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "result": {
-            "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-            "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-            "jvm_cases": 8,
-            "jvm_classes": 2,
+            "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+            "execution_date": "2026-10-29",
+            "review_date": "2026-10-30",
+            "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+            "jvm_cases": 66,
+            "jvm_classes": 7,
             "junit_receipts": [
+              {
+                "name": "org.athar.app.AccountExportTest",
+                "tests": 5,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+                "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+                "bytes": 1006
+              },
+              {
+                "name": "org.athar.app.AccountExportWriterTest",
+                "tests": 4,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+                "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+                "bytes": 867
+              },
               {
                 "name": "org.athar.app.KhatmahContractTest",
                 "tests": 3,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-                "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+                "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
                 "bytes": 735
               },
               {
+                "name": "org.athar.app.KhatmahJournalTest",
+                "tests": 10,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+                "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+                "bytes": 1682
+              },
+              {
                 "name": "org.athar.app.KhatmahViewModelTest",
-                "tests": 5,
+                "tests": 8,
                 "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-                "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-                "bytes": 990
+                "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+                "bytes": 1415
+              },
+              {
+                "name": "org.athar.app.OwnedSyncRunnerTest",
+                "tests": 9,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+                "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+                "bytes": 1562
+              },
+              {
+                "name": "org.athar.app.SessionRepositoryTest",
+                "tests": 27,
+                "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+                "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+                "bytes": 4132
               }
             ],
             "backend_suites": 5,
-            "backend_assertions": 323,
+            "backend_assertions": 335,
             "backend_components": {
-              "khatmah": 84,
+              "khatmah": 96,
               "catalog_progress": 103,
               "account_export": 33,
               "account_deletion": 33,
               "recovery": 70
             },
-            "actual_cookie_api_http_assertions": 23,
+            "actual_cookie_api_http_assertions": 29,
             "debug_apk": "PASS",
             "test_apk": "PASS",
             "lint_errors": 0,
-            "lint_warnings": 62,
-            "resources_paired": 451,
-            "new_instrumentation_cases": 0,
+            "lint_warnings": 64,
+            "resources_paired": 462,
+            "new_instrumentation_cases": 5,
+            "instrumentation_cases_executed": 6,
+            "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
             "physical_acceptance": "NOT_EXECUTED",
             "provider_delivery": "NOT_APPLICABLE",
             "logs": [
               {
-                "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-                "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-                "bytes": 5326
+                "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+                "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+                "bytes": 8448
               },
               {
-                "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-                "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-                "bytes": 153
+                "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+                "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+                "bytes": 4251
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-                "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-                "bytes": 234
+                "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+                "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+                "bytes": 434
               },
               {
-                "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-                "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-                "bytes": 426
+                "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+                "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+                "bytes": 226
               },
               {
-                "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-                "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+                "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+                "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
                 "bytes": 472
               }
             ],
             "limits": [
-              "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-              "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-              "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+              "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+              "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+              "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+              "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+              "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
             ]
           }
         }
@@ -9534,14 +10061,14 @@
       "tests_still_required": [
         "Offline restart/lost response/conflict/ownership plan tests. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
-        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
+        "Execute native real HTTP and actual process/reboot/network-restoration scheduling, plus authorized physical RTL/LTR/theme/font/landscape/accessibility journeys. Unsubmitted typing is distinct from durable saved intents; full acceptance remains pending."
       ],
       "external_blockers": [],
       "confidence": "medium",
       "confidence_limit": "Source-level finding; no unperformed acceptance inferred.",
       "old_closure_accurate": true,
       "old_status_assessment": "Implementation advanced after original audit9492f14. Earlier partial finding was accurate then; this record reflects the later functional checkpoint, not retroactive completion.",
-      "reporting_verdict": "R"
+      "reporting_verdict": "V"
     },
     {
       "id": "08.1",
@@ -23864,10 +24391,10 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "40e353643b26593b063f13a55fb97759316d11d1",
-          "sha256": "ca51a2055a446c1a73b62f5599504120f9eb7ed076c57b5a7c2a7804c58cd240",
-          "last_path_commit": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "1a37ac93450de2d60eac63e2104ef83fb72a5f91",
+          "sha256": "7b7dc617ea3115977f3215edd63cd9be714108505e190efe02ef34a99b1f9c06",
+          "last_path_commit": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
           "symbols": [
             {
               "line": 1,
@@ -23878,7 +24405,7 @@
         }
       ],
       "related_commits": [
-        "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+        "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
         "f66a05a5c567afb6acd7d2bf55b8e0593493bb1c"
       ],
       "alternative_branch_evidence": [],
@@ -23903,7 +24430,7 @@
       "inherited_acceptance_receipts": [],
       "receipt_blob_continuity": [],
       "tests_still_required": [
-        "Current paired resource format checks (451 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
+        "Current paired resource format checks (462 at current checkpoint); fresh-default/persisted language/theme and screenshot matrix. Native changes: assembleDebug, testDebugUnitTest, assembleDebugAndroidTest, lintDebug and paired resources; backend changes: isolated relevant suites/schema checks; Admin changes: build plus HTTP/RBAC/CSRF/browser tests, as applicable.",
         "Authorized API27 phone: relevant real journey, Arabic RTL light and English LTR, offline/error/retry and retained data. UI-sensitive work also checks dark/reduced motion/large font/landscape; API33+ or tablet when required. No uninstall/reset/global-settings changes.",
         "Complete screen matrix and correct any residual mixed numbers/dates/RTL mirroring/contrast issues; resource parity alone cannot establish visual completion."
       ],
@@ -26041,13 +26568,13 @@
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
           "kind": "test tree",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
         },
         {
           "location": "main",
           "path": "tests",
           "kind": "test tree",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
         }
       ],
       "related_commits": [],
@@ -27098,98 +27625,133 @@
     ]
   },
   "functional_checkpoint": {
-    "main_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+    "main_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
     "reviewed_tasks": [
       "07.7",
       "07.8",
       "07.9"
     ],
-    "summary": "Functional integration after original audit:07.7/07.8 now have canonical inclusive UTC workload/date validation, revisioned shared web/API writes, native owner-leased editing and deliberate lifecycle actions. Both are IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL.07.9 has server CAS/replay and retained-draft foundations only; durable offline intent/conflicts are still missing.",
+    "summary": "07.7–07.9 are now IMPLEMENTED/INTEGRATED/ACCEPTANCE_PENDING/PARTIAL. The current editor uses durable encrypted owned intents, ordered lifecycle synchronization, captured session generations, semantic acknowledgments, additive owner/plan fingerprints, explicit reviewed cloud/device recovery, retained rejection/unreadable bytes, and validated export/deletion. Full native HTTP/OS/physical acceptance remains open.",
     "validation": {
-      "source_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-      "provenance": "New focused functional checkpoint; original167 JVM/24 backend/35 API34 evidence remains separately pinned at2b7d7de. No full175-case run is claimed.",
-      "jvm_cases": 8,
-      "jvm_classes": 2,
+      "source_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+      "execution_date": "2026-10-29",
+      "review_date": "2026-10-30",
+      "provenance": "Scoped source checkpoint:66 JVM cases and6 actual API34 storage cases; original167 JVM/24 backend/35 API34 baseline remains separately pinned at2b7d7de. No full-project rerun or physical acceptance is claimed.",
+      "jvm_cases": 66,
+      "jvm_classes": 7,
       "junit_receipts": [
+        {
+          "name": "org.athar.app.AccountExportTest",
+          "tests": 5,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportTest.xml",
+          "sha256": "ab44bf3318f951ce7eb8dbfa5d1d394c55b01d003449f61dd751bccf4768dd0b",
+          "bytes": 1006
+        },
+        {
+          "name": "org.athar.app.AccountExportWriterTest",
+          "tests": 4,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.AccountExportWriterTest.xml",
+          "sha256": "5f4798a829ffca3ef7140889d8aaa92464064d37a18c79e8a16c56c9c7901bf7",
+          "bytes": 867
+        },
         {
           "name": "org.athar.app.KhatmahContractTest",
           "tests": 3,
           "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahContractTest.xml",
-          "sha256": "baa22155c8022c19b0985580a2e02840cb8cf930ac65019083b7079a6dde4a34",
+          "sha256": "4206331ac1cdbacd7eea2ec5bc8527f427b08cede5e3e367e4d1b59ebdebdf9d",
           "bytes": 735
         },
         {
+          "name": "org.athar.app.KhatmahJournalTest",
+          "tests": 10,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahJournalTest.xml",
+          "sha256": "8737bab4842863e0f6f33a70a24dee451ba692747b70b05af33f07a3f441ec48",
+          "bytes": 1682
+        },
+        {
           "name": "org.athar.app.KhatmahViewModelTest",
-          "tests": 5,
+          "tests": 8,
           "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.KhatmahViewModelTest.xml",
-          "sha256": "f8ec5e700b02d62de0bc2ffa85cc6b66a94a2ace8a5e77d0253a52354cd60b33",
-          "bytes": 990
+          "sha256": "33a5cd52ba281a433e77ee4386a8ea6913e6880880962db272c240247791112b",
+          "bytes": 1415
+        },
+        {
+          "name": "org.athar.app.OwnedSyncRunnerTest",
+          "tests": 9,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.OwnedSyncRunnerTest.xml",
+          "sha256": "07999c483e9471cfbf32ea09b305d57b612db6fdafe3157eabdd644bcbbcfde5",
+          "bytes": 1562
+        },
+        {
+          "name": "org.athar.app.SessionRepositoryTest",
+          "tests": 27,
+          "path": "android/app/build/test-results/testDebugUnitTest/TEST-org.athar.app.SessionRepositoryTest.xml",
+          "sha256": "3b736bf55cc5158b9a7a2e93a7f6a474dd3ec22001a7efdaac00b2fb87e70588",
+          "bytes": 4132
         }
       ],
       "backend_suites": 5,
-      "backend_assertions": 323,
+      "backend_assertions": 335,
       "backend_components": {
-        "khatmah": 84,
+        "khatmah": 96,
         "catalog_progress": 103,
         "account_export": 33,
         "account_deletion": 33,
         "recovery": 70
       },
-      "actual_cookie_api_http_assertions": 23,
+      "actual_cookie_api_http_assertions": 29,
       "debug_apk": "PASS",
       "test_apk": "PASS",
       "lint_errors": 0,
-      "lint_warnings": 62,
-      "resources_paired": 451,
-      "new_instrumentation_cases": 0,
+      "lint_warnings": 64,
+      "resources_paired": 462,
+      "new_instrumentation_cases": 5,
+      "instrumentation_cases_executed": 6,
+      "instrumentation_result": "6/6 PASS on API34;5 new KhatmahStorageTest +1 extended AccountExportStorageTest; real Room/Keystore, deterministic transport.",
       "physical_acceptance": "NOT_EXECUTED",
       "provider_delivery": "NOT_APPLICABLE",
       "logs": [
         {
-          "path": "artifacts/functional-integration/khatmah-subsystem-final.log",
-          "sha256": "c6a50083921e008d3001d8cfdbd4919305ec7fe812594b37b98bb15f26abf6a4",
-          "bytes": 5326
+          "path": "artifacts/functional-integration/khatmah-durable-final-corrected-gate.log",
+          "sha256": "2550841ee90274cb64de8368ade8934133908fa66d8c53190e88e2e4626b8beb",
+          "bytes": 8448
         },
         {
-          "path": "artifacts/functional-integration/khatmah-replay-strict-final.log",
-          "sha256": "e2544857e177ff2ba0f52e90c9d3f654f3d84838a44ab5ef6a2280804b62a4ea",
-          "bytes": 153
+          "path": "artifacts/functional-integration/khatmah-api34-storage.private.log",
+          "sha256": "716bcaf66874a68c40ef167969ba7f601e839e7eaf1912184cbc9cdce0f596d9",
+          "bytes": 4251
         },
         {
-          "path": "artifacts/functional-integration/khatmah-backend-focused-final.log",
-          "sha256": "d30fc6b3a0d99874f89ce5506233b9c51721547bede0bc64f0b4ae679b84c61a",
-          "bytes": 234
+          "path": "artifacts/functional-integration/khatmah-durable-backend-final.log",
+          "sha256": "e3a65f56e8e6053f177f607bb0a2ec11b57cd543e659dfa20617446a04f4e958",
+          "bytes": 434
         },
         {
-          "path": "artifacts/functional-integration/khatmah-backend-compatibility.log",
-          "sha256": "33ba4895735d1513c168935ee532848929e39c7dcce99bbfadbbdf34651f18e2",
-          "bytes": 426
+          "path": "artifacts/functional-integration/khatmah-durable-recovery-final.log",
+          "sha256": "0ff38c798c0b33712cf17af2014b4879e5d90d8a399b3516553c928f3c6fbe49",
+          "bytes": 226
         },
         {
-          "path": "artifacts/functional-integration/khatmah-real-http-final.log",
-          "sha256": "6157b5caf5cea1d4f89d383655f23a49eb272f455e6846d4691c9682f67e10eb",
+          "path": "artifacts/functional-integration/khatmah-fingerprint-real-http.log",
+          "sha256": "2ba6159dd9cd0ce3446e5a66847711793970a3730b4a7fa10c971128526a2875",
           "bytes": 472
         }
       ],
       "limits": [
-        "ViewModel draft retention is not durable process/reboot recovery;07.9 remains open.",
-        "Actual native HTTP/physical RTL/LTR/accessibility journeys are pending.",
-        "Staged feature secret-pattern screening found0; original historical synthetic URL fixtures were not rewritten."
+        "Room close/reopen proves database recovery, not OS process-kill/reboot or network-restoration scheduling.",
+        "Actual native real HTTP/physical RTL/LTR/accessibility journeys remain pending; launch screenshot is only a sign-in rendering preview.",
+        "Unsubmitted form typing remains ViewModel state; only explicitly saved intents are durable.",
+        "Lint0 errors/64 warnings: prior62 plus2 new quantity-string plural candidates; no suppressions added.",
+        "Added-line staged key/credential-URL pattern screening passed; historical fixtures were not rewritten."
       ]
     },
-    "integration_overrides": {
-      "07.9": "PARTIALLY_INTEGRATED"
-    },
-    "additional_main_evidence": {
-      "07.9": [
-        "KhatmahViewModel.kt",
-        "backend/src/Progress/Khatmah.php"
-      ]
-    },
+    "integration_overrides": {},
+    "additional_main_evidence": {},
     "next_task": {
-      "id": "07.9",
-      "action": "Implement durable encrypted owned Khatmah intent/outbox and restart-safe synchronization with explicit conflicts; preserve already integrated revisioned web/API and native drafts.",
-      "deferred": "Required native real HTTP/OS/process/physical acceptance remains queued; no closure from focused local tests alone."
-    }
+      "id": "08.1",
+      "action": "Reconcile the Night Prayer tonight route with current protected ownership; refresh sourced night identity across Maghrib/Fajr, lifecycle return and clock/timezone changes before porting dependent08.x screens.",
+      "deferred": "07.7–07.9 native real HTTP/OS/physical acceptance is queued with the related device batch; no closure from scoped local/emulator tests."
+    },
+    "date": "2026-10-30"
   }
 }

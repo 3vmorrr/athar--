@@ -612,8 +612,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "088108e33f9ae7f92eb3c87b2be85d03584b4820"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "b67ebd4c4673ce38197f5aee8e33ecea85bb0f78"
         }
       ],
       "historic_parallel_state_claim": "COMPLETE"
@@ -748,8 +748,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b"
         }
       ],
       "historic_parallel_state_claim": "COMPLETE"
@@ -1321,8 +1321,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b"
         },
         {
           "location": "main",
@@ -1911,8 +1911,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/sync/OwnedSyncRunner.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "088108e33f9ae7f92eb3c87b2be85d03584b4820"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "b67ebd4c4673ce38197f5aee8e33ecea85bb0f78"
         },
         {
           "location": "main",
@@ -4475,8 +4475,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b"
         },
         {
           "location": "main",
@@ -4576,8 +4576,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/auth/SessionRepository.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "861436d836571bff12f34bf857d84f6a486edac4"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "29e4d82033df5ecbbe47e22159c4f7a44820024b"
         },
         {
           "location": "main",
@@ -4803,8 +4803,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/core/data/AccountLocalData.kt",
-          "ref": "2b7d7de0fc3a6cdf2fdfb99adbd3ee6c5c11a474",
-          "git_blob": "e52b30d10477a5bde809147315465c334189a2d3"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ad41ead3d5edd8782fc1d90bd6c61586ad5b2402"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5099,26 +5099,26 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahContract.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "453180ea330ae5700d7a6bc811c206391e6ce115"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "7e15b746461b46d00e312419a644284790dda4e1"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4"
         },
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5177,20 +5177,20 @@
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "377d9a3962361fd2436e8ec03a92479f62fce9c2"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0"
         },
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -5200,9 +5200,9 @@
       "name": "Khatmah offline and conflicts",
       "work_package": "Work package 7: Account/Khatmah",
       "classification": "BOTH MUST BE RECONCILED",
-      "review_state": "ACTUAL SOURCE AUDITED; partially_implemented",
+      "review_state": "ACTUAL SOURCE AUDITED; implemented_integrated_awaiting_acceptance",
       "codex_state": "PARTIAL",
-      "parallel_state": "SEE ACTUAL AUDIT: PARTIALLY_IMPLEMENTED",
+      "parallel_state": "SEE ACTUAL AUDIT: HISTORIC SOURCE CLAIM NOT USED FOR CURRENT VERDICT",
       "parallel_candidate_commits": [
         "4b23614f2c33be37ca31dc8fa5e93d845e981486",
         "5d2007811579fd85f3773c20632360195d226614",
@@ -5250,33 +5250,51 @@
       "external_blockers": null,
       "remaining_acceptance": "Persist plan edits/progress safely across restart/account changes and reconcile conflicts explicitly. Applicable logic/API/persistence/offline/error/retry/privacy/localization/accessibility gates above pass; no placeholder or stale-branch logic; relevant device evidence recorded; docs updated; diff/security reviewed; logical commit and verified normal push.",
       "acceptance_evidence": [],
-      "implementation_status": "PARTIALLY_IMPLEMENTED",
-      "integration_status": "PARTIALLY_INTEGRATED",
-      "verification_status": "TESTS_FAILING",
+      "implementation_status": "IMPLEMENTED",
+      "integration_status": "INTEGRATED",
+      "verification_status": "ACCEPTANCE_PENDING",
       "closure_status": "PARTIAL",
-      "production_code_remaining": true,
+      "production_code_remaining": false,
       "missing": [
-        "Implement a durable owned intent/outbox and action-preserving background dispatcher in the current graph. Preserve newer edits on refresh/ACK, retain permanent rejection bytes, and support deliberate server/device/missing-server resolution across restart/account changes. Current ViewModel is not durable offline storage."
+        "Execute native real HTTP and actual process/reboot/network-restoration scheduling, plus authorized physical RTL/LTR/theme/font/landscape/accessibility journeys. Unsubmitted typing is distinct from durable saved intents; full acceptance remains pending."
       ],
       "actual_audit_record": "07.9",
       "actual_evidence": [
         {
-          "location": "parallel",
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahJournal.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "43cb938c7a7cff3d78ea3ad357d28cc674e4dd50"
+        },
+        {
+          "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahRepository.kt",
-          "ref": "7392e93b088990c3478cf32197781f831eb10f83",
-          "git_blob": "1a011495f2eee908d708875dc0d40fbe6caa8e33"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "31e12e7633508f96b9e60053bbe863b57ba1cd6a"
         },
         {
           "location": "main",
           "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahViewModel.kt",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "7880af2ec03bb801c69ceb798bc491e4a32b809d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "0f100ac1ec0059c994a66d9003f7018c17dda9e0"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/khatmah/KhatmahScreen.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "4eb7e4432b765f5fed6de26c12eff221406426b4"
+        },
+        {
+          "location": "main",
+          "path": "android/app/src/main/java/org/athar/app/core/sync/PrivateSyncWorker.kt",
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "990471662465b62aadbb6b6dd57908caafd7c3bc"
         },
         {
           "location": "main",
           "path": "backend/src/Progress/Khatmah.php",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "d6f4ce3937c2e65a7ea0ddb6946deb37bb7839b7"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "ed4b84912f318b0b7fcdd99b6bff680d9de11e0a"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -12996,8 +13014,8 @@
         {
           "location": "main",
           "path": "android/app/src/main/res/values-en/strings.xml",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
-          "git_blob": "40e353643b26593b063f13a55fb97759316d11d1"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
+          "git_blob": "1a37ac93450de2d60eac63e2104ef83fb72a5f91"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -16080,12 +16098,12 @@
         {
           "location": "main",
           "path": "android/app/src/androidTest/java/org/athar/app",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
         },
         {
           "location": "main",
           "path": "tests",
-          "ref": "11f94da50b2d4e050a296be3c1ab861225de7d4d"
+          "ref": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6"
         }
       ],
       "historic_parallel_state_claim": "PARTIAL"
@@ -18039,26 +18057,26 @@
   "actual_audit": "ACTUAL_IMPLEMENTATION_AUDIT.json",
   "actual_audit_metrics": {
     "total": 149,
-    "fully_implemented_any_reviewed_branch": 112,
-    "fully_implemented_main": 73,
-    "integrated_active_application": 73,
+    "fully_implemented_any_reviewed_branch": 113,
+    "fully_implemented_main": 74,
+    "integrated_active_application": 74,
     "passed_all_required_verification": 19,
     "formally_closed": 19,
-    "fully_implemented_outstanding_verification": 93,
-    "acceptance_only_current_app": 54,
-    "partially_implemented_needing_code": 22,
-    "partial_tasks_needing_production_code": 21,
+    "fully_implemented_outstanding_verification": 94,
+    "acceptance_only_current_app": 55,
+    "partially_implemented_needing_code": 21,
+    "partial_tasks_needing_production_code": 20,
     "partial_tasks_needing_only_test_code": 1,
     "not_implemented": 0,
     "external_blocked": 4,
     "implemented_only_unmerged": 39,
-    "any_implementation_or_scaffold_only_unmerged": 51,
-    "production_code_remaining_including_integration": 63,
-    "feature_code_remaining": 22,
-    "integration_code_remaining": 47,
+    "any_implementation_or_scaffold_only_unmerged": 50,
+    "production_code_remaining_including_integration": 62,
+    "feature_code_remaining": 21,
+    "integration_code_remaining": 46,
     "reopened_previous_complete": 7
   },
-  "audit_target_sha": "11f94da50b2d4e050a296be3c1ab861225de7d4d",
+  "audit_target_sha": "4e066a793c13b92e0aa3da69c1c247bbdc1e1cc6",
   "audit_source_sha": "7392e93b088990c3478cf32197781f831eb10f83",
   "historic_inventory_notice": "Earlier candidate lists and cursor are historical source inventory, not task implementation verdicts. Four-axis actual audit supersedes codex_state/review_state interpretations."
 }

@@ -23,7 +23,7 @@ INPUT = PROGRESS/'ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json'
 CHECKPOINT = json.loads(INPUT.read_text(encoding='utf-8')) if INPUT.exists() else {}
 TARGET = CHECKPOINT.get('main_sha', BASELINE_SHA)
 SOURCE = '7392e93b088990c3478cf32197781f831eb10f83'
-DATE = '2026-10-29'
+DATE = CHECKPOINT.get('date', '2026-10-29')
 AUDIT = PROGRESS / 'ACTUAL_IMPLEMENTATION_AUDIT.json'
 RECONCILED_DOCS = [
     'docs/progress/TASK_TRACKER.md','docs/progress/IMPLEMENTATION_PLAN.md',
@@ -491,7 +491,7 @@ def report_text(data):
         cp=data['functional_checkpoint']
         v=cp['validation']
         lines[4:4]=['## Functional update after the original audit','',cp['summary'],'',
-                    f"Current focused validation, separate from the inherited baseline: **{v['jvm_cases']} JVM / {v['backend_assertions']} backend assertions / {v['actual_cookie_api_http_assertions']} actual cookie/API HTTP assertions**. Debug/test APK PASS; lint{v['lint_errors']} errors/{v['lint_warnings']} warnings;{v['resources_paired']} paired resources. No new instrumentation/physical acceptance. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.",'']
+                    f"Current focused validation, separate from the inherited baseline: **{v['jvm_cases']} JVM / {v['backend_assertions']} backend assertions / {v['actual_cookie_api_http_assertions']} actual cookie/API HTTP assertions**. Debug/test APK PASS; lint{v['lint_errors']} errors/{v['lint_warnings']} warnings;{v['resources_paired']} paired resources. {v.get('instrumentation_cases_executed', 0)} scoped emulator cases executed; physical acceptance remains pending. Exact component counts, source SHA and receipt digests are in ACTUAL_IMPLEMENTATION_AUDIT_INPUT.json.",'']
     return '\n'.join(lines)
 
 def reconcile_documents(data):
@@ -503,10 +503,10 @@ def reconcile_documents(data):
         source=path.read_text(encoding='utf-8')
         source=re.sub(re.escape(marker_start)+r'.*?'+re.escape(marker_end)+r'\n*','',source,flags=re.S)
         link='ACTUAL_IMPLEMENTATION_AUDIT.md' if '/progress/' in name else '../progress/ACTUAL_IMPLEMENTATION_AUDIT.md'
-        note=f"{marker_start}\n> **Current authority —2026-10-29:** [{metrics['total']}-task actual source audit]({link}). {metrics['fully_implemented_any_reviewed_branch']} tasks have implemented source ({metrics['fully_implemented_main']} in main, {metrics['implemented_only_unmerged']} only unmerged); {metrics['formally_closed']} are accepted/closed, {metrics['acceptance_only_current_app']} need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.\n\n"
+        note=f"{marker_start}\n> **Current authority —{DATE}:** [{metrics['total']}-task actual source audit]({link}). {metrics['fully_implemented_any_reviewed_branch']} tasks have implemented source ({metrics['fully_implemented_main']} in main, {metrics['implemented_only_unmerged']} only unmerged); {metrics['formally_closed']} are accepted/closed, {metrics['acceptance_only_current_app']} need current acceptance only. Seven earlier native closures reopened after source changes. These metrics overlap; use the audit's exclusive149 partition. Older counts, percentages, next-task statements and dated test results below are historical receipts, not current inventory or newly executed tests.\n\n"
         if name.endswith('ACCOUNT_FUNCTIONAL_INTEGRATION.md'):
             note+='> **WP07.1–07.6:** IMPLEMENTATION: IMPLEMENTED. INTEGRATION: INTEGRATED. VERIFICATION: ACCEPTANCE_PENDING. CLOSURE: PARTIAL. MISSING: real native HTTP/OS/physical/chooser acceptance appropriate to each task. EVIDENCE:2b7d7de baseline and inherited167 JVM/24 backend/35 API34 gates; full per-task records in the audit. '
-            note+=('07.7/07.8 now have integrated revisioned web/API/native editing and explicit lifecycle; see KHATMAH_FUNCTIONAL_INTEGRATION.md and current focused receipts.07.9 durable offline/outbox/conflicts remain open.' if CHECKPOINT else '07.7–07.9 still require Khatmah contract/conflict code and integration.')+'\n\n'
+            note+=(CHECKPOINT['summary']+' See KHATMAH_FUNCTIONAL_INTEGRATION.md and current focused receipts.' if CHECKPOINT else '07.7–07.9 still require Khatmah contract/conflict code and integration.')+'\n\n'
         note+=marker_end+'\n\n'
         first, separator, rest=source.partition('\n')
         path.write_text(first+'\n\n'+note+rest.lstrip('\n') if separator else note+source,encoding='utf-8')
@@ -525,7 +525,7 @@ def reconcile_documents(data):
     path=PROGRESS/'PREMIUM_UI_MILESTONE.json'
     d=json.loads(path.read_text(encoding='utf-8'))
     d['actual_audit']='ACTUAL_IMPLEMENTATION_AUDIT.json'
-    d['historic_snapshot_notice']='paused_execution counts/base commit are dated planning history. Runtime source/current acceptance and all task counts are superseded by2026-10-29 actual audit; no new user visual acceptance is inferred.'
+    d['historic_snapshot_notice']=f'paused_execution counts/base commit are dated planning history. Runtime source/current acceptance and all task counts are superseded by{DATE} actual audit; no new user visual acceptance is inferred.'
     dump(path,d)
     path=PROGRESS/'DEVICE_ACCEPTANCE_QUEUE.json'
     d=json.loads(path.read_text(encoding='utf-8'))
