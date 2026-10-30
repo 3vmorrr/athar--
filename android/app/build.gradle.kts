@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.File
 import java.net.URI
 import java.security.MessageDigest
 
@@ -65,7 +66,7 @@ if (releaseRequested) {
             "ATHAR_RELEASE_STORE_PASSWORD, ATHAR_RELEASE_KEY_ALIAS and " +
             "ATHAR_RELEASE_KEY_PASSWORD outside the repository."
     }
-    require(java.io.File(requireNotNull(releaseStorePath)).isFile) {
+    require(File(requireNotNull(releaseStorePath)).isFile) {
         "ATHAR_RELEASE_STORE_FILE must point to an existing keystore."
     }
 }
@@ -277,7 +278,7 @@ val verifyReleaseConfiguration by tasks.registering {
         ) {
             "Release signing inputs are incomplete."
         }
-        check(java.io.File(requireNotNull(releaseStorePath)).isFile) {
+        check(File(requireNotNull(releaseStorePath)).isFile) {
             "Release keystore does not exist."
         }
     }
