@@ -1,0 +1,29 @@
+# Night Prayer planning integration —2026-10-30
+
+08.2 IMPLEMENTATION:IMPLEMENTED. INTEGRATION:INTEGRATED. VERIFICATION:ACCEPTANCE_PENDING. CLOSURE:PARTIAL. The current Night Prayer route now exposes target/range preview, encrypted owned saved plans, copy reference, deliberate clear and separately confirmed full-range recording. Native real HTTP/clipboard/account-switch/OS/process and physical acceptance remain queued.08.3 exact reading/continuation is a separate open task.
+
+## Source reconciliation
+
+Parallel7392e93 supplies planner/card/explicit-record intent. Its repository lacks owner/environment-bound payloads, strict retained reconstruction, atomic version checks and session-generation fences. Its continuation label considers all historical ranges and does not open a Quran reader. These portions are superseded or deferred; the branch is not merged wholesale. Existing history/rejection/conflict behavior and premium primitives remain.
+
+`NightPlanState` stores an exact bounded schema under `private:night-verse-plan:v1`, outside disposable locale HTTP caches. Owner/environment, UUID, integral revisions, canonical global bounds and timestamps are checked explicitly rather than reconstructed through permissive Gson defaults. References are derived from the bundled QuranIndex; persisted surah/ayah pairs cannot disagree with global indices. Arabic/Persian digits normalize without silently turning1.5 into15. Clearing retains a versioned tombstone so old forms cannot recreate a cleared plan. No Room/schema migration, dependency, permission or Quran asset change was added.
+
+Saves and clears use a captured SessionLease and a Room read/version/write transaction with the existing deletion fence and a final generation check. Cold Quran asset loading occurs outside the transaction and rechecks the same lease before writing. Concurrent forms cannot both commit one version; stale, foreign or unreadable frames remain retained. Plan save/clear/copy do not create history or modify Quran/Khatmah progress.
+
+Explicit recording freezes the reviewed plan/version and a UUID operation. The actual Maghrib date must be chosen, with a supported timezone and private note; no midnight date is guessed. The Night session, existing ordered outbox and owner/environment-bound receipt commit together. The receipt holds only plan/operation IDs and a fingerprint, not a second copy of note/date/range. Retrying a committed operation cannot add another row or resurrect later edited/deleted history. Divergent reuse of an operation is409. A known validation failure permits repair; an uncertain return locks the original fields for an identical retry. Recording feedback states device-local/queued, not remote delivery.
+
+The ViewModel owns unsubmitted forms and private confirmation state without plaintext SavedState. It preserves newer typing on save/reload, keeps the expected version fixed after preview, rejects stale confirmations and clears presentation on actor loss. `NightPlanContent` takes immutable state/events separately from graph, clipboard and persistence wiring. The actual copy handler uses the reviewed canonical reference and marks the clipboard content sensitive. Component tests verify events, not OS clipboard acceptance.
+
+Owned export adds paired optional `device_night_plan` and `device_night_plan_records` sections, preserving old export copies. It rejects foreign/malformed/duplicate receipts and aborts on unreadable data before opening the destination. Existing owned deletion purges private documents without affecting another actor. No note duplicate is retained in receipts after a history deletion.
+
+## Executed scoped evidence
+
+-37 JVM cases across6 classes PASS:8 plan/codec/export cases,9 state-holder race/intent cases, existing8 identity/settings +3 rejection +9 export/writer cases. `night-plan-subsystem-gate.log`.
+-Debug APK and instrumentation APK PASS; lint0 errors/68 warnings (prior66 plus2 quantity-string plural candidates, no suppressions).499 paired AR/EN resources/format arguments PASS.
+-10/10 actual API34 Room/Android Keystore cases PASS:9 new plan storage cases +1 extended export snapshot. Reopen/tombstones, concurrent CAS, foreign-frame retention, same-owner/other-owner generation changes, exact record replay/deleted-history no-resurrection, post-write callback failure rollback, actor change after session/outbox writes, deletion fences/other-owner purge isolation, and canonical reference mismatch were exercised. `night-plan-api34-storage.private.log`.
+-3/3 Arabic RTL and3/3 English LTR Compose cases PASS in dark theme with1.5 font scale. Tests verify unreadable data is not an empty plan or writable, saving preview is distinct from recording, and the exact reviewed cross-surah range is displayed before a separate record confirmation. `night-plan-ar-api34.private.log`, `night-plan-en-api34.private.log`.
+-No new backend code or actual native HTTP journey was executed. The previously pinned32 Night Prayer API-contract assertions remain separate inherited evidence; no provider, real account, mail or genuine worship data was used. Fixtures use isolated generated Room databases and deterministic login transport, and delete only those databases.
+
+Initial focused gates were superseded while completing the export contract expansion and suspended Quran-index wiring. The consolidated gate above passed with the original validation expectations; earlier failed logs remain ignored local evidence. There was no production-data reset or weakened guard.
+
+The next08.3 work must add a real bounded planned/session reader and independent encrypted prayer positions. The parallel display-only continuation must not infer current-plan completion from unrelated older sessions. Receipts created here provide stable plan/session correlation for that integration.

@@ -43,7 +43,9 @@ object AccountExportPolicy {
         require(owner > 0 && namespace.matches(Regex("[a-f0-9]{12}")))
         require(integer(device["owner_id"]) == owner && device["namespace"].asString == namespace)
         val legacyKeys = deviceSections + setOf("owner_id", "namespace")
-        require(device.keySet() == legacyKeys || device.keySet() == legacyKeys + "device_khatmah_state")
+        val optional = setOf("device_khatmah_state", "device_night_plan", "device_night_plan_records")
+        require(device.keySet() - optional == legacyKeys)
+        require(device.has("device_night_plan") == device.has("device_night_plan_records"))
         deviceSections.forEach { section ->
             val value = requireNotNull(device[section])
             if (section == "device_reading_position") require(value.isJsonNull || value.isJsonObject)
@@ -60,6 +62,13 @@ object AccountExportPolicy {
         device["device_khatmah_state"]?.let { value ->
             require(value.isJsonArray && value.asJsonArray.size() <= 1)
             value.asJsonArray.forEach { org.athar.app.khatmah.KhatmahJournalCodec.decode(it.toString(), owner, namespace) }
+        }
+        device["device_night_plan"]?.let { value ->
+            require(value.isJsonArray && value.asJsonArray.size() <= 1)
+            value.asJsonArray.forEach { org.athar.app.nightprayer.NightPlanCodec.decode(it.toString(), owner, namespace) }
+            val receipts = device["device_night_plan_records"]; require(receipts.isJsonArray)
+            val ids = receipts.asJsonArray.map { org.athar.app.nightprayer.NightPlanCodec.decodeReceipt(it.toString(), owner, namespace).id }
+            require(ids.size == ids.toSet().size)
         }
         safe(device)
     }
