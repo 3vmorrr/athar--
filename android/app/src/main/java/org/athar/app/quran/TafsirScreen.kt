@@ -668,7 +668,7 @@ private fun TafsirSourceSheet(
                             },
                             trailingContent = {
                                 if (book.id == state.selectedBook?.id) {
-                                    Icon(AtharIcons.Check, null)
+                                    Icon(AtharIcons.CheckCircle, null)
                                 }
                             },
                             modifier = Modifier
