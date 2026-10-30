@@ -100,7 +100,12 @@ private fun AtharNavIcon(
     val open: (String) -> Unit = { path ->
         if (path == "home" || path == "quran" || path == "adhkar") {
             navigateTab(path)
-        } else if (path == "night-prayer" || path == "upcoming" || path == "inbox") {
+        } else if (
+            path == "night-prayer" ||
+            path == "upcoming" ||
+            path == "inbox" ||
+            path == "search"
+        ) {
             navigation.navigate(path) { launchSingleTop = true }
         } else if (path == "catalog-books") {
             navigation.navigate("catalog/books") { launchSingleTop = true }
@@ -187,6 +192,7 @@ private fun AtharNavIcon(
                                     when {
                                         route == "night-prayer" -> R.string.night_prayer
                                         route == "inbox" -> R.string.notification_inbox
+                                        route == "search" -> R.string.global_search
                                         route.startsWith("quran/") -> R.string.quran
                                         route.startsWith("upcoming") -> R.string.upcoming_lessons
                                         route.startsWith("book-reader/") -> R.string.books
@@ -203,6 +209,16 @@ private fun AtharNavIcon(
                         if (!topLevel) {
                             IconButton(onClick = { navigation.popBackStack() }) {
                                 Icon(AtharIcons.ArrowBack, stringResource(R.string.back))
+                            }
+                        }
+                    },
+                    actions = {
+                        if (topLevel) {
+                            IconButton(onClick = { open("search") }) {
+                                Icon(
+                                    AtharIcons.Search,
+                                    contentDescription = stringResource(R.string.global_search),
+                                )
                             }
                         }
                     },
@@ -256,6 +272,7 @@ private fun AtharNavIcon(
                         composable("account") { AccountScreen(vm, auth, open) }
                         composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph) }
                         composable("inbox") { org.athar.app.notifications.NotificationInboxScreen(vm.graph, open) }
+                        composable("search") { GlobalSearchScreen(vm.graph, open) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }
                         composable("upcoming/{id}",arguments=listOf(navArgument("id"){type=NavType.IntType})) { entry -> org.athar.app.learning.UpcomingScreen(vm.graph,entry.arguments?.getInt("id"),open) }
                         composable(
