@@ -3,6 +3,7 @@ package org.athar.app.core.ui
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -91,7 +92,6 @@ private fun AtharNavIcon(
     val route = currentEntry?.destination?.route ?: "home"
     val topLevel = destinations.any { it.key == route }
     val reduced = reducedMotion()
-    val settings by vm.settings.collectAsStateWithLifecycle()
     LaunchedEffect(route) { if (destinations.any { it.key == route }) selected = route }
     val navigateTab: (String) -> Unit = { key ->
         selected = key
@@ -436,7 +436,6 @@ private fun AtharNavIcon(
 ) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current.applicationContext
     var name by remember(auth.user) {
         mutableStateOf(auth.user.displayName.orEmpty())
