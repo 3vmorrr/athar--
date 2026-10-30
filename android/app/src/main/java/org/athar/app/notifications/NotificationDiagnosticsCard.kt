@@ -62,7 +62,7 @@ fun NotificationDiagnosticsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                TextButton(onClick = ::refresh, enabled = !busy) {
+                TextButton(onClick = { refresh() }, enabled = !busy) {
                     Text(stringResource(R.string.refresh))
                 }
             }
