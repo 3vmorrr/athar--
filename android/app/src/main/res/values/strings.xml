@@ -58,7 +58,7 @@
 <string name="saved_items_total">الإجمالي: %1$d</string>
 <string name="saved_quran_reference">سورة %1$s · آية %2$s</string>
 <string name="bookmark_exact_open_pending">سيتم ربط الفتح المباشر على الآية مع مسار قارئ القرآن بعد دمج مرحلة التنقل الحالية.</string>
-<string name="page_number">صفحة %1$d</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string>
+<string name="page_number">صفحة %1$d</string><string name="add_favorite">إضافة للمفضلة</string><string name="remove_favorite">إزالة من المفضلة</string><string name="download_book">تنزيل الكتاب</string><string name="downloads">التنزيلات</string><string name="offline_library">المكتبة دون اتصال</string><string name="offline_library_intro">الكتب المحفوظة على هذا الجهاز متاحة للقراءة دون إنترنت.</string><string name="downloaded_books_count">%1$d كتاب محفوظ</string><string name="downloaded_book_id">كتاب رقم %1$d</string><string name="local_storage_used">المساحة المستخدمة: %1$s</string><string name="local_copy_only">الحذف هنا يزيل النسخة المحلية فقط ولا يغيّر المفضلة أو بيانات الكتاب على حسابك.</string><string name="remove_local_copy">حذف النسخة المحلية</string><string name="no_downloaded_books">لا توجد كتب محمّلة على هذا الجهاز.</string>
 <string name="book_download_allowed">متاح للتحميل وفق الحقوق المسجلة</string>
 <string name="book_download_unavailable">التحميل غير متاح لهذا الكتاب</string>
 <string name="book_metadata">بيانات الكتاب</string>
