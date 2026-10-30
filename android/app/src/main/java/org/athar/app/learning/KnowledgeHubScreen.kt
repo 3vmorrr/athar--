@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
@@ -237,55 +238,39 @@ fun KnowledgeHubScreen(
             contentPadding=PaddingValues(bottom=AtharSpacing.Xxl),
             verticalArrangement=Arrangement.spacedBy(AtharSpacing.Md),
         ){
-            item(key="knowledge-hero",contentType="hero"){
-                val title=continuation?.title ?: stringResource(R.string.knowledge)
-                val support=when(continuationRead){
-                    KnowledgeContinuationRead.Unreadable->stringResource(R.string.local_data_unreadable)
-                    KnowledgeContinuationRead.Loading->stringResource(R.string.knowledge_intro)
-                    is KnowledgeContinuationRead.Ready->when{
-                        continuation?.seriesTitle!=null->continuation.seriesTitle
-                        continuation?.scholarName!=null->continuation.scholarName
-                        continuation!=null->stringResource(R.string.knowledge_saved_progress)
-                        else->stringResource(R.string.knowledge_intro)
-                    }
+            item(key="knowledge-continuation",contentType="continuation"){
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = AtharSpacing.Lg,
+                            end = AtharSpacing.Lg,
+                            top = AtharSpacing.Md,
+                        ),
+                ) {
+                    KnowledgeContinuationCard(
+                        read = continuationRead,
+                        continuation = continuation,
+                        onPrimary = {
+                            if (continuation != null) {
+                                open("lessons/" + continuation.lessonId)
+                            } else {
+                                scope.launch {
+                                    if (reduced) listState.scrollToItem(1)
+                                    else listState.animateScrollToItem(1)
+                                }
+                            }
+                        },
+                        onSecondary = {
+                            if (continuation?.seriesId != null) {
+                                open("series/" + continuation.seriesId)
+                            } else {
+                                open("upcoming")
+                            }
+                        },
+                    )
                 }
-                AtharImmersiveHero(
-                    presentation=AtharHeroPresentation(
-                        artwork=AtharHeroArtwork.Knowledge,
-                        eyebrow=stringResource(R.string.knowledge),
-                        title=title,
-                        supportingText=support,
-                        statusText=if(continuationRead==KnowledgeContinuationRead.Unreadable)
-                            stringResource(R.string.local_data_unreadable) else null,
-                        statusTone=if(continuationRead==KnowledgeContinuationRead.Unreadable)
-                            AtharHeroStatusTone.Warning else AtharHeroStatusTone.Neutral,
-                        primaryActionLabel=if(continuation!=null)
-                            stringResource(R.string.continue_learning)
-                        else stringResource(R.string.explore_lessons),
-                        secondaryActionLabel=when{
-                            continuation?.seriesId!=null->stringResource(R.string.open_series)
-                            else->stringResource(R.string.upcoming_lessons)
-                        },
-                        visualState=when(continuationRead){
-                            KnowledgeContinuationRead.Loading->AtharHeroVisualState.Loading
-                            KnowledgeContinuationRead.Unreadable->AtharHeroVisualState.Error
-                            is KnowledgeContinuationRead.Ready->AtharHeroVisualState.Ready
-                        },
-                        transitionKey="knowledge:"+owner,
-                    ),
-                    onPrimaryAction={
-                        if(continuation!=null)open("lessons/"+continuation.lessonId)
-                        else scope.launch{
-                            if(reduced)listState.scrollToItem(1)else listState.animateScrollToItem(1)
-                        }
-                    },
-                    onSecondaryAction={
-                        if(continuation?.seriesId!=null)open("series/"+continuation.seriesId)
-                        else open("upcoming")
-                    },
-                )
             }
-
             item(key="knowledge-controls",contentType="controls"){
                 AtharLayeredContentSurface(Modifier.fillMaxWidth(),overlap=20.dp){
                     AtharSectionHeader(stringResource(R.string.explore_knowledge))
@@ -378,6 +363,131 @@ fun KnowledgeHubScreen(
     }
 }
 
+@Composable
+private fun KnowledgeContinuationCard(
+    read: KnowledgeContinuationRead,
+    continuation: KnowledgeContinuation?,
+    onPrimary: () -> Unit,
+    onSecondary: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant,
+        ),
+    ) {
+        Column(
+            Modifier.padding(AtharSpacing.Xl),
+            verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    modifier = Modifier.size(48.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                ) {
+                    Icon(
+                        AtharIcons.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.padding(AtharSpacing.Md),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+                Column(
+                    Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Xs),
+                ) {
+                    Text(
+                        stringResource(
+                            if (continuation != null) R.string.continue_learning
+                            else R.string.knowledge,
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        continuation?.title ?: stringResource(R.string.knowledge_intro),
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    val supporting = when (read) {
+                        KnowledgeContinuationRead.Unreadable ->
+                            stringResource(R.string.local_data_unreadable)
+                        KnowledgeContinuationRead.Loading ->
+                            stringResource(R.string.knowledge_intro)
+                        is KnowledgeContinuationRead.Ready ->
+                            continuation?.seriesTitle
+                                ?: continuation?.scholarName
+                                ?: stringResource(R.string.knowledge_intro)
+                    }
+                    Text(
+                        supporting,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (read == KnowledgeContinuationRead.Unreadable) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+
+            continuation?.takeIf { it.durationSeconds > 0 }?.let { saved ->
+                val progress = (
+                    saved.positionSeconds.toFloat() / saved.durationSeconds.toFloat()
+                ).coerceIn(0f, 1f)
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                )
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm),
+            ) {
+                Button(
+                    onClick = onPrimary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text(
+                        stringResource(
+                            if (continuation != null) R.string.continue_learning
+                            else R.string.explore_lessons,
+                        ),
+                    )
+                }
+                OutlinedButton(
+                    onClick = onSecondary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text(
+                        stringResource(
+                            if (continuation?.seriesId != null) R.string.open_series
+                            else R.string.upcoming_lessons,
+                        ),
+                    )
+                }
+            }
+        }
+    }
+}
 @Composable
 private fun KnowledgeCatalogCard(
     item:KnowledgeCatalogItem,
