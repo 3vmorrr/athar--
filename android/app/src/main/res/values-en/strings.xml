@@ -273,7 +273,7 @@
 <string name="remove_bookmark">Remove bookmark</string>
 <string name="your_journey">Your space in Athar</string>
 <string name="your_activity">Your activity</string>
-<string name="quick_actions">Quick actions</string>
+<string name="quick_actions">Quick actions</string><string name="home_quick_actions_title">Worship and learning</string><string name="home_quran_action_body">Reading, tafsir, and review</string><string name="home_night_action_body">Plans, timings, and reminders</string><string name="home_adhkar_action_body">Daily adhkar and Hisn</string><string name="home_knowledge_action_body">Lessons, series, and books</string>
 <string name="reading_sessions">Reading sessions</string>
 <string name="completed_lessons">Lessons completed</string>
 <string name="completed_adhkar">Adhkar completed</string>
