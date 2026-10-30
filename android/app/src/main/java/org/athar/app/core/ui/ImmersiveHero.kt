@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -184,6 +185,7 @@ object AtharHeroLayoutPolicy {
 fun AtharImmersiveHero(
     presentation: AtharHeroPresentation,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
     collapseFraction: Float = 0f,
     reduceMotion: Boolean = false,
     onPrimaryAction: (() -> Unit)? = null,
@@ -225,7 +227,7 @@ fun AtharImmersiveHero(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+            .clip(shape),
         color = Color.Transparent,
         contentColor = Color.White,
     ) {
