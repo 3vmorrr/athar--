@@ -143,6 +143,10 @@ import java.time.LocalDate
         }
     }
     when(tool) {
+        "downloads" -> org.athar.app.books.DownloadsScreen(graph) { id ->
+            open("book-reader/$id")
+        }
+        "appearance" -> ReadingAppearanceScreen(graph)
         "export" -> Column(
             Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
