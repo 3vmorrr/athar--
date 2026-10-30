@@ -376,6 +376,8 @@ private fun AtharNavIcon(
                 "khatmah" to R.string.khatmah,
                 "reminders" to R.string.reminder_settings,
                 "inbox" to R.string.notification_inbox,
+                "downloads" to R.string.downloads,
+                "appearance" to R.string.reading_appearance,
                 "bookmarks" to R.string.bookmarks,
                 "favorites" to R.string.favorites,
                 "export" to R.string.export_data,
