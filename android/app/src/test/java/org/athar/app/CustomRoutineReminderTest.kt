@@ -12,7 +12,7 @@ class CustomRoutineReminderTest {
         label:String="Read",
         enabled:Boolean=true,
         time:String="18:00",
-        days:Set<Int>=setOf(1,3,5),
+        days: Set<Int> = setOf(1,3,5),
     )=CustomRoutineRule(
         id,label,enabled,time,days,"Africa/Cairo",1,
         Instant.parse("2026-10-26T00:00:00Z").toEpochMilli(),
