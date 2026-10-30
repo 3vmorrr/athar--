@@ -415,13 +415,24 @@ private fun AtharNavIcon(
                 )
             }
         }
-        Box(Modifier.weight(1f)) { if (tool == "profile") AccountProfileScreen(vm, auth) else AccountToolsScreen(vm.graph, tool, open) }
+        Box(Modifier.weight(1f)) {
+            if (tool == "profile") {
+                AccountProfileScreen(
+                    vm = vm,
+                    auth = auth,
+                    onOpenAppearance = { tool = "appearance" },
+                )
+            } else {
+                AccountToolsScreen(vm.graph, tool, open)
+            }
+        }
     }
 }
 
 @Composable private fun AccountProfileScreen(
     vm: AppViewModel,
     auth: AuthState.SignedIn,
+    onOpenAppearance: () -> Unit,
 ) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val operation by vm.operation.collectAsStateWithLifecycle()
@@ -453,27 +464,55 @@ private fun AtharNavIcon(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(key = "profile", contentType = "heading") {
-            AtharImmersiveHero(
-                presentation = AtharHeroPresentation(
-                    artwork = AtharHeroArtwork.Generic,
-                    eyebrow = stringResource(R.string.account),
-                    title = auth.user.displayName.orEmpty().ifBlank {
-                        auth.user.username.orEmpty()
-                    },
-                    supportingText = auth.user.email,
-                    statusText = if (auth.offline) {
-                        stringResource(R.string.offline_notice)
-                    } else {
-                        null
-                    },
-                    statusTone = if (auth.offline) {
-                        AtharHeroStatusTone.Offline
-                    } else {
-                        AtharHeroStatusTone.Neutral
-                    },
-                ),
+            Surface(
                 modifier = Modifier.fillMaxWidth(),
-            )
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
+                Column(
+                    Modifier.padding(AtharSpacing.Xl),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(56.dp),
+                            shape = androidx.compose.foundation.shape.CircleShape,
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Icon(
+                                AtharIcons.Person,
+                                contentDescription = null,
+                                modifier = Modifier.padding(AtharSpacing.Lg),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                auth.user.displayName.orEmpty().ifBlank {
+                                    auth.user.username.orEmpty()
+                                },
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                auth.user.email,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    if (auth.offline) {
+                        MessagePanel(stringResource(R.string.offline_notice))
+                    }
+                }
+            }
         }
 
         item(key = "name", contentType = "field") {
@@ -575,20 +614,19 @@ private fun AtharNavIcon(
         }
 
         item(key = "theme", contentType = "controls") {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf(
-                    "light" to R.string.light,
-                    "dark" to R.string.dark,
-                    "system" to R.string.system_theme,
-                ).forEach { (key, label) ->
-                    FilterChip(
-                        selected = settings?.theme == key,
-                        onClick = {
-                            scope.launch { vm.graph.settings.theme(key) }
-                        },
-                        label = { Text(stringResource(label)) },
-                    )
-                }
+            OutlinedButton(
+                onClick = onOpenAppearance,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 52.dp),
+            ) {
+                Icon(
+                    AtharIcons.MenuBook,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(Modifier.width(AtharSpacing.Sm))
+                Text(stringResource(R.string.reading_appearance))
             }
         }
 
