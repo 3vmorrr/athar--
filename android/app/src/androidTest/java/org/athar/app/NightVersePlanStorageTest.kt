@@ -51,7 +51,7 @@ class NightVersePlanStorageTest {
         val f = Fixture()
         try {
             f.login(1); val lease = f.session.lease(1); val repo = f.repository()
-            val position = CachedDocument(1, "reading-position", "unreadable-canary-position", 1)
+            val position = CachedDocument(1, "quran-reading-position", "unreadable-canary-position", 1)
             val khatmah = CachedDocument(1, "private:khatmah-journal:v3", "unreadable-canary-khatmah", 1)
             f.db.dao().cache(position); f.db.dao().cache(khatmah)
             val saved = repo.save(lease, f.index.target(1, 7, 100), 0)

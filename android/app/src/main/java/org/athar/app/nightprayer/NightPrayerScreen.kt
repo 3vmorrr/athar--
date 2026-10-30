@@ -2,6 +2,7 @@ package org.athar.app.nightprayer
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -109,7 +110,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     }
 }
 
-@Composable fun NightPrayerScreen(graph: AppGraph) {
+@Composable fun NightPrayerScreen(graph: AppGraph, fontSize: Int = 28) {
     var section by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("tonight") }
     val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
     Column(Modifier.fillMaxSize()) {
@@ -120,13 +121,24 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
             FilterChip(section == "calendar", { section = "calendar" }, label = { Text(stringResource(R.string.night_calendar)) })
             FilterChip(section == "tools", { section = "tools" }, label = { Text(stringResource(R.string.night_tools)) })
         }
-        AtharPageTransition(section,Modifier.weight(1f)){when(it){"plan"->NightPlanScreen(graph);"tonight"->NightTonightScreen(graph, history = { section = "history" }, tools = { section = "tools" });"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph)}}
+        AtharPageTransition(section,Modifier.weight(1f)){when(it){"plan"->NightPlanScreen(graph, fontSize);"tonight"->NightTonightScreen(graph, history = { section = "history" }, tools = { section = "tools" });"tools"->NightToolsScreen(graph);"calendar"->NightCalendarScreen(vm);else->NightHistoryScreen(graph, fontSize)}}
     }
 }
 
-@Composable private fun NightHistoryScreen(graph: AppGraph) {
+@Composable private fun NightHistoryScreen(graph: AppGraph, fontSize: Int) {
+    val actor by graph.session.state.collectAsStateWithLifecycle()
+    val owner = (actor as? org.athar.app.auth.AuthState.SignedIn)?.user?.id ?: return
+    val lease = runCatching { graph.session.lease(owner) }.getOrNull() ?: return
+    key(lease) { NightHistoryOwned(graph, lease, fontSize) }
+}
+
+@Composable private fun NightHistoryOwned(graph: AppGraph, lease: org.athar.app.auth.SessionLease, fontSize: Int) {
     val vm: NightViewModel = viewModel(key = "night:${graph.session.userId}", factory = object : ViewModelProvider.Factory { @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T = NightViewModel(graph) as T })
     val state by vm.state.collectAsStateWithLifecycle()
+    var reader by remember { mutableStateOf<NightReadingScope?>(null) }
+    val list = remember { LazyListState() }
+    if (runCatching { graph.session.requireLease(lease) }.isFailure) return
+    reader?.let { scope -> NightReaderScreen(graph, lease, scope, fontSize) { reader = null }; return }
     if(state.loading){Box(Modifier.padding(20.dp)){LinearProgressIndicator(Modifier.fillMaxWidth())};return}
     if(state.unreadable){Box(Modifier.padding(20.dp)){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryLocal){Text(stringResource(R.string.retry))}}};return}
     var editing by remember { mutableStateOf<Pair<LocalNightSession, JsonObject>?>(null) }
@@ -134,7 +146,7 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     var deleting by remember { mutableStateOf<String?>(null) }
     val totals = remember(state.rows) { state.rows.groupBy { it.first.nightDate }.mapValues { (_, list) -> list.sumOf { it.first.verseCount } } }
     val conflictedIds=remember(state.conflictRows,state.rejections){(state.conflictRows.map{it.local.id}+state.rejections.map{it.local.id}).toSet()}
-    LazyColumn(Modifier.testTag("night-history-list"),contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    LazyColumn(Modifier.testTag("night-history-list"),state = list, contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item(key = "heading", contentType = "heading") { AtharHeroSurface(Modifier.fillMaxWidth()){
             Text(stringResource(R.string.night_prayer),style=MaterialTheme.typography.headlineMedium)
             Text(stringResource(R.string.night_intro),style=MaterialTheme.typography.bodyMedium)
@@ -177,6 +189,12 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
                 val conflicted=local.id in conflictedIds
                 val revisionConflict=state.conflictRows.any{it.local.id==local.id}
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (body.text("entry_type") == "range") {
+                        val readingScope = runCatching { NightReadingScope(lease.owner, graph.partition, "session", local.id, body["start_index"].asInt, body["end_index"].asInt) }.getOrNull()
+                        if (readingScope != null) TextButton(onClick = {
+                            if (runCatching { graph.session.requireLease(lease) }.isSuccess) reader = readingScope
+                        }, enabled = !state.busy && !conflicted, modifier = Modifier.testTag("night-read-${local.id}")) { Text(stringResource(R.string.night_reader_open)) }
+                    }
                     TextButton(onClick = { editing = local to body; form = true }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.edit)) }
                     TextButton(onClick = { deleting = local.id }, enabled = !state.busy&&!conflicted) { Text(stringResource(R.string.delete_action), color = MaterialTheme.colorScheme.error) }
                     if(revisionConflict)TextButton(onClick={vm.review(local.id)},enabled=!state.busy,modifier=Modifier.testTag("night-conflict-${local.id}")){Text(stringResource(R.string.night_review_conflict))}

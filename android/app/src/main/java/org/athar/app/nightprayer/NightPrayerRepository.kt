@@ -11,6 +11,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.athar.app.auth.SessionRepository
+import org.athar.app.auth.SessionLease
 import org.athar.app.core.data.*
 import org.athar.app.core.security.PrivateCipher
 import org.athar.app.core.network.ApiException
@@ -223,6 +224,28 @@ class NightPrayerRepository(private val database: AppDatabase, private val sessi
         }
             return body
         }catch(failure:CancellationException){throw failure}catch(_:Exception){throw NightRetainedUnreadable()}
+    }
+    /** Read-only bounded-reader bridge; it never updates a reading position or worship count. */
+    internal suspend fun readerRange(lease: SessionLease, id: String): IntRange? = withContext(Dispatchers.IO) {
+        nightSessionUuid(id)
+        database.withTransaction {
+            session.requireLease(lease)
+            val row = dao.night(lease.owner, id)
+            if (row == null) {
+                if (dao.sessionMutations(lease.owner, id).isNotEmpty()) throw NightRetainedUnreadable()
+                session.requireLease(lease); return@withTransaction null
+            }
+            require(row.userId == lease.owner && row.id == id)
+            val body = validateRetained(row)
+            if (body == null || body["entry_type"]?.asString != "range") { session.requireLease(lease); return@withTransaction null }
+            fun number(key: String): Int {
+                val value = requireNotNull(body[key]); require(value.isJsonPrimitive && value.asJsonPrimitive.isNumber && value.toString().matches(Regex("[0-9]{1,4}")))
+                return value.toString().toInt()
+            }
+            val start = number("start_index"); val end = number("end_index")
+            require(start in 1..6236 && end in start..6236 && row.verseCount == end - start + 1)
+            session.requireLease(lease); start..end
+        }
     }
     private suspend fun accountVersion(owner:Long,id:String):JsonObject {
         val body=session.request("GET","night-prayer/sessions/$id",expectedUser=owner).asJsonObject

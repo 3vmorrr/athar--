@@ -390,8 +390,7 @@ class QuranViewModel(private val graph: AppGraph, private val saved: SavedStateH
                     if(storedReading==ProtectedRead.Unreadable)item(key="unreadable-position",contentType="state"){MessagePanel(stringResource(R.string.local_data_unreadable),true){TextButton(onClick=vm::retryReading){Text(stringResource(R.string.retry))}}}
                     items(state.verses, key = { it.position.globalIndex }, contentType = { "ayah" }) { ayah ->
                         Column(Modifier.fillMaxWidth().testTag("quran-ayah-${ayah.position.globalIndex}")) {
-                            if (ayah.bismillah != null) Text(ayah.bismillah, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.9).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
-                            Text(ayah.text, Modifier.fillMaxWidth(), fontFamily = QuranFont, fontSize = fontSize.sp, lineHeight = (fontSize * 1.95).sp, style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Rtl))
+                            QuranAyahText(ayah, fontSize, Modifier.fillMaxWidth())
                             FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text("${ayah.position.surah}:${ayah.position.ayah}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                                 TextButton(onClick = { scope.launch { try { vm.savePosition(ayah); snackbar.showSnackbar(saved) } catch (e: CancellationException) { throw e } catch (_: Exception) { snackbar.showSnackbar(failed) } } }, enabled = storedReading is ProtectedRead.Ready&&reading?.conflict != true) { Text(stringResource(R.string.set_reading_position)) }

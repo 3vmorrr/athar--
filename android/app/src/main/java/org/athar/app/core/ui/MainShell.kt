@@ -227,7 +227,7 @@ private fun AtharNavIcon(
                         composable("knowledge") { CompositionLocalProvider(LocalAtharVisibilityScope provides this) { KnowledgeScreen(vm.graph, open) } }
                         composable("adhkar") { AdhkarScreen(vm.graph) }
                         composable("account") { AccountScreen(vm, auth, open) }
-                        composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph) }
+                        composable("night-prayer") { org.athar.app.nightprayer.NightPrayerScreen(vm.graph, settings?.quranFontSize ?: 28) }
                         composable("book-reader/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) { entry -> org.athar.app.books.BookReaderScreen(vm.graph, requireNotNull(entry.arguments).getInt("id")) }
                         composable("player") { org.athar.app.media.AudioScreen(vm.graph, expandedOnly = true) }
                         composable("upcoming") { org.athar.app.learning.UpcomingScreen(vm.graph,open=open) }

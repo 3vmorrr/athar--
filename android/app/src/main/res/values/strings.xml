@@ -412,4 +412,21 @@
     <string name="night_plan_record_confirm">أكد أنك أتممت هذا المدى كاملًا. يضيف ذلك جلسة قيام ليل فقط.</string>
     <string name="night_plan_record_frozen">تستخدم إعادة المحاولة التاريخ والمنطقة والملاحظة نفسها لتجنب التكرار. ألغِ للمراجعة قبل بدء تسجيل آخر.</string>
     <string name="night_maghrib_date">تاريخ المغرب للجلسة</string>
+    <string name="night_reader_open">قراءة النطاق</string>
+    <string name="night_reader_title">قراءة القيام</string>
+    <string name="night_reader_notice">موضع مستقل وخاص على هذا الجهاز. القراءة وحفظ الموضع لا يسجلان صلاة مكتملة ولا يغيران تقدم المصحف أو الختمة.</string>
+    <string name="night_reader_source_changed">تغير هذا النطاق أو حُذف. ارجع وافتح النطاق الحالي للمراجعة.</string>
+    <string name="night_reader_range_changed">الموضع المحفوظ يخص نطاقًا سابقًا. راجع النطاقين قبل مسح الموضع.</string>
+    <string name="night_reader_old_range">النطاق السابق: %1$s</string>
+    <string name="night_reader_new_range">النطاق الحالي: %1$s</string>
+    <string name="night_reader_reset_range">مراجعة مسح الموضع السابق</string>
+    <string name="night_reader_reset_confirm">مسح الموضع السابق لهذا النطاق فقط؟ تبقى سجلات الصلاة وتقدم المصحف والختمة كما هي.</string>
+    <string name="night_reader_cleared">مُسح موضع قراءة القيام.</string>
+    <string name="night_reader_marker_changed">تغير الموضع المحفوظ. راجع الموضع الحالي قبل المحاولة مجددًا.</string>
+    <string name="night_reader_recorded_complete">تغطي السجلات المرتبطة هذه الخطة كاملة. يمكنك قراءتها مجددًا دون إضافة سجل.</string>
+    <string name="night_reader_position">موضع القيام: %1$s</string>
+    <string name="night_reader_start">بداية النطاق</string>
+    <string name="night_reader_clear">مسح موضع القيام</string>
+    <string name="night_reader_clear_confirm">مسح موضع القيام المحفوظ لهذا النطاق فقط؟ لا تتغير سجلات الصلاة أو تقدم المصحف والختمة.</string>
+    <string name="night_reader_save">حفظ موضع القيام هنا</string>
 </resources>

@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.PersistableBundle
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -36,20 +37,21 @@ internal sealed interface NightPlanEvent {
     data object Reload : NightPlanEvent
     data class Clear(val version: Long) : NightPlanEvent
     data class Copy(val range: QuranRange) : NightPlanEvent
+    data class Read(val scope: NightReadingScope) : NightPlanEvent
     data object OpenRecord : NightPlanEvent
     data class EditRecord(val date: String, val zone: String, val note: String) : NightPlanEvent
     data object Record : NightPlanEvent
     data object CloseRecord : NightPlanEvent
 }
 
-@Composable internal fun NightPlanScreen(graph: AppGraph) {
+@Composable internal fun NightPlanScreen(graph: AppGraph, fontSize: Int = 28) {
     val actor by graph.session.state.collectAsStateWithLifecycle()
     val owner = (actor as? org.athar.app.auth.AuthState.SignedIn)?.user?.id ?: return
     val lease = runCatching { graph.session.lease(owner) }.getOrNull() ?: return
-    key(lease) { NightPlanOwned(graph, lease) }
+    key(lease) { NightPlanOwned(graph, lease, fontSize) }
 }
 
-@Composable private fun NightPlanOwned(graph: AppGraph, lease: SessionLease) {
+@Composable private fun NightPlanOwned(graph: AppGraph, lease: SessionLease, fontSize: Int) {
     val context = LocalContext.current
     val vm: NightPlanViewModel = viewModel(key = "night-plan:${graph.partition}:${lease.owner}:${lease.generation}", factory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST") override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -69,7 +71,10 @@ internal sealed interface NightPlanEvent {
     val state by vm.state.collectAsStateWithLifecycle()
     LaunchedEffect(vm, graph.session) { graph.session.state.collect { if (runCatching { graph.session.requireLease(lease) }.isFailure) vm.clearPrivate() } }
     if (runCatching { graph.session.requireLease(lease) }.isFailure) return
-    NightPlanContent(state) { event ->
+    var reader by remember { mutableStateOf<NightReadingScope?>(null) }
+    val list = remember { LazyListState() }
+    reader?.let { scope -> NightReaderScreen(graph, lease, scope, fontSize) { reader = null }; return }
+    NightPlanContent(state, list) { event ->
         if (runCatching { graph.session.requireLease(lease) }.isFailure) vm.clearPrivate()
         else when (event) {
             is NightPlanEvent.Edit -> vm.edit(event.draft)
@@ -78,6 +83,7 @@ internal sealed interface NightPlanEvent {
             NightPlanEvent.Retry -> vm.retry()
             NightPlanEvent.Reload -> vm.reloadForm()
             is NightPlanEvent.Clear -> vm.clear(event.version)
+            is NightPlanEvent.Read -> reader = event.scope
             NightPlanEvent.OpenRecord -> vm.openRecord()
             is NightPlanEvent.EditRecord -> vm.editRecord(event.date, event.zone, event.note)
             NightPlanEvent.Record -> vm.record()
@@ -95,13 +101,13 @@ internal sealed interface NightPlanEvent {
 }
 
 /** App wiring, persistence and private imperative work stay outside plain rendering. */
-@Composable internal fun NightPlanContent(state: NightPlanUiState, event: (NightPlanEvent) -> Unit) {
+@Composable internal fun NightPlanContent(state: NightPlanUiState, list: LazyListState = remember { LazyListState() }, event: (NightPlanEvent) -> Unit) {
     var clearVersion by remember { mutableStateOf<Long?>(null) }
     var reload by remember { mutableStateOf(false) }
     val saved = (state.read as? ProtectedRead.Ready)?.value
     val actionable = state.ready && !state.busy
     val draft = state.draft
-    LazyColumn(Modifier.fillMaxSize().testTag("night-plan-screen"), contentPadding = PaddingValues(AtharSpacing.Xl), verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg)) {
+    LazyColumn(Modifier.fillMaxSize().testTag("night-plan-screen"), state = list, contentPadding = PaddingValues(AtharSpacing.Xl), verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg)) {
         item(key = "identity", contentType = "heading") { AtharSectionHeader(stringResource(R.string.night_plan_title)); Text(stringResource(R.string.night_plan_notice)) }
         if (state.busy || state.read == ProtectedRead.Loading) item(key = "loading") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
         if (state.read == ProtectedRead.Unreadable) item(key = "unreadable") { MessagePanel(stringResource(R.string.local_data_unreadable), true) {
@@ -135,6 +141,7 @@ internal sealed interface NightPlanEvent {
                 Text(stringResource(R.string.night_plan_verse_count, range.verseCount))
                 Text(stringResource(R.string.night_plan_separate_progress), style = MaterialTheme.typography.bodySmall)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Sm), verticalArrangement = Arrangement.spacedBy(AtharSpacing.Sm)) {
+                    Button(onClick = { event(NightPlanEvent.Read(NightReadingScope(saved.owner, saved.namespace, "plan", saved.plan.id, saved.plan.startIndex, saved.plan.endIndex))) }, enabled = actionable, modifier = Modifier.testTag("plan-read")) { Text(stringResource(R.string.night_reader_open)) }
                     OutlinedButton(onClick = { event(NightPlanEvent.Copy(range)) }, enabled = actionable, modifier = Modifier.testTag("plan-copy")) { Text(stringResource(R.string.night_copy_reference)) }
                     Button(onClick = { event(NightPlanEvent.OpenRecord) }, enabled = actionable, modifier = Modifier.testTag("plan-record")) { Text(stringResource(R.string.night_record_completed)) }
                     TextButton(onClick = { clearVersion = saved.version }, enabled = actionable) { Text(stringResource(R.string.night_clear_plan)) }

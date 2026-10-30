@@ -65,4 +65,13 @@ class NightPlanUiTest {
         compose.onNodeWithTag("plan-record-confirm").performClick()
         assertEquals(listOf(NightPlanEvent.Record), events)
     }
+    @Test fun readingCapturesOnlyTheSavedOwnedPlanRange() {
+        val events = mutableListOf<NightPlanEvent>()
+        val saved = NightPlanState(1, "123456abcdef").save(7, 8, 0, Instant.now())
+        val plan = saved.plan!!
+        render(NightPlanUiState(read = ProtectedRead.Ready(saved), indexReady = true, savedRange = plan.range(index())), events)
+        compose.onNodeWithTag("night-plan-screen").performScrollToNode(hasTestTag("plan-read"))
+        compose.onNodeWithTag("plan-read").performClick()
+        assertEquals(listOf(NightPlanEvent.Read(NightReadingScope(1, saved.namespace, "plan", plan.id, 7, 8))), events)
+    }
 }

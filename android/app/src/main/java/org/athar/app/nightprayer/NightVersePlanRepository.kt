@@ -50,6 +50,7 @@ internal class NightVersePlanRepository(
             if (before.version != expected) throw ApiException(409, "night_plan_changed", "")
             val after = transform(before)
             session.requireLease(lease)
+            clearReplacedNightPlanPosition(before, after, database.dao(), cipher)
             if (after != before) database.dao().cache(CachedDocument(lease.owner, NightPlanCodec.KEY, cipher.seal(NightPlanCodec.encode(after)), System.currentTimeMillis()))
             session.requireLease(lease); after
         }

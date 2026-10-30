@@ -384,4 +384,21 @@
     <string name="night_plan_record_confirm">Confirm that you completed this full range. This adds a Night Prayer session only.</string>
     <string name="night_plan_record_frozen">Retry uses the same date, zone and note to avoid a duplicate. Cancel to review before starting another recording.</string>
     <string name="night_maghrib_date">Session Maghrib date</string>
+    <string name="night_reader_open">Read range</string>
+    <string name="night_reader_title">Prayer reading</string>
+    <string name="night_reader_notice">A separate private position on this device. Reading and saving a position do not record completed prayer or change Quran or Khatmah progress.</string>
+    <string name="night_reader_source_changed">This range has changed or was deleted. Go back and open the current range for review.</string>
+    <string name="night_reader_range_changed">The saved position belongs to an earlier range. Review both ranges before clearing it.</string>
+    <string name="night_reader_old_range">Earlier range: %1$s</string>
+    <string name="night_reader_new_range">Current range: %1$s</string>
+    <string name="night_reader_reset_range">Review clearing the earlier position</string>
+    <string name="night_reader_reset_confirm">Clear only the earlier position for this range? Prayer records, Quran progress and Khatmah progress are preserved.</string>
+    <string name="night_reader_cleared">Prayer reading position cleared.</string>
+    <string name="night_reader_marker_changed">The saved position changed. Review the current position before trying again.</string>
+    <string name="night_reader_recorded_complete">Linked records cover this entire plan. You can read it again without adding a record.</string>
+    <string name="night_reader_position">Prayer position: %1$s</string>
+    <string name="night_reader_start">Range start</string>
+    <string name="night_reader_clear">Clear prayer position</string>
+    <string name="night_reader_clear_confirm">Clear the saved prayer position for this range only? Prayer records, Quran progress and Khatmah progress are preserved.</string>
+    <string name="night_reader_save">Save prayer position here</string>
 </resources>
