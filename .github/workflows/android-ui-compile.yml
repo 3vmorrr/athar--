@@ -37,5 +37,8 @@ jobs:
       - name: Compile debug Kotlin
         run: ./gradlew :app:compileDebugKotlin --no-daemon --stacktrace
 
+      - name: Assemble debug APK
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
       - name: Run debug unit tests
         run: ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace
