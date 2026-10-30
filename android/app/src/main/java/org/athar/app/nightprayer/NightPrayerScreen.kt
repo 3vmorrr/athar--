@@ -174,35 +174,52 @@ class NightViewModel(val graph: AppGraph) : ViewModel() {
     val state by vm.state.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
-        AtharImmersiveHero(
-            presentation = AtharHeroPresentation(
-                artwork = AtharHeroArtwork.NightPrayer,
-                eyebrow = stringResource(R.string.night_prayer),
-                title = stringResource(R.string.night_prayer),
-                supportingText = stringResource(R.string.night_intro),
-                statusText = when {
-                    state.unreadable -> stringResource(R.string.local_data_unreadable)
-                    state.rejections > 0 -> stringResource(R.string.night_rejection)
-                    state.conflicts > 0 -> stringResource(R.string.night_conflict)
-                    state.rows.any { it.first.dirty } -> stringResource(R.string.night_pending)
-                    else -> null
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = AtharSpacing.Lg,
+                    end = AtharSpacing.Lg,
+                    top = AtharSpacing.Md,
+                ),
+        ) {
+            AtharImmersiveHero(
+                presentation = AtharHeroPresentation(
+                    artwork = AtharHeroArtwork.NightPrayer,
+                    eyebrow = stringResource(R.string.night_prayer),
+                    title = stringResource(R.string.night_prayer),
+                    supportingText = stringResource(R.string.night_intro),
+                    statusText = when {
+                        state.unreadable -> stringResource(R.string.local_data_unreadable)
+                        state.rejections > 0 -> stringResource(R.string.night_rejection)
+                        state.conflicts > 0 -> stringResource(R.string.night_conflict)
+                        state.rows.any { it.first.dirty } -> stringResource(R.string.night_pending)
+                        else -> null
+                    },
+                    statusTone = if (
+                        state.unreadable ||
+                        state.rejections > 0 ||
+                        state.conflicts > 0
+                    ) {
+                        AtharHeroStatusTone.Warning
+                    } else {
+                        AtharHeroStatusTone.Neutral
+                    },
+                    primaryActionLabel = if (!state.loading && !state.unreadable) {
+                        stringResource(R.string.night_add)
+                    } else {
+                        null
+                    },
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
+                minimumHeight = 184.dp,
+                onPrimaryAction = {
+                    section = "history"
+                    addRequest++
                 },
-                statusTone = if (state.unreadable || state.rejections > 0 || state.conflicts > 0) {
-                    AtharHeroStatusTone.Warning
-                } else {
-                    AtharHeroStatusTone.Neutral
-                },
-                primaryActionLabel = if (!state.loading && !state.unreadable) {
-                    stringResource(R.string.night_add)
-                } else {
-                    null
-                },
-            ),
-            onPrimaryAction = {
-                section = "history"
-                addRequest++
-            },
-        )
+            )
+        }
 
         FlowRow(
             Modifier.padding(horizontal = AtharSpacing.Lg, vertical = AtharSpacing.Sm),
