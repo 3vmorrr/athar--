@@ -74,6 +74,8 @@ import org.athar.app.quran.AyahText
                     else AtharHeroStatusTone.Neutral,
                 ),
                 modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
+                minimumHeight = 200.dp,
             )
             if (
                 state.recording != null &&
