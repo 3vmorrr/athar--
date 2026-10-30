@@ -118,11 +118,13 @@ internal object BookStorage {
                 if (!digest.isFile) return@mapNotNull null
                 LocalBookDownload(
                     bookId = id,
-                    title = File(root, "book-$id.title")
-                        .takeIf { it.isFile }
-                        ?.readText(Charsets.UTF_8)
-                        ?.trim()
-                        ?.takeIf { it.isNotEmpty() },
+                    title = runCatching {
+                        File(root, "book-$id.title")
+                            .takeIf { it.isFile }
+                            ?.readText(Charsets.UTF_8)
+                            ?.trim()
+                            ?.takeIf { it.isNotEmpty() }
+                    }.getOrNull(),
                     sizeBytes = pdf.length().coerceAtLeast(0L),
                 )
             }
