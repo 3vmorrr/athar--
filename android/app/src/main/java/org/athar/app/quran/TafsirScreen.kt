@@ -1,5 +1,6 @@
 package org.athar.app.quran
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
@@ -300,16 +302,38 @@ fun TafsirScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = AtharSpacing.Lg),
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
             ) {
-                Text(
-                    verse.text,
-                    Modifier.padding(AtharSpacing.Lg),
-                    fontFamily = QuranFont,
-                    fontSize = fontSize.sp,
-                    lineHeight = (fontSize * 1.9f).sp,
-                )
+                Column(
+                    Modifier.padding(AtharSpacing.Xl),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    Text(
+                        stringResource(
+                            R.string.saved_quran_reference,
+                            verse.position.surah.toString(),
+                            verse.position.ayah.toString(),
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                    )
+                    Text(
+                        verse.text,
+                        Modifier.fillMaxWidth(),
+                        fontFamily = QuranFont,
+                        fontSize = fontSize.sp,
+                        lineHeight = (fontSize * 1.9f).sp,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
 
@@ -460,7 +484,11 @@ private fun TafsirReadingContent(
                 Surface(
                     Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    ),
                 ) {
                     Column(
                         Modifier.padding(AtharSpacing.Lg),
