@@ -208,62 +208,28 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                 contentPadding = PaddingValues(bottom = AtharSpacing.Xxl),
                 verticalArrangement = Arrangement.spacedBy(AtharSpacing.Lg),
             ) {
-                item(key = "quran-hero", contentType = "hero") {
-                    val positionText = reading?.let { position ->
-                        stringResource(
-                            R.string.reading_position_label,
-                            state.index?.surahs?.getOrNull(position.surah - 1)?.name
-                                ?: position.surah.toString(),
-                            position.ayah,
+                item(key = "quran-resume", contentType = "continuation") {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = AtharSpacing.Lg,
+                                end = AtharSpacing.Lg,
+                                top = AtharSpacing.Md,
+                            ),
+                    ) {
+                        QuranHubResumeCard(
+                            storedReading = storedReading,
+                            index = state.index,
+                            onOpen = {
+                                if (reading != null && !reading.conflict) {
+                                    vm.select(reading.surah, reading.ayah)
+                                }
+                                mode = "read"
+                            },
                         )
                     }
-                    AtharImmersiveHero(
-                        presentation = AtharHeroPresentation(
-                            artwork = AtharHeroArtwork.Quran,
-                            eyebrow = stringResource(R.string.quran),
-                            title = stringResource(R.string.quran),
-                            supportingText = when {
-                                storedReading == ProtectedRead.Unreadable ->
-                                    stringResource(R.string.local_data_unreadable)
-                                positionText != null -> positionText
-                                else -> stringResource(R.string.quran_source)
-                            },
-                            statusText = when {
-                                storedReading == ProtectedRead.Unreadable ->
-                                    stringResource(R.string.local_data_unreadable)
-                                reading?.conflict == true ->
-                                    stringResource(R.string.reading_conflict)
-                                reading?.pending == true ->
-                                    stringResource(R.string.reading_pending)
-                                else -> null
-                            },
-                            statusTone = if (
-                                storedReading == ProtectedRead.Unreadable ||
-                                    reading?.conflict == true
-                            ) {
-                                AtharHeroStatusTone.Warning
-                            } else {
-                                AtharHeroStatusTone.Neutral
-                            },
-                            primaryActionLabel = if (
-                                reading != null &&
-                                    !reading.conflict &&
-                                    storedReading is ProtectedRead.Ready
-                            ) {
-                                stringResource(R.string.resume_reading)
-                            } else {
-                                stringResource(R.string.read)
-                            },
-                        ),
-                        onPrimaryAction = {
-                            if (reading != null && !reading.conflict) {
-                                vm.select(reading.surah, reading.ayah)
-                            }
-                            mode = "read"
-                        },
-                    )
                 }
-
                 item(key = "quran-tools", contentType = "tools") {
                     Column(
                         Modifier.padding(horizontal = AtharSpacing.Lg),
@@ -318,6 +284,30 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
                         QuranWirdCard(graph)
                     }
                 }
+                item(key = "quran-index-heading", contentType = "heading") {
+                    Box(Modifier.padding(horizontal = AtharSpacing.Lg)) {
+                        AtharSectionHeader(stringResource(R.string.quran_surah_index))
+                    }
+                }
+                items(
+                    items = state.index?.surahs.orEmpty(),
+                    key = { "surah-" + it.number },
+                    contentType = { "surah-row" },
+                ) { surah ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AtharSpacing.Lg),
+                    ) {
+                        QuranHubSurahRow(
+                            surah = surah,
+                            onClick = {
+                                vm.select(surah.number)
+                                mode = "read"
+                            },
+                        )
+                    }
+                }
             }
         } else {
             Surface(
@@ -350,6 +340,180 @@ class QuranViewModel(private val graph: AppGraph) : ViewModel() {
     }
 }
 
+@Composable
+private fun QuranHubResumeCard(
+    storedReading: ProtectedRead<SavedReadingPosition?>,
+    index: QuranIndex?,
+    onOpen: () -> Unit,
+) {
+    when (storedReading) {
+        ProtectedRead.Loading -> {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+        }
+        ProtectedRead.Unreadable -> {
+            MessagePanel(
+                message = stringResource(R.string.local_data_unreadable),
+                error = true,
+            )
+        }
+        is ProtectedRead.Ready -> {
+            val position = storedReading.value
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                ),
+            ) {
+                Column(
+                    Modifier.padding(AtharSpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Surface(
+                            shape = MaterialTheme.shapes.medium,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        ) {
+                            Icon(
+                                imageVector = AtharIcons.Bookmark,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(AtharSpacing.Sm)
+                                    .size(24.dp),
+                                tint = MaterialTheme.colorScheme.secondary,
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(
+                                    if (position == null) R.string.quran else R.string.resume_reading,
+                                ),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                            Text(
+                                text = position?.let { saved ->
+                                    stringResource(
+                                        R.string.reading_position_label,
+                                        index?.surahs?.getOrNull(saved.surah - 1)?.name
+                                            ?: saved.surah.toString(),
+                                        saved.ayah,
+                                    )
+                                } ?: stringResource(R.string.quran_source),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
+                    }
+
+                    if (position?.conflict == true) {
+                        AtharStatusPill(
+                            text = stringResource(R.string.reading_conflict),
+                            emphasized = true,
+                        )
+                    } else if (position?.pending == true) {
+                        AtharStatusPill(
+                            text = stringResource(R.string.reading_pending),
+                        )
+                    }
+
+                    Button(
+                        onClick = onOpen,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 48.dp),
+                    ) {
+                        Icon(
+                            AtharIcons.MenuBook,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Spacer(Modifier.width(AtharSpacing.Sm))
+                        Text(
+                            stringResource(
+                                if (position != null && !position.conflict) {
+                                    R.string.resume_reading
+                                } else {
+                                    R.string.read
+                                },
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuranHubSurahRow(
+    surah: SurahReference,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 72.dp),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant,
+        ),
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(AtharSpacing.Lg),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AtharSpacing.Md),
+        ) {
+            Surface(
+                modifier = Modifier.size(44.dp),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = surah.number.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = surah.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                )
+                Text(
+                    text = stringResource(R.string.quran_ayah_count, surah.ayahCount),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                AtharIcons.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun QuranReaderScreen(
     graph: AppGraph,
