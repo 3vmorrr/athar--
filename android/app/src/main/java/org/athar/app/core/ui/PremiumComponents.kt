@@ -93,6 +93,7 @@ fun AtharQuickAction(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    supportingText: String? = null,
     emphasized: Boolean = false,
     enabled: Boolean = true,
     reduceMotion: Boolean = false,
@@ -113,7 +114,7 @@ fun AtharQuickAction(
         enabled = enabled,
         modifier = modifier
             .widthIn(min = 48.dp)
-            .heightIn(min = 92.dp)
+            .heightIn(min = if (supportingText == null) 92.dp else 116.dp)
             .semantics { role=Role.Button }
             .graphicsLayer { scaleX = scale; scaleY = scale; alpha=if(enabled)1f else 0.38f },
         shape = MaterialTheme.shapes.large,
@@ -143,6 +144,13 @@ fun AtharQuickAction(
                 )
             }
             Text(label, style = MaterialTheme.typography.titleSmall)
+            supportingText?.takeIf { it.isNotBlank() }?.let { supporting ->
+                Text(
+                    supporting,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
