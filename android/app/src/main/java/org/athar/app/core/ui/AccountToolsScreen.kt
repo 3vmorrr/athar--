@@ -20,7 +20,6 @@ import org.athar.app.khatmah.KhatmahRepository
 import org.athar.app.khatmah.KhatmahScreen
 import org.athar.app.AppGraph
 import org.athar.app.R
-import org.athar.app.khatmah.KhatmahScreen
 import java.time.LocalDate
 
 @Composable fun AccountToolsScreen(graph: AppGraph, tool: String, open: (String) -> Unit) {
